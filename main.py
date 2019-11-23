@@ -11,7 +11,6 @@ from torch.utils.data import Dataset, DataLoader
 from torch import nn, optim
 from torch.nn import functional as F
 
-
 parser = argparse.ArgumentParser(description='VAE MNIST Example')
 parser.add_argument('--datasetName', type=str, default='TGFb',
                     help='database name, as TGFb et al.')
@@ -94,33 +93,26 @@ class scDataset(Dataset):
         if torch.is_tensor(idx):
             idx = idx.tolist()
 
-        # landmarks = np.array([landmarks])
-        # landmarks = landmarks.astype('float').reshape(-1, 2)
-        # sample = {'image': image, 'landmarks': landmarks}
-
         sample = self.features[idx,:]
 
         if self.transform:
             sample = self.transform(sample)
 
-        # sample = sample.astype(float)
         sample = torch.from_numpy(sample.toarray())
         return sample
 
 scData = scDataset(args.datasetName)
 train_loader = DataLoader(scData, batch_size=args.batch_size, shuffle=True, **kwargs)
-    
 
-
-class VAE(nn.Module):
-    def __init__(self):
+class VAE(nn.Module, dim=2338):
+    def __init__(self,dim):
         super(VAE, self).__init__()
-
-        self.fc1 = nn.Linear(2338, 400)
+        self.dim = dim
+        self.fc1 = nn.Linear(dim, 400)
         self.fc21 = nn.Linear(400, 20)
         self.fc22 = nn.Linear(400, 20)
         self.fc3 = nn.Linear(20, 400)
-        self.fc4 = nn.Linear(400, 2338)
+        self.fc4 = nn.Linear(400, dim)
 
     def encode(self, x):
         h1 = F.relu(self.fc1(x))
@@ -136,14 +128,15 @@ class VAE(nn.Module):
         return torch.sigmoid(self.fc4(h3))
 
     def forward(self, x):
-        mu, logvar = self.encode(x.view(-1, 2338))
+        mu, logvar = self.encode(x.view(-1, self.dim))
         z = self.reparameterize(mu, logvar)
         return self.decode(z), mu, logvar
 
 
-model = VAE().to(device)
+model = VAE(scData.features.shape[1]).to(device)
 optimizer = optim.Adam(model.parameters(), lr=1e-3)
 
+# Original
 # Reconstruction + KL divergence losses summed over all elements and batch
 def loss_function(recon_x, x, mu, logvar):
     # Original 
@@ -163,7 +156,7 @@ def loss_function_graph(recon_x, x, mu, logvar, adj):
     # Original 
     # BCE = F.binary_cross_entropy(recon_x, x.view(-1, 784), reduction='sum')
     # Graph
-    target = x.view(-1, 2338)
+    target = x.view(-1, :)
     target.requires_grad = True
     BCE = graph_mse_loss_function(recon_x, target, adj, reduction='sum')
 
