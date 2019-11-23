@@ -22,6 +22,8 @@ parser.add_argument('--no-cuda', action='store_true', default=True,
                     help='enables CUDA training')
 parser.add_argument('--seed', type=int, default=1, metavar='S',
                     help='random seed (default: 1)')
+parser.add_argument('--regulized-type', type=str, default='Graph',
+                    help='regulized type (default: Graph)')
 parser.add_argument('--log-interval', type=int, default=100, metavar='N',
                     help='how many batches to wait before logging training status')
 args = parser.parse_args()
@@ -186,7 +188,8 @@ def graph_mse_loss_function(input, target, adj, size_average=None, reduce=None, 
     if target.requires_grad:
         ret = (input - target) ** 2
         #key is here
-        ret = torch.matmul(ret, adj)
+        if args.regulized_type == 'Graph':
+            ret = torch.matmul(ret, adj)
         if reduction != 'none':
             ret = torch.mean(ret) if reduction == 'mean' else torch.sum(ret)
     else:
