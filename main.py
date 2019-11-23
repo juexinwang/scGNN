@@ -156,7 +156,7 @@ def loss_function_graph(recon_x, x, mu, logvar, adj):
     # Original 
     # BCE = F.binary_cross_entropy(recon_x, x.view(-1, 784), reduction='sum')
     # Graph
-    target = x.view(-1, :)
+    target = x
     target.requires_grad = True
     BCE = graph_mse_loss_function(recon_x, target, adj, reduction='sum')
 
@@ -246,7 +246,7 @@ def train(epoch):
         recon_batch, mu, logvar = model(data)
         # Original
         # loss = loss_function(recon_batch, data, mu, logvar)
-        loss = loss_function_graph(recon_batch, data, mu, logvar, adj)
+        loss = loss_function_graph(recon_batch, data.view(-1, recon_batch.shape[1]), mu, logvar, adj)
         loss.backward()
         train_loss += loss.item()
         optimizer.step()
