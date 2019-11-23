@@ -104,7 +104,7 @@ class scDataset(Dataset):
 scData = scDataset(args.datasetName)
 train_loader = DataLoader(scData, batch_size=args.batch_size, shuffle=True, **kwargs)
 
-class VAE(nn.Module, dim=2338):
+class VAE(nn.Module):
     def __init__(self,dim):
         super(VAE, self).__init__()
         self.dim = dim
@@ -133,7 +133,7 @@ class VAE(nn.Module, dim=2338):
         return self.decode(z), mu, logvar
 
 
-model = VAE(scData.features.shape[1]).to(device)
+model = VAE(dim=scData.features.shape[1]).to(device)
 optimizer = optim.Adam(model.parameters(), lr=1e-3)
 
 # Original
