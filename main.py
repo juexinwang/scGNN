@@ -12,8 +12,8 @@ from torch import nn, optim
 from torch.nn import functional as F
 
 parser = argparse.ArgumentParser(description='VAE MNIST Example')
-parser.add_argument('--datasetName', type=str, default='TGFb',
-                    help='database name, as TGFb et al.')
+parser.add_argument('--datasetName', type=str, default='sci-CAR',
+                    help='TGFb/TGFb.cell/sci-CAR/sci-CAR_LTMG/2.Yan')
 parser.add_argument('--batch-size', type=int, default=10000, metavar='N',
                     help='input batch size for training (default: 128)')
 parser.add_argument('--epochs', type=int, default=100, metavar='N',
@@ -23,7 +23,9 @@ parser.add_argument('--no-cuda', action='store_true', default=True,
 parser.add_argument('--seed', type=int, default=1, metavar='S',
                     help='random seed (default: 1)')
 parser.add_argument('--regulized-type', type=str, default='Graph',
-                    help='regulized type (default: Graph)')
+                    help='regulized type (default: Graph), otherwise: noregu')
+parser.add_argument('--discreteTag', type=bool, default=False,
+                    help='False/True')
 parser.add_argument('--log-interval', type=int, default=100, metavar='N',
                     help='how many batches to wait before logging training status')
 args = parser.parse_args()
@@ -50,16 +52,19 @@ def parse_index_file(filename):
 
 def load_data(datasetName):
     # load the data: x, tx, allx, graph
-    names = ['x', 'tx', 'allx', 'graph']
+    if args.discreteTag:
+        names = ['xD', 'txD', 'allxD', 'graph']
+    else:
+        names = ['x', 'tx', 'allx', 'graph']
     objects = []
     for i in range(len(names)):
-        with open("data/sc/ind.{}.{}".format(datasetName, names[i]), 'rb') as f:
+        with open("data/sc/{}/ind.{}.{}".format(datasetName, datasetName, names[i]), 'rb') as f:
             if sys.version_info > (3, 0):
                 objects.append(pkl.load(f, encoding='latin1'))
             else:
                 objects.append(pkl.load(f))
     x, tx, allx, graph = tuple(objects)
-    test_idx_reorder = parse_index_file("data/sc/ind.{}.test.index".format(datasetName))
+    test_idx_reorder = parse_index_file("data/sc/{}/ind.{}.test.index".format(datasetName, datasetName))
     test_idx_range = np.sort(test_idx_reorder)
 
     if datasetName == 'citeseer':
@@ -294,5 +299,8 @@ if __name__ == "__main__":
         #                'results/sample_' + str(epoch) + '.png')
     recon = recon.detach().numpy()
     original = original.detach().numpy()
-    np.save('recon.npy',recon)
-    np.save('original.npy',original)
+    discreteStr = ''
+    if args.discreteTag:
+        discreteStr = 'D'
+    np.save(args.datasetName+'_'+args.regulized_type+discreteStr+'_recon.npy',recon)
+    np.save(args.datasetName+'_'+args.regulized_type+discreteStr+'_original.npy',original)

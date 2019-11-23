@@ -1,3 +1,4 @@
+import os
 import time
 import numpy as np
 import argparse
@@ -13,14 +14,15 @@ import csv
 
 # Preprocess network for sc
 parser = argparse.ArgumentParser()
-parser.add_argument('--graph-type', type=str, default='cell',
+parser.add_argument('--graph-type', type=str, default='gene',
                     help='cell/gene, cell:cell as nodes in the graph, gene:gene as nodes in the graph')
 parser.add_argument('--network-name', type=str, default='ttrust',
                     help='ttrust')
-parser.add_argument('--expression-name', type=str, default='sci-CAR',
-                    help='TGFb from MAGIC/ test also from MAGIC/ sci-CAR/ sci-CAR_D')
-parser.add_argument('--discrete-flag', type=str, default='False',
-                    help='True for average discrete')
+parser.add_argument('--expression-name', type=str, default='sci-CAR_LTMG',
+                    help='TGFb from MAGIC/ test also from MAGIC/ sci-CAR/ sci-CAR_LTMG')
+# Now generate both discrete and original
+# parser.add_argument('--discrete-tag', type=str, default='Ori',
+#                     help='Ori for no discrete, Avg for average discrete')
 
 args = parser.parse_args()
 
@@ -178,10 +180,11 @@ def read_edge_file_csc_cell(edgeList, nodesize, k=5):
 
 
 # Load gene expression into sparse matrix
-def read_feature_file_sparse(filename, geneList, geneDict, discreteFlag=False):
+def read_feature_file_sparse(filename, geneList, geneDict):
     samplelist=[]
     featurelist=[]
     data =[]
+    dataD = []
     selectDict={}
     selectList=[]
     count = -1
@@ -220,18 +223,19 @@ def read_feature_file_sparse(filename, geneList, geneDict, discreteFlag=False):
                 for item in selectList:
                     samplelist.append(count)
                     featurelist.append(data_count)
-                    if discreteFlag:
-                        if tmplist[item]>=avgtmp:
-                            data.append(1)
-                        else:
-                            data.append(0)
+                    # if discrete_tag == 'Avg':
+                    if tmplist[item]>=avgtmp:
+                        dataD.append(1)
                     else:
-                        data.append(float(tmplist[item]))
+                        dataD.append(0)
+                    # elif discrete_tag == 'Ori':
+                    data.append(float(tmplist[item]))
                     data_count += 1
             count += 1
     f.close()
     # As dream: rows as genes, columns as samples: This is transpose of the original scRNA data
-    feature = scipy.sparse.csr_matrix((data, (featurelist, samplelist)), shape=(len(selectList),count))  
+    feature = scipy.sparse.csr_matrix((data, (featurelist, samplelist)), shape=(len(selectList),count))
+    featureD = scipy.sparse.csr_matrix((dataD, (featurelist, samplelist)), shape=(len(selectList),count))  
 
     # For Matlab
     dim2out = [[0.0] * len(selectList) for i in range(count)]
@@ -262,15 +266,16 @@ def read_feature_file_sparse(filename, geneList, geneDict, discreteFlag=False):
             count += 1
     f.close()
 
-    return feature, dim2out, dim2outD
+    return feature, featureD, dim2out, dim2outD
 
 
 # For node as cell
 # Load gene expression into sparse matrix
-def read_feature_file_sparse_cell(filename, geneList, geneDict, discreteFlag=False):
+def read_feature_file_sparse_cell(filename, geneList, geneDict):
     samplelist=[]
     featurelist=[]
     data =[]
+    dataD = []
     selectDict={}
     selectList=[]
     count = -1
@@ -309,18 +314,19 @@ def read_feature_file_sparse_cell(filename, geneList, geneDict, discreteFlag=Fal
                 for item in selectList:
                     samplelist.append(count)
                     featurelist.append(data_count)
-                    if discreteFlag:
-                        if tmplist[item]>=avgtmp:
-                            data.append(1)
-                        else:
-                            data.append(0)
+                    # if discrete_tag == 'Avg':
+                    if tmplist[item]>=avgtmp:
+                        dataD.append(1)
                     else:
-                        data.append(float(tmplist[item]))
+                        dataD.append(0)
+                    # elif discrete_tag == 'Ori':
+                    data.append(float(tmplist[item]))
                     data_count += 1
             count += 1
     f.close()
     # As dream: rows as cells, columns as genes: This is transpose of the original scRNA data
-    feature = scipy.sparse.csr_matrix((data, (samplelist, featurelist)), shape=(count,len(selectList)))  
+    feature = scipy.sparse.csr_matrix((data, (samplelist, featurelist)), shape=(count,len(selectList))) 
+    featureD = scipy.sparse.csr_matrix((dataD, (samplelist, featurelist)), shape=(count,len(selectList))) 
 
     # For Matlab
     dim2out = [[0.0] * len(selectList)  for i in range(count)]
@@ -351,7 +357,7 @@ def read_feature_file_sparse_cell(filename, geneList, geneDict, discreteFlag=Fal
             count += 1
     f.close()
 
-    return feature, dim2out, dim2outD
+    return feature, featureD, dim2out, dim2outD
 
 
 def read_edge_file_dict(filename, geneDict):
@@ -415,12 +421,17 @@ if args.expression_name=='TGFb':
     # expressionname = 'HMLE_TGFb_day_8_10_part.csv'
 elif args.expression_name=='sci-CAR':
     expressionname = 'sci-CAR.csv'
-elif args.expression_name=='sci-CAR_D':
-    expressionname = 'sci-CAR_D.csv'
+elif args.expression_name=='sci-CAR_LTMG':
+    expressionname = 'sci-CAR_LTMG.csv'
+elif args.expression_name=='2.Yan':
+    expressionname = '2.Yan.csv'
 elif args.expression_name=='test':
     expressionname = 'test_data.csv'
 
 out_folder = "data/sc/"+args.expression_name+"/"
+if not os.path.exists(out_folder):
+    os.makedirs(out_folder)
+
 edge_filename    = "/home/wangjue/biodata/scData/network/"+networkname
 feature_filename = "/home/wangjue/biodata/scData/"+expressionname
 # edge_filename    = "data/"+networkname
@@ -435,21 +446,25 @@ geneList, geneDict = preprocess_network(edge_filename, feature_filename)
 #python and matlab
 if args.graph_type=='gene':
     graphcsc, tfDict, rowO, colO, dataO  = read_edge_file_csc(edge_filename, geneDict)
-    feature, dim2out, dim2outD = read_feature_file_sparse(feature_filename, geneList, geneDict, discreteFlag=args.discrete_flag)
+    feature, featureD, dim2out, dim2outD = read_feature_file_sparse(feature_filename, geneList, geneDict)
     graphdict = read_edge_file_dict(edge_filename, geneDict)
     outname = args.expression_name
 elif args.graph_type=='cell':
     #First generate feature
-    feature, dim2out, dim2outD = read_feature_file_sparse_cell(feature_filename, geneList, geneDict, discreteFlag=args.discrete_flag)
+    feature, featureD, dim2out, dim2outD = read_feature_file_sparse_cell(feature_filename, geneList, geneDict)
     edgeList = cal_distanceMatrix(feature, k=5)
     graphcsc, rowO, colO, dataO  = read_edge_file_csc_cell(edgeList, feature.shape[0], k=5)
     graphdict = read_edge_file_dict_cell(edgeList, feature.shape[0] )
     outname = args.expression_name + '.cell'
 
-x = feature[0:100]
+x = feature
 tx = feature[0:100]
 allx = feature[100:]
-# allx = feature
+# Discrete
+xD = featureD
+txD = featureD[0:100]
+allxD = featureD[100:]
+
 testindex = ""
 for i in range(100):
     testindex = testindex + str(i) + "\n"
@@ -473,6 +488,12 @@ pickle.dump(graphcsc, open( out_folder+"ind."+outname+".csc", "wb" ) )
 pickle.dump(x, open( out_folder+"ind."+outname+".x", "wb" ) )
 pickle.dump(tx, open( out_folder+"ind."+outname+".tx", "wb" ) )
 pickle.dump(graphdict, open( out_folder+"ind."+outname+".graph", "wb" ) )
+
+# Output discrete
+pickle.dump(allxD, open( out_folder+"ind."+outname+".allxD", "wb" ) )
+pickle.dump(xD, open( out_folder+"ind."+outname+".xD", "wb" ) )
+pickle.dump(txD, open( out_folder+"ind."+outname+".txD", "wb" ) )
+
 with open ( out_folder+"ind."+outname+".test.index", 'w') as fw:
     fw.writelines(testindex)
     fw.close()
