@@ -15,15 +15,15 @@ from torch.nn import functional as F
 parser = argparse.ArgumentParser(description='VAE MNIST Example')
 parser.add_argument('--datasetName', type=str, default='TGFb',
                     help='database name, as TGFb et al.')
-parser.add_argument('--batch-size', type=int, default=128, metavar='N',
+parser.add_argument('--batch-size', type=int, default=10000, metavar='N',
                     help='input batch size for training (default: 128)')
-parser.add_argument('--epochs', type=int, default=10, metavar='N',
+parser.add_argument('--epochs', type=int, default=100, metavar='N',
                     help='number of epochs to train (default: 10)')
 parser.add_argument('--no-cuda', action='store_true', default=True,
                     help='enables CUDA training')
 parser.add_argument('--seed', type=int, default=1, metavar='S',
                     help='random seed (default: 1)')
-parser.add_argument('--log-interval', type=int, default=10, metavar='N',
+parser.add_argument('--log-interval', type=int, default=100, metavar='N',
                     help='how many batches to wait before logging training status')
 args = parser.parse_args()
 args.cuda = not args.no_cuda and torch.cuda.is_available()
@@ -83,9 +83,12 @@ class scDataset(Dataset):
             transform (callable, optional):
         """
         self.adj, self.features = load_data(datasetName)
+        # Here lines are cells, and cols are genes
+        self.features = self.features.transpose()
+        self.transform = transform
 
-    def __length__(self):
-        return len(self.features)
+    def __len__(self):
+        return self.features.shape[0]
     
     def __getitem__(self, idx):
         if torch.is_tensor(idx):
@@ -100,22 +103,24 @@ class scDataset(Dataset):
         if self.transform:
             sample = self.transform(sample)
 
+        # sample = sample.astype(float)
+        sample = torch.from_numpy(sample.toarray())
         return sample
 
 scData = scDataset(args.datasetName)
 train_loader = DataLoader(scData, batch_size=args.batch_size, shuffle=True, **kwargs)
     
-adj, _ = load_data(args.datasetName)
+
 
 class VAE(nn.Module):
     def __init__(self):
         super(VAE, self).__init__()
 
-        self.fc1 = nn.Linear(784, 400)
+        self.fc1 = nn.Linear(2338, 400)
         self.fc21 = nn.Linear(400, 20)
         self.fc22 = nn.Linear(400, 20)
         self.fc3 = nn.Linear(20, 400)
-        self.fc4 = nn.Linear(400, 784)
+        self.fc4 = nn.Linear(400, 2338)
 
     def encode(self, x):
         h1 = F.relu(self.fc1(x))
@@ -131,7 +136,7 @@ class VAE(nn.Module):
         return torch.sigmoid(self.fc4(h3))
 
     def forward(self, x):
-        mu, logvar = self.encode(x.view(-1, 784))
+        mu, logvar = self.encode(x.view(-1, 2338))
         z = self.reparameterize(mu, logvar)
         return self.decode(z), mu, logvar
 
@@ -158,7 +163,7 @@ def loss_function_graph(recon_x, x, mu, logvar, adj):
     # Original 
     # BCE = F.binary_cross_entropy(recon_x, x.view(-1, 784), reduction='sum')
     # Graph
-    target = x.view(-1, 784)
+    target = x.view(-1, 2338)
     target.requires_grad = True
     BCE = graph_mse_loss_function(recon_x, target, adj, reduction='sum')
 
@@ -188,7 +193,7 @@ def graph_mse_loss_function(input, target, adj, size_average=None, reduce=None, 
     if target.requires_grad:
         ret = (input - target) ** 2
         #key is here
-        ret = np.mutmul(ret, adj)
+        ret = torch.matmul(ret, adj)
         if reduction != 'none':
             ret = torch.mean(ret) if reduction == 'mean' else torch.sum(ret)
     else:
@@ -236,7 +241,13 @@ def get_enum(reduction):
 def train(epoch):
     model.train()
     train_loss = 0
-    for batch_idx, (data, _) in enumerate(train_loader):
+    adj, _ = load_data(args.datasetName)
+    adjdense = sp.csr_matrix.todense(adj)
+    adj = torch.from_numpy(adjdense)
+    adj = adj.type(torch.FloatTensor)
+    # for batch_idx, (data, _) in enumerate(train_loader):
+    for batch_idx, data in enumerate(train_loader):
+        data = data.type(torch.FloatTensor)
         data = data.to(device)
         optimizer.zero_grad()
         recon_batch, mu, logvar = model(data)
@@ -254,6 +265,8 @@ def train(epoch):
 
     print('====> Epoch: {} Average loss: {:.4f}'.format(
           epoch, train_loss / len(train_loader.dataset)))
+
+    return recon_batch, data
 
 
 def test(epoch):
@@ -276,10 +289,14 @@ def test(epoch):
 
 if __name__ == "__main__":
     for epoch in range(1, args.epochs + 1):
-        train(epoch)
+        recon, original = train(epoch)
         # test(epoch)
         # with torch.no_grad():
         #     sample = torch.randn(64, 20).to(device)
         #     sample = model.decode(sample).cpu()
         #     save_image(sample.view(64, 1, 28, 28),
         #                'results/sample_' + str(epoch) + '.png')
+    recon = recon.detach().numpy()
+    original = original.detach().numpy()
+    np.save('recon.npy',recon)
+    np.save('original.npy',original)
