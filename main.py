@@ -12,11 +12,11 @@ from torch import nn, optim
 from torch.nn import functional as F
 
 parser = argparse.ArgumentParser(description='VAE MNIST Example')
-parser.add_argument('--datasetName', type=str, default='sci-CAR',
-                    help='TGFb/TGFb.cell/sci-CAR/sci-CAR_LTMG/2.Yan')
+parser.add_argument('--datasetName', type=str, default='5.Pollen',
+                    help='TGFb/TGFb.cell/sci-CAR/sci-CAR_LTMG/2.Yan/5.Pollen/5.Pollen.cell')
 parser.add_argument('--batch-size', type=int, default=10000, metavar='N',
                     help='input batch size for training (default: 128)')
-parser.add_argument('--epochs', type=int, default=100, metavar='N',
+parser.add_argument('--epochs', type=int, default=200, metavar='N',
                     help='number of epochs to train (default: 10)')
 parser.add_argument('--no-cuda', action='store_true', default=True,
                     help='enables CUDA training')
@@ -26,6 +26,8 @@ parser.add_argument('--regulized-type', type=str, default='Graph',
                     help='regulized type (default: Graph), otherwise: noregu')
 parser.add_argument('--discreteTag', type=bool, default=False,
                     help='False/True')
+parser.add_argument('--model', type=str, default='VAE',
+                    help='VAE/AE')
 parser.add_argument('--log-interval', type=int, default=100, metavar='N',
                     help='how many batches to wait before logging training status')
 args = parser.parse_args()
@@ -111,6 +113,31 @@ class scDataset(Dataset):
 scData = scDataset(args.datasetName)
 train_loader = DataLoader(scData, batch_size=args.batch_size, shuffle=True, **kwargs)
 
+class AE(nn.Module):
+    def __init__(self,dim):
+        super(AE, self).__init__()
+        self.dim = dim
+        self.fc1 = nn.Linear(dim, 512)
+        self.fc2 = nn.Linear(512, 128)
+        self.fc3 = nn.Linear(128, 20)
+        self.fc4 = nn.Linear(20, 128)
+        self.fc5 = nn.Linear(128, 512)
+        self.fc6 = nn.Linear(512, dim)
+
+    def encode(self, x):
+        h1 = F.relu(self.fc1(x))
+        h2 = F.relu(self.fc2(h1))
+        return self.fc3(h2)
+
+    def decode(self, z):
+        h4 = F.relu(self.fc4(z))
+        h5 = F.relu(self.fc5(h4))
+        return torch.sigmoid(self.fc6(h5))
+
+    def forward(self, x):
+        z = self.encode(x.view(-1, self.dim))
+        return self.decode(z), z
+
 class VAE(nn.Module):
     def __init__(self,dim):
         super(VAE, self).__init__()
@@ -137,10 +164,79 @@ class VAE(nn.Module):
     def forward(self, x):
         mu, logvar = self.encode(x.view(-1, self.dim))
         z = self.reparameterize(mu, logvar)
-        return self.decode(z), mu, logvar
+        return self.decode(z), mu, logvar, z
 
+# Original
+# class VAE2d(nn.Module):
+#     def __init__(self,dim):
+#         super(VAE2d, self).__init__()
+#         self.dim = dim
+#         self.fc1 = nn.Linear(dim, 256)
+#         self.fc21 = nn.Linear(256, 20)
+#         self.fc22 = nn.Linear(256, 20)
+#         self.fc3 = nn.Linear(20, 256)
+#         self.fc4 = nn.Linear(256, dim)
 
-model = VAE(dim=scData.features.shape[1]).to(device)
+#     def encode(self, x):
+#         h1 = F.relu(self.fc1(x))
+#         return self.fc21(h1), self.fc22(h1)
+
+#     def reparameterize(self, mu, logvar):
+#         std = torch.exp(0.5*logvar)
+#         eps = torch.randn_like(std)
+#         return mu + eps*std
+
+#     def decode(self, z):
+#         h3 = F.relu(self.fc3(z))
+#         return torch.sigmoid(self.fc4(h3))
+
+#     def forward(self, x):
+#         mu, logvar = self.encode(x.view(-1, self.dim))
+#         z = self.reparameterize(mu, logvar)
+#         return self.decode(z), mu, logvar, z
+
+class VAE2d(nn.Module):
+    def __init__(self,dim):
+        super(VAE2d, self).__init__()
+        self.dim = dim
+        self.fc1 = nn.Linear(dim, 512)
+        self.fc2 = nn.Linear(512, 128)
+        self.fc3 = nn.Linear(128, 32)
+        self.fc41 = nn.Linear(32, 2)
+        self.fc42 = nn.Linear(32, 2)
+        self.fc5 = nn.Linear(2, 32)
+        self.fc6 = nn.Linear(32, 128)
+        self.fc7 = nn.Linear(128, 512)
+        self.fc8 = nn.Linear(512, dim)
+
+    def encode(self, x):
+        h1 = F.relu(self.fc1(x))
+        h2 = F.relu(self.fc2(h1))
+        h3 = F.relu(self.fc3(h2))
+        return self.fc41(h3), self.fc42(h3)
+
+    def reparameterize(self, mu, logvar):
+        std = torch.exp(0.5*logvar)
+        eps = torch.randn_like(std)
+        return mu + eps*std
+
+    def decode(self, z):
+        h5 = F.relu(self.fc5(z))
+        h6 = F.relu(self.fc6(h5))
+        h7 = F.relu(self.fc7(h6))
+        return torch.sigmoid(self.fc8(h7))
+
+    def forward(self, x):
+        mu, logvar = self.encode(x.view(-1, self.dim))
+        z = self.reparameterize(mu, logvar)
+        return self.decode(z), mu, logvar, z
+
+# Original
+if args.model == 'VAE':
+    # model = VAE(dim=scData.features.shape[1]).to(device)
+    model = VAE2d(dim=scData.features.shape[1]).to(device)
+elif args.model == 'AE':
+    model = AE(dim=scData.features.shape[1]).to(device)
 optimizer = optim.Adam(model.parameters(), lr=1e-3)
 
 # Original
@@ -164,16 +260,85 @@ def loss_function_graph(recon_x, x, mu, logvar, adj):
     # BCE = F.binary_cross_entropy(recon_x, x.view(-1, 784), reduction='sum')
     # Graph
     target = x
-    target.requires_grad = True
-    BCE = graph_mse_loss_function(recon_x, target, adj, reduction='sum')
+    # target.requires_grad = True
+    # Euclidean
+    # BCE = graph_mse_loss_function(recon_x, target, adj, reduction='sum')
+    # Entropy
+    # BCE = graph_binary_cross_entropy(recon_x, target, adj, reduction='sum')
+    BCE = F.binary_cross_entropy(recon_x, target, reduction='sum')
+    loss = BCE
 
     # see Appendix B from VAE paper:
     # Kingma and Welling. Auto-Encoding Variational Bayes. ICLR, 2014
     # https://arxiv.org/abs/1312.6114
     # 0.5 * sum(1 + log(sigma^2) - mu^2 - sigma^2)
-    KLD = -0.5 * torch.sum(1 + logvar - mu.pow(2) - logvar.exp())
+    if args.model == 'VAE':
+        KLD = -0.5 * torch.sum(1 + logvar - mu.pow(2) - logvar.exp())
+        loss = BCE + KLD    
 
-    return BCE + KLD
+    return loss
+
+# change from pytorch
+def graph_binary_cross_entropy(input, target, adj, weight=None, size_average=None,
+                         reduce=None, reduction='mean'):
+    # type: (Tensor, Tensor, Optional[Tensor], Optional[bool], Optional[bool], str) -> Tensor
+    r"""Function that measures the Binary Cross Entropy
+    between the target and the output.
+
+    See :class:`~torch.nn.BCELoss` for details.
+
+    Args:
+        input: Tensor of arbitrary shape
+        target: Tensor of the same shape as input
+        weight (Tensor, optional): a manual rescaling weight
+                if provided it's repeated to match input tensor shape
+        size_average (bool, optional): Deprecated (see :attr:`reduction`). By default,
+            the losses are averaged over each loss element in the batch. Note that for
+            some losses, there multiple elements per sample. If the field :attr:`size_average`
+            is set to ``False``, the losses are instead summed for each minibatch. Ignored
+            when reduce is ``False``. Default: ``True``
+        reduce (bool, optional): Deprecated (see :attr:`reduction`). By default, the
+            losses are averaged or summed over observations for each minibatch depending
+            on :attr:`size_average`. When :attr:`reduce` is ``False``, returns a loss per
+            batch element instead and ignores :attr:`size_average`. Default: ``True``
+        reduction (string, optional): Specifies the reduction to apply to the output:
+            ``'none'`` | ``'mean'`` | ``'sum'``. ``'none'``: no reduction will be applied,
+            ``'mean'``: the sum of the output will be divided by the number of
+            elements in the output, ``'sum'``: the output will be summed. Note: :attr:`size_average`
+            and :attr:`reduce` are in the process of being deprecated, and in the meantime,
+            specifying either of those two args will override :attr:`reduction`. Default: ``'mean'``
+
+    Examples::
+
+        >>> input = torch.randn((3, 2), requires_grad=True)
+        >>> target = torch.rand((3, 2), requires_grad=False)
+        >>> loss = F.binary_cross_entropy(F.sigmoid(input), target)
+        >>> loss.backward()
+    """
+    if size_average is not None or reduce is not None:
+        reduction_enum = legacy_get_enum(size_average, reduce)
+    else:
+        reduction_enum = get_enum(reduction)
+    if target.size() != input.size():
+        print("Using a target size ({}) that is different to the input size ({}) is deprecated. "
+                      "Please ensure they have the same size.".format(target.size(), input.size()),
+                      stacklevel=2)
+    if input.numel() != target.numel():
+        raise ValueError("Target and input must have the same number of elements. target nelement ({}) "
+                         "!= input nelement ({})".format(target.numel(), input.numel()))
+
+    if weight is not None:
+        # new_size = _infer_size(target.size(), weight.size())
+        # weight = weight.expand(new_size)
+        print("Not implement yet from pytorch")
+
+    if args.regulized_type == 'Graph':
+        target.requires_grad = True
+        input = torch.matmul(input, adj)
+        target = torch.matmul(target, adj)
+
+    return torch._C._nn.binary_cross_entropy(
+        input, target, weight, reduction_enum)
 
 # graphical mse
 def graph_mse_loss_function(input, target, adj, size_average=None, reduce=None, reduction='mean'):
@@ -201,6 +366,10 @@ def graph_mse_loss_function(input, target, adj, size_average=None, reduce=None, 
         expanded_input, expanded_target = torch.broadcast_tensors(input, target)
         ret = torch._C._nn.mse_loss(expanded_input, expanded_target, get_enum(reduction))
     return ret
+
+def legacy_get_enum(size_average, reduce, emit_warning=True):
+    # type: (Optional[bool], Optional[bool], bool) -> int
+    return get_enum(legacy_get_string(size_average, reduce, emit_warning))
 
 # We use these functions in torch/legacy as well, in which case we'll silence the warning
 def legacy_get_string(size_average, reduce, emit_warning=True):
@@ -251,10 +420,16 @@ def train(epoch):
         data = data.type(torch.FloatTensor)
         data = data.to(device)
         optimizer.zero_grad()
-        recon_batch, mu, logvar = model(data)
-        # Original
-        # loss = loss_function(recon_batch, data, mu, logvar)
-        loss = loss_function_graph(recon_batch, data.view(-1, recon_batch.shape[1]), mu, logvar, adj)
+        if args.model == 'VAE':
+            recon_batch, mu, logvar, z = model(data)
+            # Original
+            # loss = loss_function(recon_batch, data, mu, logvar)
+            loss = loss_function_graph(recon_batch, data.view(-1, recon_batch.shape[1]), mu, logvar, adj)
+        elif args.model == 'AE':
+            recon_batch, z = model(data)
+            # Original
+            # loss = loss_function(recon_batch, data, mu, logvar)
+            loss = loss_function_graph(recon_batch, data.view(-1, recon_batch.shape[1]), _, _, adj)
         loss.backward()
         train_loss += loss.item()
         optimizer.step()
@@ -267,7 +442,7 @@ def train(epoch):
     print('====> Epoch: {} Average loss: {:.4f}'.format(
           epoch, train_loss / len(train_loader.dataset)))
 
-    return recon_batch, data
+    return recon_batch, data, z
 
 
 def test(epoch):
@@ -290,7 +465,7 @@ def test(epoch):
 
 if __name__ == "__main__":
     for epoch in range(1, args.epochs + 1):
-        recon, original = train(epoch)
+        recon, original, z = train(epoch)
         # test(epoch)
         # with torch.no_grad():
         #     sample = torch.randn(64, 20).to(device)
@@ -299,8 +474,11 @@ if __name__ == "__main__":
         #                'results/sample_' + str(epoch) + '.png')
     recon = recon.detach().numpy()
     original = original.detach().numpy()
+    z = z.detach().numpy()
     discreteStr = ''
     if args.discreteTag:
         discreteStr = 'D'
     np.save(args.datasetName+'_'+args.regulized_type+discreteStr+'_recon.npy',recon)
     np.save(args.datasetName+'_'+args.regulized_type+discreteStr+'_original.npy',original)
+    np.save(args.datasetName+'_'+args.regulized_type+discreteStr+'_z.npy',z)
+

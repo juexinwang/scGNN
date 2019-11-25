@@ -5,9 +5,16 @@ from sklearn.metrics import roc_curve
 from sklearn.metrics import roc_auc_score
 from inspect import signature
 import scipy
+import pandas as pd
+import matplotlib.cm as cm
 
 recon = np.load('recon.npy')
+# Magic
 # VIM/CDH1/ZEB1 129/68/833
+# gene1 = 129
+# gene2 = 68
+# gene3 = 833
+
 # for sci-CAR
 # 128/72/822
 gene1 = 128
@@ -56,3 +63,12 @@ scipy.stats.pearsonr(recon[68,:], recon[833,:])
 scipy.stats.spearmanr(recon[129,:], recon[68,:])
 scipy.stats.spearmanr(recon[129,:], recon[833,:])
 scipy.stats.spearmanr(recon[68,:], recon[833,:])
+
+
+#
+df = pd.read_csv('/home/wangjue/biodata/scData/AnjunBenchmark/5.Pollen/Pollen_cell_label.csv')
+df.columns = ['Cell','Cluster']
+z = np.load('5.Pollen_noreguD_z.npy')
+plt.scatter(z[:,0],z[:,1],c=df['Cluster'],cmap=cm.brg)
+plt.show()
+

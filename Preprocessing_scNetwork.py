@@ -14,12 +14,12 @@ import csv
 
 # Preprocess network for sc
 parser = argparse.ArgumentParser()
-parser.add_argument('--graph-type', type=str, default='gene',
+parser.add_argument('--graph-type', type=str, default='cell',
                     help='cell/gene, cell:cell as nodes in the graph, gene:gene as nodes in the graph')
 parser.add_argument('--network-name', type=str, default='ttrust',
                     help='ttrust')
-parser.add_argument('--expression-name', type=str, default='sci-CAR_LTMG',
-                    help='TGFb from MAGIC/ test also from MAGIC/ sci-CAR/ sci-CAR_LTMG')
+parser.add_argument('--expression-name', type=str, default='5.Pollen',
+                    help='TGFb from MAGIC/ test also from MAGIC/ sci-CAR/ sci-CAR_LTMG/ 5.Pollen')
 # Now generate both discrete and original
 # parser.add_argument('--discrete-tag', type=str, default='Ori',
 #                     help='Ori for no discrete, Avg for average discrete')
@@ -425,6 +425,8 @@ elif args.expression_name=='sci-CAR_LTMG':
     expressionname = 'sci-CAR_LTMG.csv'
 elif args.expression_name=='2.Yan':
     expressionname = '2.Yan.csv'
+elif args.expression_name=='5.Pollen':
+    expressionname = '5.Pollen.csv'
 elif args.expression_name=='test':
     expressionname = 'test_data.csv'
 
