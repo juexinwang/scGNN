@@ -48,7 +48,7 @@ kwargs = {'num_workers': 1, 'pin_memory': True} if args.cuda else {}
 #     datasets.MNIST('../data', train=False, transform=transforms.ToTensor()),
 #     batch_size=args.batch_size, shuffle=True, **kwargs)
 
-scData = scDataset(args.datasetName)
+scData = scDataset(args.datasetName, args.discreteTag)
 train_loader = DataLoader(scData, batch_size=args.batch_size, shuffle=True, **kwargs)
 
 # Original
@@ -62,7 +62,7 @@ optimizer = optim.Adam(model.parameters(), lr=1e-3)
 def train(epoch):
     model.train()
     train_loss = 0
-    adj, _ = load_data(args.datasetName)
+    adj, _ = load_data(args.datasetName, args.discreteTag)
     adjdense = sp.csr_matrix.todense(adj)
     adj = torch.from_numpy(adjdense)
     adj = adj.type(torch.FloatTensor)
@@ -75,12 +75,12 @@ def train(epoch):
             recon_batch, mu, logvar, z = model(data)
             # Original
             # loss = loss_function(recon_batch, data, mu, logvar)
-            loss = loss_function_graph(recon_batch, data.view(-1, recon_batch.shape[1]), mu, logvar, adj)
+            loss = loss_function_graph(recon_batch, data.view(-1, recon_batch.shape[1]), mu, logvar, adj, args.regulized_type, args.model)
         elif args.model == 'AE':
             recon_batch, z = model(data)
             # Original
             # loss = loss_function(recon_batch, data, mu, logvar)
-            loss = loss_function_graph(recon_batch, data.view(-1, recon_batch.shape[1]), _, _, adj)
+            loss = loss_function_graph(recon_batch, data.view(-1, recon_batch.shape[1]), _, _, adj, args.regulized_type, args.model)
         loss.backward()
         train_loss += loss.item()
         optimizer.step()
