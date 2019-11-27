@@ -8,20 +8,16 @@ class AE(nn.Module):
         self.dim = dim
         self.fc1 = nn.Linear(dim, 512)
         self.fc2 = nn.Linear(512, 128)
-        self.fc3 = nn.Linear(128, 20)
-        self.fc4 = nn.Linear(20, 128)
-        self.fc5 = nn.Linear(128, 512)
-        self.fc6 = nn.Linear(512, dim)
+        self.fc3 = nn.Linear(128, 512)
+        self.fc4 = nn.Linear(512, dim)
 
     def encode(self, x):
         h1 = F.relu(self.fc1(x))
-        h2 = F.relu(self.fc2(h1))
-        return self.fc3(h2)
+        return F.relu(self.fc2(h1))
 
     def decode(self, z):
-        h4 = F.relu(self.fc4(z))
-        h5 = F.relu(self.fc5(h4))
-        return torch.sigmoid(self.fc6(h5))
+        h3 = F.relu(self.fc3(z))
+        return torch.sigmoid(self.fc4(h3))
 
     def forward(self, x):
         z = self.encode(x.view(-1, self.dim))

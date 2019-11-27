@@ -95,7 +95,7 @@ def train(epoch):
 
     return recon_batch, data, z
 
-
+# TODO
 def test(epoch):
     model.eval()
     test_loss = 0

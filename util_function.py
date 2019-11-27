@@ -193,7 +193,7 @@ def graph_mse_loss_function(input, target, adj, regulized_type, size_average=Non
         ret = (input - target) ** 2
         #key is here
         if regulized_type == 'Graph':
-            ret = torch.matmul(ret, adj)
+            ret = torch.matmul(adj, ret)
         if reduction != 'none':
             ret = torch.mean(ret) if reduction == 'mean' else torch.sum(ret)
     else:
