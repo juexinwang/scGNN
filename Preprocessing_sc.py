@@ -19,7 +19,7 @@ parser.add_argument('--expression-name', type=str, default='5.Pollen',
 
 args = parser.parse_args()
 
-def preprocess_network(edge_filename, feature_filename):
+def preprocess_network(feature_filename):
     '''
     Preprocessing by read expression
     Now it outputs cells and genes not zero
@@ -33,10 +33,13 @@ def preprocess_network(edge_filename, feature_filename):
     count = -1
     exDict={}
     exReadDict={}
+    cellTag = False
     with open(feature_filename) as f:
         lines = f.readlines()
         for line in lines:            
             line = line.strip()
+            if line.endswith(','):
+                line = line[:-1]
             words = line.split(',')
             if count == -1:
                 tcount =0
@@ -47,24 +50,29 @@ def preprocess_network(edge_filename, feature_filename):
                 cellReadCount = 0
                 tcount = 0
                 for word in words:
-                    cellReadCount += float(word)
+                    cellReadCount = cellReadCount + float(word)
                     if tcount in exReadDict:
-                        exReadDict{tcount} = exReadDict{tcount} + float(word)
+                        exReadDict[tcount] = exReadDict[tcount] + float(word)
                     else:
-                        exReadDict{tcount} = 0
+                        exReadDict[tcount] = 0.0
                     tcount = tcount + 1
-                if cellReadCount ==0:
+                if cellReadCount == 0.0:
                     print("Cell "+str(count)+" has 0 reads") 
+                    cellTag = True
             count = count+1
     f.close()
 
+    if cellTag:
+        print("All Cells are included.")
+
     for index in exReadDict:
         gene = exDict[index]
-        if exReadDict{index} ==0:
-            print("Gene "+str(index)+" has 0 reads")
-        else:
+        if exReadDict[index] != 0.0:
             geneList.append(gene)
             geneDict[gene] = index
+        # Debug usage
+        # else:
+        #     print("Gene "+str(index)+": "+gene+" has 0 reads")
 
     return geneList, geneDict
 
@@ -180,7 +188,7 @@ if not os.path.exists(out_folder):
 
 feature_filename = "/home/wangjue/biodata/scData/"+expressionname
 
-geneList, geneDict = preprocess_network(edge_filename, feature_filename)
+geneList, geneDict = preprocess_network(feature_filename)
 
 #python and matlab
 #First generate feature
@@ -205,11 +213,10 @@ for i in range(100):
     testindex = testindex + str(i) + "\n"
 
 pickle.dump(allx, open( out_folder+"ind."+outname+".allx", "wb" ) )
-pickle.dump(graphcsc, open( out_folder+"ind."+outname+".csc", "wb" ) )
-
 pickle.dump(x, open( out_folder+"ind."+outname+".x", "wb" ) )
 pickle.dump(tx, open( out_folder+"ind."+outname+".tx", "wb" ) )
 # graph
+# pickle.dump(graphcsc, open( out_folder+"ind."+outname+".csc", "wb" ) )
 # pickle.dump(graphdict, open( out_folder+"ind."+outname+".graph", "wb" ) )
 
 # Output discrete
@@ -222,16 +229,16 @@ with open ( out_folder+"ind."+outname+".test.index", 'w') as fw:
     fw.close()
 
 
-# # For matlab
-# with open(out_folder+outname+'.features.csv','w') as fw:
-#     writer = csv.writer(fw)
-#     writer.writerows(dim2out)
-# fw.close()
+# For matlab
+with open(out_folder+outname+'.features.csv','w') as fw:
+    writer = csv.writer(fw)
+    writer.writerows(dim2out)
+fw.close()
 
-# with open(out_folder+outname+'.features.D.csv','w') as fw:
-#     writer = csv.writer(fw)
-#     writer.writerows(dim2outD)
-# fw.close()
+with open(out_folder+outname+'.features.D.csv','w') as fw:
+    writer = csv.writer(fw)
+    writer.writerows(dim2outD)
+fw.close()
 
 # with open(out_folder+outname+'.row.csv','w') as fw:
 #     for item in rowO:

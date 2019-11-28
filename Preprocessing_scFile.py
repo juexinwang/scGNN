@@ -40,18 +40,6 @@ parser.add_argument('--cellheadflag', type=bool, default=False,
                     help='True/False')
 args = parser.parse_args()
 
-# Original
-# # inputfile  = '/home/wangjue/biodata/scData/scRNA_And_scATAC_Files/Processed_Data/GeneSymbolMat.txt'
-# # outputfile = '/home/wangjue/biodata/scData/sci-CAR.csv'
-# inputfile  = '/home/wangjue/biodata/scData/scRNA_And_scATAC_Files/Processed_Data/GeneSymbolMat.dic'
-# outputfile = '/home/wangjue/biodata/scData/sci-CAR_LTMG.csv'
-# outputfileCellName = '/home/wangjue/biodata/scData/sci-CAR.cellname.txt'
-# cellcount = 1414
-# # Original:
-# genecount = 25178
-# # Discretization:
-# # genecount = 19467
-
 inputfile = args.inputfile
 outputfile = args.outputfile
 outputfileCellName = args.outputfileCellName
