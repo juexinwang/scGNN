@@ -30,7 +30,7 @@ def preprocess_network(edge_filename, feature_filename):
     geneDict={}
 
     # Check cell and genes
-    count = 0
+    count = -1
     exDict={}
     exReadDict={}
     with open(feature_filename) as f:
@@ -38,7 +38,7 @@ def preprocess_network(edge_filename, feature_filename):
         for line in lines:            
             line = line.strip()
             words = line.split(',')
-            if count == 0:
+            if count == -1:
                 tcount =0
                 for word in words:
                     exDict[tcount] = word
@@ -47,9 +47,9 @@ def preprocess_network(edge_filename, feature_filename):
                 cellReadCount = 0
                 tcount = 0
                 for word in words:
-                    cellReadCount += int(word)
+                    cellReadCount += float(word)
                     if tcount in exReadDict:
-                        exReadDict{tcount} =  exReadDict{tcount} + int(word)
+                        exReadDict{tcount} = exReadDict{tcount} + float(word)
                     else:
                         exReadDict{tcount} = 0
                     tcount = tcount + 1
