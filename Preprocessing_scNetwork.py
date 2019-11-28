@@ -19,39 +19,20 @@ parser.add_argument('--expression-name', type=str, default='5.Pollen',
 
 args = parser.parse_args()
 
-# Read network and expression
-# output geneList, geneDict
 def preprocess_network(edge_filename, feature_filename):
+    '''
+    Preprocessing by read expression
+    Now it outputs cells and genes not zero
+    output geneList, geneDict    
+    '''
     # geneList, geneDict
     geneList=[]
-    tList=[]
-    tgeneDict={}
     geneDict={}
 
-    genecount = 0
-    with open(edge_filename) as f:
-        lines = f.readlines()
-        for line in lines:
-            line = line.strip()
-            words = line.split()
-            end1 = words[0]
-            end2 = words[1]
-
-            # geneList, geneDict, tfDict
-            if end1 not in tgeneDict:
-                tgeneDict[end1] = genecount
-                tList.append(end1)
-                genecount = genecount + 1
-            if end2 not in tgeneDict:
-                tgeneDict[end2] = genecount
-                tList.append(end2)
-                genecount = genecount + 1
-            # if end1 not in tfDict:
-            #     tfDict[end1] = tgeneDict[end1]
-    f.close()
-
+    # Check cell and genes
     count = 0
     exDict={}
+    exReadDict={}
     with open(feature_filename) as f:
         lines = f.readlines()
         for line in lines:            
@@ -60,76 +41,36 @@ def preprocess_network(edge_filename, feature_filename):
             if count == 0:
                 tcount =0
                 for word in words:
-                    exDict[word] = tcount
+                    exDict[tcount] = word
                     tcount = tcount + 1
             else:
-                break
+                cellReadCount = 0
+                tcount = 0
+                for word in words:
+                    cellReadCount += int(word)
+                    if tcount in exReadDict:
+                        exReadDict{tcount} =  exReadDict{tcount} + int(word)
+                    else:
+                        exReadDict{tcount} = 0
+                    tcount = tcount + 1
+                if cellReadCount ==0:
+                    print("Cell "+str(count)+" has 0 reads") 
             count = count+1
     f.close()
 
-    count = 0
-    for gene in tList:
-        if gene in exDict:
+    for index in exReadDict:
+        gene = exDict[index]
+        if exReadDict{index} ==0:
+            print("Gene "+str(index)+" has 0 reads")
+        else:
             geneList.append(gene)
-            geneDict[gene] = count
-            count +=1
+            geneDict[gene] = index
 
     return geneList, geneDict
 
-
-class KNNEdge:
-    def __init__(self,row,col):
-        self.row=row
-        self.col=col
-
-# Not use it now
-# Calculate KNN graph, return row and col
-def cal_distanceMatrix(featureMatrix, k=5):
-    distMat = distance_matrix(featureMatrix.todense(),featureMatrix.todense())
-    edgeList=[]
-
-    for i in np.arange(distMat.shape[0]):
-        res = distMat[:,i].argsort()[:k]
-        for j in np.arange(k):
-            edgeList.append(KNNEdge(i,res[j]))
-    
-    return edgeList
-
-
-# For cell,use feature matrix as input, row as cells, col as genes
-# Load gold standard edges into sparse matrix
-# No edge types
-# output mtx, tfDict
-# Additional outfile for matlab
-def read_edge_file_csc_cell(edgeList, nodesize, k=5):
-    row=[]
-    col=[]
-    data=[]
-
-    
-    for edge in edgeList:
-        row.append(edge.row)
-        col.append(edge.col)
-        data.append(1.0)
-        row.append(edge.col)
-        col.append(edge.row)
-        data.append(1.0)
-
-    row = np.asarray(row)
-    col = np.asarray(col)
-    data = np.asarray(data)
-    #check and get full matrix
-    mtx = scipy.sparse.csc_matrix((data, (row, col)), shape=(nodesize, nodesize))
-    
-    #python output
-    # return mtx, tfDict
-
-    #Output for matlab
-    return mtx, row, col, data
-
 # For node as cell
 # Load gene expression into sparse matrix
-def read_feature_file_sparse_cell(filename, geneList, geneDict):
+def read_feature_file_sparse(filename, geneList, geneDict):
     samplelist=[]
     featurelist=[]
     data =[]
@@ -217,34 +158,7 @@ def read_feature_file_sparse_cell(filename, geneList, geneDict):
 
     return feature, featureD, dim2out, dim2outD
 
-# genereate graph dict
-def read_edge_file_dict_cell(edgeList, nodesize):
-    graphdict={}
-    tdict={}
-
-    for edge in edgeList:
-        end1 = edge.row
-        end2 = edge.col
-        tdict[end1]=""
-        tdict[end2]=""
-        if end1 in graphdict:
-            tmplist = graphdict[end1]
-        else:
-            tmplist = []
-        tmplist.append(end2)
-        graphdict[end1]= tmplist
-
-    #check and get full matrix
-    for i in range(nodesize):
-        if i not in tdict:
-            graphdict[i]=[]
-
-    return graphdict
-
-networkname=args.network_name
 expressionname=args.expression_name
-if args.network_name=='ttrust':
-    networkname = 'trrust_rawdata.human.tsv'
 
 if args.expression_name=='TGFb':
     expressionname = 'HMLE_TGFb_day_8_10.csv'
@@ -264,18 +178,18 @@ out_folder = "data/sc/"+args.expression_name+"/"
 if not os.path.exists(out_folder):
     os.makedirs(out_folder)
 
-edge_filename    = "/home/wangjue/biodata/scData/network/"+networkname
 feature_filename = "/home/wangjue/biodata/scData/"+expressionname
 
 geneList, geneDict = preprocess_network(edge_filename, feature_filename)
 
 #python and matlab
 #First generate feature
-feature, featureD, dim2out, dim2outD = read_feature_file_sparse_cell(feature_filename, geneList, geneDict)
-edgeList = cal_distanceMatrix(feature, k=5)
-graphcsc, rowO, colO, dataO  = read_edge_file_csc_cell(edgeList, feature.shape[0], k=5)
-# graph dict
-graphdict = read_edge_file_dict_cell(edgeList, feature.shape[0] )
+feature, featureD, dim2out, dim2outD = read_feature_file_sparse(feature_filename, geneList, geneDict)
+
+# Try to generate the graph structure
+# edgeList = cal_distanceMatrix(feature, k=5)
+# graphcsc, rowO, colO, dataO  = read_edge_file_csc(edgeList, feature.shape[0], k=5)
+# graphdict = read_edge_file_dict(edgeList, feature.shape[0] )
 outname = args.expression_name
 
 x = feature
@@ -295,7 +209,8 @@ pickle.dump(graphcsc, open( out_folder+"ind."+outname+".csc", "wb" ) )
 
 pickle.dump(x, open( out_folder+"ind."+outname+".x", "wb" ) )
 pickle.dump(tx, open( out_folder+"ind."+outname+".tx", "wb" ) )
-pickle.dump(graphdict, open( out_folder+"ind."+outname+".graph", "wb" ) )
+# graph
+# pickle.dump(graphdict, open( out_folder+"ind."+outname+".graph", "wb" ) )
 
 # Output discrete
 pickle.dump(allxD, open( out_folder+"ind."+outname+".allxD", "wb" ) )
@@ -307,29 +222,29 @@ with open ( out_folder+"ind."+outname+".test.index", 'w') as fw:
     fw.close()
 
 
-# For matlab
-with open(out_folder+outname+'.features.csv','w') as fw:
-    writer = csv.writer(fw)
-    writer.writerows(dim2out)
-fw.close()
+# # For matlab
+# with open(out_folder+outname+'.features.csv','w') as fw:
+#     writer = csv.writer(fw)
+#     writer.writerows(dim2out)
+# fw.close()
 
-with open(out_folder+outname+'.features.D.csv','w') as fw:
-    writer = csv.writer(fw)
-    writer.writerows(dim2outD)
-fw.close()
+# with open(out_folder+outname+'.features.D.csv','w') as fw:
+#     writer = csv.writer(fw)
+#     writer.writerows(dim2outD)
+# fw.close()
 
-with open(out_folder+outname+'.row.csv','w') as fw:
-    for item in rowO:
-        fw.write(str(item)+"\n")
-fw.close()
+# with open(out_folder+outname+'.row.csv','w') as fw:
+#     for item in rowO:
+#         fw.write(str(item)+"\n")
+# fw.close()
 
-with open(out_folder+outname+'.col.csv','w') as fw:
-    for item in colO:
-        fw.write(str(item)+"\n")
-fw.close()
+# with open(out_folder+outname+'.col.csv','w') as fw:
+#     for item in colO:
+#         fw.write(str(item)+"\n")
+# fw.close()
 
-with open(out_folder+outname+'.data.csv','w') as fw:
-    for item in dataO:
-        fw.write(str(item)+"\n")
-fw.close()
+# with open(out_folder+outname+'.data.csv','w') as fw:
+#     for item in dataO:
+#         fw.write(str(item)+"\n")
+# fw.close()
 
