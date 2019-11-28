@@ -88,14 +88,14 @@ def loss_function(recon_x, x, mu, logvar):
 
 # Reconstruction + KL divergence losses summed over all elements and batch
 # graph
-def loss_function_graph(recon_x, x, mu, logvar, adj, regulized_type, modelusage):
+def loss_function_graph(recon_x, x, mu, logvar, adjsample, adjfeature, regulized_type, modelusage):
     # Original 
     # BCE = F.binary_cross_entropy(recon_x, x.view(-1, 784), reduction='sum')
     # Graph
     target = x
     # target.requires_grad = True
     # Euclidean
-    BCE = graph_mse_loss_function(recon_x, target, adj, regulized_type, reduction='sum')
+    BCE = graph_mse_loss_function(recon_x, target, adjsample, adjfeature, regulized_type='noregu', reduction='sum')
     # Entropy
     # BCE = graph_binary_cross_entropy(recon_x, target, adj, reduction='sum')
     # BCE = F.binary_cross_entropy(recon_x, target, reduction='sum')
@@ -175,7 +175,7 @@ def loss_function_graph(recon_x, x, mu, logvar, adj, regulized_type, modelusage)
 #         input, target, weight, reduction_enum)
 
 # graphical mse
-def graph_mse_loss_function(input, target, adj, regulized_type, size_average=None, reduce=None, reduction='mean'):
+def graph_mse_loss_function(input, target, adjsample, adjfeature, regulized_type='noregu', size_average=None, reduce=None, reduction='mean'):
     # type: (Tensor, Tensor, Optional[bool], Optional[bool], str) -> Tensor
     r"""graph_mse_loss_function(input, target, adj, regulized_type, size_average=None, reduce=None, reduction='mean') -> Tensor
 
@@ -193,7 +193,10 @@ def graph_mse_loss_function(input, target, adj, regulized_type, size_average=Non
         ret = (input - target) ** 2
         #key is here
         if regulized_type == 'Graph':
-            ret = torch.matmul(adj, ret)
+            if adjsample != None:
+                ret = torch.matmul(adjsample, ret)
+            if adjfeature != None:
+                ret = torch.matmul(ret, adjfeature)
         if reduction != 'none':
             ret = torch.mean(ret) if reduction == 'mean' else torch.sum(ret)
     else:

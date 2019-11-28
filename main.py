@@ -28,7 +28,7 @@ parser.add_argument('--regulized-type', type=str, default='Graph',
                     help='regulized type (default: Graph), otherwise: noregu')
 parser.add_argument('--discreteTag', type=bool, default=False,
                     help='False/True')
-parser.add_argument('--model', type=str, default='VAE',
+parser.add_argument('--model', type=str, default='AE',
                     help='VAE/AE')
 parser.add_argument('--log-interval', type=int, default=100, metavar='N',
                     help='how many batches to wait before logging training status')
@@ -64,8 +64,9 @@ def train(epoch):
     train_loss = 0
     adj, _ = load_data(args.datasetName, args.discreteTag)
     adjdense = sp.csr_matrix.todense(adj)
-    adj = torch.from_numpy(adjdense)
-    adj = adj.type(torch.FloatTensor)
+    adjsample = torch.from_numpy(adjdense)
+    adjsample = adj.type(torch.FloatTensor)
+    adjfeature = None
     # for batch_idx, (data, _) in enumerate(train_loader):
     for batch_idx, data in enumerate(train_loader):
         data = data.type(torch.FloatTensor)
@@ -75,12 +76,12 @@ def train(epoch):
             recon_batch, mu, logvar, z = model(data)
             # Original
             # loss = loss_function(recon_batch, data, mu, logvar)
-            loss = loss_function_graph(recon_batch, data.view(-1, recon_batch.shape[1]), mu, logvar, adj, args.regulized_type, args.model)
+            loss = loss_function_graph(recon_batch, data.view(-1, recon_batch.shape[1]), mu, logvar, adjsample, adjfeature, args.regulized_type, args.model)
         elif args.model == 'AE':
             recon_batch, z = model(data)
             # Original
             # loss = loss_function(recon_batch, data, mu, logvar)
-            loss = loss_function_graph(recon_batch, data.view(-1, recon_batch.shape[1]), _, _, adj, args.regulized_type, args.model)
+            loss = loss_function_graph(recon_batch, data.view(-1, recon_batch.shape[1]), _, _, adjsample, adjfeature, args.regulized_type, args.model)
         loss.backward()
         train_loss += loss.item()
         optimizer.step()
