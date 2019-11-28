@@ -4,6 +4,7 @@ import sys
 import pickle
 import csv
 
+#Original version of generating cell graph
 class KNNEdge:
     def __init__(self,row,col):
         self.row=row
