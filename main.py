@@ -12,6 +12,7 @@ from torch import nn, optim
 from torch.nn import functional as F
 from model import AE, VAE, VAE2d
 from util_function import *
+from graph_function import *
 
 parser = argparse.ArgumentParser(description='AutoEncoder-EM for scRNA')
 parser.add_argument('--datasetName', type=str, default='5.Pollen.cell',
@@ -51,6 +52,7 @@ kwargs = {'num_workers': 1, 'pin_memory': True} if args.cuda else {}
 scData = scDataset(args.datasetName, args.discreteTag)
 train_loader = DataLoader(scData, batch_size=args.batch_size, shuffle=True, **kwargs)
 
+
 # Original
 if args.model == 'VAE':
     # model = VAE(dim=scData.features.shape[1]).to(device)
@@ -62,7 +64,7 @@ optimizer = optim.Adam(model.parameters(), lr=1e-3)
 def train(epoch):
     model.train()
     train_loss = 0
-    adj, _ = load_data(args.datasetName, args.discreteTag)
+    adj = generateAdj(scData.features, graphType='KNNgraph', para = 'Eucledian-Pairwise:5')
     adjdense = sp.csr_matrix.todense(adj)
     adjsample = torch.from_numpy(adjdense)
     adjsample = adj.type(torch.FloatTensor)

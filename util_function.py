@@ -14,7 +14,8 @@ def parse_index_file(filename):
         index.append(int(line.strip()))
     return index
 
-def load_data(datasetName, discreteTag):
+#Original version of load_data
+def load_data_ori(datasetName, discreteTag):
     # load the data: x, tx, allx, graph
     if discreteTag:
         names = ['xD', 'txD', 'allxD', 'graph']
@@ -45,6 +46,36 @@ def load_data(datasetName, discreteTag):
 
     return adj, features
 
+def load_data(datasetName, discreteTag):
+    # load the data: x, tx, allx, graph
+    if discreteTag:
+        names = ['xD', 'txD', 'allxD']
+    else:
+        names = ['x', 'tx', 'allx']
+    objects = []
+    for i in range(len(names)):
+        with open("data/sc/{}/ind.{}.{}".format(datasetName, datasetName, names[i]), 'rb') as f:
+            if sys.version_info > (3, 0):
+                objects.append(pkl.load(f, encoding='latin1'))
+            else:
+                objects.append(pkl.load(f))
+    x, tx, allx = tuple(objects)
+    test_idx_reorder = parse_index_file("data/sc/{}/ind.{}.test.index".format(datasetName, datasetName))
+    test_idx_range = np.sort(test_idx_reorder)
+
+    if datasetName == 'citeseer':
+        # Fix citeseer datasetName (there are some isolated nodes in the graph)
+        # Find isolated nodes, add them as zero-vecs into the right position
+        test_idx_range_full = range(min(test_idx_reorder), max(test_idx_reorder)+1)
+        tx_extended = sp.lil_matrix((len(test_idx_range_full), x.shape[1]))
+        tx_extended[test_idx_range-min(test_idx_range), :] = tx
+        tx = tx_extended
+
+    features = sp.vstack((allx, tx)).tolil()
+    features[test_idx_reorder, :] = features[test_idx_range, :]
+
+    return features
+
 class scDataset(Dataset):
     def __init__(self, datasetName, discreteTag, transform=None):
         """
@@ -52,7 +83,7 @@ class scDataset(Dataset):
             datasetName (String): TGFb, etc.
             transform (callable, optional):
         """
-        self.adj, self.features = load_data(datasetName,discreteTag)
+        self.features = load_data(datasetName,discreteTag)
         # Here lines are cells, and cols are genes
         self.features = self.features.transpose()
         self.transform = transform
