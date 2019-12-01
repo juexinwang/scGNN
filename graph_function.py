@@ -4,6 +4,7 @@ import sys
 import pickle
 import csv
 import networkx as nx
+import numpy as np
 
 #Graph related functions
 #graph Edge

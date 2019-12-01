@@ -63,10 +63,11 @@ optimizer = optim.Adam(model.parameters(), lr=1e-3)
 def train(epoch):
     model.train()
     train_loss = 0
-    adj = generateAdj(scData.features, graphType='KNNgraph', para = 'cosine:5')
+    # adj = generateAdj(scData.features, graphType='KNNgraph', para = 'cosine:5')
+    adj = generateAdj(scData.features, graphType='KNNgraphPairwise', para = 'Pairwise:5')
     adjdense = sp.csr_matrix.todense(adj)
     adjsample = torch.from_numpy(adjdense)
-    adjsample = adj.type(torch.FloatTensor)
+    adjsample = adjsample.type(torch.FloatTensor)
     adjsample = None
     adjfeature = None
     # for batch_idx, (data, _) in enumerate(train_loader):
@@ -81,9 +82,11 @@ def train(epoch):
             loss = loss_function_graph(recon_batch, data.view(-1, recon_batch.shape[1]), mu, logvar, adjsample, adjfeature, args.regulized_type, args.model)
         elif args.model == 'AE':
             recon_batch, z = model(data)
+            mu_dummy = ''
+            logvar_dummy = ''
             # Original
             # loss = loss_function(recon_batch, data, mu, logvar)
-            loss = loss_function_graph(recon_batch, data.view(-1, recon_batch.shape[1]), _, _, adjsample, adjfeature, args.regulized_type, args.model)
+            loss = loss_function_graph(recon_batch, data.view(-1, recon_batch.shape[1]), mu_dummy, logvar_dummy, adjsample, adjfeature, args.regulized_type, args.model)
         loss.backward()
         train_loss += loss.item()
         optimizer.step()
