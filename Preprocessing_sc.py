@@ -14,8 +14,8 @@ import csv
 
 # Preprocess network for sc
 parser = argparse.ArgumentParser()
-parser.add_argument('--expression-name', type=str, default='5.Pollen',
-                    help='TGFb from MAGIC/ test also from MAGIC/ sci-CAR/ sci-CAR_LTMG/ 5.Pollen')
+parser.add_argument('--expression-name', type=str, default='MPPbasal',
+                    help='TGFb from MAGIC/ test also from MAGIC/ sci-CAR/ sci-CAR_LTMG/ 5.Pollen/ MPPbasal/ MPPepo')
 
 args = parser.parse_args()
 
@@ -179,6 +179,10 @@ elif args.expression_name=='2.Yan':
     expressionname = '2.Yan.csv'
 elif args.expression_name=='5.Pollen':
     expressionname = '5.Pollen.csv'
+elif args.expression_name=='MPPbasal':
+    expressionname = 'MMPbasal.csv'
+elif args.expression_name=='MPPepo':
+    expressionname = 'MMPepo.csv'
 elif args.expression_name=='test':
     expressionname = 'test_data.csv'
 
@@ -254,4 +258,11 @@ fw.close()
 #     for item in dataO:
 #         fw.write(str(item)+"\n")
 # fw.close()
+
+
+# gene name:
+with open(out_folder+outname+'.gene.txt','w') as fw:
+    for gene in geneList:
+        fw.write(gene+"\n")
+fw.close()
 

@@ -15,8 +15,8 @@ from util_function import *
 from graph_function import *
 
 parser = argparse.ArgumentParser(description='AutoEncoder-EM for scRNA')
-parser.add_argument('--datasetName', type=str, default='5.Pollen',
-                    help='TGFb/sci-CAR/sci-CAR_LTMG/2.Yan/5.Pollen')
+parser.add_argument('--datasetName', type=str, default='MPPbasal',
+                    help='TGFb/sci-CAR/sci-CAR_LTMG/2.Yan/5.Pollen/MPPbasal/MPPepo')
 parser.add_argument('--batch-size', type=int, default=10000, metavar='N',
                     help='input batch size for training (default: 128)')
 parser.add_argument('--epochs', type=int, default=200, metavar='N',
@@ -25,7 +25,7 @@ parser.add_argument('--no-cuda', action='store_true', default=True,
                     help='enables CUDA training')
 parser.add_argument('--seed', type=int, default=1, metavar='S',
                     help='random seed (default: 1)')
-parser.add_argument('--regulized-type', type=str, default='Graph',
+parser.add_argument('--regulized-type', type=str, default='noregu',
                     help='regulized type (default: Graph), otherwise: noregu')
 parser.add_argument('--discreteTag', type=bool, default=False,
                     help='False/True')
@@ -64,10 +64,10 @@ def train(epoch):
     model.train()
     train_loss = 0
     # adj = generateAdj(scData.features, graphType='KNNgraph', para = 'cosine:5')
-    adj = generateAdj(scData.features, graphType='KNNgraphPairwise', para = 'Pairwise:5')
-    adjdense = sp.csr_matrix.todense(adj)
-    adjsample = torch.from_numpy(adjdense)
-    adjsample = adjsample.type(torch.FloatTensor)
+    # adj = generateAdj(scData.features, graphType='KNNgraphPairwise', para = 'Pairwise:5')
+    # adjdense = sp.csr_matrix.todense(adj)
+    # adjsample = torch.from_numpy(adjdense)
+    # adjsample = adjsample.type(torch.FloatTensor)
     adjsample = None
     adjfeature = None
     # for batch_idx, (data, _) in enumerate(train_loader):

@@ -11,7 +11,7 @@ import scipy.sparse
 import sys
 import pickle
 import csv
-# Old, can be discard for it used for gene regulized purposes
+# For gene regulized purposes, but it works for dimension reduction
 
 # Preprocess network for sc
 parser = argparse.ArgumentParser()
