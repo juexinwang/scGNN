@@ -8,10 +8,10 @@ import numpy as np
 
 #Graph related functions
 #graph Edge
-class graphEdge:
-    def __init__(self,row,col):
-        self.row=row
-        self.col=col
+# class graphEdge:
+#     def __init__(self,row,col):
+#         self.row=row
+#         self.col=col
 
 # Calculate graph, return adjcency matrix
 def generateAdj(featureMatrix, graphType='KNNgraph', para = None):
@@ -24,13 +24,19 @@ def generateAdj(featureMatrix, graphType='KNNgraph', para = None):
             distanceType = parawords[0]
             k = int(parawords[1])
         edgeList = calculateKNNgraphDistanceMatrix(featureMatrix, distanceType=distanceType, k=k)
+    elif graphType == 'Thresholdgraph':
+        if para != None:
+            parawords = para.split(':')
+            distanceType = parawords[0]
+            threshold = float(parawords[1])
+        edgeList = calculateThresholdgraphDistanceMatrix(featureMatrix, distanceType=distanceType, threshold=threshold)
     else:
         print('Should give graphtype')
     
     graphdict = edgeList2edgeDict(edgeList, featureMatrix.shape[0])
     adj = nx.adjacency_matrix(nx.from_dict_of_lists(graphdict))
     
-    return adj
+    return adj, edgeList
 
 #para: measuareName:k
 def calculateKNNgraphDistanceMatrixPairwise(featureMatrix, para):
@@ -60,7 +66,7 @@ def calculateKNNgraphDistanceMatrixPairwise(featureMatrix, para):
     for i in np.arange(distMat.shape[0]):
         res = distMat[:,i].argsort()[:k]
         for j in np.arange(k):
-            edgeList.append(graphEdge(i,res[j]))
+            edgeList.append((i,res[j]))
     
     return edgeList
 
@@ -102,14 +108,33 @@ def calculateKNNgraphDistanceMatrix(featureMatrix, distanceType='euclidean', k=5
      
     """       
 
-    distMat = distance.cdist(featureMatrix.todense(),featureMatrix.todense(), distanceType)
+    # distMat = distance.cdist(featureMatrix.todense(),featureMatrix.todense(), distanceType)
+    distMat = distance.cdist(featureMatrix,featureMatrix, distanceType)
         
     edgeList=[]
 
     for i in np.arange(distMat.shape[0]):
         res = distMat[:,i].argsort()[:k]
         for j in np.arange(k):
-            edgeList.append(graphEdge(i,res[j]))
+            edgeList.append((i,res[j]))
+    
+    return edgeList
+
+#para: measuareName:threshold
+def calculateThresholdgraphDistanceMatrix(featureMatrix, distanceType='euclidean', threshold=0.5):
+    r"""
+    Thresholdgraph: Graph with certain threshold 
+    """       
+
+    # distMat = distance.cdist(featureMatrix.todense(),featureMatrix.todense(), distanceType)
+    distMat = distance.cdist(featureMatrix,featureMatrix, distanceType)
+        
+    edgeList=[]
+
+    for i in np.arange(distMat.shape[0]):
+        indexArray = np.where(distMat[i,:]>threshold)
+        for j in indexArray[0]:
+            edgeList.append((i,j))
     
     return edgeList
 
@@ -121,8 +146,8 @@ def edgeList2edgeDict(edgeList, nodesize):
     tdict={}
 
     for edge in edgeList:
-        end1 = edge.row
-        end2 = edge.col
+        end1 = edge[0]
+        end2 = edge[1]
         tdict[end1]=""
         tdict[end2]=""
         if end1 in graphdict:
@@ -151,11 +176,11 @@ def read_edge_file_csc(edgeList, nodesize, k=5):
     data=[]
     
     for edge in edgeList:
-        row.append(edge.row)
-        col.append(edge.col)
+        row.append(edge[0])
+        col.append(edge[1])
         data.append(1.0)
-        row.append(edge.col)
-        col.append(edge.row)
+        row.append(edge[1])
+        col.append(edge[0])
         data.append(1.0)
 
     row = np.asarray(row)
@@ -177,8 +202,8 @@ def read_edge_file_dict(edgeList, nodesize):
     tdict={}
 
     for edge in edgeList:
-        end1 = edge.row
-        end2 = edge.col
+        end1 = edge[0]
+        end2 = edge[1]
         tdict[end1]=""
         tdict[end2]=""
         if end1 in graphdict:

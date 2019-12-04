@@ -18,6 +18,9 @@ import seaborn as sns
 
 import umap
 
+import community
+import networkx as nx
+
 #Original
 df = pd.read_csv('/home/wangjue/biodata/scData/AnjunBenchmark/5.Pollen/Pollen_cell_label.csv')
 df.columns = ['Cell','Cluster']
@@ -25,14 +28,23 @@ df.columns = ['Cell','Cluster']
 
 # z = pd.read_csv('data/sc/5.Pollen/5.Pollen.features.D.csv',header=None)
 z = pd.read_csv('data/sc/MPPbasal/MPPbasal.features.D.csv',header=None)
-
-
 # plt.scatter(z[:,0],z[:,1],c=df['Cluster'],cmap=cm.brg)
 # plt.show()
 
+edgeList = np.load('MPPbasal_noreguD_edgeList.npy')
+edgeList = edgeList.tolist()
+G = nx.Graph(edgeList)
+partition = community.best_partition(G)
+valueResults = []
+for key in partition.keys():
+    valueResults.append(partition[key])
+
+df = pd.DataFrame()
+df['Cluster']=valueResults
+
 
 #PCA
-pca = PCA(n_components=3)
+pca = PCA(n_components=500)
 pca_result = pca.fit_transform(z)
 re = pd.DataFrame()
 re['pca-one'] = pca_result[:,0]
@@ -79,7 +91,7 @@ sns.scatterplot(
     x="tsne-2d-one", 
     y="tsne-2d-two",
     hue="Cluster",
-    palette=sns.color_palette("brg",11),
+    palette=sns.color_palette("brg",3),
     data=df_subset,
     legend="full",
     # alpha=0.3
@@ -118,6 +130,8 @@ for com in set(partition.values()) :
     nx.draw_networkx_nodes(G, pos, list_nodes, node_size = 20,
                                 node_color = str(count / size))
 
-
 nx.draw_networkx_edges(G, pos, alpha=0.5)
 plt.show()
+
+
+

@@ -27,7 +27,7 @@ parser.add_argument('--seed', type=int, default=1, metavar='S',
                     help='random seed (default: 1)')
 parser.add_argument('--regulized-type', type=str, default='noregu',
                     help='regulized type (default: Graph), otherwise: noregu')
-parser.add_argument('--discreteTag', type=bool, default=False,
+parser.add_argument('--discreteTag', type=bool, default=True,
                     help='False/True')
 parser.add_argument('--model', type=str, default='AE',
                     help='VAE/AE')
@@ -60,16 +60,9 @@ elif args.model == 'AE':
     model = AE(dim=scData.features.shape[1]).to(device)
 optimizer = optim.Adam(model.parameters(), lr=1e-3)
 
-def train(epoch):
+def train(epoch, forceReguFlag=False):
     model.train()
     train_loss = 0
-    # adj = generateAdj(scData.features, graphType='KNNgraph', para = 'cosine:5')
-    # adj = generateAdj(scData.features, graphType='KNNgraphPairwise', para = 'Pairwise:5')
-    # adjdense = sp.csr_matrix.todense(adj)
-    # adjsample = torch.from_numpy(adjdense)
-    # adjsample = adjsample.type(torch.FloatTensor)
-    adjsample = None
-    adjfeature = None
     # for batch_idx, (data, _) in enumerate(train_loader):
     for batch_idx, data in enumerate(train_loader):
         data = data.type(torch.FloatTensor)
@@ -79,14 +72,20 @@ def train(epoch):
             recon_batch, mu, logvar, z = model(data)
             # Original
             # loss = loss_function(recon_batch, data, mu, logvar)
-            loss = loss_function_graph(recon_batch, data.view(-1, recon_batch.shape[1]), mu, logvar, adjsample, adjfeature, args.regulized_type, args.model)
+            if forceReguFlag:
+                loss = loss_function_graph(recon_batch, data.view(-1, recon_batch.shape[1]), mu, logvar, adjsample, adjfeature, 'Graph', args.model)
+            else:
+                loss = loss_function_graph(recon_batch, data.view(-1, recon_batch.shape[1]), mu, logvar, adjsample, adjfeature, args.regulized_type, args.model)
         elif args.model == 'AE':
             recon_batch, z = model(data)
             mu_dummy = ''
             logvar_dummy = ''
             # Original
             # loss = loss_function(recon_batch, data, mu, logvar)
-            loss = loss_function_graph(recon_batch, data.view(-1, recon_batch.shape[1]), mu_dummy, logvar_dummy, adjsample, adjfeature, args.regulized_type, args.model)
+            if forceReguFlag:
+                loss = loss_function_graph(recon_batch, data.view(-1, recon_batch.shape[1]), mu_dummy, logvar_dummy, adjsample, adjfeature, 'Graph', args.model)
+            else:
+                loss = loss_function_graph(recon_batch, data.view(-1, recon_batch.shape[1]), mu_dummy, logvar_dummy, adjsample, adjfeature, args.regulized_type, args.model)
         loss.backward()
         train_loss += loss.item()
         optimizer.step()
@@ -121,8 +120,15 @@ def test(epoch):
     print('====> Test set loss: {:.4f}'.format(test_loss))
 
 if __name__ == "__main__":
+    # adj = generateAdj(scData.features, graphType='KNNgraph', para = 'cosine:5')
+    # adj = generateAdj(scData.features, graphType='KNNgraphPairwise', para = 'Pairwise:5')
+    # adjdense = sp.csr_matrix.todense(adj)
+    # adjsample = torch.from_numpy(adjdense)
+    # adjsample = adjsample.type(torch.FloatTensor)       
+    adjsample = None
+    adjfeature = None
     for epoch in range(1, args.epochs + 1):
-        recon, original, z = train(epoch)
+        recon, original, z = train(epoch, forceReguFlag=False)
         # test(epoch)
         # with torch.no_grad():
         #     sample = torch.randn(64, 20).to(device)
@@ -138,4 +144,30 @@ if __name__ == "__main__":
     np.save(args.datasetName+'_'+args.regulized_type+discreteStr+'_recon.npy',recon)
     np.save(args.datasetName+'_'+args.regulized_type+discreteStr+'_original.npy',original)
     np.save(args.datasetName+'_'+args.regulized_type+discreteStr+'_z.npy',z)
+
+    adj, edgeList = generateAdj(z, graphType='Thresholdgraph', para = 'cosine:0.5')
+    adjdense = sp.csr_matrix.todense(adj)
+    adjsample = torch.from_numpy(adjdense)
+
+    np.save(args.datasetName+'_'+args.regulized_type+discreteStr+'_edgeList.npy',edgeList)
+
+    for epoch in range(1, args.epochs + 1):
+        recon, original, z = train(epoch, forceReguFlag=True)
+    
+    recon = recon.detach().numpy()
+    original = original.detach().numpy()
+    z = z.detach().numpy()
+    discreteStr = ''
+    if args.discreteTag:
+        discreteStr = 'D'
+    np.save(args.datasetName+'_'+args.regulized_type+discreteStr+'_recon1.npy',recon)
+    np.save(args.datasetName+'_'+args.regulized_type+discreteStr+'_original1.npy',original)
+    np.save(args.datasetName+'_'+args.regulized_type+discreteStr+'_z1.npy',z)
+
+
+    adj, edgeList = generateAdj(z, graphType='Thresholdgraph', para = 'cosine:0.5')
+    adjdense = sp.csr_matrix.todense(adj)
+    adjsample = torch.from_numpy(adjdense)
+
+    np.save(args.datasetName+'_'+args.regulized_type+discreteStr+'_edgeList1.npy',edgeList)
 

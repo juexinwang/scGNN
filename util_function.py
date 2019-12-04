@@ -84,8 +84,8 @@ class scDataset(Dataset):
             transform (callable, optional):
         """
         self.features = load_data(datasetName,discreteTag)
-        # Here lines are cells, and cols are genes
-        self.features = self.features.transpose()
+        # Now lines are cells, and cols are genes
+        # self.features = self.features.transpose()
         self.transform = transform
 
     def __len__(self):
