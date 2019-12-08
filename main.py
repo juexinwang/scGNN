@@ -10,6 +10,7 @@ import torch
 from torch.utils.data import Dataset, DataLoader
 from torch import nn, optim
 from torch.nn import functional as F
+from sklearn.decomposition import PCA
 from model import AE, VAE, VAE2d
 from util_function import *
 from graph_function import *
@@ -19,7 +20,7 @@ parser.add_argument('--datasetName', type=str, default='MPPbasal',
                     help='TGFb/sci-CAR/sci-CAR_LTMG/2.Yan/5.Pollen/MPPbasal/MPPepo')
 parser.add_argument('--batch-size', type=int, default=10000, metavar='N',
                     help='input batch size for training (default: 128)')
-parser.add_argument('--epochs', type=int, default=200, metavar='N',
+parser.add_argument('--epochs', type=int, default=1000, metavar='N',
                     help='number of epochs to train (default: 10)')
 parser.add_argument('--no-cuda', action='store_true', default=True,
                     help='enables CUDA training')
@@ -120,11 +121,17 @@ def test(epoch):
     print('====> Test set loss: {:.4f}'.format(test_loss))
 
 if __name__ == "__main__":
-    # adj = generateAdj(scData.features, graphType='KNNgraph', para = 'cosine:5')
-    # adj = generateAdj(scData.features, graphType='KNNgraphPairwise', para = 'Pairwise:5')
+    discreteStr = ''
+    if args.discreteTag:
+        discreteStr = 'D'
+    # pca = PCA(n_components=100)
+    # pca_result = pca.fit_transform(scData.features.todense())
+    # # adj = generateAdj(scData.features, graphType='KNNgraph', para = 'cosine:5')
+    # adj, edgeList = generateAdj(pca_result, graphType='KNNgraphPairwise', para = 'Pairwise:10')
     # adjdense = sp.csr_matrix.todense(adj)
     # adjsample = torch.from_numpy(adjdense)
-    # adjsample = adjsample.type(torch.FloatTensor)       
+    # adjsample = adjsample.type(torch.FloatTensor)
+    # np.save(args.datasetName+'_'+args.regulized_type+discreteStr+'_edgeList.npy',edgeList)       
     adjsample = None
     adjfeature = None
     for epoch in range(1, args.epochs + 1):
@@ -137,19 +144,16 @@ if __name__ == "__main__":
         #                'results/sample_' + str(epoch) + '.png')
     recon = recon.detach().numpy()
     original = original.detach().numpy()
-    z = z.detach().numpy()
-    discreteStr = ''
-    if args.discreteTag:
-        discreteStr = 'D'
-    np.save(args.datasetName+'_'+args.regulized_type+discreteStr+'_recon.npy',recon)
-    np.save(args.datasetName+'_'+args.regulized_type+discreteStr+'_original.npy',original)
-    np.save(args.datasetName+'_'+args.regulized_type+discreteStr+'_z.npy',z)
+    z = z.detach().numpy()   
+    np.save(args.datasetName+'_'+args.regulized_type+discreteStr+'_recon2.npy',recon)
+    np.save(args.datasetName+'_'+args.regulized_type+discreteStr+'_original2.npy',original)
+    np.save(args.datasetName+'_'+args.regulized_type+discreteStr+'_z2.npy',z)
 
-    adj, edgeList = generateAdj(z, graphType='Thresholdgraph', para = 'cosine:0.5')
+    adj, edgeList = generateAdj(z, graphType='KNNgraphPairwise', para = 'Pairwise:10')
     adjdense = sp.csr_matrix.todense(adj)
     adjsample = torch.from_numpy(adjdense)
 
-    np.save(args.datasetName+'_'+args.regulized_type+discreteStr+'_edgeList.npy',edgeList)
+    np.save(args.datasetName+'_'+args.regulized_type+discreteStr+'_edgeList2.npy',edgeList)
 
     for epoch in range(1, args.epochs + 1):
         recon, original, z = train(epoch, forceReguFlag=True)
@@ -160,14 +164,14 @@ if __name__ == "__main__":
     discreteStr = ''
     if args.discreteTag:
         discreteStr = 'D'
-    np.save(args.datasetName+'_'+args.regulized_type+discreteStr+'_recon1.npy',recon)
-    np.save(args.datasetName+'_'+args.regulized_type+discreteStr+'_original1.npy',original)
-    np.save(args.datasetName+'_'+args.regulized_type+discreteStr+'_z1.npy',z)
+    np.save(args.datasetName+'_'+args.regulized_type+discreteStr+'_recon3.npy',recon)
+    np.save(args.datasetName+'_'+args.regulized_type+discreteStr+'_original3.npy',original)
+    np.save(args.datasetName+'_'+args.regulized_type+discreteStr+'_z3.npy',z)
 
 
     adj, edgeList = generateAdj(z, graphType='Thresholdgraph', para = 'cosine:0.5')
     adjdense = sp.csr_matrix.todense(adj)
     adjsample = torch.from_numpy(adjdense)
 
-    np.save(args.datasetName+'_'+args.regulized_type+discreteStr+'_edgeList1.npy',edgeList)
+    np.save(args.datasetName+'_'+args.regulized_type+discreteStr+'_edgeList3.npy',edgeList)
 

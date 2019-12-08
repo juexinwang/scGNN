@@ -16,24 +16,32 @@ import csv
 parser = argparse.ArgumentParser()
 parser.add_argument('--expression-name', type=str, default='MPPbasal',
                     help='TGFb from MAGIC/ test also from MAGIC/ sci-CAR/ sci-CAR_LTMG/ 5.Pollen/ MPPbasal/ MPPepo')
+parser.add_argument('--data-type', type=str, default='int',
+                    help='int/float')                    
 
 args = parser.parse_args()
 
-def preprocess_network(feature_filename):
+if args.data_type == 'int':
+    zero = 0
+elif args.data_type == 'float':
+    zero = 0.0
+
+def preprocess_network(feature_filename, cellthreshold=1000, genethreshold=1000):
     '''
     Preprocessing by read expression
-    Now it outputs cells and genes not zero
-    output geneList, geneDict    
+    Now it outputs cells and genes larger than threshold
+    output geneList, geneDict, cellList, cellDict    
     '''
     # geneList, geneDict
     geneList=[]
     geneDict={}
+    cellList=[]
+    cellDict={}
 
     # Check cell and genes
     count = -1
     exDict={}
     exReadDict={}
-    cellTag = False
     with open(feature_filename) as f:
         lines = f.readlines()
         for line in lines:            
@@ -49,36 +57,35 @@ def preprocess_network(feature_filename):
             else:
                 cellReadCount = 0
                 tcount = 0
-                for word in words:
-                    cellReadCount = cellReadCount + float(word)
+                for word in words:                    
                     if tcount in exReadDict:
                         exReadDict[tcount] = exReadDict[tcount] + float(word)
+                        cellReadCount = cellReadCount + float(word)
                     else:
-                        exReadDict[tcount] = 0.0
+                        exReadDict[tcount] = zero
                     tcount = tcount + 1
-                if cellReadCount == 0.0:
-                    print("Cell "+str(count)+" has 0 reads") 
-                    cellTag = True
+                if cellReadCount < cellthreshold:
+                    print("Cell "+str(count)+" has less than "+ str(cellthreshold) +" reads")
+                else:
+                    cellList.append(count)
+                    cellDict[count]=''
             count = count+1
     f.close()
 
-    if cellTag:
-        print("All Cells are included.")
-
     for index in exReadDict:
         gene = exDict[index]
-        if exReadDict[index] != 0.0:
+        if exReadDict[index] >= genethreshold:
             geneList.append(gene)
             geneDict[gene] = index
         # Debug usage
         # else:
         #     print("Gene "+str(index)+": "+gene+" has 0 reads")
 
-    return geneList, geneDict
+    return geneList, geneDict, cellList, cellDict
 
 # For node as cell
 # Load gene expression into sparse matrix
-def read_feature_file_sparse(filename, geneList, geneDict):
+def read_feature_file_sparse(filename, geneList, geneDict, cellList, cellDict):
     samplelist=[]
     featurelist=[]
     data =[]
@@ -89,6 +96,7 @@ def read_feature_file_sparse(filename, geneList, geneDict):
 
     with open(filename) as f:
         lines = f.readlines()
+        cellcount = 0
         for line in lines:            
             line = line.strip()
             if line.endswith(','):
@@ -111,35 +119,39 @@ def read_feature_file_sparse(filename, geneList, geneDict):
                         ntcount += 1
                 print(str(ytcount)+"\t"+str(ntcount))
             if count >= 0:
-                #discrete here
-                tmplist =[]
-                for word in words:
-                    tmplist.append(float(word))
-                avgtmp = np.sum(tmplist)/float(len(tmplist))
-                
-                data_count = 0
-                for item in selectList:
-                    samplelist.append(count)
-                    featurelist.append(data_count)
-                    # if discrete_tag == 'Avg':
-                    if tmplist[item]>=avgtmp:
-                        dataD.append(1)
-                    else:
-                        dataD.append(0)
-                    # elif discrete_tag == 'Ori':
-                    data.append(float(tmplist[item]))
-                    data_count += 1
+                #choose cells
+                if count in cellDict:
+                    #discrete here
+                    tmplist =[]
+                    for word in words:
+                        tmplist.append(float(word))
+                    avgtmp = np.sum(tmplist)/float(len(tmplist))
+                    
+                    data_count = 0
+                    for item in selectList:
+                        samplelist.append(cellcount)
+                        featurelist.append(data_count)
+                        # if discrete_tag == 'Avg':
+                        if tmplist[item]>=avgtmp:
+                            dataD.append(1)
+                        else:
+                            dataD.append(0)
+                        # elif discrete_tag == 'Ori':
+                        data.append(float(tmplist[item]))
+                        data_count += 1
+                    cellcount += 1
             count += 1
     f.close()
     # As dream: rows as cells, columns as genes: This is transpose of the original scRNA data
-    feature = scipy.sparse.csr_matrix((data, (samplelist, featurelist)), shape=(count,len(selectList))) 
-    featureD = scipy.sparse.csr_matrix((dataD, (samplelist, featurelist)), shape=(count,len(selectList))) 
+    feature = scipy.sparse.csr_matrix((data, (samplelist, featurelist)), shape=(cellcount,len(selectList))) 
+    featureD = scipy.sparse.csr_matrix((dataD, (samplelist, featurelist)), shape=(cellcount,len(selectList))) 
 
     # For Matlab
-    dim2out = [[0.0] * len(selectList)  for i in range(count)]
-    dim2outD = [[0.0] * len(selectList) for i in range(count)]
+    dim2out = [[zero] * len(selectList)  for i in range(cellcount)]
+    dim2outD = [[zero] * len(selectList) for i in range(cellcount)]
     
     count = -1
+    cellcount = 0
     with open(filename) as f:
         lines = f.readlines()
         for line in lines:            
@@ -148,19 +160,23 @@ def read_feature_file_sparse(filename, geneList, geneDict):
                 line = line[:-1]
             words = line.split(',')
             if count >= 0:
-                tmplist =[]
-                for word in words:
-                    tmplist.append(float(word))
-                avgtmp = np.sum(tmplist)/float(len(tmplist))
-                
-                data_count = 0
-                for item in selectList:
-                    dim2out[count][data_count]=float(tmplist[item])
-                    if tmplist[item]>=avgtmp:
-                        dim2outD[count][data_count]=1
-                    else:
-                        dim2outD[count][data_count]=0
-                    data_count += 1
+                #choose cells
+                if count in cellDict:
+                    tmplist =[]
+                    for word in words:
+                        tmplist.append(float(word))
+                    avgtmp = np.sum(tmplist)/float(len(tmplist))
+                    
+                    data_count = 0
+                    for item in selectList:
+                        dim2out[cellcount][data_count]=float(tmplist[item])
+                        if tmplist[item]>=avgtmp:
+                            dim2outD[cellcount][data_count]=1
+                        else:
+                            dim2outD[cellcount][data_count]=0
+                        data_count += 1
+                    
+                    cellcount +=1
             count += 1
     f.close()
 
@@ -192,11 +208,13 @@ if not os.path.exists(out_folder):
 
 feature_filename = "/home/wangjue/biodata/scData/"+expressionname
 
-geneList, geneDict = preprocess_network(feature_filename)
+geneList, geneDict, cellList, cellDict = preprocess_network(feature_filename, cellthreshold=1000, genethreshold=1000)
 
 #python and matlab
 #First generate feature
-feature, featureD, dim2out, dim2outD = read_feature_file_sparse(feature_filename, geneList, geneDict)
+feature, featureD, dim2out, dim2outD = read_feature_file_sparse(feature_filename, geneList, geneDict, cellList, cellDict)
+
+print(str(len(cellList))+" cells are retained")
 
 # Try to generate the graph structure
 # edgeList = cal_distanceMatrix(feature, k=5)
@@ -230,6 +248,11 @@ pickle.dump(txD, open( out_folder+"ind."+outname+".txD", "wb" ) )
 
 with open ( out_folder+"ind."+outname+".test.index", 'w') as fw:
     fw.writelines(testindex)
+    fw.close()
+
+with open ( out_folder+"ind."+outname+".cellindex.txt", 'w') as fw:
+    for cell in cellList:
+        fw.write(str(cell)+"\n")
     fw.close()
 
 

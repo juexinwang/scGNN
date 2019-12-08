@@ -53,11 +53,11 @@ def calculateKNNgraphDistanceMatrixPairwise(featureMatrix, para):
 
     distMat = None
     if measureName == 'Pairwise':
-        distMat = distance_matrix(featureMatrix.todense(),featureMatrix.todense())
+        distMat = distance_matrix(featureMatrix,featureMatrix)
         k = int(parawords[1])
     elif measureName == 'Minkowski-Pairwise':
         p = int(parawords[2])
-        distMat = minkowski_distance(featureMatrix.todense(),featureMatrix.todense(),p=p)
+        distMat = minkowski_distance(featureMatrix,featureMatrix,p=p)
         k = int(parawords[1])        
     else:
         print('meausreName in KNNgraph does not recongnized')
@@ -108,7 +108,6 @@ def calculateKNNgraphDistanceMatrix(featureMatrix, distanceType='euclidean', k=5
      
     """       
 
-    # distMat = distance.cdist(featureMatrix.todense(),featureMatrix.todense(), distanceType)
     distMat = distance.cdist(featureMatrix,featureMatrix, distanceType)
         
     edgeList=[]
@@ -126,7 +125,6 @@ def calculateThresholdgraphDistanceMatrix(featureMatrix, distanceType='euclidean
     Thresholdgraph: Graph with certain threshold 
     """       
 
-    # distMat = distance.cdist(featureMatrix.todense(),featureMatrix.todense(), distanceType)
     distMat = distance.cdist(featureMatrix,featureMatrix, distanceType)
         
     edgeList=[]

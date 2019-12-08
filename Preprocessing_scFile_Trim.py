@@ -1,8 +1,14 @@
 #Used for generate MMPfiles
 #
 #Usage:
+# normalized results:
 # python Preprocessing_scFile_Trim.py --inputfile /home/wangjue/biodata/scData/MMP/GSM2388072_basal_bone_marrow.filtered_normalized_counts.csv --outputfile /home/wangjue/biodata/scData/MMPbasal.csv --outputfileCellName /home/wangjue/biodata/scData/MMPbasal.cellname.txt --split dot
 # python Preprocessing_scFile_Trim.py --inputfile /home/wangjue/biodata/scData/MMP/GSM2388073_epo_bone_marrow.filtered_normalized_counts.csv --outputfile /home/wangjue/biodata/scData/MMPepo.csv --outputfileCellName /home/wangjue/biodata/scData/MMPepo.cellname.txt --split dot
+#
+#Raw counts:
+# python Preprocessing_scFile_Trim.py --inputfile /home/wangjue/biodata/scData/MMP/bBM.raw_umifm_counts.csv --outputfile /home/wangjue/biodata/scData/MMPbasal.csv --outputfileCellName /home/wangjue/biodata/scData/MMPbasal.cellname.txt --split dot
+# python Preprocessing_scFile_Trim.py --inputfile /home/wangjue/biodata/scData/MMP/eBM.raw_umifm_counts.csv --outputfile /home/wangjue/biodata/scData/MMPepo.csv   --outputfileCellName /home/wangjue/biodata/scData/MMPepo.cellname.txt   --split dot
+
 
 import numpy as np
 import argparse

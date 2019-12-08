@@ -17,7 +17,7 @@ class AE(nn.Module):
 
     def decode(self, z):
         h3 = F.relu(self.fc3(z))
-        return torch.sigmoid(self.fc4(h3))
+        return torch.relu(self.fc4(h3))
 
     def forward(self, x):
         z = self.encode(x.view(-1, self.dim))
