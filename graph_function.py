@@ -190,7 +190,8 @@ def calculateKNNgraphDistanceMatrixML(featureMatrix, distanceType='euclidean', k
     for i in np.arange(distMat.shape[0]):
         res = distMat[i,:].argsort()[:k+1]
         preds = clf.fit_predict(featureMatrix[res,:])       
-        for j in np.arange(k):
+        for j in np.arange(1,k+1):
+            # weight = 1.0
             if preds[j]==-1:
                 weight = 0.0
             else:

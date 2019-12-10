@@ -151,13 +151,13 @@ if __name__ == "__main__":
     np.save(args.datasetName+'_'+args.regulized_type+discreteStr+'_original.npy',original)
     np.save(args.datasetName+'_'+args.regulized_type+discreteStr+'_z.npy',z)
 
-    # adj, edgeList = generateAdj(z, graphType='KNNgraphThreshold', para = 'cosine:10:0.5')
-    # adjdense = sp.csr_matrix.todense(adj)
-    # adjsample = torch.from_numpy(adjdense)
+    adj, edgeList = generateAdj(z, graphType='KNNgraphML', para = 'euclidean:10')
+    adjdense = sp.csr_matrix.todense(adj)
+    adjsample = torch.from_numpy(adjdense)
 
-    # np.save(args.datasetName+'_'+args.regulized_type+discreteStr+'_edgeList.npy',edgeList)
+    np.save(args.datasetName+'_'+args.regulized_type+discreteStr+'_edgeList.npy',edgeList)
 
-    for bigepoch in range(1, 5):
+    for bigepoch in range(0, 3):
 
         for epoch in range(1, args.epochs + 1):
             recon, original, z = train(epoch, forceReguFlag=False)
@@ -173,9 +173,9 @@ if __name__ == "__main__":
         np.save(args.datasetName+'_'+args.regulized_type+discreteStr+'_z'+str(bigepoch)+'.npy',z)
 
 
-        # adj, edgeList = generateAdj(z, graphType='KNNgraphThreshold', para = 'cosine:10:0.5')
-        # adjdense = sp.csr_matrix.todense(adj)
-        # adjsample = torch.from_numpy(adjdense)
+        adj, edgeList = generateAdj(z, graphType='KNNgraphML', para = 'euclidean:10')
+        adjdense = sp.csr_matrix.todense(adj)
+        adjsample = torch.from_numpy(adjdense)
 
-        # np.save(args.datasetName+'_'+args.regulized_type+discreteStr+'_edgeList'+str(bigepoch)+'.npy',edgeList)
+        np.save(args.datasetName+'_'+args.regulized_type+discreteStr+'_edgeList_final.npy',edgeList)
 
