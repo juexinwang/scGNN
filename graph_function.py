@@ -5,6 +5,7 @@ import pickle
 import csv
 import networkx as nx
 import numpy as np
+from sklearn.ensemble import IsolationForest
 
 #Graph related functions
 #graph Edge
@@ -30,6 +31,22 @@ def generateAdj(featureMatrix, graphType='KNNgraph', para = None):
             distanceType = parawords[0]
             threshold = float(parawords[1])
         edgeList = calculateThresholdgraphDistanceMatrix(featureMatrix, distanceType=distanceType, threshold=threshold)
+    elif graphType == 'KNNgraphThreshold':
+        if para != None:
+            parawords = para.split(':')
+            distanceType = parawords[0]
+            k = int(parawords[1])
+            threshold = float(parawords[2])
+        edgeList = calculateKNNThresholdgraphDistanceMatrix(featureMatrix, distanceType=distanceType, k=k, threshold=threshold)
+    elif graphType == 'KNNgraphML':
+        # with weights!
+        # https://towardsdatascience.com/5-ways-to-detect-outliers-that-every-data-scientist-should-know-python-code-70a54335a623
+        # https://scikit-learn.org/stable/modules/outlier_detection.html
+        if para != None:
+            parawords = para.split(':')
+            distanceType = parawords[0]
+            k = int(parawords[1])
+        edgeList = calculateKNNgraphDistanceMatrixML(featureMatrix, distanceType=distanceType, k=k)
     else:
         print('Should give graphtype')
     
@@ -71,7 +88,7 @@ def calculateKNNgraphDistanceMatrixPairwise(featureMatrix, para):
     return edgeList
 
 #para: measuareName:k
-def calculateKNNgraphDistanceMatrix(featureMatrix, distanceType='euclidean', k=5):
+def calculateKNNgraphDistanceMatrix(featureMatrix, distanceType='euclidean', k=10):
     r"""
     KNNgraph: 
     https://docs.scipy.org/doc/scipy/reference/generated/scipy.spatial.distance.cdist.html#scipy.spatial.distance.cdist
@@ -133,6 +150,53 @@ def calculateThresholdgraphDistanceMatrix(featureMatrix, distanceType='euclidean
         indexArray = np.where(distMat[i,:]>threshold)
         for j in indexArray[0]:
             edgeList.append((i,j))
+    
+    return edgeList
+
+#para: measuareName:k:threshold
+def calculateKNNThresholdgraphDistanceMatrix(featureMatrix, distanceType='cosine', k=10, threshold=0.5):
+    r"""
+    Thresholdgraph: KNN Graph with certain threshold 
+    """       
+
+    distMat = distance.cdist(featureMatrix,featureMatrix, distanceType)
+        
+    edgeList=[]
+
+    for i in np.arange(distMat.shape[0]):
+        res = distMat[:,i].argsort()[:k]
+        for j in np.arange(k-1):
+            if (distMat[i,res[j]]>threshold):
+                edgeList.append((i,res[j]))
+        # edgeList.append((i,res[k-1]))
+    
+    return edgeList
+
+
+#para: measuareName:k:threshold
+def calculateKNNgraphDistanceMatrixML(featureMatrix, distanceType='euclidean', k=10, param=None):
+    r"""
+    Thresholdgraph: KNN Graph with Machine Learning based methods
+
+    IsolationForest
+    https://scikit-learn.org/stable/modules/generated/sklearn.ensemble.IsolationForest.html#sklearn.ensemble.IsolationForest 
+    """       
+
+    distMat = distance.cdist(featureMatrix,featureMatrix, distanceType)
+    edgeList=[]
+
+    clf = IsolationForest( behaviour = 'new', contamination= 'auto')
+
+    for i in np.arange(distMat.shape[0]):
+        res = distMat[i,:].argsort()[:k+1]
+        preds = clf.fit_predict(featureMatrix[res,:])       
+        for j in np.arange(k):
+            if preds[j]==-1:
+                weight = 0.0
+            else:
+                weight = 1.0
+            #preds[j]==-1 means outliner, 1 is what we want
+            edgeList.append((i,res[j],weight))
     
     return edgeList
 
