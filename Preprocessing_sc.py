@@ -14,10 +14,14 @@ import csv
 
 # Preprocess network for sc
 parser = argparse.ArgumentParser()
-parser.add_argument('--expression-name', type=str, default='MPPbasal',
-                    help='TGFb from MAGIC/ test also from MAGIC/ sci-CAR/ sci-CAR_LTMG/ 5.Pollen/ MPPbasal/ MPPepo')
+parser.add_argument('--expression-name', type=str, default='MPPbasal_allcell',
+                    help='TGFb from MAGIC/ test also from MAGIC/ sci-CAR/ sci-CAR_LTMG/ 5.Pollen/ MPPbasal/ MPPbasal_all/ MPPbasal_allcell/ MPPbasal_allgene/ MPPepo/ MPPepo_all')
 parser.add_argument('--data-type', type=str, default='int',
-                    help='int/float')                    
+                    help='int/float')
+parser.add_argument('--cell-threshold', type=int, default=-1,
+                    help='1000 for varID, -1 for all')
+parser.add_argument('--gene-threshold', type=str, default=1000,
+                    help='1000 for varID, -1 for all')                    
 
 args = parser.parse_args()
 
@@ -197,7 +201,19 @@ elif args.expression_name=='5.Pollen':
     expressionname = '5.Pollen.csv'
 elif args.expression_name=='MPPbasal':
     expressionname = 'MMPbasal.csv'
+elif args.expression_name=='MPPbasal_all':
+    expressionname = 'MMPbasal.csv'
+elif args.expression_name=='MPPbasal_allgene':
+    expressionname = 'MMPbasal.csv'
+elif args.expression_name=='MPPbasal_allcell':
+    expressionname = 'MMPbasal.csv'
 elif args.expression_name=='MPPepo':
+    expressionname = 'MMPepo.csv'
+elif args.expression_name=='MPPepo_all':
+    expressionname = 'MMPepo.csv'
+elif args.expression_name=='MPPepo_allgene':
+    expressionname = 'MMPepo.csv'
+elif args.expression_name=='MPPepo_allcell':
     expressionname = 'MMPepo.csv'
 elif args.expression_name=='test':
     expressionname = 'test_data.csv'
@@ -208,7 +224,7 @@ if not os.path.exists(out_folder):
 
 feature_filename = "/home/wangjue/biodata/scData/"+expressionname
 
-geneList, geneDict, cellList, cellDict = preprocess_network(feature_filename, cellthreshold=1000, genethreshold=1000)
+geneList, geneDict, cellList, cellDict = preprocess_network(feature_filename, cellthreshold=args.cell_threshold, genethreshold=args.gene_threshold)
 
 #python and matlab
 #First generate feature

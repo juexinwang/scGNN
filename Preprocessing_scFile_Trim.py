@@ -22,6 +22,8 @@ parser.add_argument('--outputfileCellName', type=str, default='/home/wangjue/bio
                     help='outputfile cell name')
 parser.add_argument('--split', type=str, default='dot',
                     help='dot/blank')
+parser.add_argument('--geneNameIndexStart', type=int, default=5,
+                    help='index, context specific')
 args = parser.parse_args()
 
 inputfile = args.inputfile
@@ -37,7 +39,7 @@ geneNameStr = ''
 geneNameDict = {}
 cellNames = []
 
-geneNameIndexStart = 5
+geneNameIndexStart = args.geneNameIndexStart
 outList = []
 
 #cell as the row, col as the gene
