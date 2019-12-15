@@ -14,11 +14,11 @@ import csv
 
 # Preprocess network for sc
 parser = argparse.ArgumentParser()
-parser.add_argument('--expression-name', type=str, default='MPPbasal_allcell',
-                    help='TGFb from MAGIC/ test also from MAGIC/ sci-CAR/ sci-CAR_LTMG/ 5.Pollen/ MPPbasal/ MPPbasal_all/ MPPbasal_allcell/ MPPbasal_allgene/ MPPepo/ MPPepo_all')
+parser.add_argument('--expression-name', type=str, default='MPPepo_all',
+                    help='TGFb from MAGIC/ test also from MAGIC/sci-CAR/sci-CAR_LTMG/5.Pollen/MPPbasal/MPPbasal_all/MPPbasal_allcell/MPPbasal_allgene/MPPepo/MPPepo_all/MPPepo_allcell/MPPepo_allgene')
 parser.add_argument('--data-type', type=str, default='int',
                     help='int/float')
-parser.add_argument('--cell-threshold', type=int, default=-1,
+parser.add_argument('--cell-threshold', type=int, default=1000,
                     help='1000 for varID, -1 for all')
 parser.add_argument('--gene-threshold', type=str, default=1000,
                     help='1000 for varID, -1 for all')                    

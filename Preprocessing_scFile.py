@@ -19,6 +19,7 @@
 # python Preprocessing_scFile.py --inputfile /home/wangjue/biodata/scData/AnjunBenchmark/5.Pollen/Pollen_expression.csv --outputfile /home/wangjue/biodata/scData/5.Pollen.csv --outputfileCellName /home/wangjue/biodata/scData/5.Pollen.cellname.txt --cellcount 301 --genecount 23730 --split dot --cellheadflag False
 # python Preprocessing_scFile.py --inputfile /home/wangjue/biodata/scData/AnjunBenchmark/6.Kolodziejczyk/Kolodziejczyk_expression.csv --outputfile /home/wangjue/biodata/scData/6.Kolodziejczyk.csv --outputfileCellName /home/wangjue/biodata/scData/6.Kolodziejczyk.cellname.txt --cellcount 704 --genecount 38653 --split dot --cellheadflag False
 #
+# Don't use now
 # python Preprocessing_scFile.py --inputfile /home/wangjue/biodata/scData/MMP/GSM2388072_basal_bone_marrow.filtered_normalized_counts.csv --outputfile /home/wangjue/biodata/scData/MMPbasal.csv --outputfileCellName /home/wangjue/biodata/scData/MMPbasal.cellname.txt --cellcount X --genecount 4763 --split dot --cellheadflag False --selectGeneflag True
 
 import numpy as np
