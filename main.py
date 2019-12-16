@@ -32,6 +32,8 @@ parser.add_argument('--discreteTag', type=bool, default=False,
                     help='False/True')
 parser.add_argument('--model', type=str, default='AE',
                     help='VAE/AE')
+parser.add_argument('--npyDir', type=str, default='npy/',
+                    help='save npy results in directory')
 parser.add_argument('--log-interval', type=int, default=100, metavar='N',
                     help='how many batches to wait before logging training status')
 args = parser.parse_args()
@@ -147,15 +149,15 @@ if __name__ == "__main__":
     recon = recon.detach().numpy()
     original = original.detach().numpy()
     z = z.detach().numpy()   
-    np.save(args.datasetName+'_'+args.regulized_type+discreteStr+'_recon.npy',recon)
-    np.save(args.datasetName+'_'+args.regulized_type+discreteStr+'_original.npy',original)
-    np.save(args.datasetName+'_'+args.regulized_type+discreteStr+'_z.npy',z)
+    np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_recon.npy',recon)
+    np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_original.npy',original)
+    np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_z.npy',z)
 
     adj, edgeList = generateAdj(z, graphType='KNNgraphML', para = 'euclidean:10')
     adjdense = sp.csr_matrix.todense(adj)
     adjsample = torch.from_numpy(adjdense)
 
-    np.save(args.datasetName+'_'+args.regulized_type+discreteStr+'_edgeList.npy',edgeList)
+    np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_edgeList.npy',edgeList)
 
     for bigepoch in range(0, 3):
 
@@ -168,14 +170,14 @@ if __name__ == "__main__":
         discreteStr = ''
         if args.discreteTag:
             discreteStr = 'D'
-        np.save(args.datasetName+'_'+args.regulized_type+discreteStr+'_recon'+str(bigepoch)+'.npy',recon)
-        np.save(args.datasetName+'_'+args.regulized_type+discreteStr+'_original'+str(bigepoch)+'.npy',original)
-        np.save(args.datasetName+'_'+args.regulized_type+discreteStr+'_z'+str(bigepoch)+'.npy',z)
+        np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_recon'+str(bigepoch)+'.npy',recon)
+        np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_original'+str(bigepoch)+'.npy',original)
+        np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_z'+str(bigepoch)+'.npy',z)
 
 
         adj, edgeList = generateAdj(z, graphType='KNNgraphML', para = 'euclidean:10')
         adjdense = sp.csr_matrix.todense(adj)
         adjsample = torch.from_numpy(adjdense)
 
-        np.save(args.datasetName+'_'+args.regulized_type+discreteStr+'_edgeList_final.npy',edgeList)
+        np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_edgeList_final.npy',edgeList)
 
