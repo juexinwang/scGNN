@@ -27,9 +27,9 @@ import community
 from graph_function import * 
 
 parser = argparse.ArgumentParser(description='Plot scRNA Results')
-parser.add_argument('--datasetName', type=str, default='MPPbasal_allgene',
+parser.add_argument('--datasetName', type=str, default='MPPbasal_all',
                     help='MPPbasal')
-parser.add_argument('--dataset', type=str, default='MPPbasal_allgene_noregu_z.npy',
+parser.add_argument('--dataset', type=str, default='MPPbasal_all_noregu_z2.npy',
                     help='MPPbasal_noregu_z5.npy  data/sc/MPPbasal/MPPbasal.features.csv  /home/wangjue/scRNA/VarID_analysis/pca.csv')
 parser.add_argument('--csvheader', type=bool, default=False,
                     help='Only for csv')
@@ -228,52 +228,56 @@ def drawFractPlot(exFile, geneFile, markerGeneList, listResult):
 
     # dim: [4394, 20]
     useData = expressionData[:,markerGeneIndexList]
-    zData = stats.zscore(useData,axis=1)
-    allIndexm1  = np.where(np.less(zData,-1.0))
-    allIndexm01 = np.where(np.logical_and(np.greater_equal(zData,-1.0),np.less(zData,0.0)))
-    allIndex01 = np.where(np.logical_and(np.greater_equal(zData,0.0),np.less(zData,1.0)))
-    allIndex13 = np.where(np.logical_and(np.greater_equal(zData,1.0),np.less(zData,3.0)))
-    allIndex3 = np.where(np.greater_equal(zData,3.0))
-    allIndex1 = np.where(np.greater_equal(zData,1.0))
+    zData = stats.zscore(useData,axis=0)
 
-    allIndex = allIndex3
-
-    # resultTablem1 = [[0.0] * len(markerGeneList)  for i in range(len(set(listResult)))]
     resultTable = [[0.0] * len(markerGeneList)  for i in range(len(set(listResult)))]
     resultTableRatio = [[0.0] * len(markerGeneList)  for i in range(len(set(listResult)))]
 
     clusterNum = [0 for i in range(len(set(listResult)))]
-    for i in range(useData.shape[0]):
-        clusterNum[listResult[i]] += 1
 
+    for i in range(zData.shape[0]):
+        clusterIndex = listResult[i]
+        clusterNum[clusterIndex] += 1
+        for j in range(zData.shape[1]):           
+            resultTable[clusterIndex][j] += zData[i,j]
+    
     clusterNum = np.asarray(clusterNum).reshape(len(set(listResult)),1)
-
-    for i in np.arange(allIndex[0].shape[0]):
-        clusterIndex = listResult[allIndex[0][i]]
-        resultTable[clusterIndex][allIndex[1][i]] += 1
 
     resultTableUsage = resultTable/clusterNum
 
-    df = pd.DataFrame(data=resultTableUsage,index=range(len(set(listResult))),columns=markerGeneList)
-    ax = sns.heatmap(df)
+    clusterSortDict={}
+    clusterSortList=[]
+    for i in range(resultTableUsage.shape[1]):
+        indexArray = np.argsort(resultTableUsage[:,i],axis=0)[::-1]
+        for j in indexArray:
+            if not j in clusterSortDict:
+                clusterSortList.append(j)
+                clusterSortDict[j]=0
+                break
+
+    df = pd.DataFrame(data=resultTableUsage[clusterSortList,:], index=clusterSortList, columns=markerGeneList)
+    ax = sns.heatmap(df,cmap="YlGnBu")
     plt.savefig(args.saveDir+args.dataset+'_MarkerGenes.jpeg',dpi=300)
+    # np.save('resultTable.npy',resultTable)
+    # np.save('resultTableUsage.npy',resultTableUsage)
 
 # Main plots:
-#pca_result, re = pcaFunc(z, n_components=100)
-
 # edgeList = np.load('MPPbasal_noregu_edgeList1.npy')
 
-#_, edgeList = generateAdj(pca_result, graphType='Thresholdgraph', para = 'cosine:0.95')
 _, edgeList = generateAdj(z, graphType='KNNgraphML', para = 'euclidean:10')
 # _, edgeList = generateAdj(z, graphType='KNNgraphML', para = 'cosine:10')
 # _, edgeList = generateAdj(z, graphType='KNNgraphML', para = 'correlation:10')
 
 listResult,size = generateCluster(edgeList)
 
-# drawUMAP(z,listResult,size)
+#PCA
+# pca_result, re = pcaFunc(z, n_components=100)
+# _, edgeList = generateAdj(pca_result, graphType='KNNgraphML', para = 'euclidean:10')
 
-# drawSPRING(edgeList, listResult)
-# drawTSNE(z, listResult)
+drawUMAP(z,listResult,size)
+
+drawSPRING(edgeList, listResult)
+drawTSNE(z, listResult)
 
 # test marker genes:
 markerGeneList = ['Kit','Flt3','Dntt','Ebf1','Cd19','Lmo4','Ms4a2','Ear10','Cd74','Irf8','Mpo','Elane','Ngp','Mpl','Pf4','Car1','Gata1','Hbb-bs','Ptgfrn','Mki67']
