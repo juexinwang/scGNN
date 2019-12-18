@@ -43,7 +43,6 @@ geneNameIndexStart = args.geneNameIndexStart
 outList = []
 
 #cell as the row, col as the gene
-
 count = -1
 with open(inputfile, 'r') as f:
     lines = f.readlines()

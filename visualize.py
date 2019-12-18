@@ -30,7 +30,7 @@ parser = argparse.ArgumentParser(description='Plot scRNA Results')
 parser.add_argument('--datasetName', type=str, default='MPPbasal_all',
                     help='MPPbasal')
 parser.add_argument('--dataset', type=str, default='MPPbasal_all_noregu_z2.npy',
-                    help='MPPbasal_noregu_z5.npy  data/sc/MPPbasal/MPPbasal.features.csv  /home/wangjue/scRNA/VarID_analysis/pca.csv')
+                    help='MPPbasal_noregu_z.npy  data/sc/MPPbasal/MPPbasal.features.csv  /home/wangjue/scRNA/VarID_analysis/pca.csv')
 parser.add_argument('--csvheader', type=bool, default=False,
                     help='Only for csv')
 parser.add_argument('--saveFlag', type=bool, default=True,
@@ -41,19 +41,6 @@ parser.add_argument('--npyDir', type=str, default='npy/',
                     help='save npy results in directory')
 args = parser.parse_args()
 
-if args.dataset[-3:] == 'npy':
-    # z = np.load('MPPbasal_noregu_z5.npy')
-    z = np.load(args.npyDir+args.dataset)
-elif args.dataset[-3:] == 'csv':
-    if args.csvheader==False:
-        # z = pd.read_csv('data/sc/MPPbasal/MPPbasal.features.csv',header=None)
-        z = pd.read_csv(args.dataset,header=None)
-    else:
-        # z = pd.read_csv('/home/wangjue/scRNA/VarID_analysis/pca.csv')
-        z = pd.read_csv(args.dataset)
-        z = z.to_numpy()
-        z = z.transpose()
-
 # Use all
 # z = pd.read_csv('data/sc/MPPbasal/MPPbasal.features.csv',header=None)
 # z = np.load('MPPbasal_noregu_z5.npy')
@@ -63,7 +50,7 @@ elif args.dataset[-3:] == 'csv':
 # df['Cluster']= memberList
 
 #PCA
-def pcaFunc(z=z, n_components=100):
+def pcaFunc(z, n_components=100):
     pca = PCA(n_components=100)
     pca_result = pca.fit_transform(z)
     re = pd.DataFrame()
@@ -151,7 +138,7 @@ def drawUMAP(z,listResult,size):
     plt.colorbar(boundaries=np.arange(int(size))-0.5).set_ticks(np.arange(int(size)))
     plt.title('UMAP projection', fontsize=24)
     if args.saveFlag:
-        plt.savefig(args.saveDir+args.dataset+'_UMAP.jpeg',dpi=300)
+        plt.savefig(args.saveDir+args.dataset.split('/')[-1]+'_UMAP.jpeg',dpi=300)
 
 #Spring plot drawing
 def drawSPRING(edgeList, listResult):
@@ -174,7 +161,7 @@ def drawSPRING(edgeList, listResult):
     nx.draw_networkx_edges(G, pos, alpha=0.5)
     # plt.show()
     if args.saveFlag:
-        plt.savefig(args.saveDir+args.dataset+'_SPRING.jpeg',dpi=300)
+        plt.savefig(args.saveDir+args.dataset.split('/')[-1]+'_SPRING.jpeg',dpi=300)
 
 
 # T-SNE
@@ -199,7 +186,7 @@ def drawTSNE(z, listResult):
         # alpha=0.3
     )
     if args.saveFlag:
-        plt.savefig(args.saveDir+args.dataset+'_TSNE.jpeg',dpi=300)
+        plt.savefig(args.saveDir+args.dataset.split('/')[-1]+'_TSNE.jpeg',dpi=300)
 
 def drawFractPlot(exFile, geneFile, markerGeneList, listResult):
     expressionData = pd.read_csv(exFile,header=None)
@@ -257,22 +244,34 @@ def drawFractPlot(exFile, geneFile, markerGeneList, listResult):
 
     df = pd.DataFrame(data=resultTableUsage[clusterSortList,:], index=clusterSortList, columns=markerGeneList)
     ax = sns.heatmap(df,cmap="YlGnBu")
-    plt.savefig(args.saveDir+args.dataset+'_MarkerGenes.jpeg',dpi=300)
+    plt.savefig(args.saveDir+args.dataset.split('/')[-1]+'_MarkerGenes.jpeg',dpi=300)
     # np.save('resultTable.npy',resultTable)
     # np.save('resultTableUsage.npy',resultTableUsage)
 
 # Main plots:
 # edgeList = np.load('MPPbasal_noregu_edgeList1.npy')
 
+if args.dataset[-3:] == 'npy':
+    # z = np.load('MPPbasal_noregu_z5.npy')
+    z = np.load(args.npyDir+args.dataset)
+elif args.dataset[-3:] == 'csv':
+    if args.csvheader==False:
+        # z = pd.read_csv('data/sc/MPPbasal/MPPbasal.features.csv',header=None)
+        z = pd.read_csv(args.dataset,header=None)
+    else:
+        # z = pd.read_csv('/home/wangjue/scRNA/VarID_analysis/pca.csv')
+        z = pd.read_csv(args.dataset)
+        z = z.to_numpy()
+        z = z.transpose()
+    
+    #PCA
+    z, re = pcaFunc(z, n_components=100)
+
 _, edgeList = generateAdj(z, graphType='KNNgraphML', para = 'euclidean:10')
 # _, edgeList = generateAdj(z, graphType='KNNgraphML', para = 'cosine:10')
 # _, edgeList = generateAdj(z, graphType='KNNgraphML', para = 'correlation:10')
 
 listResult,size = generateCluster(edgeList)
-
-#PCA
-# pca_result, re = pcaFunc(z, n_components=100)
-# _, edgeList = generateAdj(pca_result, graphType='KNNgraphML', para = 'euclidean:10')
 
 drawUMAP(z,listResult,size)
 
