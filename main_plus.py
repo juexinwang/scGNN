@@ -16,6 +16,7 @@ from sklearn.metrics import silhouette_samples, silhouette_score
 from model import AE, VAE, VAE2d
 from util_function import *
 from graph_function import *
+from visualize_util import *
 
 parser = argparse.ArgumentParser(description='AutoEncoder-EM for scRNA')
 parser.add_argument('--datasetName', type=str, default='MMPbasal_LTMG',
@@ -160,6 +161,11 @@ if __name__ == "__main__":
     adjsample = torch.from_numpy(adjdense)
 
     np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_edgeList.npy',edgeList)
+
+    # Get cluster
+    listResult,size = generateCluster(edgeList)
+
+    # Each cluster has a autoencoder, and organize them back in iteraization 
 
     for bigepoch in range(0, 3):
         scDataInter = scDatasetInter(recon)

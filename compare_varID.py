@@ -1,5 +1,8 @@
 import numpy as np
 import networkx as nx
+import community
+from sklearn.metrics import silhouette_samples, silhouette_score
+from visualize_util import * 
 
 pvalueList=[]
 with open('/home/wangjue/scRNA/VarID_analysis/pvalue.txt','r') as f:
@@ -33,4 +36,12 @@ with open('/home/wangjue/scRNA/VarID_analysis/member.txt','r') as f:
         line = line.strip()
         memberList.append(int(line)-1)    
     f.close()
+
+z = pd.read_csv('/home/wangjue/scRNA/VarID_analysis/pca.csv')
+z = z.to_numpy()
+z = z.transpose()
+
+modularity = calcuModularity(memberList, edgeList)
+silhouette = calcuSilhouette(memberList, z)
+print(str(modularity)+"\t"+str(silhouette))
     

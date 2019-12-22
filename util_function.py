@@ -76,8 +76,35 @@ def load_data(datasetName, discreteTag):
 
     return features
 
+class scDatasetInter(Dataset):
+    def __init__(self, features, transform=None):
+        """
+        Internal scData
+        Args:
+            construct dataset from features
+        """
+        self.features = features
+        # Now lines are cells, and cols are genes
+        # self.features = self.features.transpose()
+        self.transform = transform        
+
+    def __len__(self):
+        return self.features.shape[0]
+    
+    def __getitem__(self, idx):
+        if torch.is_tensor(idx):
+            idx = idx.tolist()
+
+        sample = self.features[idx,:]
+
+        if self.transform:
+            sample = self.transform(sample)
+
+        sample = torch.from_numpy(sample.toarray())
+        return sample
+
 class scDataset(Dataset):
-    def __init__(self, datasetName, discreteTag, transform=None):
+    def __init__(self, datasetName=None, discreteTag=False, transform=None):
         """
         Args:
             datasetName (String): TGFb, etc.
@@ -86,7 +113,7 @@ class scDataset(Dataset):
         self.features = load_data(datasetName,discreteTag)
         # Now lines are cells, and cols are genes
         # self.features = self.features.transpose()
-        self.transform = transform
+        self.transform = transform        
 
     def __len__(self):
         return self.features.shape[0]
