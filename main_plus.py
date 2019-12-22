@@ -23,7 +23,7 @@ parser.add_argument('--datasetName', type=str, default='MMPbasal_LTMG',
                     help='TGFb/sci-CAR/sci-CAR_LTMG/2.Yan/5.Pollen/MPPbasal/MPPbasal_all/MPPbasal_allgene/MPPbasal_allcell/MPPepo/MMPbasal_LTMG/MMPbasal_all_LTMG')
 parser.add_argument('--batch-size', type=int, default=10000, metavar='N',
                     help='input batch size for training (default: 128)')
-parser.add_argument('--epochs', type=int, default=500, metavar='N',
+parser.add_argument('--epochs', type=int, default=2, metavar='N',
                     help='number of epochs to train (default: 10)')
 parser.add_argument('--no-cuda', action='store_true', default=True,
                     help='enables CUDA training')
@@ -35,7 +35,7 @@ parser.add_argument('--discreteTag', type=bool, default=False,
                     help='False/True')
 parser.add_argument('--model', type=str, default='AE',
                     help='VAE/AE')
-parser.add_argument('--npyDir', type=str, default='npy/',
+parser.add_argument('--npyDir', type=str, default='npyplus/',
                     help='save npy results in directory')
 parser.add_argument('--log-interval', type=int, default=100, metavar='N',
                     help='how many batches to wait before logging training status')
@@ -150,42 +150,78 @@ if __name__ == "__main__":
         #     save_image(sample.view(64, 1, 28, 28),
         #                'results/sample_' + str(epoch) + '.png')
     reconOut = recon.detach().cpu().numpy()
-    originalOut = original.detach().cpu().numpy()
+    # originalOut = original.detach().cpu().numpy()
     zOut = z.detach().cpu().numpy()   
     np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_recon.npy',reconOut)
-    np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_original.npy',originalOut)
+    # np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_original.npy',originalOut)
     np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_z.npy',zOut)
 
-    adj, edgeList = generateAdj(z, graphType='KNNgraphML', para = 'euclidean:10')
+    adj, edgeList = generateAdj(zOut, graphType='KNNgraphML', para = 'euclidean:10')
     adjdense = sp.csr_matrix.todense(adj)
     adjsample = torch.from_numpy(adjdense)
 
     np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_edgeList.npy',edgeList)
 
-    # Get cluster
-    listResult,size = generateCluster(edgeList)
-
-    # Each cluster has a autoencoder, and organize them back in iteraization 
-
+    
     for bigepoch in range(0, 3):
-        scDataInter = scDatasetInter(recon)
-        train_loader = DataLoader(scDataInter, batch_size=args.batch_size, shuffle=True, **kwargs)
-        for epoch in range(1, args.epochs + 1):
-            recon, original, z = train(epoch, forceReguFlag=False)
+        # Get cluster
+        listResult,size = generateCluster(edgeList)
+
+        # Each cluster has a autoencoder, and organize them back in iteraization
+        clusterIndexList = []
+        for i in range(len(set(listResult))):
+            clusterIndexList.append([])
+        for i in range(len(listResult)):
+            clusterIndexList[listResult[i]].append(i)
+
+        reconNew = np.zeros((scData.features.shape[0],scData.features.shape[1]))
+        originalNew = np.zeros((scData.features.shape[0],scData.features.shape[1]))
+        zNew = np.copy(zOut)
+        
+        # Convert to Tensor
+        reconNew = torch.from_numpy(reconNew)
+        reconNew = reconNew.type(torch.FloatTensor)
+        reconNew = reconNew.to(device)
+        originalNew = torch.from_numpy(originalNew)
+        originalNew = originalNew.type(torch.FloatTensor)
+        originalNew = originalNew.to(device)
+        zNew = torch.from_numpy(zNew)
+        zNew = zNew.type(torch.FloatTensor)
+        zNew = zNew.to(device)
+
+        for clusterIndex in clusterIndexList:
+            reconUsage = recon[clusterIndex]
+
+            scDataInter = scDatasetInter(reconUsage)
+            train_loader = DataLoader(scDataInter, batch_size=args.batch_size, shuffle=True, **kwargs)
+            for epoch in range(1, args.epochs + 1):
+                reconCluster, originalCluster, zCluster = train(epoch, forceReguFlag=False)
+            
+            count = 0
+            for i in clusterIndex:
+                reconNew[i] = reconCluster[count,:]
+                originalNew[i] = originalCluster[count,:]
+                zNew[i] = zCluster[count,:]
+                count +=1
+
+        # Update
+        recon = reconNew
+        original = originalNew
+        zOut = zNew        
         
         reconOut = recon.detach().cpu().numpy()
-        originalOut = original.detach().cpu().numpy()
+        # originalOut = original.detach().cpu().numpy()
         zOut = z.detach().cpu().numpy()
         discreteStr = ''
         if args.discreteTag:
             discreteStr = 'D'
         np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_recon'+str(bigepoch)+'.npy',reconOut)
-        np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_original'+str(bigepoch)+'.npy',originalOut)
+        # np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_original'+str(bigepoch)+'.npy',originalOut)
         np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_z'+str(bigepoch)+'.npy',zOut)
 
-        adj, edgeList = generateAdj(z, graphType='KNNgraphML', para = 'euclidean:10')
-        adjdense = sp.csr_matrix.todense(adj)
-        adjsample = torch.from_numpy(adjdense)
+    adj, edgeList = generateAdj(zOut, graphType='KNNgraphML', para = 'euclidean:10')
+    adjdense = sp.csr_matrix.todense(adj)
+    adjsample = torch.from_numpy(adjdense)
 
-        np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_edgeList_final.npy',edgeList)
+    np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_edgeList_final.npy',edgeList)
 
