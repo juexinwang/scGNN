@@ -135,7 +135,7 @@ def drawSPRING(edgeList, listResult, saveDir, dataset, saveFlag=True):
         list_nodes = [nodes for nodes in partition.keys()
                                     if partition[nodes] == com]
         nx.draw_networkx_nodes(G, pos, list_nodes, node_size = 20,
-                                    node_color = str(count / size))
+                                    node_color = str(count / len(set(partition.values()))))
 
     nx.draw_networkx_edges(G, pos, alpha=0.5)
     # plt.show()
@@ -145,6 +145,7 @@ def drawSPRING(edgeList, listResult, saveDir, dataset, saveFlag=True):
 
 # T-SNE
 def drawTSNE(z, listResult, saveDir, dataset, saveFlag=True):
+    size = len(set(listResult))
     time_start = time.time()
     tsne = TSNE(n_components=2, verbose=1, perplexity=40, n_iter=300)
     tsne_results = tsne.fit_transform(z)

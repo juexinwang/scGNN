@@ -3,6 +3,7 @@ import numpy as np
 import pickle as pkl
 import networkx as nx
 import scipy.sparse as sp
+from node2vec import Node2Vec
 import torch
 from torch import nn, optim
 from torch.nn import functional as F
@@ -301,3 +302,31 @@ def get_enum(reduction):
         ret = -1  # TODO: remove once JIT exceptions support control flow
         raise ValueError("{} is not a valid value for reduction".format(reduction))
     return ret
+
+def generate_embedding(A, nodenum, dim=64):
+    '''
+    generate embedding from node2Vec
+    Ref:
+    https://github.com/eliorc/node2vec/blob/master/README.md
+    return np.numArray(nodesize, dim)
+    '''
+    G = nx.from_scipy_sparse_matrix(A)
+    # Precompute probabilities and generate walks - **ON WINDOWS ONLY WORKS WITH workers=1**
+    node2vec = Node2Vec(G, dimensions=dim, walk_length=80, num_walks=10, workers=4)  # Use temp_folder for big graphs
+
+    # Embed nodes
+    model = node2vec.fit(window=10, min_count=1, batch_words=4)  # Any keywords acceptable by gensim.Word2Vec can be passed, `diemnsions` and `workers` are automatically passed (from the Node2Vec constructor)
+
+    wv = model.wv
+    embeddings = np.zeros([nodenum, dim], dtype='float32')
+    sum_embeddings = 0
+    empty_list = []
+    for i in range(nodenum):
+        if str(i) in wv:
+            embeddings[i] = wv.word_vec(str(i))
+            sum_embeddings += embeddings[i]
+        else:
+            empty_list.append(i)
+    mean_embedding = sum_embeddings / (nodenum - len(empty_list))
+    embeddings[empty_list] = mean_embedding
+    return embeddings

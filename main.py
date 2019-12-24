@@ -34,7 +34,7 @@ parser.add_argument('--discreteTag', type=bool, default=False,
                     help='False/True')
 parser.add_argument('--model', type=str, default='AE',
                     help='VAE/AE')
-parser.add_argument('--npyDir', type=str, default='npy/',
+parser.add_argument('--npyDir', type=str, default='npyGraph/',
                     help='save npy results in directory')
 parser.add_argument('--log-interval', type=int, default=100, metavar='N',
                     help='how many batches to wait before logging training status')
@@ -65,6 +65,7 @@ elif args.model == 'AE':
     model = AE(dim=scData.features.shape[1]).to(device)
 optimizer = optim.Adam(model.parameters(), lr=1e-3)
 
+#TODO: batch needs to implement
 def train(epoch, train_loader=train_loader, forceReguFlag=False):
     model.train()
     train_loss = 0
@@ -165,7 +166,7 @@ if __name__ == "__main__":
         scDataInter = scDatasetInter(recon)
         train_loader = DataLoader(scDataInter, batch_size=args.batch_size, shuffle=True, **kwargs)
         for epoch in range(1, args.epochs + 1):
-            recon, original, z = train(epoch, forceReguFlag=False)
+            recon, original, z = train(epoch, forceReguFlag=True)
         
         reconOut = recon.detach().cpu().numpy()
         originalOut = original.detach().cpu().numpy()

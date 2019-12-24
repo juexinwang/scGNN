@@ -18,9 +18,9 @@ parser.add_argument('--expression-name', type=str, default='MMPbasal_all_LTMG',
                     help='TGFb from MAGIC/ test also from MAGIC/sci-CAR/sci-CAR_LTMG/5.Pollen/MPPbasal/MPPbasal_all/MPPbasal_allcell/MPPbasal_allgene/MPPepo/MPPepo_all/MPPepo_allcell/MPPepo_allgene/MMPbasal_LTMG/MMPbasal_all_LTMG')
 parser.add_argument('--data-type', type=str, default='float',
                     help='int/float')
-parser.add_argument('--cell-threshold', type=int, default=1000,
+parser.add_argument('--cell-threshold', type=int, default=-1,
                     help='1000 for varID, -1 for all')
-parser.add_argument('--gene-threshold', type=int, default=1000,
+parser.add_argument('--gene-threshold', type=int, default=-1,
                     help='1000 for varID, -1 for all')                    
 
 args = parser.parse_args()
@@ -198,6 +198,8 @@ elif args.expression_name=='sci-CAR_LTMG':
 elif args.expression_name=='2.Yan':
     expressionname = '2.Yan.csv'
 elif args.expression_name=='5.Pollen':
+    expressionname = '5.Pollen.csv'
+elif args.expression_name=='5.Pollen_all':
     expressionname = '5.Pollen.csv'
 elif args.expression_name=='MPPbasal':
     expressionname = 'MMPbasal.csv'
