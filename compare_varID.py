@@ -2,7 +2,7 @@ import numpy as np
 import networkx as nx
 import community
 from sklearn.metrics import silhouette_samples, silhouette_score
-from visualize_util import * 
+from benchmark_util import * 
 
 pvalueList=[]
 lcount =0

@@ -331,7 +331,7 @@ def readTrueLabelList(labelFilename, cellFilename, cellIndexFilename):
     return labelList
 
 
-def dropout(X, rate=0.1):
+def impute_dropout(X, rate=0.1):
     """
     X: original testing set
     ========
@@ -354,6 +354,7 @@ def dropout(X, rate=0.1):
 
 
 # IMPUTATION METRICS
+# Ref:
 # https://github.com/romain-lopez/scVI-reproducibility/blob/master/demo_code/benchmarking.py
 def imputation_error(X_mean, X, X_zero, i, j, ix):
     """

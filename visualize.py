@@ -26,7 +26,7 @@ import umap
 import community
 from sklearn.metrics import silhouette_samples, silhouette_score
 from graph_function import *
-from visualize_util import * 
+from benchmark_util import * 
 
 parser = argparse.ArgumentParser(description='Plot scRNA Results')
 parser.add_argument('--datasetName', type=str, default='MMPbasal_all',
