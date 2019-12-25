@@ -24,8 +24,8 @@ from mpl_toolkits.mplot3d import Axes3D
 import seaborn as sns
 import umap
 import community
-from sklearn.metrics import silhouette_samples, silhouette_score
-from sklearn.metrics.cluster import adjusted_rand_score
+from sklearn.metrics import *
+from sklearn.metrics.cluster import *
 from graph_function import *
 
 #PCA
@@ -36,8 +36,8 @@ def pcaFunc(z, n_components=100):
     re['pca-one'] = pca_result[:,0]
     re['pca-two'] = pca_result[:,1] 
     re['pca-three'] = pca_result[:,2]
-    # re['Cluster'] = df['Cluster']
-    print('Explained variation per principal component: {}'.format(pca.explained_variance_ratio_))
+    # Not print Now
+    # print('Explained variation per principal component: {}'.format(pca.explained_variance_ratio_))
     return pca_result, re
 
 #find Cluster from Louvain
@@ -243,17 +243,128 @@ def calcuModularity(listResult,edgeList):
     global_modularity = community.modularity(partition, G)
     return global_modularity
 
-def calcuSilhouette(listResult, z):
+def measureClusteringNoLabel(z, listResult):
     '''
-    https://scikit-learn.org/stable/auto_examples/cluster/plot_kmeans_silhouette_analysis.html
-    '''
-    silhouette_avg = silhouette_score(z, listResult)
-    return silhouette_avg
+    Measure clustering without labels
+    return:
+    silhouette, calinski_harabasz_score(Variance Ratio Criterion), davies_bouldin_score
 
-def calcuAdjuestedRandIndex(labels_true, labels_pred):
+    silhouette: most important
+    davies_bouldin_score: lower the better, others: higher the better
+
+    https://scikit-learn.org/stable/auto_examples/cluster/plot_kmeans_silhouette_analysis.html
+    https://scikit-learn.org/stable/modules/clustering.html#calinski-harabasz-index
+    https://scikit-learn.org/stable/modules/clustering.html#davies-bouldin-index
     '''
-    Adjusted Rand Index
-    https://scikit-learn.org/stable/modules/generated/sklearn.metrics.adjusted_rand_score.html
+    silhouette = silhouette_score(z, listResult)
+    chs = calinski_harabasz_score(z, listResult)
+    dbs = davies_bouldin_score(z, listResult)
+    return silhouette, chs, dbs
+
+
+def measureClusteringTrueLabel(labels_true, labels_pred):
+    '''
+    Measure clustering with true labels
+    return: 
+    Adjusted Rand Index, Ajusted Mutual Information, Normalized Mutual Information, completeness score, fowlkes mallows score, v measure score, homogeneity score 
+
+    https://scikit-learn.org/stable/modules/generated/sklearn.metrics.adjusted_rand_score.html   
+    https://scikit-learn.org/stable/modules/generated/sklearn.metrics.adjusted_mutual_info_score.html
+    https://scikit-learn.org/stable/modules/generated/sklearn.metrics.normalized_mutual_info_score.html
+    https://scikit-learn.org/stable/modules/generated/sklearn.metrics.completeness_score.html
+    https://scikit-learn.org/stable/modules/generated/sklearn.metrics.fowlkes_mallows_score.html
+    https://scikit-learn.org/stable/modules/generated/sklearn.metrics.v_measure_score.html
+    https://scikit-learn.org/stable/modules/generated/sklearn.metrics.homogeneity_score.html
+
     '''
     ari = adjusted_rand_score(labels_true, labels_pred)
-    return ari
+    ami = adjusted_mutual_info_score(labels_true, labels_pred)
+    nmi = normalized_mutual_info_score(labels_true, labels_pred)
+    cs  = completeness_score(labels_true, labels_pred)
+    fms = fowlkes_mallows_score(labels_true, labels_pred)
+    vms = v_measure_score(labels_true, labels_pred)
+    hs  = homogeneity_score(labels_true, labels_pred)
+    return ari, ami, nmi, cs, fms, vms, hs
+
+# labelFilename:     /home/wangjue/biodata/scData/AnjunBenchmark/5.Pollen/Pollen_cell_label.csv
+# cellFilename:      /home/wangjue/biodata/scData/5.Pollen.cellname.txt
+# cellIndexFilename: /home/wangjue/myprojects/scGNN/data/sc/5.Pollen/ind.5.Pollen.cellindex.txt
+def readTrueLabelList(labelFilename, cellFilename, cellIndexFilename):
+    '''
+    Read gold standard label from file
+    '''
+    cellDict = {}
+    count = -1
+    with open(labelFilename, 'r') as f:
+        lines = f.readlines()
+        for line in lines:
+            if count > 0:
+                line = line.strip()
+                words = line.split(',')
+                cellDict[words[0]]=words[1]
+            count += 1
+        f.close()
+    
+    cellIndexDict = {}
+    count = -1
+    with open(cellFilename, 'r') as f:
+        lines = f.readlines()
+        for line in lines:
+            if count > 0:
+                line = line.strip()
+                cellIndexDict[count]=line            
+            count += 1
+        f.close()
+    
+    labelList = []
+    count = 0
+    with open(cellIndexFilename, 'r') as f:
+        lines = f.readlines()
+        for line in lines:
+            line = line.strip()
+            cellName = cellIndexDict[line]
+            memberName = cellDict[cellName]
+            labelList.append(memberName)            
+            count += 1
+        f.close()
+
+    return labelList
+
+
+def dropout(X, rate=0.1):
+    """
+    X: original testing set
+    ========
+    returns:
+    X_zero: copy of X with zeros
+    i, j, ix: indices of where dropout is applied
+    """
+    X_zero = np.copy(X)
+    # select non-zero subset
+    i,j = np.nonzero(X_zero)
+    
+    # choice number 1 : select 10 percent of the non zero values (so that distributions overlap enough)
+    ix = np.random.choice(range(len(i)), int(np.floor(0.1 * len(i))), replace=False)
+    X_zero[i[ix], j[ix]] *= np.random.binomial(1, rate)
+       
+    # choice number 2, focus on a few but corrupt binomially
+    #ix = np.random.choice(range(len(i)), int(slice_prop * np.floor(len(i))), replace=False)
+    #X_zero[i[ix], j[ix]] = np.random.binomial(X_zero[i[ix], j[ix]].astype(np.int), rate)
+    return X_zero, i, j, ix
+
+
+# IMPUTATION METRICS
+# https://github.com/romain-lopez/scVI-reproducibility/blob/master/demo_code/benchmarking.py
+def imputation_error(X_mean, X, X_zero, i, j, ix):
+    """
+    X_mean: imputed dataset
+    X: original dataset
+    X_zero: zeros dataset
+    i, j, ix: indices of where dropout was applied
+    ========
+    returns:
+    median L1 distance between datasets at indices given
+    """
+    all_index = i[ix], j[ix]
+    x, y = X_mean[all_index], X[all_index]
+    return np.median(np.abs(x - y))
