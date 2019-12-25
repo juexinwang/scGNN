@@ -360,7 +360,7 @@ def imputation_error(X_mean, X, X_zero, i, j, ix):
     """
     X_mean: imputed dataset
     X: original dataset
-    X_zero: zeros dataset
+    X_zero: zeros dataset, does not need 
     i, j, ix: indices of where dropout was applied
     ========
     returns:

@@ -8,6 +8,7 @@ import torch
 from torch import nn, optim
 from torch.nn import functional as F
 from torch.utils.data import Dataset, DataLoader
+from benchmark_util import *
 
 def parse_index_file(filename):
     index = []
@@ -112,6 +113,35 @@ class scDataset(Dataset):
             transform (callable, optional):
         """
         self.features = load_data(datasetName,discreteTag)
+        # Now lines are cells, and cols are genes
+        # self.features = self.features.transpose()
+        self.transform = transform        
+
+    def __len__(self):
+        return self.features.shape[0]
+    
+    def __getitem__(self, idx):
+        if torch.is_tensor(idx):
+            idx = idx.tolist()
+
+        sample = self.features[idx,:]
+
+        if self.transform:
+            sample = self.transform(sample)
+
+        sample = torch.from_numpy(sample.toarray())
+        return sample
+
+class scDatasetDropout(Dataset):
+    def __init__(self, datasetName=None, discreteTag=False, ratio=0.1, transform=None):
+        """
+        Args:
+            datasetName (String): TGFb, etc.
+            transform (callable, optional):
+        """
+        self.featuresOriginal = load_data(datasetName,discreteTag)
+        self.ratio = ratio
+        self.features, self.i, self.j, self.ix = impute_dropout(self.featuresOriginal, rate=self.ratio) 
         # Now lines are cells, and cols are genes
         # self.features = self.features.transpose()
         self.transform = transform        
