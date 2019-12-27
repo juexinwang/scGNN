@@ -16,13 +16,14 @@ from sklearn.metrics import silhouette_samples, silhouette_score
 from model import AE, VAE, VAE2d
 from util_function import *
 from graph_function import *
+from visualize_util import *
 
-parser = argparse.ArgumentParser(description='Only for imputation AutoEncoder-EM for scRNA')
+parser = argparse.ArgumentParser(description='AutoEncoder-EM for scRNA')
 parser.add_argument('--datasetName', type=str, default='MMPbasal_LTMG',
                     help='TGFb/sci-CAR/sci-CAR_LTMG/2.Yan/5.Pollen/MPPbasal/MPPbasal_all/MPPbasal_allgene/MPPbasal_allcell/MPPepo/MMPbasal_LTMG/MMPbasal_all_LTMG')
 parser.add_argument('--batch-size', type=int, default=10000, metavar='N',
                     help='input batch size for training (default: 128)')
-parser.add_argument('--epochs', type=int, default=100, metavar='N',
+parser.add_argument('--epochs', type=int, default=500, metavar='N',
                     help='number of epochs to train (default: 10)')
 parser.add_argument('--no-cuda', action='store_true', default=True,
                     help='enables CUDA training')
@@ -34,12 +35,10 @@ parser.add_argument('--discreteTag', type=bool, default=False,
                     help='False/True')
 parser.add_argument('--model', type=str, default='AE',
                     help='VAE/AE')
-parser.add_argument('--npyDir', type=str, default='npyImpute/',
+parser.add_argument('--npyDir', type=str, default='npyplus/',
                     help='save npy results in directory')
 parser.add_argument('--log-interval', type=int, default=100, metavar='N',
                     help='how many batches to wait before logging training status')
-parser.add_argument('--dropoutRatio', type=float, default=0.1,
-                    help='dropout ratio for impute')
 args = parser.parse_args()
 args.cuda = not args.no_cuda and torch.cuda.is_available()
 
@@ -56,7 +55,7 @@ kwargs = {'num_workers': 1, 'pin_memory': True} if args.cuda else {}
 #     datasets.MNIST('../data', train=False, transform=transforms.ToTensor()),
 #     batch_size=args.batch_size, shuffle=True, **kwargs)
 
-scData = scDatasetDropout(args.datasetName, args.discreteTag, args.dropoutRatio)
+scData = scDataset(args.datasetName, args.discreteTag)
 train_loader = DataLoader(scData, batch_size=args.batch_size, shuffle=True, **kwargs)
 
 # Original
@@ -67,7 +66,6 @@ elif args.model == 'AE':
     model = AE(dim=scData.features.shape[1]).to(device)
 optimizer = optim.Adam(model.parameters(), lr=1e-3)
 
-#TODO: batch needs to implement
 def train(epoch, train_loader=train_loader, forceReguFlag=False):
     model.train()
     train_loss = 0
@@ -143,14 +141,6 @@ if __name__ == "__main__":
     # np.save(args.datasetName+'_'+args.regulized_type+discreteStr+'_edgeList_init.npy',edgeList)       
     adjsample = None
     adjfeature = None
-
-    # save for imputation
-    np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_'+str(args.dropoutRatio)+'_features.npy',scData.features)
-    np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_'+str(args.dropoutRatio)+'_dropi.npy',scData.i)
-    np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_'+str(args.dropoutRatio)+'_dropj.npy',scData.j)
-    np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_'+str(args.dropoutRatio)+'_dropix.npy',scData.ix)
-    
-
     for epoch in range(1, args.epochs + 1):
         recon, original, z = train(epoch, forceReguFlag=False)
         # test(epoch)
@@ -160,11 +150,11 @@ if __name__ == "__main__":
         #     save_image(sample.view(64, 1, 28, 28),
         #                'results/sample_' + str(epoch) + '.png')
     reconOut = recon.detach().cpu().numpy()
-    originalOut = original.detach().cpu().numpy()
+    # originalOut = original.detach().cpu().numpy()
     zOut = z.detach().cpu().numpy()   
-    np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_'+str(args.dropoutRatio)+'_recon.npy',reconOut)
-    np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_'+str(args.dropoutRatio)+'_original.npy',originalOut)
-    np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_'+str(args.dropoutRatio)+'_z.npy',zOut)
+    np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_recon.npy',reconOut)
+    # np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_original.npy',originalOut)
+    np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_z.npy',zOut)
 
     adj, edgeList = generateAdj(zOut, graphType='KNNgraphML', para = 'euclidean:10')
     adjdense = sp.csr_matrix.todense(adj)
@@ -172,25 +162,66 @@ if __name__ == "__main__":
 
     np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_edgeList.npy',edgeList)
 
-    for bigepoch in range(0, 0):
-        scDataInter = scDatasetInter(recon)
-        train_loader = DataLoader(scDataInter, batch_size=args.batch_size, shuffle=True, **kwargs)
-        for epoch in range(1, args.epochs + 1):
-            recon, original, z = train(epoch, forceReguFlag=True)
+    
+    for bigepoch in range(0, 3):
+        # Get cluster
+        listResult,size = generateCluster(edgeList)
+
+        # Each cluster has a autoencoder, and organize them back in iteraization
+        clusterIndexList = []
+        for i in range(len(set(listResult))):
+            clusterIndexList.append([])
+        for i in range(len(listResult)):
+            clusterIndexList[listResult[i]].append(i)
+
+        reconNew = np.zeros((scData.features.shape[0],scData.features.shape[1]))
+        originalNew = np.zeros((scData.features.shape[0],scData.features.shape[1]))
+        zNew = np.copy(zOut)
+        
+        # Convert to Tensor
+        reconNew = torch.from_numpy(reconNew)
+        reconNew = reconNew.type(torch.FloatTensor)
+        reconNew = reconNew.to(device)
+        originalNew = torch.from_numpy(originalNew)
+        originalNew = originalNew.type(torch.FloatTensor)
+        originalNew = originalNew.to(device)
+        zNew = torch.from_numpy(zNew)
+        zNew = zNew.type(torch.FloatTensor)
+        zNew = zNew.to(device)
+
+        for clusterIndex in clusterIndexList:
+            reconUsage = recon[clusterIndex]
+
+            scDataInter = scDatasetInter(reconUsage)
+            train_loader = DataLoader(scDataInter, batch_size=args.batch_size, shuffle=True, **kwargs)
+            for epoch in range(1, args.epochs + 1):
+                reconCluster, originalCluster, zCluster = train(epoch, forceReguFlag=False)
+            
+            count = 0
+            for i in clusterIndex:
+                reconNew[i] = reconCluster[count,:]
+                originalNew[i] = originalCluster[count,:]
+                zNew[i] = zCluster[count,:]
+                count +=1
+
+        # Update
+        recon = reconNew
+        original = originalNew
+        zOut = zNew        
         
         reconOut = recon.detach().cpu().numpy()
-        originalOut = original.detach().cpu().numpy()
+        # originalOut = original.detach().cpu().numpy()
         zOut = z.detach().cpu().numpy()
         discreteStr = ''
         if args.discreteTag:
             discreteStr = 'D'
         np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_recon'+str(bigepoch)+'.npy',reconOut)
-        np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_original'+str(bigepoch)+'.npy',originalOut)
+        # np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_original'+str(bigepoch)+'.npy',originalOut)
         np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_z'+str(bigepoch)+'.npy',zOut)
 
-        adj, edgeList = generateAdj(zOut, graphType='KNNgraphML', para = 'euclidean:10')
-        adjdense = sp.csr_matrix.todense(adj)
-        adjsample = torch.from_numpy(adjdense)
+    adj, edgeList = generateAdj(zOut, graphType='KNNgraphML', para = 'euclidean:10')
+    adjdense = sp.csr_matrix.todense(adj)
+    adjsample = torch.from_numpy(adjdense)
 
-        np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_edgeList_final.npy',edgeList)
+    np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_edgeList_final.npy',edgeList)
 

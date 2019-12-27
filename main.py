@@ -1,4 +1,5 @@
 from __future__ import print_function
+import time
 import argparse
 import sys
 import numpy as np
@@ -18,7 +19,7 @@ from util_function import *
 from graph_function import *
 
 parser = argparse.ArgumentParser(description='AutoEncoder-EM for scRNA')
-parser.add_argument('--datasetName', type=str, default='MMPbasal_LTMG',
+parser.add_argument('--datasetName', type=str, default='MMPbasal',
                     help='TGFb/sci-CAR/sci-CAR_LTMG/2.Yan/5.Pollen/MPPbasal/MPPbasal_all/MPPbasal_allgene/MPPbasal_allcell/MPPepo/MMPbasal_LTMG/MMPbasal_all_LTMG')
 parser.add_argument('--batch-size', type=int, default=10000, metavar='N',
                     help='input batch size for training (default: 128)')
@@ -34,8 +35,10 @@ parser.add_argument('--discreteTag', type=bool, default=False,
                     help='False/True')
 parser.add_argument('--model', type=str, default='AE',
                     help='VAE/AE')
-parser.add_argument('--npyDir', type=str, default='npyGraph/',
+parser.add_argument('--npyDir', type=str, default='npynzGraph/',
                     help='save npy results in directory')
+parser.add_argument('--zerofillFlag', type=bool, default=True,
+                    help='fill zero or not in the iteration')
 parser.add_argument('--log-interval', type=int, default=100, metavar='N',
                     help='how many batches to wait before logging training status')
 args = parser.parse_args()
@@ -149,11 +152,13 @@ if __name__ == "__main__":
         #     sample = model.decode(sample).cpu()
         #     save_image(sample.view(64, 1, 28, 28),
         #                'results/sample_' + str(epoch) + '.png')
+    
+    
     reconOut = recon.detach().cpu().numpy()
-    originalOut = original.detach().cpu().numpy()
+    # originalOut = original.detach().cpu().numpy()
     zOut = z.detach().cpu().numpy()   
     np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_recon.npy',reconOut)
-    np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_original.npy',originalOut)
+    # np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_original.npy',originalOut)
     np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_z.npy',zOut)
 
     adj, edgeList = generateAdj(zOut, graphType='KNNgraphML', para = 'euclidean:10')
@@ -162,25 +167,38 @@ if __name__ == "__main__":
 
     np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_edgeList.npy',edgeList)
 
-    for bigepoch in range(0, 3):
+
+    #if fill the zero in the iteration
+    start_time = time.time()
+    # TODO: better implementation
+    if args.zerofillFlag:
+        for nz_index in range(len(scData.nz_i)):
+            # tmp = scipy.sparse.lil_matrix.todense(scData.features[scData.nz_i[nz_index], scData.nz_j[nz_index]])
+            # tmp = np.asarray(tmp).reshape(-1)[0]
+            tmp = scData.features[scData.nz_i[nz_index], scData.nz_j[nz_index]]
+            reconOut[scData.nz_i[nz_index], scData.nz_j[nz_index]] = tmp
+        recon = reconOut
+    print("--- %s seconds ---" % (time.time() - start_time))
+
+    for bigepoch in range(0, 2):
         scDataInter = scDatasetInter(recon)
         train_loader = DataLoader(scDataInter, batch_size=args.batch_size, shuffle=True, **kwargs)
+
         for epoch in range(1, args.epochs + 1):
+            # recon, original, z = train(epoch, forceReguFlag=True, tensorType=False)
             recon, original, z = train(epoch, forceReguFlag=True)
         
         reconOut = recon.detach().cpu().numpy()
-        originalOut = original.detach().cpu().numpy()
+        # originalOut = original.detach().cpu().numpy()
         zOut = z.detach().cpu().numpy()
-        discreteStr = ''
-        if args.discreteTag:
-            discreteStr = 'D'
+
         np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_recon'+str(bigepoch)+'.npy',reconOut)
-        np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_original'+str(bigepoch)+'.npy',originalOut)
+        # np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_original'+str(bigepoch)+'.npy',originalOut)
         np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_z'+str(bigepoch)+'.npy',zOut)
 
         adj, edgeList = generateAdj(zOut, graphType='KNNgraphML', para = 'euclidean:10')
         adjdense = sp.csr_matrix.todense(adj)
         adjsample = torch.from_numpy(adjdense)
 
-        np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_edgeList_final.npy',edgeList)
+    np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_edgeList_final.npy',edgeList)
 

@@ -39,7 +39,7 @@ parser.add_argument('--saveFlag', type=bool, default=True,
                     help='save fig or not')
 parser.add_argument('--saveDir', type=str, default='fig/',
                     help='save fig or not')
-parser.add_argument('--npyDir', type=str, default='npy/',
+parser.add_argument('--npyDir', type=str, default='npyGraph/',
                     help='save npy results in directory')
 args = parser.parse_args()
 
@@ -77,20 +77,20 @@ _, edgeList = generateAdj(z, graphType='KNNgraphML', para = 'euclidean:10')
 
 listResult,size = generateCluster(edgeList)
 
-drawUMAP(z, listResult, size, args.saveDir, args.dataset, args.saveFlag)
+# drawUMAP(z, listResult, size, args.saveDir, args.dataset, args.saveFlag)
 
-drawSPRING(edgeList, listResult, args.saveDir, args.dataset, args.saveFlag)
-drawTSNE(z, listResult, args.saveDir, args.dataset, args.saveFlag)
+# drawSPRING(edgeList, listResult, args.saveDir, args.dataset, args.saveFlag)
+# drawTSNE(z, listResult, args.saveDir, args.dataset, args.saveFlag)
 
-# test marker genes:
-markerGeneList = ['Kit','Flt3','Dntt','Ebf1','Cd19','Lmo4','Ms4a2','Ear10','Cd74','Irf8','Mpo','Elane','Ngp','Mpl','Pf4','Car1','Gata1','Hbb-bs','Ptgfrn','Mki67']
-exFile = 'data/sc/{}/{}.features.csv'.format(args.datasetName, args.datasetName)
-geneFilename = args.datasetName
-#_LTMG use same genefiles as original
-if args.datasetName[-4:]=='LTMG':
-    geneFilename = args.datasetName[:-5]
-geneFile = 'data/sc/{}/{}.gene.txt'.format(geneFilename, geneFilename)
-drawFractPlot(exFile, geneFile, markerGeneList, listResult, args.saveDir, args.dataset, args.saveFlag)
+# # test marker genes:
+# markerGeneList = ['Kit','Flt3','Dntt','Ebf1','Cd19','Lmo4','Ms4a2','Ear10','Cd74','Irf8','Mpo','Elane','Ngp','Mpl','Pf4','Car1','Gata1','Hbb-bs','Ptgfrn','Mki67']
+# exFile = 'data/sc/{}/{}.features.csv'.format(args.datasetName, args.datasetName)
+# geneFilename = args.datasetName
+# #_LTMG use same genefiles as original
+# if args.datasetName[-4:]=='LTMG':
+#     geneFilename = args.datasetName[:-5]
+# geneFile = 'data/sc/{}/{}.gene.txt'.format(geneFilename, geneFilename)
+# drawFractPlot(exFile, geneFile, markerGeneList, listResult, args.saveDir, args.dataset, args.saveFlag)
 
 modularity = calcuModularity(listResult, edgeList)
 print('{:.4f}'.format(modularity))
@@ -98,13 +98,13 @@ silhouette, chs, dbs = measureClusteringNoLabel(z, listResult)
 print('{:.4f} {:.4f} {:.4f}'.format(silhouette, chs, dbs))
 
 
-labelFilename = '/home/wangjue/biodata/scData/AnjunBenchmark/5.Pollen/Pollen_cell_label.csv'
-cellFilename  = '/home/wangjue/biodata/scData/5.Pollen.cellname.txt'
-cellIndexFilename = '/home/wangjue/myprojects/scGNN/data/sc/5.Pollen/ind.5.Pollen.cellindex.txt'
-truelabel = readTrueLabelList(labelFilename, cellFilename, cellIndexFilename)
+# labelFilename = '/home/wangjue/biodata/scData/AnjunBenchmark/5.Pollen/Pollen_cell_label.csv'
+# cellFilename  = '/home/wangjue/biodata/scData/5.Pollen.cellname.txt'
+# cellIndexFilename = '/home/wangjue/myprojects/scGNN/data/sc/5.Pollen/ind.5.Pollen.cellindex.txt'
+# truelabel = readTrueLabelList(labelFilename, cellFilename, cellIndexFilename)
 
-ari, ami, nmi, cs, fms, vms, hs = measureClusteringTrueLabel(truelabel, listResult)
-print('{:.4f} {:.4f} {:.4f} {:.4f} {:.4f} {:.4f} {:.4f}'.format(ari, ami, nmi, cs, fms, vms, hs))
+# ari, ami, nmi, cs, fms, vms, hs = measureClusteringTrueLabel(truelabel, listResult)
+# print('{:.4f} {:.4f} {:.4f} {:.4f} {:.4f} {:.4f} {:.4f}'.format(ari, ami, nmi, cs, fms, vms, hs))
 
 
 # new={}

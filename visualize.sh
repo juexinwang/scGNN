@@ -1,9 +1,9 @@
 #
-python -W ignore visualize.py --datasetName MMPbasal --dataset data/sc/MMPbasal/MMPbasal.features.csv
-python -W ignore visualize.py --datasetName MMPbasal --dataset data/sc/MMPbasal/MMPbasal.features.D.csv
+# python -W ignore visualize.py --datasetName MMPbasal --dataset data/sc/MMPbasal/MMPbasal.features.csv
+# python -W ignore visualize.py --datasetName MMPbasal --dataset data/sc/MMPbasal/MMPbasal.features.D.csv
 
-python -W ignore visualize.py --datasetName MMPbasal_all --dataset data/sc/MMPbasal_all/MMPbasal_all.features.csv
-python -W ignore visualize.py --datasetName MMPbasal_all --dataset data/sc/MMPbasal_all/MMPbasal_all.features.D.csv
+# python -W ignore visualize.py --datasetName MMPbasal_all --dataset data/sc/MMPbasal_all/MMPbasal_all.features.csv
+# python -W ignore visualize.py --datasetName MMPbasal_all --dataset data/sc/MMPbasal_all/MMPbasal_all.features.D.csv
 
 # python visualize.py --datasetName MMPbasal_allgene --dataset data/sc/MMPbasal_allgene/MMPbasal_allgene.features.csv
 # python visualize.py --datasetName MMPbasal_allgene --dataset data/sc/MMPbasal_allgene/MMPbasal_allgene.features.D.csv

@@ -3,6 +3,7 @@ import numpy as np
 import pickle as pkl
 import networkx as nx
 import scipy.sparse as sp
+import scipy.io
 from node2vec import Node2Vec
 import torch
 from torch import nn, optim
@@ -115,6 +116,8 @@ class scDataset(Dataset):
         self.features = load_data(datasetName,discreteTag)
         # Now lines are cells, and cols are genes
         # self.features = self.features.transpose()
+        # save nonzero
+        self.nz_i,self.nz_j = self.features.nonzero()
         self.transform = transform        
 
     def __len__(self):

@@ -339,6 +339,28 @@ def impute_dropout(X, rate=0.1):
     X_zero: copy of X with zeros
     i, j, ix: indices of where dropout is applied
     """
+    X_zero = scipy.sparse.lil_matrix.copy(X)
+    # select non-zero subset
+    i,j = X_zero.nonzero()
+    
+    # choice number 1 : select 10 percent of the non zero values (so that distributions overlap enough)
+    ix = np.random.choice(range(len(i)), int(np.floor(0.1 * len(i))), replace=False)
+    X_zero[i[ix], j[ix]] *= np.random.binomial(1, rate)
+       
+    # choice number 2, focus on a few but corrupt binomially
+    #ix = np.random.choice(range(len(i)), int(slice_prop * np.floor(len(i))), replace=False)
+    #X_zero[i[ix], j[ix]] = np.random.binomial(X_zero[i[ix], j[ix]].astype(np.int), rate)
+    return X_zero, i, j, ix
+
+# TODO
+def impute_dropout_sparse(X, rate=0.1):
+    """
+    X: original testing set
+    ========
+    returns:
+    X_zero: copy of X with zeros
+    i, j, ix: indices of where dropout is applied
+    """
     X_zero = np.copy(X)
     # select non-zero subset
     i,j = np.nonzero(X_zero)
@@ -353,10 +375,30 @@ def impute_dropout(X, rate=0.1):
     return X_zero, i, j, ix
 
 
+
 # IMPUTATION METRICS
 # Ref:
 # https://github.com/romain-lopez/scVI-reproducibility/blob/master/demo_code/benchmarking.py
 def imputation_error(X_mean, X, X_zero, i, j, ix):
+    """
+    X_mean: imputed dataset
+    X: original dataset
+    X_zero: zeros dataset, does not need 
+    i, j, ix: indices of where dropout was applied
+    ========
+    returns:
+    median L1 distance between datasets at indices given
+    """
+    all_index = i[ix], j[ix]
+    x = X_mean[all_index[0],all_index[1]]
+    y =      X[all_index[0],all_index[1]]
+    yuse = scipy.sparse.lil_matrix.todense(y)
+    yuse = np.asarray(yuse).reshape(-1)
+    # return np.median(np.abs(x - yuse))
+    return np.mean(np.abs(x - yuse))
+
+#TODO
+def imputation_error_sparse(X_mean, X, X_zero, i, j, ix):
     """
     X_mean: imputed dataset
     X: original dataset
