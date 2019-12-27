@@ -394,8 +394,9 @@ def imputation_error(X_mean, X, X_zero, i, j, ix):
     y =      X[all_index[0],all_index[1]]
     yuse = scipy.sparse.lil_matrix.todense(y)
     yuse = np.asarray(yuse).reshape(-1)
+    result = np.abs(x - yuse)
     # return np.median(np.abs(x - yuse))
-    return np.mean(np.abs(x - yuse))
+    return np.mean(result), np.median(result), np.min(result), np.max(result)
 
 #TODO
 def imputation_error_sparse(X_mean, X, X_zero, i, j, ix):

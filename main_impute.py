@@ -160,10 +160,10 @@ if __name__ == "__main__":
         #     save_image(sample.view(64, 1, 28, 28),
         #                'results/sample_' + str(epoch) + '.png')
     reconOut = recon.detach().cpu().numpy()
-    originalOut = original.detach().cpu().numpy()
+    # originalOut = original.detach().cpu().numpy()
     zOut = z.detach().cpu().numpy()   
     np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_'+str(args.dropoutRatio)+'_recon.npy',reconOut)
-    np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_'+str(args.dropoutRatio)+'_original.npy',originalOut)
+    # np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_'+str(args.dropoutRatio)+'_original.npy',originalOut)
     np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_'+str(args.dropoutRatio)+'_z.npy',zOut)
 
     adj, edgeList = generateAdj(zOut, graphType='KNNgraphML', para = 'euclidean:10')
@@ -172,25 +172,25 @@ if __name__ == "__main__":
 
     np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_edgeList.npy',edgeList)
 
-    for bigepoch in range(0, 0):
+    for bigepoch in range(0, 3):
         scDataInter = scDatasetInter(recon)
         train_loader = DataLoader(scDataInter, batch_size=args.batch_size, shuffle=True, **kwargs)
         for epoch in range(1, args.epochs + 1):
             recon, original, z = train(epoch, forceReguFlag=True)
         
         reconOut = recon.detach().cpu().numpy()
-        originalOut = original.detach().cpu().numpy()
+        # originalOut = original.detach().cpu().numpy()
         zOut = z.detach().cpu().numpy()
         discreteStr = ''
         if args.discreteTag:
             discreteStr = 'D'
         np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_recon'+str(bigepoch)+'.npy',reconOut)
-        np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_original'+str(bigepoch)+'.npy',originalOut)
+        # np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_original'+str(bigepoch)+'.npy',originalOut)
         np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_z'+str(bigepoch)+'.npy',zOut)
 
         adj, edgeList = generateAdj(zOut, graphType='KNNgraphML', para = 'euclidean:10')
         adjdense = sp.csr_matrix.todense(adj)
         adjsample = torch.from_numpy(adjdense)
 
-        np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_edgeList_final.npy',edgeList)
+    np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_edgeList_final.npy',edgeList)
 

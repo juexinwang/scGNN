@@ -29,7 +29,21 @@ dropix           = np.load(args.npyDir+args.datasetName+'_'+args.regulized_type+
 
 featuresImpute   = np.load(args.npyDir+args.datasetName+'_'+args.regulized_type+'_'+args.ratio+'_recon.npy')
 
-l1Error = imputation_error(featuresImpute, featuresOriginal, features, dropi, dropj, dropix)
+l1ErrorMean, l1ErrorMedian, l1ErrorMin, l1ErrorMax = imputation_error(featuresImpute, featuresOriginal, features, dropi, dropj, dropix)
 
-print(l1Error)
+print('{:.4f} {:.4f} {:.4f} {:.4f}'.format(l1ErrorMean, l1ErrorMedian, l1ErrorMin, l1ErrorMax))
+
+
+
+# z = pd.read_csv('data/sc/MPPbasal/MPPbasal.features.csv',header=None)
+z = pd.read_csv('data/sc/{}/{}.features.csv'.format(args.datasetName, args.datasetName),header=None)
+
+_, edgeList = generateAdj(z, graphType='KNNgraphML', para = 'euclidean:10')
+
+listResult,size = generateCluster(edgeList)
+
+modularity = calcuModularity(listResult, edgeList)
+print('{:.4f}'.format(modularity))
+silhouette, chs, dbs = measureClusteringNoLabel(z, listResult)
+print('{:.4f} {:.4f} {:.4f}'.format(silhouette, chs, dbs))
 

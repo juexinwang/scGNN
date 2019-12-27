@@ -39,7 +39,7 @@ parser.add_argument('--saveFlag', type=bool, default=True,
                     help='save fig or not')
 parser.add_argument('--saveDir', type=str, default='fig/',
                     help='save fig or not')
-parser.add_argument('--npyDir', type=str, default='npyGraph/',
+parser.add_argument('--npyDir', type=str, default='npynzGraph/',
                     help='save npy results in directory')
 args = parser.parse_args()
 
