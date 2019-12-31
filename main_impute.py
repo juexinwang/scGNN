@@ -145,7 +145,10 @@ if __name__ == "__main__":
     adjfeature = None
 
     # save for imputation
-    np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_'+str(args.dropoutRatio)+'_features.npy',scData.features)
+    # TODO
+    save_sparse_matrix(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_'+str(args.dropoutRatio)+'_features.npz',scData.features)
+    # sp.save_npz(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_'+str(args.dropoutRatio)+'_features.npz',scData.features)
+    # np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_'+str(args.dropoutRatio)+'_features.npy',scData.features)
     np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_'+str(args.dropoutRatio)+'_dropi.npy',scData.i)
     np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_'+str(args.dropoutRatio)+'_dropj.npy',scData.j)
     np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_'+str(args.dropoutRatio)+'_dropix.npy',scData.ix)
@@ -170,9 +173,9 @@ if __name__ == "__main__":
     adjdense = sp.csr_matrix.todense(adj)
     adjsample = torch.from_numpy(adjdense)
 
-    np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_edgeList.npy',edgeList)
+    np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_'+str(args.dropoutRatio)+'_edgeList.npy',edgeList)
 
-    for bigepoch in range(0, 3):
+    for bigepoch in range(0, 1):
         scDataInter = scDatasetInter(recon)
         train_loader = DataLoader(scDataInter, batch_size=args.batch_size, shuffle=True, **kwargs)
         for epoch in range(1, args.epochs + 1):
@@ -184,13 +187,13 @@ if __name__ == "__main__":
         discreteStr = ''
         if args.discreteTag:
             discreteStr = 'D'
-        np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_recon'+str(bigepoch)+'.npy',reconOut)
+        np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_'+str(args.dropoutRatio)+'_recon'+str(bigepoch)+'.npy',reconOut)
         # np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_original'+str(bigepoch)+'.npy',originalOut)
-        np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_z'+str(bigepoch)+'.npy',zOut)
+        np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_'+str(args.dropoutRatio)+'_z'+str(bigepoch)+'.npy',zOut)
 
         adj, edgeList = generateAdj(zOut, graphType='KNNgraphML', para = 'euclidean:10')
         adjdense = sp.csr_matrix.todense(adj)
         adjsample = torch.from_numpy(adjdense)
 
-    np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_edgeList_final.npy',edgeList)
+    np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_'+str(args.dropoutRatio)+'_edgeList_final.npy',edgeList)
 

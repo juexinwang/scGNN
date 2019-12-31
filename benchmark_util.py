@@ -301,7 +301,7 @@ def readTrueLabelList(labelFilename, cellFilename, cellIndexFilename):
             if count > 0:
                 line = line.strip()
                 words = line.split(',')
-                cellDict[words[0]]=words[1]
+                cellDict[words[0]]=int(words[1])-1
             count += 1
         f.close()
     
@@ -310,7 +310,7 @@ def readTrueLabelList(labelFilename, cellFilename, cellIndexFilename):
     with open(cellFilename, 'r') as f:
         lines = f.readlines()
         for line in lines:
-            if count > 0:
+            if count >= 0:
                 line = line.strip()
                 cellIndexDict[count]=line            
             count += 1
@@ -322,8 +322,11 @@ def readTrueLabelList(labelFilename, cellFilename, cellIndexFilename):
         lines = f.readlines()
         for line in lines:
             line = line.strip()
-            cellName = cellIndexDict[line]
-            memberName = cellDict[cellName]
+            if line in cellIndexDict:
+                cellName = cellIndexDict[line]
+                memberName = cellDict[cellName]
+            else:
+                memberName = 100
             labelList.append(memberName)            
             count += 1
         f.close()

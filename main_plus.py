@@ -16,14 +16,14 @@ from sklearn.metrics import silhouette_samples, silhouette_score
 from model import AE, VAE, VAE2d
 from util_function import *
 from graph_function import *
-from visualize_util import *
+from benchmark_util import *
 
 parser = argparse.ArgumentParser(description='AutoEncoder-EM for scRNA')
 parser.add_argument('--datasetName', type=str, default='MMPbasal_LTMG',
                     help='TGFb/sci-CAR/sci-CAR_LTMG/2.Yan/5.Pollen/MPPbasal/MPPbasal_all/MPPbasal_allgene/MPPbasal_allcell/MPPepo/MMPbasal_LTMG/MMPbasal_all_LTMG')
 parser.add_argument('--batch-size', type=int, default=10000, metavar='N',
                     help='input batch size for training (default: 128)')
-parser.add_argument('--epochs', type=int, default=500, metavar='N',
+parser.add_argument('--epochs', type=int, default=100, metavar='N',
                     help='number of epochs to train (default: 10)')
 parser.add_argument('--no-cuda', action='store_true', default=True,
                     help='enables CUDA training')
