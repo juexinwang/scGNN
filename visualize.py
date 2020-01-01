@@ -39,7 +39,7 @@ parser.add_argument('--saveFlag', type=bool, default=True,
                     help='save fig or not')
 parser.add_argument('--saveDir', type=str, default='fig/',
                     help='save fig or not')
-parser.add_argument('--npyDir', type=str, default='npyplus/',
+parser.add_argument('--npyDir', type=str, default='npyGraph10/',
                     help='save npy results in directory')
 parser.add_argument('--benchFlag', type=bool, default=True,
                     help='True for data with benchmark')
@@ -94,15 +94,15 @@ listResult,size = generateCluster(edgeList)
 # geneFile = 'data/sc/{}/{}.gene.txt'.format(geneFilename, geneFilename)
 # drawFractPlot(exFile, geneFile, markerGeneList, listResult, args.saveDir, args.dataset, args.saveFlag)
 
-modularity = calcuModularity(listResult, edgeList)
-print('{:.4f}'.format(modularity))
+# modularity = calcuModularity(listResult, edgeList)
+# print('{:.4f}'.format(modularity))
 silhouette, chs, dbs = measureClusteringNoLabel(z, listResult)
 print('{:.4f} {:.4f} {:.4f}'.format(silhouette, chs, dbs))
 
 if args.benchFlag:
     labelFilename = '/home/wangjue/biodata/scData/AnjunBenchmark/5.Pollen/Pollen_cell_label.csv'
     cellFilename  = '/home/wangjue/biodata/scData/5.Pollen.cellname.txt'
-    cellIndexFilename = '/home/wangjue/myprojects/scGNN/data/sc/5.Pollen_all/ind.5.Pollen_all.cellindex.txt'
+    cellIndexFilename = '/home/wangjue/myprojects/scGNN/data/sc/5.Pollen/ind.5.Pollen.cellindex.txt'
     truelabel = readTrueLabelList(labelFilename, cellFilename, cellIndexFilename)
 
     ari, ami, nmi, cs, fms, vms, hs = measureClusteringTrueLabel(truelabel, listResult)

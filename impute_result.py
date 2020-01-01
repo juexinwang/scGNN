@@ -53,8 +53,8 @@ def imputeResult(inputData):
     silhouette, chs, dbs = measureClusteringNoLabel(z, listResult)
     print('{:.4f} {:.4f} {:.4f}'.format(silhouette, chs, dbs))
 
-# imputeResult(featuresImpute)
-# imputeResult(featuresOriginal)
-imputeResult(features)
+imputeResult(featuresImpute)
+imputeResult(featuresOriginal)
+# imputeResult(features)
 print('\n')
 
