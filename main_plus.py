@@ -219,9 +219,9 @@ if __name__ == "__main__":
         # np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_original'+str(bigepoch)+'.npy',originalOut)
         np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_z'+str(bigepoch)+'.npy',zOut)
 
-    adj, edgeList = generateAdj(zOut, graphType='KNNgraphML', para = 'euclidean:10')
-    adjdense = sp.csr_matrix.todense(adj)
-    adjsample = torch.from_numpy(adjdense)
+        adj, edgeList = generateAdj(zOut, graphType='KNNgraphML', para = 'euclidean:10')
+        adjdense = sp.csr_matrix.todense(adj)
+        adjsample = torch.from_numpy(adjdense)
 
-    np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_edgeList_final.npy',edgeList)
+        np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_'+str(bigepoch)+'_edgeList_final.npy',edgeList)
 
