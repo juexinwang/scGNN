@@ -29,7 +29,13 @@ from benchmark_util import *
 parser = argparse.ArgumentParser()
 parser.add_argument('--npyDir',type=str,default='npyGraph10/',help="npyDir")
 parser.add_argument('--zFilename',type=str,default='5.Pollen_all_noregu_recon0.npy',help="z Filename")
-
+parser.add_argument('--benchmark',type=bool,default=True,help="whether have benchmark")
+# cell File
+parser.add_argument('--labelFilename',type=str,default='/home/wangjue/biodata/scData/AnjunBenchmark/5.Pollen/Pollen_cell_label.csv',help="label Filename")
+parser.add_argument('--cellFilename',type=str,default='/home/wangjue/biodata/scData/5.Pollen.cellname.txt',help="cell Filename")
+parser.add_argument('--cellIndexname',type=str,default='/home/wangjue/myprojects/scGNN/data/sc/5.Pollen_all/ind.5.Pollen_all.cellindex.txt',help="cell index Filename")
+parser.add_argument('--originalFile',type=str,default='data/sc/5.Pollen_all/5.Pollen_all.features.csv',help="original csv Filename")
+# GAE
 parser.add_argument('--model', type=str, default='gcn_vae', help="models used")
 parser.add_argument('--dw', type=int, default=0, help="whether to use deepWalk regularization, 0/1")
 parser.add_argument('--epochs', type=int, default=200, help='Number of epochs to train.')
@@ -49,14 +55,14 @@ parser.add_argument('--n-clusters', default=11, type=int, help='number of cluste
 parser.add_argument('--plot', type=int, default=0, help="whether to plot the clusters using tsne")
 args = parser.parse_args()
 
-
-def gae_clustering(z, true_labels, adj):
+#gae embedding
+def gae_embedding(z, adj):
     '''
-    GAE for clustering
+    GAE embedding for clustering
     Return:
         Embedding from graph
     '''
-    true_labels = np.asarray(true_labels)
+    # true_labels = np.asarray(true_labels)
 
     # args.model = 'gcn_vae'
     # args.dw    = 0
@@ -210,43 +216,112 @@ def gae_clustering(z, true_labels, adj):
             epoch + 1, cur_loss,
             ap_curr, time.time() - t))
 
-        if (epoch + 1) % 10 == 0:
-            tqdm.write("Evaluating intermediate results...")
-            kmeans = KMeans(n_clusters=args.n_clusters, random_state=0).fit(hidden_emb)
-            predict_labels = kmeans.predict(hidden_emb)
-            cm = clustering_metrics(true_labels, predict_labels)
-            cm.evaluationClusterModelFromLabel(tqdm)
-            roc_score, ap_score = get_roc_score(hidden_emb, adj_orig, test_edges, test_edges_false)
-            tqdm.write('ROC: {}, AP: {}'.format(roc_score, ap_score))
-            np.save('logs/emb_epoch_{}.npy'.format(epoch + 1), hidden_emb)
+        # if (epoch + 1) % 10 == 0:
+        #     tqdm.write("Evaluating intermediate results...")
+        #     kmeans = KMeans(n_clusters=args.n_clusters, random_state=0).fit(hidden_emb)
+        #     predict_labels = kmeans.predict(hidden_emb)
+        #     cm = clustering_metrics(true_labels, predict_labels)
+        #     cm.evaluationClusterModelFromLabel(tqdm)
+        #     roc_score, ap_score = get_roc_score(hidden_emb, adj_orig, test_edges, test_edges_false)
+        #     tqdm.write('ROC: {}, AP: {}'.format(roc_score, ap_score))
+        #     np.save('logs/emb_epoch_{}.npy'.format(epoch + 1), hidden_emb)
 
     tqdm.write("Optimization Finished!")
 
     roc_score, ap_score = get_roc_score(hidden_emb, adj_orig, test_edges, test_edges_false)
     tqdm.write('Test ROC score: ' + str(roc_score))
     tqdm.write('Test AP score: ' + str(ap_score))
-    kmeans = KMeans(n_clusters=args.n_clusters, random_state=0).fit(hidden_emb)
-    predict_labels = kmeans.predict(hidden_emb)
-    cm = clustering_metrics(true_labels, predict_labels)
-    cm.evaluationClusterModelFromLabel(tqdm)
+    # kmeans = KMeans(n_clusters=args.n_clusters, random_state=0).fit(hidden_emb)
+    # predict_labels = kmeans.predict(hidden_emb)
+    # cm = clustering_metrics(true_labels, predict_labels)
+    # cm.evaluationClusterModelFromLabel(tqdm)
 
-    if args.plot == 1:
-        cm.plotClusters(tqdm, hidden_emb, true_labels)
+    # if args.plot == 1:
+    #     cm.plotClusters(tqdm, hidden_emb, true_labels)
 
     return hidden_emb
 
+def measure_clustering_benchmark_results(z, listResult, true_labels):
+    '''
+    Output results from different clustering methods with known cell types
+    '''
+    silhouette, chs, dbs = measureClusteringNoLabel(z, listResult)
+    ari, ami, nmi, cs, fms, vms, hs = measureClusteringTrueLabel(true_labels, listResult)
+    print('{:.4f} {:.4f} {:.4f} {:.4f} {:.4f} {:.4f} {:.4f} {:.4f} {:.4f} {:.4f}'.format(silhouette, chs, dbs, ari, ami, nmi, cs, fms, vms, hs))
+
 def measure_clustering_results(z, listResult):
     '''
-    Output results from different clustering methods
+    Output results from different clustering methods with unknown cell types
     '''
     silhouette, chs, dbs = measureClusteringNoLabel(z, listResult)
     print('{:.4f} {:.4f} {:.4f}'.format(silhouette, chs, dbs))
-    ari, ami, nmi, cs, fms, vms, hs = measureClusteringTrueLabel(true_labels, listResult)
-    print('{:.4f} {:.4f} {:.4f} {:.4f} {:.4f} {:.4f} {:.4f}'.format(ari, ami, nmi, cs, fms, vms, hs))
+
+def test_clustering_benchmark_results(z, edgeList, true_labels):
+    '''
+    Try different clustring with known celltypes
+    '''
+    #graph Louvain
+    print("Louvain")
+    listResult,size = generateCluster(edgeList)
+    measure_clustering_benchmark_results(z,listResult, true_labels)
+
+    #KMeans
+    print("KMeans")
+    clustering = KMeans(n_clusters=args.n_clusters, random_state=0).fit(z)
+    listResult = clustering.predict(z)
+    measure_clustering_benchmark_results(z,listResult, true_labels)
+
+    #Spectral Clustering
+    print("SpectralClustering")
+    clustering = SpectralClustering(n_clusters=args.n_clusters, assign_labels="discretize", random_state=0).fit(z)
+    listResult = clustering.labels_.tolist()
+    measure_clustering_benchmark_results(z,listResult, true_labels)
+
+    #AffinityPropagation
+    print("AffinityPropagation")
+    clustering = AffinityPropagation().fit(z)
+    listResult = clustering.predict(z)
+    measure_clustering_benchmark_results(z,listResult, true_labels)
+
+    #AgglomerativeClustering
+    print("AgglomerativeClustering")
+    clustering = AgglomerativeClustering().fit(z)
+    listResult = clustering.labels_.tolist()
+    measure_clustering_benchmark_results(z,listResult, true_labels)
+
+    #Birch
+    print("Birch")
+    clustering = Birch(n_clusters=args.n_clusters).fit(z)
+    listResult = clustering.predict(z)
+    measure_clustering_benchmark_results(z,listResult, true_labels)
+
+    # #DBSCAN
+    # print("DBSCAN")
+    # clustering = DBSCAN().fit(z)
+    # listResult = clustering.labels_.tolist()
+    # measure_clustering_benchmark_results(z,listResult, true_labels)
+
+    #FeatureAgglomeration
+    # print("FeatureAgglomeration")
+    # clustering = FeatureAgglomeration(n_clusters=args.n_clusters).fit(z)
+    # listResult = clustering.labels_.tolist()
+    # measure_clustering_benchmark_results(z,listResult, true_labels)
+
+    #MeanShift
+    # print("MeanShift")
+    # clustering = MeanShift().fit(z)
+    # listResult = clustering.predict(z)
+    # measure_clustering_benchmark_results(z,listResult, true_labels)
+
+    #OPTICS
+    print("OPTICS")
+    clustering = OPTICS().fit(z)
+    listResult = clustering.labels_.tolist()
+    measure_clustering_benchmark_results(z,listResult, true_labels)
 
 def test_clustering_results(z, edgeList):
     '''
-    Try different clustring
+    Try different clustring without known celltypes
     '''
     #graph Louvain
     print("Louvain")
@@ -307,27 +382,42 @@ def test_clustering_results(z, edgeList):
     listResult = clustering.labels_.tolist()
     measure_clustering_results(z,listResult)
 
+if args.benchmark:
+    labelFilename = args.labelFilename
+    cellFilename  = args.cellFilename
+    cellIndexFilename = args.cellIndexname
+    true_labels = readTrueLabelList(labelFilename, cellFilename, cellIndexFilename)
 
 
 
+print("Proposed")
 z = np.load(args.npyDir+args.zFilename)
 adj, edgeList = generateAdj(z, graphType='KNNgraphML', para = 'euclidean:10')
 
-labelFilename = '/home/wangjue/biodata/scData/AnjunBenchmark/5.Pollen/Pollen_cell_label.csv'
-cellFilename  = '/home/wangjue/biodata/scData/5.Pollen.cellname.txt'
-cellIndexFilename = '/home/wangjue/myprojects/scGNN/data/sc/5.Pollen_all/ind.5.Pollen_all.cellindex.txt'
-true_labels = readTrueLabelList(labelFilename, cellFilename, cellIndexFilename)
-
-# print("Before GAE")
-# test_clustering_results(z, edgeList)
-
-#gae
 print("Start GAE")
 zDiscret = z>np.mean(z,axis=0)
 zDiscret = 1.0*zDiscret
-z=gae_clustering(zDiscret, true_labels, adj)
+zGAE=gae_embedding(zDiscret, adj)
 
-print("After GAE")
-test_clustering_results(z, edgeList)
+print("GAE clustering")
+if args.benchmark:
+    test_clustering_benchmark_results(zGAE, edgeList, true_labels)
+else:
+    test_clustering_results(zGAE, edgeList)
+
+print("Original PCA")
+x = pd.read_csv(args.originalFile,header=None)
+x, re = pcaFunc(x, n_components=100)
+adj, edgeList = generateAdj(x, graphType='KNNgraphML', para = 'euclidean:10')
+if args.benchmark:
+    test_clustering_benchmark_results(x, edgeList, true_labels)
+else:
+    test_clustering_results(x, edgeList)
+
+print("Before GAE")
+if args.benchmark:
+    test_clustering_benchmark_results(z, edgeList, true_labels)
+else:
+    test_clustering_results(x, edgeList)
 
 

@@ -23,6 +23,8 @@ parser.add_argument('--datasetName', type=str, default='MMPbasal',
                     help='TGFb/sci-CAR/sci-CAR_LTMG/2.Yan/5.Pollen/MPPbasal/MPPbasal_all/MPPbasal_allgene/MPPbasal_allcell/MPPepo/MMPbasal_LTMG/MMPbasal_all_LTMG')
 parser.add_argument('--batch-size', type=int, default=10000, metavar='N',
                     help='input batch size for training (default: 128)')
+parser.add_argument('--total-epochs', type=int, default=3, metavar='N',
+                    help='number of epochs in total iteration (default: 3)')
 parser.add_argument('--epochs', type=int, default=500, metavar='N',
                     help='number of epochs to train (default: 10)')
 parser.add_argument('--no-cuda', action='store_true', default=True,
@@ -33,6 +35,10 @@ parser.add_argument('--regulized-type', type=str, default='noregu',
                     help='regulized type (default: Graph), otherwise: noregu')
 parser.add_argument('--discreteTag', type=bool, default=False,
                     help='False/True')
+parser.add_argument('--k', type=int, default=10,
+                    help='k in KNN graph (default: 10)')
+parser.add_argument('--knn-distance', type=str, default='euclidean',
+                    help='KNN graph distance type (default: euclidean)')                    
 parser.add_argument('--model', type=str, default='AE',
                     help='VAE/AE')
 parser.add_argument('--npyDir', type=str, default='npynzGraph/',
@@ -161,11 +167,12 @@ if __name__ == "__main__":
     # np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_original.npy',originalOut)
     np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_z.npy',zOut)
 
-    adj, edgeList = generateAdj(zOut, graphType='KNNgraphML', para = 'euclidean:10')
+    # Here para = 'euclidean:10'
+    adj, edgeList = generateAdj(zOut, graphType='KNNgraphML', para = args.knn_distance+':'+str(args.k)) 
     adjdense = sp.csr_matrix.todense(adj)
     adjsample = torch.from_numpy(adjdense)
 
-    np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_edgeList.npy',edgeList)
+    np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'init_edgeList.npy',edgeList)
 
 
     #if fill the zero in the iteration
@@ -180,7 +187,7 @@ if __name__ == "__main__":
         recon = reconOut
     print("--- %s seconds ---" % (time.time() - start_time))
 
-    for bigepoch in range(0, 2):
+    for bigepoch in range(0, args.total_epochs):
         scDataInter = scDatasetInter(recon)
         train_loader = DataLoader(scDataInter, batch_size=args.batch_size, shuffle=True, **kwargs)
 
@@ -196,7 +203,8 @@ if __name__ == "__main__":
         # np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_original'+str(bigepoch)+'.npy',originalOut)
         np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_z'+str(bigepoch)+'.npy',zOut)
 
-        adj, edgeList = generateAdj(zOut, graphType='KNNgraphML', para = 'euclidean:10')
+        # Here para = 'euclidean:10'
+        adj, edgeList = generateAdj(zOut, graphType='KNNgraphML', para = args.knn_distance+':'+str(args.k)) 
         adjdense = sp.csr_matrix.todense(adj)
         adjsample = torch.from_numpy(adjdense)
 
