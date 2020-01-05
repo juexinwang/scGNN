@@ -28,14 +28,14 @@ from gae_embedding import *
 
 # Ref codes from https://github.com/MysteryVaibhav/RWR-GAE
 parser = argparse.ArgumentParser()
-parser.add_argument('--npyDir',type=str,default='npyGraph10/',help="npyDir")
+parser.add_argument('--npyDir',type=str,default='../npyGraph10/',help="npyDir")
 parser.add_argument('--zFilename',type=str,default='5.Pollen_all_noregu_recon0.npy',help="z Filename")
 parser.add_argument('--benchmark',type=bool,default=True,help="whether have benchmark")
 # cell File
 parser.add_argument('--labelFilename',type=str,default='/home/wangjue/biodata/scData/AnjunBenchmark/5.Pollen/Pollen_cell_label.csv',help="label Filename")
 parser.add_argument('--cellFilename',type=str,default='/home/wangjue/biodata/scData/5.Pollen.cellname.txt',help="cell Filename")
 parser.add_argument('--cellIndexname',type=str,default='/home/wangjue/myprojects/scGNN/data/sc/5.Pollen_all/ind.5.Pollen_all.cellindex.txt',help="cell index Filename")
-parser.add_argument('--originalFile',type=str,default='data/sc/5.Pollen_all/5.Pollen_all.features.csv',help="original csv Filename")
+parser.add_argument('--originalFile',type=str,default='../data/sc/5.Pollen_all/5.Pollen_all.features.csv',help="original csv Filename")
 args = parser.parse_args()
 
 if args.benchmark:

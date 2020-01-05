@@ -11,7 +11,7 @@ from torch.utils.data import Dataset, DataLoader
 from torch import nn, optim
 from torch.nn import functional as F
 
-# May be discard later
+# May be discard later, only AE
 parser = argparse.ArgumentParser(description='AE/VAE standalone, from official tutorial of pytorch')
 parser.add_argument('--datasetName', type=str, default='5.Pollen',
                     help='TGFb/TGFb.cell/sci-CAR/sci-CAR_LTMG/2.Yan/5.Pollen/5.Pollen.cell')

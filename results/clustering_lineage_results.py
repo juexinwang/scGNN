@@ -17,7 +17,7 @@ args = parser.parse_args()
 # expressionData = np.load('MPPbasal_noregu_original.npy')
 # expressionData = np.reshape(expressionData, (expressionData.shape[0],-1))
 
-expressionData = pd.read_csv('data/sc/MPPbasal/MPPbasal.features.csv',header=None)
+expressionData = pd.read_csv('../data/sc/MPPbasal/MPPbasal.features.csv',header=None)
 expressionData = expressionData.to_numpy()
 
 markerGeneList = ['Kit','Flt3','Dntt','Ebf1','Cd19','Lmo4','Ms4a2','Ear10','Cd74','Irf8','Mpo','Elane','Ngp','Mpl','Pf4','Car1','Gata1','Hbb-bs','Ptgfrn','Mki67']
@@ -26,7 +26,7 @@ geneDict = {}
 geneList = []
 
 # with open("data/sc/{}/{}.gene.txt".format(args.datasetName, args.datasetName), 'r') as f:
-with open("data/sc/MPPbasal/MPPbasal.gene.txt", 'r') as f:
+with open("../data/sc/MPPbasal/MPPbasal.gene.txt", 'r') as f:
     lines = f.readlines()
     count = 0
     for line in lines:

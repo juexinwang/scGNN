@@ -32,14 +32,14 @@ parser = argparse.ArgumentParser(description='Plot scRNA Results')
 parser.add_argument('--datasetName', type=str, default='MMPbasal_all',
                     help='MPPbasal')
 parser.add_argument('--dataset', type=str, default='MPPbasal_noregu_z2.npy',
-                    help='MPPbasal_noregu_z.npy  data/sc/MPPbasal/MPPbasal.features.csv  /home/wangjue/scRNA/VarID_analysis/pca.csv')
+                    help='MPPbasal_noregu_z.npy  ../data/sc/MPPbasal/MPPbasal.features.csv  /home/wangjue/scRNA/VarID_analysis/pca.csv')
 parser.add_argument('--csvheader', type=bool, default=False,
                     help='Only for csv')
 parser.add_argument('--saveFlag', type=bool, default=True,
                     help='save fig or not')
-parser.add_argument('--saveDir', type=str, default='fig/',
+parser.add_argument('--saveDir', type=str, default='../fig/',
                     help='save fig or not')
-parser.add_argument('--npyDir', type=str, default='npyGraph10/',
+parser.add_argument('--npyDir', type=str, default='../npyGraph10/',
                     help='save npy results in directory')
 parser.add_argument('--benchFlag', type=bool, default=True,
                     help='True for data with benchmark')

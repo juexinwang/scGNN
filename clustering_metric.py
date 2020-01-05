@@ -7,6 +7,7 @@ import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 
+# Tmp
 # Ref: https://github.com/MysteryVaibhav/RWR-GAE
 class clustering_metrics:
     def __init__(self, true_label, predict_label):

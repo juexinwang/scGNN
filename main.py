@@ -54,7 +54,7 @@ parser.add_argument('--log-interval', type=int, default=100, metavar='N',
 #Clustering related
 parser.add_argument('--useGAEembedding', type=bool, default=True,
                     help='whether use GAE embedding before clustering(default: True)')
-parser.add_argument('--clustering-method', type=str, default='KMeans',
+parser.add_argument('--clustering-method', type=str, default='Louvain',
                     help='Clustering method: Louvain/KMeans/SpectralClustering/AffinityPropagation/AgglomerativeClustering/Birch')
 #GAE related
 parser.add_argument('--GAEmodel', type=str, default='gcn_vae', help="models used")

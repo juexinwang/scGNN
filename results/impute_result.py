@@ -12,7 +12,7 @@ parser.add_argument('--discreteTag', type=bool, default=True,
                     help='False/True')
 parser.add_argument('--regulized-type', type=str, default='noregu',
                     help='regulized type (default: Graph), otherwise: noregu')
-parser.add_argument('--npyDir', type=str, default='npyImpute/',
+parser.add_argument('--npyDir', type=str, default='../npyImpute/',
                     help='directory of npy')
 parser.add_argument('--ratio', type=str, default='0.1',
                     help='dropoutratio')
