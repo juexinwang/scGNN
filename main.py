@@ -13,10 +13,12 @@ from torch import nn, optim
 from torch.nn import functional as F
 from sklearn.decomposition import PCA
 from sklearn.metrics import silhouette_samples, silhouette_score
+from sklearn.cluster import KMeans,SpectralClustering,AffinityPropagation,AgglomerativeClustering,Birch,DBSCAN,FeatureAgglomeration,MeanShift,OPTICS 
 from model import AE, VAE, VAE2d
 from util_function import *
 from graph_function import *
 from benchmark_util import *
+from gae_embedding import GAEembedding
 
 parser = argparse.ArgumentParser(description='Graph Regularized EM AutoEncoder for scRNA')
 parser.add_argument('--datasetName', type=str, default='MMPbasal',
@@ -49,6 +51,21 @@ parser.add_argument('--EMtype', type=str, default='celltypeEM',
                     help='EM process type (default: celltypeEM) or EM')
 parser.add_argument('--log-interval', type=int, default=100, metavar='N',
                     help='how many batches to wait before logging training status')
+#Clustering related
+parser.add_argument('--useGAEembedding', type=bool, default=True,
+                    help='whether use GAE embedding before clustering(default: True)')
+parser.add_argument('--clustering-method', type=str, default='KMeans',
+                    help='Clustering method: Louvain/KMeans/SpectralClustering/AffinityPropagation/AgglomerativeClustering/Birch')
+#GAE related
+parser.add_argument('--GAEmodel', type=str, default='gcn_vae', help="models used")
+parser.add_argument('--GAEepochs', type=int, default=200, help='Number of epochs to train.')
+parser.add_argument('--GAEhidden1', type=int, default=32, help='Number of units in hidden layer 1.')
+parser.add_argument('--GAEhidden2', type=int, default=16, help='Number of units in hidden layer 2.')
+parser.add_argument('--GAElr', type=float, default=0.01, help='Initial learning rate.')
+parser.add_argument('--GAEdropout', type=float, default=0., help='Dropout rate (1 - keep probability).')
+parser.add_argument('--GAElr_dw', type=float, default=0.001, help='Initial learning rate for regularization.')
+parser.add_argument('--GAEn-clusters', default=11, type=int, help='number of clusters, 7 for cora, 6 for citeseer')
+
 args = parser.parse_args()
 args.cuda = not args.no_cuda and torch.cuda.is_available()
 
@@ -137,6 +154,12 @@ if __name__ == "__main__":
     adjdense = sp.csr_matrix.todense(adj)
     adjsample = torch.from_numpy(adjdense)
 
+    # GAE
+    zDiscret = zOut>np.mean(zOut,axis=0)
+    zDiscret = 1.0*zDiscret
+    zGAE=GAEembedding(zDiscret, adj)
+    np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_zGAE.npy',zGAE)
+
     np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_init_edgeList.npy',edgeList)
 
     #Fill the zeros before EM iteration
@@ -163,8 +186,35 @@ if __name__ == "__main__":
                 recon, original, z = train(epoch, EMFlag=True)
 
         elif args.EMtype == 'celltypeEM':
-            # Get cluster
-            listResult,size = generateCluster(edgeList)
+            # Whether use GAE embedding
+            if args.useGAEembedding:
+                zDiscret = zOut>np.mean(zOut,axis=0)
+                zDiscret = 1.0*zDiscret
+                zOut=GAEembedding(zDiscret, adj)
+                # Here para = 'euclidean:10'
+                adj, edgeList = generateAdj(zOut, graphType='KNNgraphML', para = args.knn_distance+':'+str(args.k)) 
+                adjdense = sp.csr_matrix.todense(adj)
+                adjsample = torch.from_numpy(adjdense)
+            # Clustering: Get cluster
+            if args.clustering_method=='Louvain':
+                listResult,size = generateCluster(edgeList)
+            elif args.clustering_method=='KMeans':
+                clustering = KMeans(n_clusters=args.GAEn_clusters, random_state=0).fit(zOut)
+                listResult = clustering.predict(zOut)
+            elif args.clustering_method=='SpectralClustering':
+                clustering = SpectralClustering(n_clusters=args.GAEn_clusters, assign_labels="discretize", random_state=0).fit(zOut)
+                listResult = clustering.labels_.tolist()
+            elif args.clustering_method=='AffinityPropagation':
+                clustering = AffinityPropagation().fit(zOut)
+                listResult = clustering.predict(zOut)
+            elif args.clustering_method=='AgglomerativeClustering':
+                clustering = AgglomerativeClustering().fit(zOut)
+                listResult = clustering.labels_.tolist()
+            elif args.clustering_method=='Birch':
+                clustering = Birch(n_clusters=args.n_clusters).fit(zOut)
+                listResult = clustering.predict(zOut)
+            else:
+                print("Error: Clustering method not appropriate")
 
             # Each cluster has a autoencoder, and organize them back in iteraization
             clusterIndexList = []

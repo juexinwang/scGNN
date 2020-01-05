@@ -36,29 +36,31 @@ parser.add_argument('--cellFilename',type=str,default='/home/wangjue/biodata/scD
 parser.add_argument('--cellIndexname',type=str,default='/home/wangjue/myprojects/scGNN/data/sc/5.Pollen_all/ind.5.Pollen_all.cellindex.txt',help="cell index Filename")
 parser.add_argument('--originalFile',type=str,default='data/sc/5.Pollen_all/5.Pollen_all.features.csv',help="original csv Filename")
 # GAE
-parser.add_argument('--model', type=str, default='gcn_vae', help="models used")
+parser.add_argument('--GAEmodel', type=str, default='gcn_vae', help="models used")
 parser.add_argument('--dw', type=int, default=0, help="whether to use deepWalk regularization, 0/1")
-parser.add_argument('--epochs', type=int, default=200, help='Number of epochs to train.')
-parser.add_argument('--hidden1', type=int, default=32, help='Number of units in hidden layer 1.')
-parser.add_argument('--hidden2', type=int, default=16, help='Number of units in hidden layer 2.')
-parser.add_argument('--lr', type=float, default=0.01, help='Initial learning rate.')
-parser.add_argument('--dropout', type=float, default=0., help='Dropout rate (1 - keep probability).')
+parser.add_argument('--GAEepochs', type=int, default=200, help='Number of epochs to train.')
+parser.add_argument('--GAEhidden1', type=int, default=32, help='Number of units in hidden layer 1.')
+parser.add_argument('--GAEhidden2', type=int, default=16, help='Number of units in hidden layer 2.')
+parser.add_argument('--GAElr', type=float, default=0.01, help='Initial learning rate.')
+parser.add_argument('--GAEdropout', type=float, default=0., help='Dropout rate (1 - keep probability).')
 parser.add_argument('--dataset-str', type=str, default='cora', help='type of dataset.')
 parser.add_argument('--walk-length', default=5, type=int, help='Length of the random walk started at each node')
 parser.add_argument('--window-size', default=3, type=int, help='Window size of skipgram model.')
 parser.add_argument('--number-walks', default=5, type=int, help='Number of random walks to start at each node')
 parser.add_argument('--full-number-walks', default=0, type=int, help='Number of random walks from each node')
-parser.add_argument('--lr_dw', type=float, default=0.001, help='Initial learning rate for regularization.')
+parser.add_argument('--GAElr_dw', type=float, default=0.001, help='Initial learning rate for regularization.')
 parser.add_argument('--context', type=int, default=0, help="whether to use context nodes for skipgram")
 parser.add_argument('--ns', type=int, default=1, help="whether to use negative samples for skipgram")
-parser.add_argument('--n-clusters', default=11, type=int, help='number of clusters, 7 for cora, 6 for citeseer')
-parser.add_argument('--plot', type=int, default=0, help="whether to plot the clusters using tsne")
+parser.add_argument('--GAEn-clusters', default=11, type=int, help='number of clusters, 7 for cora, 6 for citeseer')
+parser.add_argument('--GAEplot', type=int, default=0, help="whether to plot the clusters using tsne")
 args = parser.parse_args()
 
 #gae embedding
-def gae_embedding(z, adj):
+def GAEembedding(z, adj):
     '''
     GAE embedding for clustering
+    Param:
+        z,adj
     Return:
         Embedding from graph
     '''
@@ -119,11 +121,11 @@ def gae_embedding(z, adj):
     pos_weight = float(adj.shape[0] * adj.shape[0] - adj.sum()) / adj.sum()
     norm = adj.shape[0] * adj.shape[0] / float((adj.shape[0] * adj.shape[0] - adj.sum()) * 2)
 
-    if args.model == 'gcn_vae':
-        model = GCNModelVAE(feat_dim, args.hidden1, args.hidden2, args.dropout)
+    if args.GAEmodel == 'gcn_vae':
+        model = GCNModelVAE(feat_dim, args.GAEhidden1, args.GAEhidden2, args.GAEdropout)
     else:
-        model = GCNModelAE(feat_dim, args.hidden1, args.hidden2, args.dropout)
-    optimizer = optim.Adam(model.parameters(), lr=args.lr)
+        model = GCNModelAE(feat_dim, args.GAEhidden1, args.GAEhidden2, args.GAEdropout)
+    optimizer = optim.Adam(model.parameters(), lr=args.GAElr)
 
     # if args.dw == 1:
     #     sg = SkipGram(args.hidden2, adj.shape[0])
@@ -135,7 +137,7 @@ def gae_embedding(z, adj):
     #     random.Random().shuffle(nodes_in_G)
 
     hidden_emb = None
-    for epoch in tqdm(range(args.epochs)):
+    for epoch in tqdm(range(args.GAEepochs)):
         t = time.time()
         model.train()
         optimizer.zero_grad()
@@ -231,12 +233,12 @@ def gae_embedding(z, adj):
     roc_score, ap_score = get_roc_score(hidden_emb, adj_orig, test_edges, test_edges_false)
     tqdm.write('Test ROC score: ' + str(roc_score))
     tqdm.write('Test AP score: ' + str(ap_score))
-    # kmeans = KMeans(n_clusters=args.n_clusters, random_state=0).fit(hidden_emb)
+    # kmeans = KMeans(n_clusters=args.GAEn_clusters, random_state=0).fit(hidden_emb)
     # predict_labels = kmeans.predict(hidden_emb)
     # cm = clustering_metrics(true_labels, predict_labels)
     # cm.evaluationClusterModelFromLabel(tqdm)
 
-    # if args.plot == 1:
+    # if args.GAEplot == 1:
     #     cm.plotClusters(tqdm, hidden_emb, true_labels)
 
     return hidden_emb
@@ -388,8 +390,6 @@ if args.benchmark:
     cellIndexFilename = args.cellIndexname
     true_labels = readTrueLabelList(labelFilename, cellFilename, cellIndexFilename)
 
-
-
 print("Proposed")
 z = np.load(args.npyDir+args.zFilename)
 adj, edgeList = generateAdj(z, graphType='KNNgraphML', para = 'euclidean:10')
@@ -397,7 +397,7 @@ adj, edgeList = generateAdj(z, graphType='KNNgraphML', para = 'euclidean:10')
 print("Start GAE")
 zDiscret = z>np.mean(z,axis=0)
 zDiscret = 1.0*zDiscret
-zGAE=gae_embedding(zDiscret, adj)
+zGAE=GAEembedding(zDiscret, adj)
 
 print("GAE clustering")
 if args.benchmark:
