@@ -16,8 +16,9 @@ from sklearn.metrics import silhouette_samples, silhouette_score
 from model import AE, VAE, VAE2d
 from util_function import *
 from graph_function import *
+from benchmark_util import *
 
-parser = argparse.ArgumentParser(description='Regularized EM AutoEncoder for scRNA')
+parser = argparse.ArgumentParser(description='Graph Regularized EM AutoEncoder for scRNA')
 parser.add_argument('--datasetName', type=str, default='MMPbasal',
                     help='TGFb/sci-CAR/sci-CAR_LTMG/2.Yan/5.Pollen/MPPbasal/MPPbasal_all/MPPbasal_allgene/MPPbasal_allcell/MPPepo/MMPbasal_LTMG/MMPbasal_all_LTMG')
 parser.add_argument('--batch-size', type=int, default=10000, metavar='N',
@@ -44,6 +45,8 @@ parser.add_argument('--npyDir', type=str, default='npyGraph/',
                     help='save npy results in directory')
 parser.add_argument('--zerofillFlag', type=bool, default=False,
                     help='fill zero or not before EM process (default: False)')
+parser.add_argument('--EMtype', type=str, default='celltypeEM',
+                    help='EM process type (default: celltypeEM) or EM')
 parser.add_argument('--log-interval', type=int, default=100, metavar='N',
                     help='how many batches to wait before logging training status')
 args = parser.parse_args()
@@ -150,13 +153,57 @@ if __name__ == "__main__":
 
     print("EM processes started")
     for bigepoch in range(0, args.EM_epochs):
-        # Use new dataloader
-        scDataInter = scDatasetInter(recon)
-        train_loader = DataLoader(scDataInter, batch_size=args.batch_size, shuffle=True, **kwargs)
 
-        for epoch in range(1, args.epochs + 1):
-            recon, original, z = train(epoch, EMFlag=True)
-        
+        if args.EMtype == 'EM':
+            # Use new dataloader
+            scDataInter = scDatasetInter(recon)
+            train_loader = DataLoader(scDataInter, batch_size=args.batch_size, shuffle=True, **kwargs)
+
+            for epoch in range(1, args.epochs + 1):
+                recon, original, z = train(epoch, EMFlag=True)
+
+        elif args.EMtype == 'celltypeEM':
+            # Get cluster
+            listResult,size = generateCluster(edgeList)
+
+            # Each cluster has a autoencoder, and organize them back in iteraization
+            clusterIndexList = []
+            for i in range(len(set(listResult))):
+                clusterIndexList.append([])
+            for i in range(len(listResult)):
+                clusterIndexList[listResult[i]].append(i)
+
+            reconNew = np.zeros((scData.features.shape[0],scData.features.shape[1]))
+            zNew = np.copy(zOut)
+            
+            # Convert to Tensor
+            reconNew = torch.from_numpy(reconNew)
+            reconNew = reconNew.type(torch.FloatTensor)
+            reconNew = reconNew.to(device)
+            zNew = torch.from_numpy(zNew)
+            zNew = zNew.type(torch.FloatTensor)
+            zNew = zNew.to(device)
+
+            for clusterIndex in clusterIndexList:
+                reconUsage = recon[clusterIndex]
+
+                scDataInter = scDatasetInter(reconUsage)
+                train_loader = DataLoader(scDataInter, batch_size=args.batch_size, shuffle=True, **kwargs)
+                for epoch in range(1, args.epochs + 1):
+                    reconCluster, originalCluster, zCluster = train(epoch, EMFlag=True)
+                
+                count = 0
+                for i in clusterIndex:
+                    reconNew[i] = reconCluster[count,:]
+                    zNew[i] = zCluster[count,:]
+                    count +=1
+
+            # Update
+            recon = reconNew
+            zOut = zNew
+        else:
+            print('Error: EM type not correctec')
+            
         reconOut = recon.detach().cpu().numpy()
         zOut = z.detach().cpu().numpy()
         np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_recon'+str(bigepoch)+'.npy',reconOut)
@@ -166,6 +213,5 @@ if __name__ == "__main__":
         adj, edgeList = generateAdj(zOut, graphType='KNNgraphML', para = args.knn_distance+':'+str(args.k)) 
         adjdense = sp.csr_matrix.todense(adj)
         adjsample = torch.from_numpy(adjdense)
-
+    
     np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_final_edgeList.npy',edgeList)
-
