@@ -11,8 +11,9 @@ import scipy.sparse
 import sys
 import pickle
 import csv
-# For gene regulized purposes, but it works for dimension reduction
 
+# Needs to reconstruct
+# For gene regulized purposes, but it works for dimension reduction
 # Preprocess network for sc
 parser = argparse.ArgumentParser()
 parser.add_argument('--graph-type', type=str, default='cell',

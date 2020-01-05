@@ -7,7 +7,6 @@ import pickle as pkl
 import networkx as nx
 import scipy.sparse as sp
 import torch
-# import torch.utils.data
 from torch.utils.data import Dataset, DataLoader
 from torch import nn, optim
 from torch.nn import functional as F
@@ -67,6 +66,11 @@ parser.add_argument('--GAElr', type=float, default=0.01, help='Initial learning 
 parser.add_argument('--GAEdropout', type=float, default=0., help='Dropout rate (1 - keep probability).')
 parser.add_argument('--GAElr_dw', type=float, default=0.001, help='Initial learning rate for regularization.')
 parser.add_argument('--GAEn-clusters', default=11, type=int, help='number of clusters, 7 for cora, 6 for citeseer')
+#Start Impute or not, only used for evaluating Impute
+parser.add_argument('--imputeTag', type=bool, default=False,
+                    help='impute or not (default: False). Caution: usually change npuDir if set imputeTag as true')
+parser.add_argument('--dropoutRatio', type=float, default=0.1,
+                    help='dropout ratio for impute (default: 0.1)')
 
 args = parser.parse_args()
 args.cuda = not args.no_cuda and torch.cuda.is_available()
@@ -76,7 +80,10 @@ device = torch.device("cuda" if args.cuda else "cpu")
 
 kwargs = {'num_workers': 1, 'pin_memory': True} if args.cuda else {}
 
-scData = scDataset(args.datasetName, args.discreteTag)
+if not args.imputeTag:
+    scData = scDataset(args.datasetName, args.discreteTag)
+else:
+    scData = scDatasetDropout(args.datasetName, args.discreteTag, args.dropoutRatio)
 train_loader = DataLoader(scData, batch_size=args.batch_size, shuffle=True, **kwargs)
 
 # Original
@@ -143,6 +150,16 @@ if __name__ == "__main__":
     adjsample = None
     # adjfeature refer to gene-gene regulization
     adjfeature = None
+
+    # Save results only when impute
+    if args.imputeTag:
+        save_sparse_matrix(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_'+str(args.dropoutRatio)+'_features.npz',scData.features)
+        # sp.save_npz(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_'+str(args.dropoutRatio)+'_features.npz',scData.features)
+        # np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_'+str(args.dropoutRatio)+'_features.npy',scData.features)
+        np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_'+str(args.dropoutRatio)+'_dropi.npy',scData.i)
+        np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_'+str(args.dropoutRatio)+'_dropj.npy',scData.j)
+        np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_'+str(args.dropoutRatio)+'_dropix.npy',scData.ix)
+
     for epoch in range(1, args.epochs + 1):
         recon, original, z = train(epoch, EMFlag=False)
     
