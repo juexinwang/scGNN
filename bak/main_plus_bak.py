@@ -18,6 +18,7 @@ from util_function import *
 from graph_function import *
 from benchmark_util import *
 
+#can be discard later
 parser = argparse.ArgumentParser(description='AutoEncoder-EM for scRNA')
 parser.add_argument('--datasetName', type=str, default='MMPbasal_LTMG',
                     help='TGFb/sci-CAR/sci-CAR_LTMG/2.Yan/5.Pollen/MPPbasal/MPPbasal_all/MPPbasal_allgene/MPPbasal_allcell/MPPepo/MMPbasal_LTMG/MMPbasal_all_LTMG')

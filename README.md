@@ -1,4 +1,5 @@
 # scGNN
+single cell Graph Neural Networks
 
 Reference:
 1. VAE https://github.com/pytorch/examples/tree/master/vae

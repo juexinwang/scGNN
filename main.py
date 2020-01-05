@@ -20,15 +20,17 @@ from graph_function import *
 from benchmark_util import *
 from gae_embedding import GAEembedding
 
-parser = argparse.ArgumentParser(description='Graph Regularized EM AutoEncoder for scRNA')
+parser = argparse.ArgumentParser(description='Graph EM AutoEncoder for scRNA')
 parser.add_argument('--datasetName', type=str, default='MMPbasal',
                     help='TGFb/sci-CAR/sci-CAR_LTMG/2.Yan/5.Pollen/MPPbasal/MPPbasal_all/MPPbasal_allgene/MPPbasal_allcell/MPPepo/MMPbasal_LTMG/MMPbasal_all_LTMG')
 parser.add_argument('--batch-size', type=int, default=10000, metavar='N',
                     help='input batch size for training (default: 128)')
-parser.add_argument('--EM-epochs', type=int, default=3, metavar='N',
-                    help='number of epochs in EM iteration (default: 3)')
 parser.add_argument('--epochs', type=int, default=500, metavar='N',
                     help='number of epochs to train (default: 10)')
+parser.add_argument('--EM-iteration', type=int, default=3, metavar='N',
+                    help='number of epochs in EM iteration (default: 3)')
+parser.add_argument('--celltype-epochs', type=int, default=200, metavar='N',
+                    help='number of epochs in celltype training (default: 200)')
 parser.add_argument('--no-cuda', action='store_true', default=True,
                     help='enables CUDA training')
 parser.add_argument('--seed', type=int, default=1, metavar='S',
@@ -175,8 +177,8 @@ if __name__ == "__main__":
         # print("--- %s seconds ---" % (time.time() - start_time))
 
     print("EM processes started")
-    for bigepoch in range(0, args.EM_epochs):
-
+    for bigepoch in range(0, args.EM_iteration):
+        #Graph regulizated EM AE
         if args.EMtype == 'EM':
             # Use new dataloader
             scDataInter = scDatasetInter(recon)
@@ -185,6 +187,7 @@ if __name__ == "__main__":
             for epoch in range(1, args.epochs + 1):
                 recon, original, z = train(epoch, EMFlag=True)
 
+        #Graph regulizated EM AE with celltype AE
         elif args.EMtype == 'celltypeEM':
             # Whether use GAE embedding
             if args.useGAEembedding:
@@ -236,23 +239,20 @@ if __name__ == "__main__":
 
             for clusterIndex in clusterIndexList:
                 reconUsage = recon[clusterIndex]
-
                 scDataInter = scDatasetInter(reconUsage)
                 train_loader = DataLoader(scDataInter, batch_size=args.batch_size, shuffle=True, **kwargs)
-                for epoch in range(1, args.epochs + 1):
-                    reconCluster, originalCluster, zCluster = train(epoch, EMFlag=True)
-                
+                for epoch in range(1, args.celltype_epochs + 1):
+                    reconCluster, originalCluster, zCluster = train(epoch, EMFlag=True)                
                 count = 0
                 for i in clusterIndex:
                     reconNew[i] = reconCluster[count,:]
                     zNew[i] = zCluster[count,:]
                     count +=1
-
             # Update
             recon = reconNew
             zOut = zNew
         else:
-            print('Error: EM type not correctec')
+            print('Error: EM type not correct')
             
         reconOut = recon.detach().cpu().numpy()
         zOut = z.detach().cpu().numpy()
