@@ -44,12 +44,15 @@ parser.add_argument('--knn-distance', type=str, default='euclidean',
                     help='KNN graph distance type (default: euclidean)')                    
 parser.add_argument('--model', type=str, default='AE',
                     help='VAE/AE (default: AE)')
-parser.add_argument('--npyDir', type=str, default='npyGraph/',
-                    help='save npy results in directory')
 parser.add_argument('--zerofillFlag', type=bool, default=False,
                     help='fill zero or not before EM process (default: False)')
 parser.add_argument('--EMtype', type=str, default='celltypeEM',
                     help='EM process type (default: celltypeEM) or EM')
+#Debug related
+parser.add_argument('--saveTag', type=bool, default=False,
+                    help='whether save npy results or not')
+parser.add_argument('--npyDir', type=str, default='npyGraphTest/',
+                    help='save npy results in directory')
 parser.add_argument('--log-interval', type=int, default=100, metavar='N',
                     help='how many batches to wait before logging training status')
 #Clustering related
@@ -162,11 +165,12 @@ if __name__ == "__main__":
 
     for epoch in range(1, args.epochs + 1):
         recon, original, z = train(epoch, EMFlag=False)
-    
-    reconOut = recon.detach().cpu().numpy()
-    zOut = z.detach().cpu().numpy()   
-    np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_recon.npy',reconOut)
-    np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_z.npy',zOut)
+        
+    zOut = z.detach().cpu().numpy() 
+    if args.saveTag:
+        reconOut = recon.detach().cpu().numpy()  
+        np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_recon.npy',reconOut)
+        np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_z.npy',zOut)
 
     # Here para = 'euclidean:10'
     adj, edgeList = generateAdj(zOut, graphType='KNNgraphML', para = args.knn_distance+':'+str(args.k)) 
@@ -177,9 +181,10 @@ if __name__ == "__main__":
     zDiscret = zOut>np.mean(zOut,axis=0)
     zDiscret = 1.0*zDiscret
     zGAE=GAEembedding(zDiscret, adj)
-    np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_zGAE.npy',zGAE)
+    if args.saveTag:
+        np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_zGAE.npy',zGAE)
 
-    np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_init_edgeList.npy',edgeList)
+        np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_init_edgeList.npy',edgeList)
 
     #Fill the zeros before EM iteration
     # TODO: better implementation
@@ -270,15 +275,17 @@ if __name__ == "__main__":
             zOut = zNew
         else:
             print('Error: EM type not correct')
-            
-        reconOut = recon.detach().cpu().numpy()
+                    
         zOut = z.detach().cpu().numpy()
-        np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_recon'+str(bigepoch)+'.npy',reconOut)
-        np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_z'+str(bigepoch)+'.npy',zOut)
+        if args.saveTag:
+            reconOut = recon.detach().cpu().numpy()
+            np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_recon'+str(bigepoch)+'.npy',reconOut)
+            np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_z'+str(bigepoch)+'.npy',zOut)
 
         # Here para = 'euclidean:10'
         adj, edgeList = generateAdj(zOut, graphType='KNNgraphML', para = args.knn_distance+':'+str(args.k)) 
         adjdense = sp.csr_matrix.todense(adj)
         adjsample = torch.from_numpy(adjdense)
     
-    np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_final_edgeList.npy',edgeList)
+    if args.saveTag:
+        np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_final_edgeList.npy',edgeList)
