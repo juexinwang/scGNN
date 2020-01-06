@@ -169,11 +169,13 @@ if __name__ == "__main__":
         recon, original, z = train(epoch, EMFlag=False)
         
     zOut = z.detach().cpu().numpy() 
-        
+
+    prune_time = time.time()        
     # Here para = 'euclidean:10'
     adj, edgeList = generateAdj(zOut, graphType='KNNgraphML', para = args.knn_distance+':'+str(args.k)) 
     adjdense = sp.csr_matrix.todense(adj)
     adjsample = torch.from_numpy(adjdense)
+    print("---Pruning takes %s seconds ---" % (time.time() - prune_time))
     if args.saveTag:
         reconOut = recon.detach().cpu().numpy()  
         np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_recon.npy',reconOut)
@@ -184,10 +186,12 @@ if __name__ == "__main__":
         zDiscret = zOut>np.mean(zOut,axis=0)
         zDiscret = 1.0*zDiscret
         zOut=GAEembedding(zDiscret, adj)
+        prune_time = time.time()
         # Here para = 'euclidean:10'
         adj, edgeList = generateAdj(zOut, graphType='KNNgraphML', para = args.knn_distance+':'+str(args.k)) 
         adjdense = sp.csr_matrix.todense(adj)
         adjsample = torch.from_numpy(adjdense)
+        print("---Pruning takes %s seconds ---" % (time.time() - prune_time))
         if args.saveTag:
             np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_zGAE.npy',zOut)
         # np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_init_edgeList.npy',edgeList)
@@ -209,6 +213,7 @@ if __name__ == "__main__":
         #Graph regulizated EM AE with celltype AE, do the additional AE
         if args.EMtype == 'celltypeEM':            
             # Clustering: Get cluster
+            clustering_time = time.time()
             if args.clustering_method=='Louvain':
                 listResult,size = generateCluster(edgeList)
             elif args.clustering_method=='KMeans':
@@ -228,9 +233,11 @@ if __name__ == "__main__":
                 listResult = clustering.predict(zOut)
             else:
                 print("Error: Clustering method not appropriate")
+            print("---Clustering takes %s seconds ---" % (time.time() - clustering_time))
             
             #Calculate silhouette
             measure_clustering_results(zOut, listResult)
+            print('Total Cluster Number: '+str(len(set(listResult))))
 
             # Each cluster has a autoencoder, and organize them back in iteraization
             clusterIndexList = []
@@ -268,20 +275,24 @@ if __name__ == "__main__":
         
         zOut = z.detach().cpu().numpy()
 
+        prune_time = time.time()
         # Here para = 'euclidean:10'
         adj, edgeList = generateAdj(zOut, graphType='KNNgraphML', para = args.knn_distance+':'+str(args.k)) 
         adjdense = sp.csr_matrix.todense(adj)
         adjsample = torch.from_numpy(adjdense)
+        print("---Pruning takes %s seconds ---" % (time.time() - prune_time))
 
         # Whether use GAE embedding
         if args.useGAEembedding:
             zDiscret = zOut>np.mean(zOut,axis=0)
             zDiscret = 1.0*zDiscret
             zOut=GAEembedding(zDiscret, adj)
+            prune_time = time.time()
             # Here para = 'euclidean:10'
             adj, edgeList = generateAdj(zOut, graphType='KNNgraphML', para = args.knn_distance+':'+str(args.k)) 
             adjdense = sp.csr_matrix.todense(adj)
             adjsample = torch.from_numpy(adjdense)
+            print("---Pruning takes %s seconds ---" % (time.time() - prune_time))
 
         if args.saveTag:
             reconOut = recon.detach().cpu().numpy()
