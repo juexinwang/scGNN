@@ -36,7 +36,7 @@ parser.add_argument('--seed', type=int, default=1, metavar='S',
                     help='random seed (default: 1)')
 parser.add_argument('--regulized-type', type=str, default='Graph',
                     help='regulized type (default: Graph) in EM, otherwise: noregu')
-parser.add_argument('--discreteTag', default=False, action='store_true',
+parser.add_argument('--discreteTag', action='store_true', default=False, 
                     help='whether input is raw or 0/1 (default: False)')
 parser.add_argument('--k', type=int, default=10,
                     help='parameter k in KNN graph (default: 10)')
@@ -44,19 +44,19 @@ parser.add_argument('--knn-distance', type=str, default='euclidean',
                     help='KNN graph distance type (default: euclidean)')                    
 parser.add_argument('--model', type=str, default='AE',
                     help='VAE/AE (default: AE)')
-parser.add_argument('--zerofillFlag', default=False, action='store_true',
+parser.add_argument('--zerofillFlag', action='store_true', default=False, 
                     help='fill zero or not before EM process (default: False)')
 parser.add_argument('--EMtype', type=str, default='celltypeEM',
                     help='EM process type (default: celltypeEM) or EM')
 #Debug related
-parser.add_argument('--saveFlag', default=False, action='store_true',
+parser.add_argument('--saveFlag', action='store_true', default=False, 
                     help='whether save npy results or not')
 parser.add_argument('--npyDir', type=str, default='npyGraphTest/',
                     help='save npy results in directory')
 parser.add_argument('--log-interval', type=int, default=100, metavar='N',
                     help='how many batches to wait before logging training status')
 #Clustering related
-parser.add_argument('--useGAEembedding', default=False, action='store_true',
+parser.add_argument('--use-GAEembedding', action='store_true', default=False, 
                     help='whether use GAE embedding before clustering(default: False)')
 parser.add_argument('--clustering-method', type=str, default='Louvain',
                     help='Clustering method: Louvain/KMeans/SpectralClustering/AffinityPropagation/AgglomerativeClustering/Birch')
@@ -183,7 +183,7 @@ if __name__ == "__main__":
         np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_z.npy',zOut)
     
     # Whether use GAE embedding
-    if args.useGAEembedding:
+    if args.use_GAEembedding:
         zDiscret = zOut>np.mean(zOut,axis=0)
         zDiscret = 1.0*zDiscret
         zOut=GAEembedding(zDiscret, adj)
@@ -284,7 +284,7 @@ if __name__ == "__main__":
         print("---Pruning takes %s seconds ---" % (time.time() - prune_time))
 
         # Whether use GAE embedding
-        if args.useGAEembedding:
+        if args.use_GAEembedding:
             zDiscret = zOut>np.mean(zOut,axis=0)
             zDiscret = 1.0*zDiscret
             zOut=GAEembedding(zDiscret, adj)
