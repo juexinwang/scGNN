@@ -230,7 +230,7 @@ if __name__ == "__main__":
                 print("Error: Clustering method not appropriate")
             
             #Calculate silhouette
-            measure_clustering_results(z, listResult)
+            measure_clustering_results(zOut, listResult)
 
             # Each cluster has a autoencoder, and organize them back in iteraization
             clusterIndexList = []
