@@ -167,25 +167,29 @@ if __name__ == "__main__":
         recon, original, z = train(epoch, EMFlag=False)
         
     zOut = z.detach().cpu().numpy() 
-    if args.saveTag:
-        reconOut = recon.detach().cpu().numpy()  
-        np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_recon.npy',reconOut)
-        np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_z.npy',zOut)
-
+        
     # Here para = 'euclidean:10'
     adj, edgeList = generateAdj(zOut, graphType='KNNgraphML', para = args.knn_distance+':'+str(args.k)) 
     adjdense = sp.csr_matrix.todense(adj)
     adjsample = torch.from_numpy(adjdense)
-
-    # GAE
-    zDiscret = zOut>np.mean(zOut,axis=0)
-    zDiscret = 1.0*zDiscret
-    zGAE=GAEembedding(zDiscret, adj)
     if args.saveTag:
-        np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_zGAE.npy',zGAE)
-
-        np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_init_edgeList.npy',edgeList)
-
+        reconOut = recon.detach().cpu().numpy()  
+        np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_recon.npy',reconOut)
+        np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_z.npy',zOut)
+    
+    # Whether use GAE embedding
+    if args.useGAEembedding:
+        zDiscret = zOut>np.mean(zOut,axis=0)
+        zDiscret = 1.0*zDiscret
+        zOut=GAEembedding(zDiscret, adj)
+        # Here para = 'euclidean:10'
+        adj, edgeList = generateAdj(zOut, graphType='KNNgraphML', para = args.knn_distance+':'+str(args.k)) 
+        adjdense = sp.csr_matrix.todense(adj)
+        adjsample = torch.from_numpy(adjdense)
+        if args.saveTag:
+            np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_zGAE.npy',zOut)
+        # np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_init_edgeList.npy',edgeList)
+    
     #Fill the zeros before EM iteration
     # TODO: better implementation
     if args.zerofillFlag:
@@ -200,26 +204,8 @@ if __name__ == "__main__":
 
     print("EM processes started")
     for bigepoch in range(0, args.EM_iteration):
-        #Graph regulizated EM AE
-        if args.EMtype == 'EM':
-            # Use new dataloader
-            scDataInter = scDatasetInter(recon)
-            train_loader = DataLoader(scDataInter, batch_size=args.batch_size, shuffle=True, **kwargs)
-
-            for epoch in range(1, args.epochs + 1):
-                recon, original, z = train(epoch, EMFlag=True)
-
-        #Graph regulizated EM AE with celltype AE
-        elif args.EMtype == 'celltypeEM':
-            # Whether use GAE embedding
-            if args.useGAEembedding:
-                zDiscret = zOut>np.mean(zOut,axis=0)
-                zDiscret = 1.0*zDiscret
-                zOut=GAEembedding(zDiscret, adj)
-                # Here para = 'euclidean:10'
-                adj, edgeList = generateAdj(zOut, graphType='KNNgraphML', para = args.knn_distance+':'+str(args.k)) 
-                adjdense = sp.csr_matrix.todense(adj)
-                adjsample = torch.from_numpy(adjdense)
+        #Graph regulizated EM AE with celltype AE, do the additional AE
+        if args.EMtype == 'celltypeEM':            
             # Clustering: Get cluster
             if args.clustering_method=='Louvain':
                 listResult,size = generateCluster(edgeList)
@@ -249,15 +235,11 @@ if __name__ == "__main__":
                 clusterIndexList[listResult[i]].append(i)
 
             reconNew = np.zeros((scData.features.shape[0],scData.features.shape[1]))
-            zNew = np.copy(zOut)
             
             # Convert to Tensor
             reconNew = torch.from_numpy(reconNew)
             reconNew = reconNew.type(torch.FloatTensor)
             reconNew = reconNew.to(device)
-            zNew     = torch.from_numpy(zNew)
-            zNew     = zNew.type(torch.FloatTensor)
-            zNew     = zNew.to(device)
 
             for clusterIndex in clusterIndexList:
                 reconUsage = recon[clusterIndex]
@@ -268,24 +250,38 @@ if __name__ == "__main__":
                 count = 0
                 for i in clusterIndex:
                     reconNew[i] = reconCluster[count,:]
-                    zNew[i] = zCluster[count,:]
                     count +=1
             # Update
             recon = reconNew
-            zOut = zNew
-        else:
-            print('Error: EM type not correct')
-                    
+        
+        # Use new dataloader
+        scDataInter = scDatasetInter(recon)
+        train_loader = DataLoader(scDataInter, batch_size=args.batch_size, shuffle=True, **kwargs)
+
+        for epoch in range(1, args.epochs + 1):
+            recon, original, z = train(epoch, EMFlag=True)
+        
         zOut = z.detach().cpu().numpy()
-        if args.saveTag:
-            reconOut = recon.detach().cpu().numpy()
-            np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_recon'+str(bigepoch)+'.npy',reconOut)
-            np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_z'+str(bigepoch)+'.npy',zOut)
 
         # Here para = 'euclidean:10'
         adj, edgeList = generateAdj(zOut, graphType='KNNgraphML', para = args.knn_distance+':'+str(args.k)) 
         adjdense = sp.csr_matrix.todense(adj)
         adjsample = torch.from_numpy(adjdense)
+
+        # Whether use GAE embedding
+        if args.useGAEembedding:
+            zDiscret = zOut>np.mean(zOut,axis=0)
+            zDiscret = 1.0*zDiscret
+            zOut=GAEembedding(zDiscret, adj)
+            # Here para = 'euclidean:10'
+            adj, edgeList = generateAdj(zOut, graphType='KNNgraphML', para = args.knn_distance+':'+str(args.k)) 
+            adjdense = sp.csr_matrix.todense(adj)
+            adjsample = torch.from_numpy(adjdense)
+
+        if args.saveTag:
+            reconOut = recon.detach().cpu().numpy()
+            np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_recon'+str(bigepoch)+'.npy',reconOut)
+            np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_z'+str(bigepoch)+'.npy',zOut)
     
     if args.saveTag:
         np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_final_edgeList.npy',edgeList)
