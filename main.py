@@ -68,7 +68,7 @@ parser.add_argument('--GAEhidden2', type=int, default=16, help='Number of units 
 parser.add_argument('--GAElr', type=float, default=0.01, help='Initial learning rate.')
 parser.add_argument('--GAEdropout', type=float, default=0., help='Dropout rate (1 - keep probability).')
 parser.add_argument('--GAElr_dw', type=float, default=0.001, help='Initial learning rate for regularization.')
-parser.add_argument('--GAEn-clusters', default=11, type=int, help='number of clusters, 7 for cora, 6 for citeseer')
+parser.add_argument('--GAEn-clusters', default=20, type=int, help='number of clusters, 7 for cora, 6 for citeseer, 11 for 5.Pollen, 20 for MMP')
 #Start Impute or not, only used for evaluating Impute
 parser.add_argument('--imputeTag', type=bool, default=False,
                     help='impute or not (default: False). Caution: usually change npuDir if set imputeTag as true')
