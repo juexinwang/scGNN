@@ -49,15 +49,15 @@ parser.add_argument('--zerofillFlag', dest='zerofillFlag', default=False, action
 parser.add_argument('--EMtype', type=str, default='celltypeEM',
                     help='EM process type (default: celltypeEM) or EM')
 #Debug related
-parser.add_argument('--saveTag', dest='saveTag', default=False, action='store_true',
+parser.add_argument('--saveFlag', dest='saveFlag', default=False, action='store_true',
                     help='whether save npy results or not')
 parser.add_argument('--npyDir', type=str, default='npyGraphTest/',
                     help='save npy results in directory')
 parser.add_argument('--log-interval', type=int, default=100, metavar='N',
                     help='how many batches to wait before logging training status')
 #Clustering related
-parser.add_argument('--useGAEembedding', dest='useGAEembedding', default=True, action='store_true',
-                    help='whether use GAE embedding before clustering(default: True)')
+parser.add_argument('--useGAEembedding', dest='useGAEembedding', default=False, action='store_true',
+                    help='whether use GAE embedding before clustering(default: False)')
 parser.add_argument('--clustering-method', type=str, default='Louvain',
                     help='Clustering method: Louvain/KMeans/SpectralClustering/AffinityPropagation/AgglomerativeClustering/Birch')
 #GAE related
@@ -70,8 +70,8 @@ parser.add_argument('--GAEdropout', type=float, default=0., help='Dropout rate (
 parser.add_argument('--GAElr_dw', type=float, default=0.001, help='Initial learning rate for regularization.')
 parser.add_argument('--GAEn-clusters', default=20, type=int, help='number of clusters, 7 for cora, 6 for citeseer, 11 for 5.Pollen, 20 for MMP')
 #Start Impute or not, only used for evaluating Impute
-parser.add_argument('--imputeTag', dest='imputeTag', default=False, action='store_true',
-                    help='impute or not (default: False). Caution: usually change npuDir if set imputeTag as true')
+parser.add_argument('--imputeMode', dest='imputeMode', default=False, action='store_true',
+                    help='impute or not (default: False). Caution: usually change npuDir if set imputeMode as true')
 parser.add_argument('--dropoutRatio', type=float, default=0.1,
                     help='dropout ratio for impute (default: 0.1)')
 
@@ -83,7 +83,7 @@ device = torch.device("cuda" if args.cuda else "cpu")
 
 kwargs = {'num_workers': 1, 'pin_memory': True} if args.cuda else {}
 
-if not args.imputeTag:
+if not args.imputeMode:
     scData = scDataset(args.datasetName, args.discreteTag)
 else:
     scData = scDatasetDropout(args.datasetName, args.discreteTag, args.dropoutRatio)
@@ -157,7 +157,7 @@ if __name__ == "__main__":
     adjfeature = None
 
     # Save results only when impute
-    if args.imputeTag:
+    if args.imputeMode:
         save_sparse_matrix(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_'+str(args.dropoutRatio)+'_features.npz',scData.features)
         # sp.save_npz(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_'+str(args.dropoutRatio)+'_features.npz',scData.features)
         # np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_'+str(args.dropoutRatio)+'_features.npy',scData.features)
@@ -176,7 +176,7 @@ if __name__ == "__main__":
     adjdense = sp.csr_matrix.todense(adj)
     adjsample = torch.from_numpy(adjdense)
     print("---Pruning takes %s seconds ---" % (time.time() - prune_time))
-    if args.saveTag:
+    if args.saveFlag:
         reconOut = recon.detach().cpu().numpy()  
         np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_recon.npy',reconOut)
         np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_z.npy',zOut)
@@ -192,7 +192,7 @@ if __name__ == "__main__":
         adjdense = sp.csr_matrix.todense(adj)
         adjsample = torch.from_numpy(adjdense)
         print("---Pruning takes %s seconds ---" % (time.time() - prune_time))
-        if args.saveTag:
+        if args.saveFlag:
             np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_zGAE.npy',zOut)
         # np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_init_edgeList.npy',edgeList)
     
@@ -294,13 +294,13 @@ if __name__ == "__main__":
             adjsample = torch.from_numpy(adjdense)
             print("---Pruning takes %s seconds ---" % (time.time() - prune_time))
 
-        if args.saveTag:
+        if args.saveFlag:
             reconOut = recon.detach().cpu().numpy()
             np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_recon'+str(bigepoch)+'.npy',reconOut)
             np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_z'+str(bigepoch)+'.npy',zOut)
         
         print("---One iteration in EM process, proceeded %s seconds ---" % (time.time() - iteration_time))
 
-    if args.saveTag:
+    if args.saveFlag:
         np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_final_edgeList.npy',edgeList)
     print("---Total Running Time: %s seconds ---" % (time.time() - start_time))
