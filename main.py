@@ -186,7 +186,7 @@ if __name__ == "__main__":
     if args.use_GAEembedding:
         zDiscret = zOut>np.mean(zOut,axis=0)
         zDiscret = 1.0*zDiscret
-        zOut=GAEembedding(zDiscret, adj)
+        zOut=GAEembedding(zDiscret, adj, args)
         prune_time = time.time()
         # Here para = 'euclidean:10'
         adj, edgeList = generateAdj(zOut, graphType='KNNgraphML', para = args.knn_distance+':'+str(args.k)) 
@@ -287,7 +287,7 @@ if __name__ == "__main__":
         if args.use_GAEembedding:
             zDiscret = zOut>np.mean(zOut,axis=0)
             zDiscret = 1.0*zDiscret
-            zOut=GAEembedding(zDiscret, adj)
+            zOut=GAEembedding(zDiscret, adj, args)
             prune_time = time.time()
             # Here para = 'euclidean:10'
             adj, edgeList = generateAdj(zOut, graphType='KNNgraphML', para = args.knn_distance+':'+str(args.k)) 

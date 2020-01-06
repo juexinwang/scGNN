@@ -26,37 +26,38 @@ from graph_function import *
 from benchmark_util import *
 
 # Ref codes from https://github.com/MysteryVaibhav/RWR-GAE
-parser = argparse.ArgumentParser()
-parser.add_argument('--npyDir',type=str,default='npyGraph10/',help="npyDir")
-parser.add_argument('--zFilename',type=str,default='5.Pollen_all_noregu_recon0.npy',help="z Filename")
-parser.add_argument('--benchmark',type=bool,default=True,help="whether have benchmark")
-# cell File
-parser.add_argument('--labelFilename',type=str,default='/home/wangjue/biodata/scData/AnjunBenchmark/5.Pollen/Pollen_cell_label.csv',help="label Filename")
-parser.add_argument('--cellFilename',type=str,default='/home/wangjue/biodata/scData/5.Pollen.cellname.txt',help="cell Filename")
-parser.add_argument('--cellIndexname',type=str,default='/home/wangjue/myprojects/scGNN/data/sc/5.Pollen_all/ind.5.Pollen_all.cellindex.txt',help="cell index Filename")
-parser.add_argument('--originalFile',type=str,default='data/sc/5.Pollen_all/5.Pollen_all.features.csv',help="original csv Filename")
-# GAE
-parser.add_argument('--GAEmodel', type=str, default='gcn_vae', help="models used")
-parser.add_argument('--dw', type=int, default=0, help="whether to use deepWalk regularization, 0/1")
-parser.add_argument('--GAEepochs', type=int, default=200, help='Number of epochs to train.')
-parser.add_argument('--GAEhidden1', type=int, default=32, help='Number of units in hidden layer 1.')
-parser.add_argument('--GAEhidden2', type=int, default=16, help='Number of units in hidden layer 2.')
-parser.add_argument('--GAElr', type=float, default=0.01, help='Initial learning rate.')
-parser.add_argument('--GAEdropout', type=float, default=0., help='Dropout rate (1 - keep probability).')
-parser.add_argument('--dataset-str', type=str, default='cora', help='type of dataset.')
-parser.add_argument('--walk-length', default=5, type=int, help='Length of the random walk started at each node')
-parser.add_argument('--window-size', default=3, type=int, help='Window size of skipgram model.')
-parser.add_argument('--number-walks', default=5, type=int, help='Number of random walks to start at each node')
-parser.add_argument('--full-number-walks', default=0, type=int, help='Number of random walks from each node')
-parser.add_argument('--GAElr_dw', type=float, default=0.001, help='Initial learning rate for regularization.')
-parser.add_argument('--context', type=int, default=0, help="whether to use context nodes for skipgram")
-parser.add_argument('--ns', type=int, default=1, help="whether to use negative samples for skipgram")
-parser.add_argument('--GAEn-clusters', default=11, type=int, help='number of clusters, 7 for cora, 6 for citeseer')
-parser.add_argument('--GAEplot', type=int, default=0, help="whether to plot the clusters using tsne")
-args = parser.parse_args()
+def main(raw_args=None):
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--npyDir',type=str,default='npyGraph10/',help="npyDir")
+    parser.add_argument('--zFilename',type=str,default='5.Pollen_all_noregu_recon0.npy',help="z Filename")
+    parser.add_argument('--benchmark',type=bool,default=True,help="whether have benchmark")
+    # cell File
+    parser.add_argument('--labelFilename',type=str,default='/home/wangjue/biodata/scData/AnjunBenchmark/5.Pollen/Pollen_cell_label.csv',help="label Filename")
+    parser.add_argument('--cellFilename',type=str,default='/home/wangjue/biodata/scData/5.Pollen.cellname.txt',help="cell Filename")
+    parser.add_argument('--cellIndexname',type=str,default='/home/wangjue/myprojects/scGNN/data/sc/5.Pollen_all/ind.5.Pollen_all.cellindex.txt',help="cell index Filename")
+    parser.add_argument('--originalFile',type=str,default='data/sc/5.Pollen_all/5.Pollen_all.features.csv',help="original csv Filename")
+    # GAE
+    parser.add_argument('--GAEmodel', type=str, default='gcn_vae', help="models used")
+    parser.add_argument('--dw', type=int, default=0, help="whether to use deepWalk regularization, 0/1")
+    parser.add_argument('--GAEepochs', type=int, default=200, help='Number of epochs to train.')
+    parser.add_argument('--GAEhidden1', type=int, default=32, help='Number of units in hidden layer 1.')
+    parser.add_argument('--GAEhidden2', type=int, default=16, help='Number of units in hidden layer 2.')
+    parser.add_argument('--GAElr', type=float, default=0.01, help='Initial learning rate.')
+    parser.add_argument('--GAEdropout', type=float, default=0., help='Dropout rate (1 - keep probability).')
+    parser.add_argument('--dataset-str', type=str, default='cora', help='type of dataset.')
+    parser.add_argument('--walk-length', default=5, type=int, help='Length of the random walk started at each node')
+    parser.add_argument('--window-size', default=3, type=int, help='Window size of skipgram model.')
+    parser.add_argument('--number-walks', default=5, type=int, help='Number of random walks to start at each node')
+    parser.add_argument('--full-number-walks', default=0, type=int, help='Number of random walks from each node')
+    parser.add_argument('--GAElr_dw', type=float, default=0.001, help='Initial learning rate for regularization.')
+    parser.add_argument('--context', type=int, default=0, help="whether to use context nodes for skipgram")
+    parser.add_argument('--ns', type=int, default=1, help="whether to use negative samples for skipgram")
+    parser.add_argument('--GAEn-clusters', default=11, type=int, help='number of clusters, 7 for cora, 6 for citeseer')
+    parser.add_argument('--GAEplot', type=int, default=0, help="whether to plot the clusters using tsne")
+    args = parser.parse_args()
 
 #gae embedding
-def GAEembedding(z, adj):
+def GAEembedding(z, adj, args):
     '''
     GAE embedding for clustering
     Param:
@@ -383,4 +384,7 @@ def test_clustering_results(z, edgeList):
     clustering = OPTICS().fit(z)
     listResult = clustering.labels_.tolist()
     measure_clustering_results(z,listResult)
+
+if __name__=='__main__':
+    main()
 
