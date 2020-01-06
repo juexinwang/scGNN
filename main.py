@@ -82,6 +82,7 @@ torch.manual_seed(args.seed)
 device = torch.device("cuda" if args.cuda else "cpu")
 
 kwargs = {'num_workers': 1, 'pin_memory': True} if args.cuda else {}
+print(args)
 
 if not args.imputeMode:
     scData = scDataset(args.datasetName, args.discreteTag)
