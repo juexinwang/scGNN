@@ -17,7 +17,7 @@ from model import AE, VAE, VAE2d
 from util_function import *
 from graph_function import *
 from benchmark_util import *
-from gae_embedding import GAEembedding
+from gae_embedding import GAEembedding,measure_clustering_results,test_clustering_benchmark_results
 
 parser = argparse.ArgumentParser(description='Graph EM AutoEncoder for scRNA')
 parser.add_argument('--datasetName', type=str, default='MMPbasal',
@@ -97,7 +97,8 @@ elif args.model == 'AE':
     model = AE(dim=scData.features.shape[1]).to(device)
 optimizer = optim.Adam(model.parameters(), lr=1e-3)
 
-#TODO: needs to implement batch
+#TODO: have to implement batch
+#TODO: have to improve save npy
 def train(epoch, train_loader=train_loader, EMFlag=False):
     '''
     EMFlag indicates whether in EM processes. 
@@ -146,6 +147,7 @@ def train(epoch, train_loader=train_loader, EMFlag=False):
     return recon_batch, data, z
 
 if __name__ == "__main__":
+    start_time = time.time()
     discreteStr = ''
     if args.discreteTag:
         discreteStr = 'D'       
@@ -193,17 +195,17 @@ if __name__ == "__main__":
     #Fill the zeros before EM iteration
     # TODO: better implementation
     if args.zerofillFlag:
-        # start_time = time.time()
         for nz_index in range(len(scData.nz_i)):
             # tmp = scipy.sparse.lil_matrix.todense(scData.features[scData.nz_i[nz_index], scData.nz_j[nz_index]])
             # tmp = np.asarray(tmp).reshape(-1)[0]
             tmp = scData.features[scData.nz_i[nz_index], scData.nz_j[nz_index]]
             reconOut[scData.nz_i[nz_index], scData.nz_j[nz_index]] = tmp
         recon = reconOut
-        # print("--- %s seconds ---" % (time.time() - start_time))
 
+    print("---Before EM process, proceeded %s seconds ---" % (time.time() - start_time))
     print("EM processes started")
     for bigepoch in range(0, args.EM_iteration):
+        iteration_time = time.time()
         #Graph regulizated EM AE with celltype AE, do the additional AE
         if args.EMtype == 'celltypeEM':            
             # Clustering: Get cluster
@@ -226,6 +228,9 @@ if __name__ == "__main__":
                 listResult = clustering.predict(zOut)
             else:
                 print("Error: Clustering method not appropriate")
+            
+            #Calculate silhouette
+            measure_clustering_results(z, listResult)
 
             # Each cluster has a autoencoder, and organize them back in iteraization
             clusterIndexList = []
@@ -282,6 +287,9 @@ if __name__ == "__main__":
             reconOut = recon.detach().cpu().numpy()
             np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_recon'+str(bigepoch)+'.npy',reconOut)
             np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_z'+str(bigepoch)+'.npy',zOut)
-    
+        
+        print("---One iteration in EM process, proceeded %s seconds ---" % (time.time() - iteration_time))
+
     if args.saveTag:
         np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_final_edgeList.npy',edgeList)
+    print("---Total Running Time: %s seconds ---" % (time.time() - start_time))
