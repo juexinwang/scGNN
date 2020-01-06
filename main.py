@@ -49,14 +49,14 @@ parser.add_argument('--zerofillFlag', action='store_true', default=False,
 parser.add_argument('--EMtype', type=str, default='celltypeEM',
                     help='EM process type (default: celltypeEM) or EM')
 #Debug related
-parser.add_argument('--saveFlag', action='store_true', default=False, 
+parser.add_argument('--saveFlag', action='store_true', default=True, 
                     help='whether save npy results or not')
 parser.add_argument('--npyDir', type=str, default='npyGraphTest/',
                     help='save npy results in directory')
 parser.add_argument('--log-interval', type=int, default=100, metavar='N',
                     help='how many batches to wait before logging training status')
 #Clustering related
-parser.add_argument('--use-GAEembedding', action='store_true', default=False, 
+parser.add_argument('--useGAEembedding', action='store_true', default=False, 
                     help='whether use GAE embedding before clustering(default: False)')
 parser.add_argument('--clustering-method', type=str, default='Louvain',
                     help='Clustering method: Louvain/KMeans/SpectralClustering/AffinityPropagation/AgglomerativeClustering/Birch')
@@ -183,7 +183,7 @@ if __name__ == "__main__":
         np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_z.npy',zOut)
     
     # Whether use GAE embedding
-    if args.use_GAEembedding:
+    if args.useGAEembedding:
         zDiscret = zOut>np.mean(zOut,axis=0)
         zDiscret = 1.0*zDiscret
         zOut=GAEembedding(zDiscret, adj, args)
@@ -284,7 +284,7 @@ if __name__ == "__main__":
         print("---Pruning takes %s seconds ---" % (time.time() - prune_time))
 
         # Whether use GAE embedding
-        if args.use_GAEembedding:
+        if args.useGAEembedding:
             zDiscret = zOut>np.mean(zOut,axis=0)
             zDiscret = 1.0*zDiscret
             zOut=GAEembedding(zDiscret, adj, args)
