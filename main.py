@@ -36,7 +36,7 @@ parser.add_argument('--seed', type=int, default=1, metavar='S',
                     help='random seed (default: 1)')
 parser.add_argument('--regulized-type', type=str, default='Graph',
                     help='regulized type (default: Graph) in EM, otherwise: noregu')
-parser.add_argument('--discreteTag', dest='discreteTag', default=False, action='store_true',
+parser.add_argument('--discreteTag', default=False, action='store_true',
                     help='whether input is raw or 0/1 (default: False)')
 parser.add_argument('--k', type=int, default=10,
                     help='parameter k in KNN graph (default: 10)')
@@ -44,19 +44,19 @@ parser.add_argument('--knn-distance', type=str, default='euclidean',
                     help='KNN graph distance type (default: euclidean)')                    
 parser.add_argument('--model', type=str, default='AE',
                     help='VAE/AE (default: AE)')
-parser.add_argument('--zerofillFlag', dest='zerofillFlag', default=False, action='store_true',
+parser.add_argument('--zerofillFlag', default=False, action='store_true',
                     help='fill zero or not before EM process (default: False)')
 parser.add_argument('--EMtype', type=str, default='celltypeEM',
                     help='EM process type (default: celltypeEM) or EM')
 #Debug related
-parser.add_argument('--saveFlag', dest='saveFlag', default=False, action='store_true',
+parser.add_argument('--saveFlag', default=False, action='store_true',
                     help='whether save npy results or not')
 parser.add_argument('--npyDir', type=str, default='npyGraphTest/',
                     help='save npy results in directory')
 parser.add_argument('--log-interval', type=int, default=100, metavar='N',
                     help='how many batches to wait before logging training status')
 #Clustering related
-parser.add_argument('--useGAEembedding', dest='useGAEembedding', default=False, action='store_true',
+parser.add_argument('--useGAEembedding', default=False, action='store_true',
                     help='whether use GAE embedding before clustering(default: False)')
 parser.add_argument('--clustering-method', type=str, default='Louvain',
                     help='Clustering method: Louvain/KMeans/SpectralClustering/AffinityPropagation/AgglomerativeClustering/Birch')
@@ -70,7 +70,7 @@ parser.add_argument('--GAEdropout', type=float, default=0., help='Dropout rate (
 parser.add_argument('--GAElr_dw', type=float, default=0.001, help='Initial learning rate for regularization.')
 parser.add_argument('--GAEn-clusters', default=20, type=int, help='number of clusters, 7 for cora, 6 for citeseer, 11 for 5.Pollen, 20 for MMP')
 #Start Impute or not, only used for evaluating Impute
-parser.add_argument('--imputeMode', dest='imputeMode', default=False, action='store_true',
+parser.add_argument('--imputeMode', default=False, action='store_true',
                     help='impute or not (default: False). Caution: usually change npuDir if set imputeMode as true')
 parser.add_argument('--dropoutRatio', type=float, default=0.1,
                     help='dropout ratio for impute (default: 0.1)')
