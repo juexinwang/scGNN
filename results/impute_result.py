@@ -1,6 +1,8 @@
 import numpy as np
 import argparse
 import scipy.sparse
+import sys
+sys.path.append('../')
 from util_function import *
 from benchmark_util import * 
 
