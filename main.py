@@ -178,9 +178,13 @@ if __name__ == "__main__":
     adjsample = torch.from_numpy(adjdense)
     print("---Pruning takes %s seconds ---" % (time.time() - prune_time))
     if args.saveFlag:
-        reconOut = recon.detach().cpu().numpy()  
-        np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_recon.npy',reconOut)
-        np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_z.npy',zOut)
+        reconOut = recon.detach().cpu().numpy()
+        if args.imputeMode:
+            np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_'+str(args.dropoutRatio)+'_recon.npy',reconOut)
+            np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_'+str(args.dropoutRatio)+'_z.npy',zOut)
+        else:  
+            np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_recon.npy',reconOut)
+            np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_z.npy',zOut)
     
     # Whether use GAE embedding
     if args.useGAEembedding:
@@ -194,7 +198,10 @@ if __name__ == "__main__":
         adjsample = torch.from_numpy(adjdense)
         print("---Pruning takes %s seconds ---" % (time.time() - prune_time))
         if args.saveFlag:
-            np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_zGAE.npy',zOut)
+            if args.imputeMode:
+                np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_'+str(args.dropoutRatio)+'_zGAE.npy',zOut)
+            else:
+                np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_zGAE.npy',zOut)
         # np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_init_edgeList.npy',edgeList)
     
     #Fill the zeros before EM iteration
@@ -297,11 +304,18 @@ if __name__ == "__main__":
 
         if args.saveFlag:
             reconOut = recon.detach().cpu().numpy()
-            np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_recon'+str(bigepoch)+'.npy',reconOut)
-            np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_z'+str(bigepoch)+'.npy',zOut)
+            if args.imputeMode:
+                np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_'+str(args.dropoutRatio)+'_recon'+str(bigepoch)+'.npy',reconOut)
+                np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_'+str(args.dropoutRatio)+'_z'+str(bigepoch)+'.npy',zOut)
+            else:
+                np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_recon'+str(bigepoch)+'.npy',reconOut)
+                np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_z'+str(bigepoch)+'.npy',zOut)
         
         print("---One iteration in EM process, proceeded %s seconds ---" % (time.time() - iteration_time))
 
     if args.saveFlag:
-        np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_final_edgeList.npy',edgeList)
+        if args.imputeMode:
+            np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_'+str(args.dropoutRatio)+'_final_edgeList.npy',edgeList)
+        else:
+            np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_final_edgeList.npy',edgeList)
     print("---Total Running Time: %s seconds ---" % (time.time() - start_time))
