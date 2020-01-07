@@ -24,13 +24,13 @@ parser.add_argument('--datasetName', type=str, default='MMPbasal',
                     help='TGFb/sci-CAR/sci-CAR_LTMG/2.Yan/5.Pollen/MMPbasal/MMPbasal_all/MMPbasal_allgene/MMPbasal_allcell/MMPepo/MMPbasal_LTMG/MMPbasal_all_LTMG')
 parser.add_argument('--batch-size', type=int, default=10000, metavar='N',
                     help='input batch size for training (default: 128)')
-parser.add_argument('--epochs', type=int, default=2, metavar='N',
+parser.add_argument('--epochs', type=int, default=50, metavar='N',
                     help='number of epochs to train (default: 500)')
-parser.add_argument('--EM-iteration', type=int, default=2, metavar='N',
+parser.add_argument('--EM-iteration', type=int, default=3, metavar='N',
                     help='number of epochs in EM iteration (default: 3)')
-parser.add_argument('--celltype-epochs', type=int, default=2, metavar='N',
+parser.add_argument('--celltype-epochs', type=int, default=20, metavar='N',
                     help='number of epochs in celltype training (default: 200)')
-parser.add_argument('--no-cuda', action='store_true', default=True,
+parser.add_argument('--no-cuda', action='store_true', default=False,
                     help='enables CUDA training')
 parser.add_argument('--seed', type=int, default=1, metavar='S',
                     help='random seed (default: 1)')
