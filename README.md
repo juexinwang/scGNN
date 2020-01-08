@@ -18,6 +18,7 @@ Reqirements: (May not sufficient)
     pip install community
     pip install rpy2
     pip install node2vec
+    pip install munkres
 
 R integration:
 
