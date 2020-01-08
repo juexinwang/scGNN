@@ -237,7 +237,7 @@ if __name__ == "__main__":
                 clustering = AgglomerativeClustering().fit(zOut)
                 listResult = clustering.labels_.tolist()
             elif args.clustering_method=='Birch':
-                clustering = Birch(n_clusters=args.n_clusters).fit(zOut)
+                clustering = Birch(n_clusters=args.GAEn_clusters).fit(zOut)
                 listResult = clustering.predict(zOut)
             else:
                 print("Error: Clustering method not appropriate")

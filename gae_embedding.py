@@ -259,7 +259,7 @@ def measure_clustering_results(z, listResult):
     silhouette, chs, dbs = measureClusteringNoLabel(z, listResult)
     print('{:.4f} {:.4f} {:.4f}'.format(silhouette, chs, dbs))
 
-def test_clustering_benchmark_results(z, edgeList, true_labels):
+def test_clustering_benchmark_results(z, edgeList, true_labels, args):
     '''
     Try different clustring with known celltypes
     '''
@@ -322,7 +322,7 @@ def test_clustering_benchmark_results(z, edgeList, true_labels):
     listResult = clustering.labels_.tolist()
     measure_clustering_benchmark_results(z,listResult, true_labels)
 
-def test_clustering_results(z, edgeList):
+def test_clustering_results(z, edgeList, args):
     '''
     Try different clustring without known celltypes
     '''

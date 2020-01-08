@@ -28,6 +28,7 @@ from sklearn.metrics import silhouette_samples, silhouette_score
 from graph_function import *
 from benchmark_util import * 
 
+# Visualize results of celltype identifications
 parser = argparse.ArgumentParser(description='Plot scRNA Results')
 parser.add_argument('--datasetName', type=str, default='MMPbasal_all',
                     help='MPPbasal')

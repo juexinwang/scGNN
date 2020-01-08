@@ -6,5 +6,5 @@ python3 -W ignore main.py --datasetName MMPbasal_all --EMtype celltypeEM --imput
 python3 -W ignore main.py --datasetName MMPbasal_all --discreteTag --EMtype celltypeEM --imputeMode  --npyDir npyImputeG2F/
 python3 -W ignore main.py --datasetName MMPbasal_all_LTMG --EMtype celltypeEM --imputeMode  --npyDir npyImputeG2F/
 
-python3 -W ignore main.py --datasetName MPPbasal_allcell --EMtype celltypeEM --imputeMode  --npyDir npyImputeG2F/
-python3 -W ignore main.py --datasetName MPPbasal_allcell --discreteTag --EMtype celltypeEM --imputeMode  --npyDir npyImputeG2F/
+python3 -W ignore main.py --datasetName MMPbasal_allcell --EMtype celltypeEM --imputeMode  --npyDir npyImputeG2F/
+python3 -W ignore main.py --datasetName MMPbasal_allcell --discreteTag --EMtype celltypeEM --imputeMode  --npyDir npyImputeG2F/

@@ -6,5 +6,5 @@ python3 -W ignore main.py --datasetName MMPbasal_all --EMtype celltypeEM   --clu
 python3 -W ignore main.py --datasetName MMPbasal_all --discreteTag --EMtype celltypeEM   --clustering-method AgglomerativeClustering --useGAEembedding --imputeMode --npyDir npyImputeG2E_AgglomerativeClustering/
 python3 -W ignore main.py --datasetName MMPbasal_all_LTMG --EMtype celltypeEM   --clustering-method AgglomerativeClustering --useGAEembedding --imputeMode --npyDir npyImputeG2E_AgglomerativeClustering/
 
-python3 -W ignore main.py --datasetName MPPbasal_allcell --EMtype celltypeEM   --clustering-method AgglomerativeClustering --useGAEembedding --imputeMode --npyDir npyImputeG2E_AgglomerativeClustering/
-python3 -W ignore main.py --datasetName MPPbasal_allcell --discreteTag --EMtype celltypeEM   --clustering-method AgglomerativeClustering --useGAEembedding --imputeMode --npyDir npyImputeG2E_AgglomerativeClustering/
+python3 -W ignore main.py --datasetName MMPbasal_allcell --EMtype celltypeEM   --clustering-method AgglomerativeClustering --useGAEembedding --imputeMode --npyDir npyImputeG2E_AgglomerativeClustering/
+python3 -W ignore main.py --datasetName MMPbasal_allcell --discreteTag --EMtype celltypeEM   --clustering-method AgglomerativeClustering --useGAEembedding --imputeMode --npyDir npyImputeG2E_AgglomerativeClustering/

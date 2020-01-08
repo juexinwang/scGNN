@@ -4,6 +4,8 @@ import community
 from sklearn.metrics import silhouette_samples, silhouette_score
 from benchmark_util import * 
 
+# Results compare with varID
+# https://www.nature.com/articles/s41592-019-0632-3
 pvalueList=[]
 lcount =0
 with open('/home/wangjue/scRNA/VarID_analysis/pvalue.txt','r') as f:

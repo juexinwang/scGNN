@@ -4,10 +4,11 @@ import community
 import networkx as nx
 import matplotlib.pyplot as plt
 import pandas as pd
+
+# Plot the lineage by markers in each cell types
 # Louvain clustering
 # https://python-louvain.readthedocs.io/en/latest/api.html
 # https://github.com/taynaud/python-louvain
-
 parser = argparse.ArgumentParser(description='AutoEncoder-EM for scRNA')
 parser.add_argument('--datasetName', type=str, default='MPPbasal',
                     help='TGFb/sci-CAR/sci-CAR_LTMG/2.Yan/5.Pollen/MPPbasal/MPPepo')

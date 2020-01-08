@@ -6,6 +6,7 @@ sys.path.append('../')
 from util_function import *
 from benchmark_util import * 
 
+#Evaluating imputing results
 #Used to postprocess results of imputation
 parser = argparse.ArgumentParser(description='Imputation Results')
 parser.add_argument('--datasetName', type=str, default='MMPbasal',
@@ -33,9 +34,7 @@ dropj            = np.load(args.npyDir+args.datasetName+'_'+args.regulized_type+
 dropix           = np.load(args.npyDir+args.datasetName+'_'+args.regulized_type+'_'+args.ratio+'_dropix.npy')
 
 featuresImpute   = np.load(args.npyDir+args.datasetName+'_'+args.regulized_type+'_'+args.ratio+'_recon.npy')
-
 l1ErrorMean, l1ErrorMedian, l1ErrorMin, l1ErrorMax = imputation_error(featuresImpute, featuresOriginal, features, dropi, dropj, dropix)
-
 print('{:.4f} {:.4f} {:.4f} {:.4f}'.format(l1ErrorMean, l1ErrorMedian, l1ErrorMin, l1ErrorMax))
 
 

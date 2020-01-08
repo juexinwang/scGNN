@@ -6,5 +6,5 @@ python3 -W ignore main.py --datasetName MMPbasal_all --EMtype celltypeEM  --clus
 python3 -W ignore main.py --datasetName MMPbasal_all --discreteTag --EMtype celltypeEM  --clustering-method KMeans --imputeMode --npyDir npyImputeG2F_KMeans/
 python3 -W ignore main.py --datasetName MMPbasal_all_LTMG --EMtype celltypeEM  --clustering-method KMeans --imputeMode --npyDir npyImputeG2F_KMeans/
 
-python3 -W ignore main.py --datasetName MPPbasal_allcell --EMtype celltypeEM  --clustering-method KMeans --imputeMode --npyDir npyImputeG2F_KMeans/
-python3 -W ignore main.py --datasetName MPPbasal_allcell --discreteTag --EMtype celltypeEM  --clustering-method KMeans --imputeMode --npyDir npyImputeG2F_KMeans/
+python3 -W ignore main.py --datasetName MMPbasal_allcell --EMtype celltypeEM  --clustering-method KMeans --imputeMode --npyDir npyImputeG2F_KMeans/
+python3 -W ignore main.py --datasetName MMPbasal_allcell --discreteTag --EMtype celltypeEM  --clustering-method KMeans --imputeMode --npyDir npyImputeG2F_KMeans/
