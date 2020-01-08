@@ -8,6 +8,8 @@ Graph Neural Network for Single Cell Impute and celltype classification
 
 Reqirements: (May not sufficient)
 ----------
+Tested on Ubuntu 16.04 and CentOS 7 with Python 3.6.8
+
     pip install numpy
     pip install torch
     pip install networkx
