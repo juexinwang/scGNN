@@ -52,7 +52,7 @@ def main(raw_args=None):
     parser.add_argument('--GAElr_dw', type=float, default=0.001, help='Initial learning rate for regularization.')
     parser.add_argument('--context', type=int, default=0, help="whether to use context nodes for skipgram")
     parser.add_argument('--ns', type=int, default=1, help="whether to use negative samples for skipgram")
-    parser.add_argument('--GAEn-clusters', default=11, type=int, help='number of clusters, 7 for cora, 6 for citeseer')
+    parser.add_argument('--n-clusters', default=11, type=int, help='number of clusters, 7 for cora, 6 for citeseer')
     parser.add_argument('--GAEplot', type=int, default=0, help="whether to plot the clusters using tsne")
     args = parser.parse_args()
 
@@ -234,7 +234,7 @@ def GAEembedding(z, adj, args):
     roc_score, ap_score = get_roc_score(hidden_emb, adj_orig, test_edges, test_edges_false)
     tqdm.write('Test ROC score: ' + str(roc_score))
     tqdm.write('Test AP score: ' + str(ap_score))
-    # kmeans = KMeans(n_clusters=args.GAEn_clusters, random_state=0).fit(hidden_emb)
+    # kmeans = KMeans(n_clusters=args.n_clusters, random_state=0).fit(hidden_emb)
     # predict_labels = kmeans.predict(hidden_emb)
     # cm = clustering_metrics(true_labels, predict_labels)
     # cm.evaluationClusterModelFromLabel(tqdm)

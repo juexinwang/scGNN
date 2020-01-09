@@ -19,6 +19,8 @@ parser.add_argument('--npyDir', type=str, default='../npyImpute/',
                     help='directory of npy')
 parser.add_argument('--ratio', type=str, default='0.1',
                     help='dropoutratio')
+parser.add_argument('--reconstr', type=str, default='',
+                    help='iteration of imputed recon (default: '') alternative: 0,1,2')
 args = parser.parse_args()
 
 featuresOriginal = load_data(args.datasetName, args.discreteTag)
@@ -33,7 +35,7 @@ dropi            = np.load(args.npyDir+args.datasetName+'_'+args.regulized_type+
 dropj            = np.load(args.npyDir+args.datasetName+'_'+args.regulized_type+'_'+args.ratio+'_dropj.npy')
 dropix           = np.load(args.npyDir+args.datasetName+'_'+args.regulized_type+'_'+args.ratio+'_dropix.npy')
 
-featuresImpute   = np.load(args.npyDir+args.datasetName+'_'+args.regulized_type+'_'+args.ratio+'_recon.npy')
+featuresImpute   = np.load(args.npyDir+args.datasetName+'_'+args.regulized_type+'_'+args.ratio+'_recon'+args.reconstr+'.npy')
 l1ErrorMean, l1ErrorMedian, l1ErrorMin, l1ErrorMax = imputation_error(featuresImpute, featuresOriginal, features, dropi, dropj, dropix)
 print('{:.4f} {:.4f} {:.4f} {:.4f}'.format(l1ErrorMean, l1ErrorMedian, l1ErrorMin, l1ErrorMax))
 
