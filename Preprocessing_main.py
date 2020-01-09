@@ -14,14 +14,20 @@ import csv
 
 # Preprocess network for sc
 parser = argparse.ArgumentParser()
-parser.add_argument('--expression-name', type=str, default='MMPbasal_all_LTMG',
-                    help='TGFb from MAGIC/ test also from MAGIC/sci-CAR/sci-CAR_LTMG/5.Pollen/MPPbasal/MPPbasal_all/MPPbasal_allcell/MPPbasal_allgene/MPPepo/MPPepo_all/MPPepo_allcell/MPPepo_allgene/MMPbasal_LTMG/MMPbasal_all_LTMG')
+parser.add_argument('--expression-name', type=str, default='MMPbasal_2000',
+                    help='TGFb from MAGIC/ test also from MAGIC/sci-CAR/sci-CAR_LTMG/5.Pollen/MMPbasal/MMPbasal_all/MMPbasal_allcell/MMPbasal_allgene/MMPepo/MMPepo_all/MMPepo_allcell/MMPepo_allgene/MMPbasal_LTMG/MMPbasal_all_LTMG')
 parser.add_argument('--data-type', type=str, default='float',
                     help='int/float')
+parser.add_argument('--geneNzThreshold', type=float, default=0.05,
+                    help='cells with genes not zero at least (default: 0.05)')  
+parser.add_argument('--geneThreshold', type=int, default=2000,
+                    help='how many genes are selected (default: 2000)')
+parser.add_argument('--countThreshold', action='store_true', default=False,
+                    help='use count as the threshold')
 parser.add_argument('--cell-threshold', type=int, default=-1,
                     help='1000 for varID, -1 for all')
 parser.add_argument('--gene-threshold', type=int, default=-1,
-                    help='1000 for varID, -1 for all')                    
+                    help='1000 for varID, -1 for all')                   
 
 args = parser.parse_args()
 
@@ -30,9 +36,10 @@ if args.data_type == 'int':
 elif args.data_type == 'float':
     zero = 0.0
 
-def preprocess_network(feature_filename, cellthreshold=1000, genethreshold=1000):
+# Old
+def preprocess_network_countsThreshold(feature_filename, cellthreshold=1000, genethreshold=1000):
     '''
-    Preprocessing by read expression
+    Preprocessing by read expression by counts threshold
     Now it outputs cells and genes larger than threshold
     output geneList, geneDict, cellList, cellDict    
     '''
@@ -84,6 +91,87 @@ def preprocess_network(feature_filename, cellthreshold=1000, genethreshold=1000)
         # Debug usage
         # else:
         #     print("Gene "+str(index)+": "+gene+" has 0 reads")
+
+    return geneList, geneDict, cellList, cellDict
+
+# Prefer to use
+def preprocess_network(feature_filename, geneNzThreshold=0.05, geneThreshold=2000):
+    '''
+    Preprocessing by read expression
+    Now it outputs all cells and genes nonzero than threshold of all cells
+    output geneList, geneDict, cellList, cellDict    
+    '''
+    # geneList, geneDict
+    geneList=[]
+    geneDict={}
+    exDict={}
+
+    #TODO: create a huge matrix, can be update later
+    # Get cell number and gene number
+    count = -1
+    with open(feature_filename) as f:
+        lines = f.readlines()
+        for line in lines:
+            if count == -1:
+                line = line.strip()
+                if line.endswith(','):
+                    line = line[:-1]
+                words = line.split(',')
+                tcount =0
+                for word in words:
+                    exDict[tcount] = word
+                    tcount = tcount + 1
+            else:
+                cellList.append(count)
+                cellDict[count]=''
+            count = count + 1
+    f.close()
+    
+    cellcount = count
+    genecount = tcount
+
+    genenzThreshold = (int)(cellcount * geneNzThreshold)
+    # cell as the rows, gene as the col 
+    contentArray = [[0.0] * genecount for i in range(cellcount)]
+
+    # gene nonezero count List
+    genenzCountList=[0] * genecount
+
+    # Check cell and genes
+    count = -1
+    exDict={}
+    exReadDict={}
+    with open(feature_filename) as f:
+        lines = f.readlines()
+        for line in lines:            
+            line = line.strip()
+            if line.endswith(','):
+                line = line[:-1]
+            words = line.split(',')
+            if count > -1:
+                tcount = 0
+                for word in words:
+                    contentArray[count][tcount] = float(word)
+                    if not float(word)==0.0:
+                        genenzCountList[tcount]=genenzCountList[tcount]+1 
+                    tcount = tcount + 1
+            count = count+1
+    f.close()
+
+    tmpindexList=[]
+    for i in range(genecount):
+        if genenzCountList[i]>genenzThreshold:
+            tmpindexList.append(i)
+
+    contentArray = np.asarray(contentArray)
+
+    tmpChooseIndex = np.argsort(-np.var(contentArray[:,tmpindexList], axis=0))[:geneThreshold]
+    chooseIndex = tmpindexList[tmpChooseIndex]
+
+    for i in chooseIndex:
+        gene = exDict[i]
+        geneList.append(gene)
+        geneDict[gene] = i
 
     return geneList, geneDict, cellList, cellDict
 
@@ -201,25 +289,27 @@ elif args.expression_name=='5.Pollen':
     expressionname = '5.Pollen.csv'
 elif args.expression_name=='5.Pollen_all':
     expressionname = '5.Pollen.csv'
-elif args.expression_name=='MPPbasal':
+elif args.expression_name=='MMPbasal':
     expressionname = 'MMPbasal.csv'
-elif args.expression_name=='MPPbasal_all':
+elif args.expression_name=='MMPbasal_all':
     expressionname = 'MMPbasal.csv'
-elif args.expression_name=='MPPbasal_allgene':
+elif args.expression_name=='MMPbasal_allgene':
     expressionname = 'MMPbasal.csv'
-elif args.expression_name=='MPPbasal_allcell':
+elif args.expression_name=='MMPbasal_allcell':
+    expressionname = 'MMPbasal.csv'
+elif args.expression_name=='MMPbasal_2000':
     expressionname = 'MMPbasal.csv'
 elif args.expression_name=='MMPbasal_LTMG':
     expressionname = 'MMPbasal_LTMG.csv'
 elif args.expression_name=='MMPbasal_all_LTMG':
     expressionname = 'MMPbasal_all_LTMG.csv'
-elif args.expression_name=='MPPepo':
+elif args.expression_name=='MMPepo':
     expressionname = 'MMPepo.csv'
-elif args.expression_name=='MPPepo_all':
+elif args.expression_name=='MMPepo_all':
     expressionname = 'MMPepo.csv'
-elif args.expression_name=='MPPepo_allgene':
+elif args.expression_name=='MMPepo_allgene':
     expressionname = 'MMPepo.csv'
-elif args.expression_name=='MPPepo_allcell':
+elif args.expression_name=='MMPepo_allcell':
     expressionname = 'MMPepo.csv'
 elif args.expression_name=='test':
     expressionname = 'test_data.csv'
@@ -230,12 +320,16 @@ if not os.path.exists(out_folder):
 
 feature_filename = "/home/wangjue/biodata/scData/"+expressionname
 
-geneList, geneDict, cellList, cellDict = preprocess_network(feature_filename, cellthreshold=args.cell_threshold, genethreshold=args.gene_threshold)
+if args.countThreshold:
+    #Set counts threshold as VarID
+    geneList, geneDict, cellList, cellDict = preprocess_network_countsThreshold(feature_filename, cellthreshold=args.cell_threshold, genethreshold=args.gene_threshold)
+else:
+    #Set threshold
+    geneList, geneDict, cellList, cellDict = preprocess_network(feature_filename, geneNzThreshold=args.geneNzThreshold, geneThreshold=args.geneThreshold)
 
 #python and matlab
 #First generate feature
 feature, featureD, dim2out, dim2outD = read_feature_file_sparse(feature_filename, geneList, geneDict, cellList, cellDict)
-
 print(str(len(cellList))+" cells are retained")
 
 # Try to generate the graph structure
