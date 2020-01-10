@@ -22,7 +22,7 @@
 # MMP LTMG
 # python Preprocessing_scFile.py --inputfile /home/wangjue/biodata/scData/MMP/MMPbasal_OneSign_LTMG.txt --outputfile /home/wangjue/biodata/scData/MMPbasal_LTMG.csv --outputfileCellName /home/wangjue/biodata/scData/MMPbasal_LTMG.cellname.txt --cellcount 4394 --genecount 3784 --split space --cellheadflag False
 # python Preprocessing_scFile.py --inputfile /home/wangjue/biodata/scData/MMP/MMPbasal_all_OneSign_LTMG.txt --outputfile /home/wangjue/biodata/scData/MMPbasal_all_LTMG.csv --outputfileCellName /home/wangjue/biodata/scData/MMPbasal_all_LTMG.cellname.txt --cellcount 5432 --genecount 21299 --split space --cellheadflag False
-
+# python Preprocessing_scFile.py --inputfile /home/wangjue/biodata/scData/MMP/T2000_OneSign_LTMG.txt --outputfile /home/wangjue/biodata/scData/MMPbasal_2000_LTMG.csv --outputfileCellName /home/wangjue/biodata/scData/MMPbasal_2000_LTMG.cellname.txt --cellcount 5432 --genecount 2000 --split space --cellheadflag False
 
 
 import numpy as np
