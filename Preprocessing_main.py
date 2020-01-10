@@ -15,7 +15,7 @@ import csv
 # Preprocess network for sc
 parser = argparse.ArgumentParser()
 parser.add_argument('--expression-name', type=str, default='MMPbasal_2000',
-                    help='TGFb from MAGIC/ test also from MAGIC/sci-CAR/sci-CAR_LTMG/5.Pollen/MMPbasal/MMPbasal_all/MMPbasal_allcell/MMPbasal_allgene/MMPepo/MMPepo_all/MMPepo_allcell/MMPepo_allgene/MMPbasal_LTMG/MMPbasal_all_LTMG')
+                    help='TGFb from MAGIC/ test also from MAGIC/sci-CAR/sci-CAR_LTMG/5.Pollen/MMPbasal/MMPbasal_all/MMPbasal_allcell/MMPbasal_allgene/MMPepo/MMPepo_all/MMPepo_allcell/MMPepo_allgene/MMPbasal_LTMG/MMPbasal_all_LTMG/MMPbasal_2000')
 parser.add_argument('--data-type', type=str, default='float',
                     help='int/float')
 parser.add_argument('--geneNzThreshold', type=float, default=0.05,
@@ -104,6 +104,8 @@ def preprocess_network(feature_filename, geneNzThreshold=0.05, geneThreshold=200
     # geneList, geneDict
     geneList=[]
     geneDict={}
+    cellList=[]
+    cellDict={}
     exDict={}
 
     #TODO: create a huge matrix, can be update later
@@ -130,7 +132,7 @@ def preprocess_network(feature_filename, geneNzThreshold=0.05, geneThreshold=200
     cellcount = count
     genecount = tcount
 
-    genenzThreshold = (int)(cellcount * geneNzThreshold)
+    genenzThresholdCount = (int)(cellcount * geneNzThreshold)
     # cell as the rows, gene as the col 
     contentArray = [[0.0] * genecount for i in range(cellcount)]
 
@@ -139,8 +141,6 @@ def preprocess_network(feature_filename, geneNzThreshold=0.05, geneThreshold=200
 
     # Check cell and genes
     count = -1
-    exDict={}
-    exReadDict={}
     with open(feature_filename) as f:
         lines = f.readlines()
         for line in lines:            
@@ -156,16 +156,20 @@ def preprocess_network(feature_filename, geneNzThreshold=0.05, geneThreshold=200
                         genenzCountList[tcount]=genenzCountList[tcount]+1 
                     tcount = tcount + 1
             count = count+1
+            if count%100 == 0:
+                print(count)
     f.close()
 
     tmpindexList=[]
     for i in range(genecount):
-        if genenzCountList[i]>genenzThreshold:
+        if genenzCountList[i]>genenzThresholdCount:
             tmpindexList.append(i)
 
     contentArray = np.asarray(contentArray)
+    tmpindexList = np.asarray(tmpindexList)
 
     tmpChooseIndex = np.argsort(-np.var(contentArray[:,tmpindexList], axis=0))[:geneThreshold]
+    tmpChooseIndex = tmpChooseIndex.tolist()
     chooseIndex = tmpindexList[tmpChooseIndex]
 
     for i in chooseIndex:
