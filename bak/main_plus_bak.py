@@ -17,6 +17,7 @@ from model import AE, VAE, VAE2d
 from util_function import *
 from graph_function import *
 from benchmark_util import *
+from R_util import generateLouvainCluster
 
 #can be discard later
 parser = argparse.ArgumentParser(description='AutoEncoder-EM for scRNA')
@@ -166,7 +167,7 @@ if __name__ == "__main__":
     
     for bigepoch in range(0, 3):
         # Get cluster
-        listResult,size = generateCluster(edgeList)
+        listResult,size = generateLouvainCluster(edgeList)
 
         # Each cluster has a autoencoder, and organize them back in iteraization
         clusterIndexList = []

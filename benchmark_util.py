@@ -24,9 +24,12 @@ from mpl_toolkits.mplot3d import Axes3D
 import seaborn as sns
 import umap
 import community
+from sklearn.cluster import KMeans,SpectralClustering,AffinityPropagation,AgglomerativeClustering,Birch,DBSCAN,FeatureAgglomeration,MeanShift,OPTICS 
+from clustering_metric import clustering_metrics
 from sklearn.metrics import *
 from sklearn.metrics.cluster import *
 from graph_function import *
+from R_util import generateLouvainCluster
 
 #PCA
 def pcaFunc(z, n_components=100):
@@ -39,74 +42,6 @@ def pcaFunc(z, n_components=100):
     # Not print Now
     # print('Explained variation per principal component: {}'.format(pca.explained_variance_ratio_))
     return pca_result, re
-
-#find Cluster from Louvain
-def generateCluster(edgeList):
-    # no weights
-    # G = nx.Graph(edgeList)
-
-    # weighted edges: networkx,does not work
-    # https://github.com/vtraag/louvain-igraph
-    # https://python-louvain.readthedocs.io/en/latest/api.html
-    # G = nx.Graph()
-    # G.add_weighted_edges_from(edgeList)
-    # partition = community.best_partition(G,weight='weight')
-    # valueResults = []
-    # for key in partition.keys():
-    #     valueResults.append(partition[key])
-
-    # df = pd.DataFrame()
-    # df['Cluster']=valueResults
-
-    # R:
-    # https://github.com/dgrun/RaceID3_StemID2_package/blob/master/R/VarID_functions.R
-    fromVec = []
-    toVec   = []
-    weightVec = []
-    for edge in edgeList:
-        fromVec.append(edge[0])
-        toVec.append(edge[1])
-        weightVec.append(edge[2])
-
-    import rpy2.robjects as ro
-    from rpy2.robjects.packages import importr
-    from rpy2.robjects import r, pandas2ri
-    pandas2ri.activate()
-
-    igraph = importr('igraph')
-    base   = importr('base')
-    fromV  = ro.FloatVector(fromVec)
-    toV    = ro.FloatVector(toVec)
-    # weightV= ro.FloatVector([0.1,1.0,1.0,0.1])
-    weightV= ro.FloatVector(weightVec)
-    links  = ro.DataFrame({'from':fromV,'to':toV,'weight':weightV})
-    g  = igraph.graph_from_data_frame(links,directed = False)
-    cl = igraph.cluster_louvain(g)
-
-    def as_dict(vector):
-        """Convert an RPy2 ListVector to a Python dict"""
-        result = {}
-        for i, name in enumerate(vector.names):
-            if isinstance(vector[i], ro.ListVector):
-                result[name] = as_dict(vector[i])
-            elif len(vector[i]) == 1:
-                result[name] = vector[i][0]
-            else:
-                result[name] = vector[i]
-        return result
-
-    cl_dict = as_dict(cl)
-    df = pd.DataFrame()
-    # df['Cluster']=cl_dict['membership']
-    size = float(len(set(cl_dict['membership'])))
-
-    listResult=[]
-    count = 0
-    for i in range(len(cl_dict['membership'])):
-        listResult.append(int(cl_dict['membership'][i])-1)
-        count += 1
-
-    return listResult, size
     
 #UMAP
 def drawUMAP(z,listResult,size,saveDir,dataset,saveFlag=True):
@@ -332,6 +267,151 @@ def readTrueLabelList(labelFilename, cellFilename, cellIndexFilename):
         f.close()
 
     return labelList
+
+# Benchmark
+def measure_clustering_benchmark_results(z, listResult, true_labels):
+    '''
+    Output results from different clustering methods with known cell types
+    '''
+    silhouette, chs, dbs = measureClusteringNoLabel(z, listResult)
+    ari, ami, nmi, cs, fms, vms, hs = measureClusteringTrueLabel(true_labels, listResult)
+    print('{:.4f} {:.4f} {:.4f} {:.4f} {:.4f} {:.4f} {:.4f} {:.4f} {:.4f} {:.4f}'.format(silhouette, chs, dbs, ari, ami, nmi, cs, fms, vms, hs))
+
+# Benchmark
+def measure_clustering_results(z, listResult):
+    '''
+    Output results from different clustering methods with unknown cell types
+    '''
+    silhouette, chs, dbs = measureClusteringNoLabel(z, listResult)
+    print('{:.4f} {:.4f} {:.4f}'.format(silhouette, chs, dbs))
+
+# Benchmark
+def test_clustering_benchmark_results(z, edgeList, true_labels, args):
+    '''
+    Try different clustring with known celltypes
+    '''
+    #graph Louvain
+    print("Louvain")
+    listResult,size = generateLouvainCluster(edgeList)
+    measure_clustering_benchmark_results(z,listResult, true_labels)
+
+    #KMeans
+    print("KMeans")
+    clustering = KMeans(n_clusters=args.n_clusters, random_state=0).fit(z)
+    listResult = clustering.predict(z)
+    measure_clustering_benchmark_results(z,listResult, true_labels)
+
+    #Spectral Clustering
+    print("SpectralClustering")
+    clustering = SpectralClustering(n_clusters=args.n_clusters, assign_labels="discretize", random_state=0).fit(z)
+    listResult = clustering.labels_.tolist()
+    measure_clustering_benchmark_results(z,listResult, true_labels)
+
+    #AffinityPropagation
+    print("AffinityPropagation")
+    clustering = AffinityPropagation().fit(z)
+    listResult = clustering.predict(z)
+    measure_clustering_benchmark_results(z,listResult, true_labels)
+
+    #AgglomerativeClustering
+    print("AgglomerativeClustering")
+    clustering = AgglomerativeClustering().fit(z)
+    listResult = clustering.labels_.tolist()
+    measure_clustering_benchmark_results(z,listResult, true_labels)
+
+    #Birch
+    print("Birch")
+    clustering = Birch(n_clusters=args.n_clusters).fit(z)
+    listResult = clustering.predict(z)
+    measure_clustering_benchmark_results(z,listResult, true_labels)
+
+    # #DBSCAN
+    # print("DBSCAN")
+    # clustering = DBSCAN().fit(z)
+    # listResult = clustering.labels_.tolist()
+    # measure_clustering_benchmark_results(z,listResult, true_labels)
+
+    #FeatureAgglomeration
+    # print("FeatureAgglomeration")
+    # clustering = FeatureAgglomeration(n_clusters=args.n_clusters).fit(z)
+    # listResult = clustering.labels_.tolist()
+    # measure_clustering_benchmark_results(z,listResult, true_labels)
+
+    #MeanShift
+    # print("MeanShift")
+    # clustering = MeanShift().fit(z)
+    # listResult = clustering.predict(z)
+    # measure_clustering_benchmark_results(z,listResult, true_labels)
+
+    #OPTICS
+    print("OPTICS")
+    clustering = OPTICS().fit(z)
+    listResult = clustering.labels_.tolist()
+    measure_clustering_benchmark_results(z,listResult, true_labels)
+
+# Benchmark
+def test_clustering_results(z, edgeList, args):
+    '''
+    Try different clustring without known celltypes
+    '''
+    #graph Louvain
+    print("Louvain")
+    listResult,size = generateLouvainCluster(edgeList)
+    measure_clustering_results(z,listResult)
+
+    #KMeans
+    print("KMeans")
+    clustering = KMeans(n_clusters=args.n_clusters, random_state=0).fit(z)
+    listResult = clustering.predict(z)
+    measure_clustering_results(z,listResult)
+
+    #Spectral Clustering
+    print("SpectralClustering")
+    clustering = SpectralClustering(n_clusters=args.n_clusters, assign_labels="discretize", random_state=0).fit(z)
+    listResult = clustering.labels_.tolist()
+    measure_clustering_results(z,listResult)
+
+    #AffinityPropagation
+    print("AffinityPropagation")
+    clustering = AffinityPropagation().fit(z)
+    listResult = clustering.predict(z)
+    measure_clustering_results(z,listResult)
+
+    #AgglomerativeClustering
+    print("AgglomerativeClustering")
+    clustering = AgglomerativeClustering().fit(z)
+    listResult = clustering.labels_.tolist()
+    measure_clustering_results(z,listResult)
+
+    #Birch
+    print("Birch")
+    clustering = Birch(n_clusters=args.n_clusters).fit(z)
+    listResult = clustering.predict(z)
+    measure_clustering_results(z,listResult)
+
+    # #DBSCAN
+    # print("DBSCAN")
+    # clustering = DBSCAN().fit(z)
+    # listResult = clustering.labels_.tolist()
+    # measure_clustering_results(z,listResult)
+
+    #FeatureAgglomeration
+    # print("FeatureAgglomeration")
+    # clustering = FeatureAgglomeration(n_clusters=args.n_clusters).fit(z)
+    # listResult = clustering.labels_.tolist()
+    # measure_clustering_results(z,listResult)
+
+    #MeanShift
+    # print("MeanShift")
+    # clustering = MeanShift().fit(z)
+    # listResult = clustering.predict(z)
+    # measure_clustering_results(z,listResult)
+
+    #OPTICS
+    print("OPTICS")
+    clustering = OPTICS().fit(z)
+    listResult = clustering.labels_.tolist()
+    measure_clustering_results(z,listResult)
 
 
 def impute_dropout(X, rate=0.1):

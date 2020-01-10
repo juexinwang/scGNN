@@ -223,7 +223,10 @@ if __name__ == "__main__":
             # Clustering: Get cluster
             clustering_time = time.time()
             if args.clustering_method=='Louvain':
-                listResult,size = generateCluster(edgeList)
+                # Louvain: the only function has R dependent
+                # Seperate here for platforms without R support
+                from R_util import generateLouvainCluster
+                listResult,size = generateLouvainCluster(edgeList)
             elif args.clustering_method=='KMeans':
                 clustering = KMeans(n_clusters=args.n_clusters, random_state=0).fit(zOut)
                 listResult = clustering.predict(zOut)

@@ -4,7 +4,8 @@ import scipy.sparse
 import sys
 sys.path.append('../')
 from util_function import *
-from benchmark_util import * 
+from benchmark_util import *
+from R_util import generateLouvainCluster 
 
 #Evaluating imputing results
 #Used to postprocess results of imputation
@@ -50,7 +51,7 @@ def imputeResult(inputData):
         inputData = scipy.sparse.lil.lil_matrix.todense(inputData)
     z,_ = pcaFunc(inputData)
     _, edgeList = generateAdj(z, graphType='KNNgraphML', para = 'euclidean:10')
-    listResult,size = generateCluster(edgeList)
+    listResult,size = generateLouvainCluster(edgeList)
     # modularity = calcuModularity(listResult, edgeList)
     # print('{:.4f}'.format(modularity))
     silhouette, chs, dbs = measureClusteringNoLabel(z, listResult)

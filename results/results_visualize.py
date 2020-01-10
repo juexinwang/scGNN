@@ -26,7 +26,8 @@ import umap
 import community
 from sklearn.metrics import silhouette_samples, silhouette_score
 from graph_function import *
-from benchmark_util import * 
+from benchmark_util import *
+from R_util import generateLouvainCluster 
 
 # Visualize results of celltype identifications
 parser = argparse.ArgumentParser(description='Plot scRNA Results')
@@ -78,7 +79,7 @@ _, edgeList = generateAdj(z, graphType='KNNgraphML', para = 'euclidean:10')
 # _, edgeList = generateAdj(z, graphType='KNNgraphML', para = 'cosine:10')
 # _, edgeList = generateAdj(z, graphType='KNNgraphML', para = 'correlation:10')
 
-listResult,size = generateCluster(edgeList)
+listResult,size = generateLouvainCluster(edgeList)
 
 # drawUMAP(z, listResult, size, args.saveDir, args.dataset, args.saveFlag)
 

@@ -9,6 +9,10 @@ python3 -W ignore main.py --datasetName MMPbasal_all_LTMG  --npyDir ../npyImpute
 python3 -W ignore main.py --datasetName MMPbasal_allcell  --npyDir ../npyImputeG2E_AgglomerativeClustering/
 python3 -W ignore main.py --datasetName MMPbasal_allcell --discreteTag  --npyDir ../npyImputeG2E_AgglomerativeClustering/
 
+python3 -W ignore main.py --datasetName MMPbasal_2000  --npyDir ../npyImputeG2E_AgglomerativeClustering/
+python3 -W ignore main.py --datasetName MMPbasal_2000 --discreteTag  --npyDir ../npyImputeG2E_AgglomerativeClustering/
+python3 -W ignore main.py --datasetName MMPbasal_2000_LTMG  --npyDir ../npyImputeG2E_AgglomerativeClustering/
+
 for i in {0..2}
 do
     python3 -W ignore main.py --datasetName MMPbasal --reconstr $i --npyDir ../npyImputeG2E_AgglomerativeClustering/
@@ -21,4 +25,8 @@ do
 
     python3 -W ignore main.py --datasetName MMPbasal_allcell --reconstr $i --npyDir ../npyImputeG2E_AgglomerativeClustering/
     python3 -W ignore main.py --datasetName MMPbasal_allcell --discreteTag --reconstr $i --npyDir ../npyImputeG2E_AgglomerativeClustering/
+
+    python3 -W ignore main.py --datasetName MMPbasal_2000 --reconstr $i --npyDir ../npyImputeG2E_AgglomerativeClustering/
+    python3 -W ignore main.py --datasetName MMPbasal_2000 --discreteTag --reconstr $i --npyDir ../npyImputeG2E_AgglomerativeClustering/
+    python3 -W ignore main.py --datasetName MMPbasal_2000_LTMG --reconstr $i --npyDir ../npyImputeG2E_AgglomerativeClustering/
 done
