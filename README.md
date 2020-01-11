@@ -30,6 +30,32 @@ R integration:
     install_github("dgrun/FateID")
     install_github("dgrun/RaceID3_StemID2_package")
 
+Notes for Cluster Running:
+---------
+module load miniconda3
+conda create -n my_environment python=3.7
+source activate my_environment
+
+* for using R support: geneLouvianCluster.py, otherwise we do not use rpy2
+experiment_1_g_e.sh
+experiment_1_g_f.sh
+experiment_1_n_e.sh
+experiment_1_n_f.sh
+experiment_2_g_e_AffinityPropagation.sh
+experiment_2_g_e_AgglomerativeClustering.sh
+experiment_2_g_e_Birch.sh
+experiment_2_g_e_KMeans.sh
+experiment_2_g_e.sh *
+experiment_2_g_e_SpectralClustering.sh
+experiment_2_g_f_AffinityPropagation.sh
+experiment_2_g_f_AgglomerativeClustering.sh
+experiment_2_g_f_Birch.sh
+experiment_2_g_f_KMeans.sh
+experiment_2_g_f.sh *
+experiment_2_g_f_SpectralClustering.sh
+experiment_2_n_e.sh *
+experiment_2_n_f.sh *
+
 Reference:
 ---------
 
