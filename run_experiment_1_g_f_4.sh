@@ -6,6 +6,7 @@
 #SBATCH -t 2-00:00                  # two hour time limit
 #SBATCH -N 1                        # number of nodes
 #SBATCH -n 4                        # number of cores (AKA tasks)
+#SBATCH --mem=8G
 #################################################################
 
 module load miniconda3
