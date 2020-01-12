@@ -1,7 +1,7 @@
 #! /bin/bash
 ######################### Batch Headers #########################
-#SBATCH -p biocompute               # use the Lewis partition
-#SBATCH -J eI_1_g_e_1             # give the job a custom name
+#SBATCH -p Lewis                    # use the Lewis partition
+#SBATCH -J eI1ge_1                  # give the job a custom name
 #SBATCH -o results-%j.out           # give the job output a custom name
 #SBATCH -t 2-00:00                  # two hour time limit
 #SBATCH -N 1                        # number of nodes
