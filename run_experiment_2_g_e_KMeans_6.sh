@@ -13,4 +13,4 @@ module load miniconda3
 source activate my_environment
 
 # Now you can run Python scripts that use the packages in your environment
-python3 -W ignore main.py --datasetName MMPbasal_all_LTMG --EMtype celltypeEM  --clustering-method KMeans --useGAEembedding --npyDir npyG2E_KMeans/
+python3 -W ignore main.py --datasetName MMPbasal_all_LTMG --EMtype celltypeEM  --clustering-method KMeans --useGAEembedding --imputeMode --npyDir npyImputeG2E_KMeans/
