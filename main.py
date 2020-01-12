@@ -26,7 +26,7 @@ parser.add_argument('--batch-size', type=int, default=10000, metavar='N',
                     help='input batch size for training (default: 128)')
 parser.add_argument('--epochs', type=int, default=500, metavar='N',
                     help='number of epochs to train (default: 500)')
-parser.add_argument('--EM-iteration', type=int, default=3, metavar='N',
+parser.add_argument('--EM-iteration', type=int, default=5, metavar='N',
                     help='number of epochs in EM iteration (default: 3)')
 parser.add_argument('--celltype-epochs', type=int, default=200, metavar='N',
                     help='number of epochs in celltype training (default: 200)')
