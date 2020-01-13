@@ -56,6 +56,8 @@ experiment_2_g_f_SpectralClustering.sh
 experiment_2_n_e.sh *
 experiment_2_n_f.sh *
 
+The experiments shell (run_experiment_*.sh) can be running on clusters with slurm system using sbatch
+
 Reference:
 ---------
 
