@@ -13,9 +13,10 @@ import pickle
 import csv
 
 # Preprocess network for sc
+# Dataset: 1-13 benchmark
 parser = argparse.ArgumentParser()
-parser.add_argument('--expression-name', type=str, default='MMPbasal_2000_LTMG',
-                    help='TGFb from MAGIC/ test also from MAGIC/sci-CAR/sci-CAR_LTMG/5.Pollen/MMPbasal/MMPbasal_all/MMPbasal_allcell/MMPbasal_allgene/MMPepo/MMPepo_all/MMPepo_allcell/MMPepo_allgene/MMPbasal_LTMG/MMPbasal_all_LTMG/MMPbasal_2000/MMPbasal_2000_LTMG')
+parser.add_argument('--expression-name', type=str, default='11.Kolodziejczyk',
+                    help='TGFb from MAGIC/test also from MAGIC/sci-CAR/sci-CAR_LTMG/MMPbasal/MMPbasal_all/MMPbasal_allcell/MMPbasal_allgene/MMPepo/MMPepo_all/MMPepo_allcell/MMPepo_allgene/MMPbasal_LTMG/MMPbasal_all_LTMG/MMPbasal_2000/MMPbasal_2000_LTMG')
 parser.add_argument('--data-type', type=str, default='float',
                     help='int/float')
 parser.add_argument('--geneNzThreshold', type=float, default=0.05,
@@ -27,8 +28,7 @@ parser.add_argument('--countThreshold', action='store_true', default=False,
 parser.add_argument('--cell-threshold', type=int, default=-1,
                     help='1000 for varID, -1 for all')
 parser.add_argument('--gene-threshold', type=int, default=-1,
-                    help='1000 for varID, -1 for all')                   
-
+                    help='1000 for varID, -1 for all')
 args = parser.parse_args()
 
 if args.data_type == 'int':
@@ -36,7 +36,7 @@ if args.data_type == 'int':
 elif args.data_type == 'float':
     zero = 0.0
 
-# Old
+# Old, threshold 1000 as VarID
 def preprocess_network_countsThreshold(feature_filename, cellthreshold=1000, genethreshold=1000):
     '''
     Preprocessing by read expression by counts threshold
@@ -287,12 +287,32 @@ elif args.expression_name=='sci-CAR':
     expressionname = 'sci-CAR.csv'
 elif args.expression_name=='sci-CAR_LTMG':
     expressionname = 'sci-CAR_LTMG.csv'
-elif args.expression_name=='2.Yan':
-    expressionname = '2.Yan.csv'
-elif args.expression_name=='5.Pollen':
-    expressionname = '5.Pollen.csv'
-elif args.expression_name=='5.Pollen_all':
-    expressionname = '5.Pollen.csv'
+elif args.expression_name=='1.Biase':
+    expressionname = '1.Biase.csv'
+elif args.expression_name=='2.Li':
+    expressionname = '2.Li.csv'
+elif args.expression_name=='3.Treutlein':
+    expressionname = '3.Treutlein.csv'
+elif args.expression_name=='4.Yan':
+    expressionname = '4.Yan.csv'
+elif args.expression_name=='5.Goolam':
+    expressionname = '5.Goolam.csv'
+elif args.expression_name=='6.Guo':
+    expressionname = '6.Guo.csv'
+elif args.expression_name=='7.Deng':
+    expressionname = '7.Deng.csv'
+elif args.expression_name=='8.Pollen':
+    expressionname = '8.Pollen.csv'
+elif args.expression_name=='9.Chung':
+    expressionname = '9.Chung.csv'
+elif args.expression_name=='10.Usoskin':
+    expressionname = '10.Usoskin.csv'
+elif args.expression_name=='11.Kolodziejczyk':
+    expressionname = '11.Kolodziejczyk.csv'
+elif args.expression_name=='12.Klein':
+    expressionname = '12.Klein.csv'
+elif args.expression_name=='13.Zeisel':
+    expressionname = '13.Zeisel.csv'
 elif args.expression_name=='MMPbasal':
     expressionname = 'MMPbasal.csv'
 elif args.expression_name=='MMPbasal_all':

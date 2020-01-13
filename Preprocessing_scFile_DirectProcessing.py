@@ -1,13 +1,13 @@
-#Used for generate MMPfiles
+#Used for processing raw data to generate MMPfiles
 #
 #Usage:
 # normalized results:
-# python Preprocessing_scFile_Trim.py --inputfile /home/wangjue/biodata/scData/MMP/GSM2388072_basal_bone_marrow.filtered_normalized_counts.csv --outputfile /home/wangjue/biodata/scData/MMPbasal.csv --outputfileCellName /home/wangjue/biodata/scData/MMPbasal.cellname.txt --split dot
-# python Preprocessing_scFile_Trim.py --inputfile /home/wangjue/biodata/scData/MMP/GSM2388073_epo_bone_marrow.filtered_normalized_counts.csv --outputfile /home/wangjue/biodata/scData/MMPepo.csv --outputfileCellName /home/wangjue/biodata/scData/MMPepo.cellname.txt --split dot
+# python Preprocessing_scFile_Trim.py --inputfile /home/wangjue/biodata/scData/MMP/GSM2388072_basal_bone_marrow.filtered_normalized_counts.csv --outputfile /home/wangjue/biodata/scData/MMPbasal.csv --outputfileCellName /home/wangjue/biodata/scData/MMPbasal.cellname.txt --split comma
+# python Preprocessing_scFile_Trim.py --inputfile /home/wangjue/biodata/scData/MMP/GSM2388073_epo_bone_marrow.filtered_normalized_counts.csv --outputfile /home/wangjue/biodata/scData/MMPepo.csv --outputfileCellName /home/wangjue/biodata/scData/MMPepo.cellname.txt --split comma
 #
 #Raw counts:
-# python Preprocessing_scFile_Trim.py --inputfile /home/wangjue/biodata/scData/MMP/bBM.raw_umifm_counts.csv --outputfile /home/wangjue/biodata/scData/MMPbasal.csv --outputfileCellName /home/wangjue/biodata/scData/MMPbasal.cellname.txt --split dot
-# python Preprocessing_scFile_Trim.py --inputfile /home/wangjue/biodata/scData/MMP/eBM.raw_umifm_counts.csv --outputfile /home/wangjue/biodata/scData/MMPepo.csv   --outputfileCellName /home/wangjue/biodata/scData/MMPepo.cellname.txt   --split dot
+# python Preprocessing_scFile_Trim.py --inputfile /home/wangjue/biodata/scData/MMP/bBM.raw_umifm_counts.csv --outputfile /home/wangjue/biodata/scData/MMPbasal.csv --outputfileCellName /home/wangjue/biodata/scData/MMPbasal.cellname.txt --split comma
+# python Preprocessing_scFile_Trim.py --inputfile /home/wangjue/biodata/scData/MMP/eBM.raw_umifm_counts.csv --outputfile /home/wangjue/biodata/scData/MMPepo.csv   --outputfileCellName /home/wangjue/biodata/scData/MMPepo.cellname.txt   --split comma
 
 
 import numpy as np
@@ -20,8 +20,8 @@ parser.add_argument('--outputfile', type=str, default='/home/wangjue/biodata/scD
                     help='outputfile name')
 parser.add_argument('--outputfileCellName', type=str, default='/home/wangjue/biodata/scData/sci-CAR.cellname.txt',
                     help='outputfile cell name')
-parser.add_argument('--split', type=str, default='dot',
-                    help='dot/blank')
+parser.add_argument('--split', type=str, default='comma',
+                    help='comma/blank')
 parser.add_argument('--geneNameIndexStart', type=int, default=5,
                     help='index, context specific')
 args = parser.parse_args()
@@ -32,7 +32,7 @@ outputfileCellName = args.outputfileCellName
 splitChar = ''
 if args.split == 'space':
     splitChar = ''
-elif args.split == 'dot':
+elif args.split == 'comma':
     splitChar = ',' 
 
 geneNameStr = ''
