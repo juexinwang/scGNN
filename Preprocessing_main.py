@@ -13,10 +13,10 @@ import pickle
 import csv
 
 # Preprocess network for sc
-# Dataset: 1-13 benchmark
 parser = argparse.ArgumentParser()
 parser.add_argument('--expression-name', type=str, default='11.Kolodziejczyk',
                     help='TGFb from MAGIC/test also from MAGIC/sci-CAR/sci-CAR_LTMG/MMPbasal/MMPbasal_all/MMPbasal_allcell/MMPbasal_allgene/MMPepo/MMPepo_all/MMPepo_allcell/MMPepo_allgene/MMPbasal_LTMG/MMPbasal_all_LTMG/MMPbasal_2000/MMPbasal_2000_LTMG')
+# Dataset: 1-13 benchmark: 1.Biase/2.Li/3.Treutlein/4.Yan/5.Goolam/6.Guo/7.Deng/8.Pollen/9.Chung/10.Usoskin/11.Kolodziejczyk/12.Klein/13.Zeisel
 parser.add_argument('--data-type', type=str, default='float',
                     help='int/float')
 parser.add_argument('--geneNzThreshold', type=float, default=0.05,
@@ -94,7 +94,7 @@ def preprocess_network_countsThreshold(feature_filename, cellthreshold=1000, gen
 
     return geneList, geneDict, cellList, cellDict
 
-# Prefer to use
+# Prefer to use threshold here
 def preprocess_network(feature_filename, geneNzThreshold=0.05, geneThreshold=2000):
     '''
     Preprocessing by read expression
@@ -157,7 +157,7 @@ def preprocess_network(feature_filename, geneNzThreshold=0.05, geneThreshold=200
                     tcount = tcount + 1
             count = count+1
             if count%1000 == 0:
-                print(str(count)+'cells have been proceeded.')
+                print('{} of {} cells have been proceeded.'.format(count,cellcount))
     f.close()
 
     tmpindexList=[]
@@ -213,7 +213,7 @@ def read_feature_file_sparse(filename, geneList, geneDict, cellList, cellDict):
                     else:
                         print(str(gene)+' is not in the input')
                         ntcount += 1
-                print(str(ytcount)+"\t"+str(ntcount))
+                # print(str(ytcount)+"\t"+str(ntcount))
             if count >= 0:
                 #choose cells
                 if count in cellDict:
