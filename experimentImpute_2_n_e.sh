@@ -12,3 +12,6 @@ python3 -W ignore main.py --datasetName MMPbasal_allcell --discreteTag  --reguli
 python3 -W ignore main.py --datasetName MMPbasal_2000 --regulized-type noregu --EMtype celltypeEM --useGAEembedding --imputeMode  --npyDir npyImputeN2E/
 python3 -W ignore main.py --datasetName MMPbasal_2000 --discreteTag  --regulized-type noregu --EMtype celltypeEM --useGAEembedding --imputeMode  --npyDir npyImputeN2E/
 python3 -W ignore main.py --datasetName MMPbasal_2000_LTMG --regulized-type noregu --EMtype celltypeEM --useGAEembedding --imputeMode  --npyDir npyImputeN2E/
+
+python3 -W ignore main.py --datasetName 11.Kolodziejczyk --regulized-type noregu --EMtype celltypeEM --useGAEembedding --imputeMode  --npyDir npyImputeN2E/
+python3 -W ignore main.py --datasetName 11.Kolodziejczyk --discreteTag --regulized-type noregu --EMtype celltypeEM --useGAEembedding --imputeMode  --npyDir npyImputeN2E/
