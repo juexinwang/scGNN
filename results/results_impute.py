@@ -12,8 +12,8 @@ from R_util import generateLouvainCluster
 parser = argparse.ArgumentParser(description='Imputation Results')
 parser.add_argument('--datasetName', type=str, default='MMPbasal',
                     help='databaseName')
-parser.add_argument('--discreteTag', type=bool, default=True,
-                    help='False/True')
+parser.add_argument('--discreteTag', action='store_true', default=False,
+                    help='whether input is raw or 0/1 (default: False)')
 parser.add_argument('--regulized-type', type=str, default='Graph',
                     help='regulized type (default: Graph), otherwise: noregu')
 parser.add_argument('--npyDir', type=str, default='../npyImpute/',
