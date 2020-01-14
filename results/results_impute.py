@@ -38,7 +38,7 @@ dropix           = np.load(args.npyDir+args.datasetName+'_'+args.regulized_type+
 
 featuresImpute   = np.load(args.npyDir+args.datasetName+'_'+args.regulized_type+'_'+args.ratio+'_recon'+args.reconstr+'.npy')
 l1ErrorMean, l1ErrorMedian, l1ErrorMin, l1ErrorMax = imputation_error(featuresImpute, featuresOriginal, features, dropi, dropj, dropix)
-print('{:.4f} {:.4f} {:.4f} {:.4f}'.format(l1ErrorMean, l1ErrorMedian, l1ErrorMin, l1ErrorMax), end='')
+print('{:.4f} {:.4f} {:.4f} {:.4f} '.format(l1ErrorMean, l1ErrorMedian, l1ErrorMin, l1ErrorMax), end='')
 
 
 def imputeResult(inputData):
@@ -55,7 +55,7 @@ def imputeResult(inputData):
     # modularity = calcuModularity(listResult, edgeList)
     # print('{:.4f}'.format(modularity))
     silhouette, chs, dbs = measureClusteringNoLabel(z, listResult)
-    print('{:.4f} {:.4f} {:.4f}'.format(silhouette, chs, dbs), end='')
+    print('{:.4f} {:.4f} {:.4f} '.format(silhouette, chs, dbs), end='')
 
 imputeResult(featuresImpute)
 imputeResult(featuresOriginal)
