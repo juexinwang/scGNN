@@ -13,7 +13,7 @@ python3 -W ignore results_impute.py --datasetName MMPbasal_2000 --npyDir ../npyI
 python3 -W ignore results_impute.py --datasetName MMPbasal_2000 --discreteTag  --npyDir ../npyImputeG1E/
 python3 -W ignore results_impute.py --datasetName MMPbasal_2000_LTMG --npyDir ../npyImputeG1E/
 
-for i in {0..2}
+for i in {0..4}
 do
     python3 -W ignore results_impute.py --datasetName MMPbasal --reconstr $i --npyDir ../npyImputeG1E/
     python3 -W ignore results_impute.py --datasetName MMPbasal --discreteTag  --reconstr $i --npyDir ../npyImputeG1E/
