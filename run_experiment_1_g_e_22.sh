@@ -14,4 +14,4 @@ module load miniconda3
 source activate my_environment
 
 # Now you can run Python scripts that use the packages in your environment
-python3 -W ignore main.py --datasetName 4.Yan --discreteTag --EMtype EM --useGAEembedding  --imputeMode  --npyDir npyImputeG1E/
+python3 -W ignore main.py --datasetName 8.Pollen --discreteTag --EMtype EM --useGAEembedding  --imputeMode  --npyDir npyImputeG1E/
