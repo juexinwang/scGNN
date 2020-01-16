@@ -373,15 +373,15 @@ print(str(len(cellList))+" cells are retained")
 outname = args.expression_name
 
 x = feature
-tx = feature[0:100]
-allx = feature[100:]
+tx = feature[0:1]
+allx = feature[1:]
 # Discrete
 xD = featureD
-txD = featureD[0:100]
-allxD = featureD[100:]
+txD = featureD[0:1]
+allxD = featureD[1:]
 
 testindex = ""
-for i in range(100):
+for i in range(1):
     testindex = testindex + str(i) + "\n"
 
 pickle.dump(allx, open( out_folder+"ind."+outname+".allx", "wb" ) )
