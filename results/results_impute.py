@@ -22,7 +22,19 @@ parser.add_argument('--ratio', type=str, default='0.1',
                     help='dropoutratio')
 parser.add_argument('--reconstr', type=str, default='',
                     help='iteration of imputed recon (default: '') alternative: 0,1,2')
+# if have benchmark: use cell File
+parser.add_argument('--benchmark',action='store_true', default=False, help="whether have benchmark")
+parser.add_argument('--labelFilename',type=str,default='/home/wangjue/biodata/scData/AnjunBenchmark/11.Kolodziejczyk/Kolodziejczyk_cell_label.csv',help="label Filename")
+parser.add_argument('--cellFilename', type=str,default='/home/wangjue/biodata/scData/11.Kolodziejczyk.cellname.txt',help="cell Filename")
+parser.add_argument('--cellIndexname',type=str,default='/home/wangjue/myprojects/scGNN/data/sc/11.Kolodziejczyk/ind.11.Kolodziejczyk.cellindex.txt',help="cell index Filename")
+
 args = parser.parse_args()
+
+if args.benchmark:
+    labelFilename = args.labelFilename
+    cellFilename  = args.cellFilename
+    cellIndexFilename = args.cellIndexname
+    true_labels = readTrueLabelList(labelFilename, cellFilename, cellIndexFilename)
 
 featuresOriginal = load_data(args.datasetName, args.discreteTag)
 discreteStr = ''
@@ -40,7 +52,6 @@ featuresImpute   = np.load(args.npyDir+args.datasetName+'_'+args.regulized_type+
 l1ErrorMean, l1ErrorMedian, l1ErrorMin, l1ErrorMax = imputation_error(featuresImpute, featuresOriginal, features, dropi, dropj, dropix)
 print('{:.4f} {:.4f} {:.4f} {:.4f} '.format(l1ErrorMean, l1ErrorMedian, l1ErrorMin, l1ErrorMax), end='')
 
-
 def imputeResult(inputData):
     '''
     Impute results function
@@ -52,10 +63,15 @@ def imputeResult(inputData):
     z,_ = pcaFunc(inputData)
     _, edgeList = generateAdj(z, graphType='KNNgraphML', para = 'euclidean:10')
     listResult,size = generateLouvainCluster(edgeList)
-    # modularity = calcuModularity(listResult, edgeList)
-    # print('{:.4f}'.format(modularity))
-    silhouette, chs, dbs = measureClusteringNoLabel(z, listResult)
-    print('{:.4f} {:.4f} {:.4f} '.format(silhouette, chs, dbs), end='')
+    if args.benchmark:
+        ari, ami, nmi, cs, fms, vms, hs = measureClusteringTrueLabel(true_labels, listResult)
+        print('{:.4f} {:.4f} {:.4f} {:.4f} {:.4f} {:.4f} {:.4f} '.format(ari, ami, nmi, cs, fms, vms, hs), end='')
+    else:
+        # modularity = calcuModularity(listResult, edgeList)
+        # print('{:.4f}'.format(modularity))
+        silhouette, chs, dbs = measureClusteringNoLabel(z, listResult)
+        print('{:.4f} {:.4f} {:.4f} '.format(silhouette, chs, dbs), end='')
+    
 
 imputeResult(featuresImpute)
 imputeResult(featuresOriginal)
