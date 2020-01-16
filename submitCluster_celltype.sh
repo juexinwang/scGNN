@@ -1,16 +1,45 @@
-for i in {15..25}
+mkdir npyG1E
+mkdir npyG1F
+mkdir npyN1E
+mkdir npyN1F
+mkdir npyG2E_AffinityPropagation
+mkdir npyG2E_AgglomerativeClustering
+mkdir npyG2E_Birch
+mkdir npyG2E_KMeans
+mkdir npyG2E_SpectralClustering
+mkdir npyG2E
+mkdir npyG2F_AffinityPropagation
+mkdir npyG2F_AgglomerativeClustering
+mkdir npyG2F_Birch
+mkdir npyG2F_KMeans
+mkdir npyG2F_SpectralClustering
+mkdir npyG2F
+mkdir npyN2E_AffinityPropagation
+mkdir npyN2E_AgglomerativeClustering
+mkdir npyN2E_Birch
+mkdir npyN2E_KMeans
+mkdir npyN2E_SpectralClustering
+mkdir npyN2E
+mkdir npyN2F_AffinityPropagation
+mkdir npyN2F_AgglomerativeClustering
+mkdir npyN2F_Birch
+mkdir npyN2F_KMeans
+mkdir npyN2F_SpectralClustering
+mkdir npyN2F
+
+for i in {9,10,11,15,16,17,18,19,20,21,22,23,24,25}
 do
 sbatch run_experiment_1_g_e_$i.sh
 sleep 3
 done
 
-for i in {15..25}
+for i in {9,10,11,15,16,17,18,19,20,21,22,23,24,25}
 do
 sbatch run_experiment_1_n_e_$i.sh
 sleep 3
 done
 
-for i in {15..25}
+for i in {9,10,11,15,16,17,18,19,20,21,22,23,24,25}
 do
 sbatch run_experiment_1_n_f_$i.sh
 sleep 3
