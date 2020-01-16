@@ -5,7 +5,7 @@ parser.add_argument('--inputFilename', type=str, default='experimentImpute_1_g_f
                     help='source file for generating sbatch files')
 parser.add_argument('--inputDir', type=str, default='../',
                     help='Directory of source file for generating sbatch files')
-parser.add_argument('--sbatchFilename', type=str, default='run_experiment_1_g_f',
+parser.add_argument('--sbatchFilename', type=str, default='run_experimentImpute_1_g_f',
                     help='batch files for cluster running')
 parser.add_argument('--outputDir', type=str, default='../',
                     help='Directory of batch files for cluster running')
@@ -26,8 +26,8 @@ templateStr1 = "#! /bin/bash\n"\
 templateStr2 = "\n#SBATCH -o results-%j.out           # give the job output a custom name\n"\
 "#SBATCH -t 2-00:00                  # two days time limit\n"\
 "#SBATCH -N 1                        # number of nodes\n"\
-"#SBATCH -n 4                        # number of cores (AKA tasks)\n"\
-"#SBATCH --mem=32G\n"\
+"#SBATCH -n 8                        # number of cores (AKA tasks)\n"\
+"#SBATCH --mem=64G\n"\
 "#################################################################\n"\
 "module load miniconda3\n"\
 "source activate my_environment\n"
