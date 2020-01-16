@@ -313,6 +313,14 @@ elif args.expression_name=='12.Klein':
     expressionname = '12.Klein.csv'
 elif args.expression_name=='13.Zeisel':
     expressionname = '13.Zeisel.csv'
+elif args.expression_name=='4.Yan_LTMG':
+    expressionname = '4.Yan_LTMG.csv'
+elif args.expression_name=='5.Goolam_LTMG':
+    expressionname = '5.Goolam_LTMG.csv'
+elif args.expression_name=='7.Deng_LTMG':
+    expressionname = '7.Deng_LTMG.csv'
+elif args.expression_name=='8.Pollen_LTMG':
+    expressionname = '8.Pollen_LTMG.csv'
 elif args.expression_name=='MMPbasal':
     expressionname = 'MMPbasal.csv'
 elif args.expression_name=='MMPbasal_all':
