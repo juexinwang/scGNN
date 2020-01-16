@@ -38,50 +38,52 @@ source activate my_environment
 
 We totally have 28 methods in testing:
 * for using R support: geneLouvianCluster.py, otherwise we do not use rpy2
-experiment_1_g_e.sh
-experiment_1_g_f.sh
-experiment_1_n_e.sh
-experiment_1_n_f.sh
-experiment_2_g_e_AffinityPropagation.sh
-experiment_2_g_e_AgglomerativeClustering.sh
-experiment_2_g_e_Birch.sh
-experiment_2_g_e_KMeans.sh
-experiment_2_g_e_SpectralClustering.sh
-experiment_2_g_e.sh *
-experiment_2_g_f_AffinityPropagation.sh
-experiment_2_g_f_AgglomerativeClustering.sh
-experiment_2_g_f_Birch.sh
-experiment_2_g_f_KMeans.sh
-experiment_2_g_f_SpectralClustering.sh
-experiment_2_g_f.sh *
-experiment_2_n_e_AffinityPropagation.sh
-experiment_2_n_e_AgglomerativeClustering.sh
-experiment_2_n_e_Birch.sh
-experiment_2_n_e_KMeans.sh
-experiment_2_n_e_SpectralClustering.sh
-experiment_2_n_e.sh *
-experiment_2_n_f_AffinityPropagation.sh
-experiment_2_n_f_AgglomerativeClustering.sh
-experiment_2_n_f_Birch.sh
-experiment_2_n_f_KMeans.sh
-experiment_2_n_f_SpectralClustering.sh
-experiment_2_n_f.sh *
+    experiment_1_g_e.sh
+    experiment_1_g_f.sh
+    experiment_1_n_e.sh
+    experiment_1_n_f.sh
+    experiment_2_g_e_AffinityPropagation.sh
+    experiment_2_g_e_AgglomerativeClustering.sh
+    experiment_2_g_e_Birch.sh
+    experiment_2_g_e_KMeans.sh
+    experiment_2_g_e_SpectralClustering.sh
+    experiment_2_g_e.sh *
+    experiment_2_g_f_AffinityPropagation.sh
+    experiment_2_g_f_AgglomerativeClustering.sh
+    experiment_2_g_f_Birch.sh
+    experiment_2_g_f_KMeans.sh
+    experiment_2_g_f_SpectralClustering.sh
+    experiment_2_g_f.sh *
+    experiment_2_n_e_AffinityPropagation.sh
+    experiment_2_n_e_AgglomerativeClustering.sh
+    experiment_2_n_e_Birch.sh
+    experiment_2_n_e_KMeans.sh
+    experiment_2_n_e_SpectralClustering.sh
+    experiment_2_n_e.sh *
+    experiment_2_n_f_AffinityPropagation.sh
+    experiment_2_n_f_AgglomerativeClustering.sh
+    experiment_2_n_f_Birch.sh
+    experiment_2_n_f_KMeans.sh
+    experiment_2_n_f_SpectralClustering.sh
+    experiment_2_n_f.sh *
 
 1. Generating shells for sbatch: This will generate lots of shell files!
 
-cd clusterScripts
-bash generateBatchshell_Celltype.sh
-bash generateBatchshell_Impute.sh
+    cd clusterScripts
+    bash generateBatchshell_Celltype.sh
+    bash generateBatchshell_Impute.sh
 
 2. Submit shells in cluster (Lewis in University of Missouri):
-cd ..
-submitCluster_Celltype.sh
-submitCluster_Impute.sh
+
+    cd ..
+    submitCluster_Celltype.sh
+    submitCluster_Impute.sh
 
 3. Parsing results when ready:
-cd results
-python results_Reading.py --methodName 0
-python results_Reading.py --methodName 0 --imputeMode
+
+    cd results
+    python results_Reading.py --methodName 0
+    python results_Reading.py --methodName 0 --imputeMode
 
 
 Reference:
