@@ -42,10 +42,11 @@ featuresOriginal = load_data(args.datasetName, args.discreteTag)
 discreteStr = ''
 if args.discreteTag:
     discreteStr = 'D'
-#TODO
-# features         = np.load(args.npyDir+args.datasetName+'_'+args.regulized_type+'_'+args.ratio+'_features.npy')
-features         = load_sparse_matrix(args.npyDir+args.datasetName+'_'+args.regulized_type+'_'+args.ratio+'_features.npz').tolil()
-# features         = scipy.sparse.load_npz(args.npyDir+args.datasetName+'_'+args.regulized_type+'_'+args.ratio+'_features.npz')
+## features         = np.load(args.npyDir+args.datasetName+'_'+args.regulized_type+'_'+args.ratio+'_features.npy')
+## features         = scipy.sparse.load_npz(args.npyDir+args.datasetName+'_'+args.regulized_type+'_'+args.ratio+'_features.npz')
+#Note: features is not actually used here
+#  features         = load_sparse_matrix(args.npyDir+args.datasetName+'_'+args.regulized_type+'_'+args.ratio+'_features.npz').tolil()
+features         = None
 dropi            = np.load(args.npyDir+args.datasetName+'_'+args.regulized_type+'_'+args.ratio+'_dropi.npy')
 dropj            = np.load(args.npyDir+args.datasetName+'_'+args.regulized_type+'_'+args.ratio+'_dropj.npy')
 dropix           = np.load(args.npyDir+args.datasetName+'_'+args.regulized_type+'_'+args.ratio+'_dropix.npy')
