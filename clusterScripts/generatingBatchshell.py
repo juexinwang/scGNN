@@ -30,7 +30,7 @@ templateStr2 = "\n#SBATCH -o results-%j.out           # give the job output a cu
 "#SBATCH --mem=64G\n"\
 "#################################################################\n"\
 "module load miniconda3\n"\
-"source activate my_environment\n"
+"source activate conda_R\n"
 
 contList = []
 with open(inputFilename) as f:
