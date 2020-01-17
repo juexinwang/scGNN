@@ -84,18 +84,20 @@ We totally have 28 methods in testing:
 
     3.1 Generating results shells
 
-    cd results
-    python results_Reading.py --methodName 0 > run_Results_Celltype_0.sh
-    python results_Reading.py --methodName 4 > run_Results_Celltype_4.sh
+        cd results
+        python results_Reading.py --methodName 0 > run_Results_Celltype_0.sh
+        ...
+        python results_Reading.py --methodName 27 > run_Results_Celltype_27.sh
 
-    python results_Reading.py --methodName 0 --imputeMode > run_Results_Impute_0.sh
-    python results_Reading.py --methodName 4 --imputeMode > run_Results_Impute_4.sh
+        python results_Reading.py --methodName 0 --imputeMode > run_Results_Impute_0.sh
+        ...
+        python results_Reading.py --methodName 27 --imputeMode > run_Results_Impute_27.sh
 
     3.2 Submit scripts to cluster
 
-
-
-
+        bash submitCluster_Result_Celltype.sh
+        bash submitCluster_Result_Impute.sh
+        
 
 3.X (Localmachine)Parsing results when ready:
 
