@@ -5,7 +5,7 @@ parser.add_argument('--methodName', type=int, default=0,
                     help="method used: 0-27")
 parser.add_argument('--imputeMode', default=False, action='store_true',
                     help='impute or not (default: False). Caution: usually change npuDir if set imputeMode as true')
-parser.add_argument('--benchmark',action='store_true', default=False, help="whether have benchmark")
+parser.add_argument('--runMode',action='store_true', default=False, help="Run or prepare cluster script")
 args = parser.parse_args()
 
 # Note:
@@ -13,7 +13,8 @@ args = parser.parse_args()
 # We are not use runpy.run_path('main_result.py') for it is hard to pass arguments
 # We are not use subprocess.call("python main_result.py", shell=True) for it runs scripts parallel
 # So we use os.system('') here
-datasetList = ['MMPbasal_2000',
+datasetList = [
+    'MMPbasal_2000',
     'MMPbasal_2000 --discreteTag',
     'MMPbasal_2000_LTMG',
     '4.Yan',
@@ -29,12 +30,14 @@ datasetList = ['MMPbasal_2000',
     '8.Pollen --discreteTag',
     '8.Pollen_LTMG',
     '11_Kolodziejczyk',
-    '11_Kolodziejczyk --discreteTag']
+    '11_Kolodziejczyk --discreteTag'
+    ]
     #TODO: we wait for 11.Kolodziejczyk_LTMG
 
 if args.imputeMode:
     pyStr = 'results_impute.py'
-    npyList = ['../npyImputeG1E/',
+    npyList = [
+        '../npyImputeG1E/',
         '../npyImputeG1F/',
         '../npyImputeN1E/',
         '../npyImputeN1F/',
@@ -61,10 +64,12 @@ if args.imputeMode:
         '../npyImputeN2F_Birch/',
         '../npyImputeN2F_KMeans/',
         '../npyImputeN2F_SpectralClustering/',
-        '../npyImputeN2F/']
+        '../npyImputeN2F/'
+        ]
 else:
     pyStr = 'results_celltype.py'
-    npyList = ['../npyG1E/',
+    npyList = [
+        '../npyG1E/',
         '../npyG1F/',
         '../npyN1E/',
         '../npyN1F/',
@@ -91,7 +96,8 @@ else:
         '../npyN2F_Birch/',
         '../npyN2F_KMeans/',
         '../npyN2F_SpectralClustering/',
-        '../npyN2F/']
+        '../npyN2F/'
+        ]
 
 reguDict={2:None, 3:None}
 for i in range(16,28):
@@ -103,40 +109,79 @@ if args.methodName in reguDict:
 npyStr = npyList[args.methodName]
 
 benchmarkStr = ''
-if args.benchmark:
-    if int(args.methodName/3)==1:
-        benchmarkStr = ' --benchmark '\
-            '--labelFilename /home/wangjue/biodata/scData/AnjunBenchmark/4.Yan/4.Yan_cell_label.csv '\
-            '--cellFilename /home/wangjue/biodata/scData/4.Yan.cellname.txt '\
-            '--cellIndexname /home/wangjue/myprojects/scGNN/data/sc/4.Yan/ind.4.Yan.cellindex.txt '
-    elif int(args.methodName/3)==2:
-        benchmarkStr = ' --benchmark '\
-            '--labelFilename /home/wangjue/biodata/scData/AnjunBenchmark/5.Goolam/5.Goolam_cell_label.csv '\
-            '--cellFilename /home/wangjue/biodata/scData/5.Goolam.cellname.txt '\
-            '--cellIndexname /home/wangjue/myprojects/scGNN/data/sc/5.Goolam/ind.5.Goolam.cellindex.txt '
-    elif int(args.methodName/3)==3:
-        benchmarkStr = ' --benchmark '\
-            '--labelFilename /home/wangjue/biodata/scData/AnjunBenchmark/7.Deng/7.Deng_cell_label.csv '\
-            '--cellFilename /home/wangjue/biodata/scData/7.Deng.cellname.txt '\
-            '--cellIndexname /home/wangjue/myprojects/scGNN/data/sc/7.Deng/ind.7.Deng.cellindex.txt '
-    elif int(args.methodName/3)==4:
-        benchmarkStr = ' --benchmark '\
-            '--labelFilename /home/wangjue/biodata/scData/AnjunBenchmark/8.Pollen/8.Pollen_cell_label.csv '\
-            '--cellFilename /home/wangjue/biodata/scData/8.Pollen.cellname.txt '\
-            '--cellIndexname /home/wangjue/myprojects/scGNN/data/sc/8.Pollen/ind.8.Pollen.cellindex.txt '
-    elif int(args.methodName/3)==5:
-        benchmarkStr = ' --benchmark '\
-            '--labelFilename /home/wangjue/biodata/scData/AnjunBenchmark/11.Kolodziejczyk/Kolodziejczyk_cell_label.csv '\
-            '--cellFilename /home/wangjue/biodata/scData/11.Kolodziejczyk.cellname.txt '\
-            '--cellIndexname /home/wangjue/myprojects/scGNN/data/sc/11.Kolodziejczyk/ind.11.Kolodziejczyk.cellindex.txt '
 
+if args.runMode:
+    labelFileDir = '/home/wangjue/biodata/scData/AnjunBenchmark/'
+    cellFileDir  = '/home/wangjue/biodata/scData/'
+    cellIndexDir = '/home/wangjue/myprojects/scGNN/data/sc/'
+else:
+    labelFileDir = '/home/jwang/data/scData/'
+    cellFileDir  = '/home/jwang/data/scData/'
+    cellIndexDir = '/home/jwang/data/scData/'
+    
+if int(args.methodName/3)==1:
+    benchmarkStr = ' --benchmark '\
+        '--labelFilename ' + labelFileDir + '4.Yan/Yan_cell_label.csv '\
+        '--cellFilename ' + cellFileDir + '4.Yan.cellname.txt '\
+        '--cellIndexname ' + cellIndexDir + '4.Yan/ind.4.Yan.cellindex.txt '\
+        '--n-clusters 7 '
+elif int(args.methodName/3)==2:
+    benchmarkStr = ' --benchmark '\
+        '--labelFilename ' + labelFileDir + '5.Goolam/Goolam_cell_label.csv '\
+        '--cellFilename ' + cellFileDir + '5.Goolam.cellname.txt '\
+        '--cellIndexname ' + cellIndexDir + '5.Goolam/ind.5.Goolam.cellindex.txt '\
+        '--n-clusters 5 '
+elif int(args.methodName/3)==3:
+    benchmarkStr = ' --benchmark '\
+        '--labelFilename ' + labelFileDir + '7.Deng/Deng_cell_label.csv '\
+        '--cellFilename ' + cellFileDir + '7.Deng.cellname.txt '\
+        '--cellIndexname ' + cellIndexDir + '7.Deng/ind.7.Deng.cellindex.txt '\
+        '--n-clusters 10 '
+elif int(args.methodName/3)==4:
+    benchmarkStr = ' --benchmark '\
+        '--labelFilename ' + labelFileDir + '8.Pollen/Pollen_cell_label.csv '\
+        '--cellFilename ' + cellFileDir + '8.Pollen.cellname.txt '\
+        '--cellIndexname ' + cellIndexDir + '8.Pollen/ind.8.Pollen.cellindex.txt '\
+        '--n-clusters 11 '
+elif int(args.methodName/3)==5:
+    benchmarkStr = ' --benchmark '\
+        '--labelFilename ' + labelFileDir + '11.Kolodziejczyk/Kolodziejczyk_cell_label.csv '\
+        '--cellFilename ' + cellFileDir + '11.Kolodziejczyk.cellname.txt '\
+        '--cellIndexname ' + cellIndexDir + '11.Kolodziejczyk/ind.11.Kolodziejczyk.cellindex.txt '\
+        '--n-clusters 3 '
+
+
+if not args.runMode:
+    if args.imputeMode:
+        imputeStr = 'I'
+    else:
+        imputeStr = 'C'
+    templateStr = "#! /bin/bash\n"\
+    "######################### Batch Headers #########################\n"\
+    "#SBATCH -A xulab\n"\
+    "#SBATCH -p BioCompute               # use the BioCompute partition\n"\
+    "#SBATCH -J R" + imputeStr + str(args.methodName) +              " \n"\
+    "#SBATCH -o results-%j.out           # give the job output a custom name\n"\
+    "#SBATCH -t 2-00:00                  # two days time limit\n"\
+    "#SBATCH -N 1                        # number of nodes\n"\
+    "#SBATCH -n 8                        # number of cores (AKA tasks)\n"\
+    "#SBATCH --mem=64G\n"\
+    "#################################################################\n"\
+    "module load miniconda3\n"\
+    "source activate conda_R\n"
+    print(templateStr)
 
 for datasetStr in datasetList:
     commandStr = 'python -W ignore ' + pyStr + ' --datasetName ' + datasetStr + reguStr + benchmarkStr + ' --npyDir ' + npyStr
-    # os.system(commandStr)
-    print(commandStr)
+    if args.runMode:
+        os.system(commandStr)
+    else:
+        print(commandStr)
     for i in range(5):
         commandStr = 'python -W ignore ' + pyStr + ' --datasetName ' + datasetStr + reguStr + benchmarkStr + ' --reconstr '+ str(i) + ' --npyDir ' + npyStr
-        # os.system(commandStr)
-        print(commandStr)
+        if args.runMode:
+            os.system(commandStr)
+        else:
+            print(commandStr)
+
 

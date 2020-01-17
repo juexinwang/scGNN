@@ -29,9 +29,15 @@ from gae_embedding import *
 # Evaluating celltype identification results
 # Ref codes from https://github.com/MysteryVaibhav/RWR-GAE
 parser = argparse.ArgumentParser()
+parser.add_argument('--datasetName', type=str, default='MMPbasal',
+                    help='databaseName')
+parser.add_argument('--discreteTag', action='store_true', default=False,
+                    help='whether input is raw or 0/1 (default: False)')
+parser.add_argument('--regulized-type', type=str, default='Graph',
+                    help='regulized type (default: Graph), otherwise: noregu')
 parser.add_argument('--npyDir',   type=str,default='../npyGraph10/',help="npyDir")
-parser.add_argument('--zFilename',type=str,default='11.Kolodziejczyk_noregu_recon0.npy',help="z Filename")
-parser.add_argument('--originalFile', type=str,default='../data/sc/11.Kolodziejczyk/11.Kolodziejczyk.features.csv',help="original csv Filename")
+parser.add_argument('--reconstr', type=str, default='',
+                    help='iteration of imputed recon (default: '') alternative: 0,1,2')
 # if have benchmark: use cell File
 parser.add_argument('--benchmark',action='store_true', default=False, help="whether have benchmark")
 parser.add_argument('--labelFilename',type=str,default='/home/wangjue/biodata/scData/AnjunBenchmark/11.Kolodziejczyk/Kolodziejczyk_cell_label.csv',help="label Filename")
@@ -42,9 +48,6 @@ parser.add_argument('--k', type=int, default=10,
                     help='parameter k in KNN graph (default: 10)')
 parser.add_argument('--knn-distance', type=str, default='euclidean',
                     help='KNN graph distance type (default: euclidean)')
-#Clustering related
-parser.add_argument('--clustering-method', type=str, default='Louvain',
-                    help='Clustering method: Louvain/KMeans/SpectralClustering/AffinityPropagation/AgglomerativeClustering/Birch')
 # GAE related
 parser.add_argument('--GAEmodel', type=str, default='gcn_vae', help="models used")
 parser.add_argument('--GAEepochs', type=int, default=200, help='Number of epochs to train.')
@@ -56,6 +59,10 @@ parser.add_argument('--GAElr_dw', type=float, default=0.001, help='Initial learn
 parser.add_argument('--n-clusters', default=20, type=int, help='number of clusters, 7 for cora, 6 for citeseer, 11 for 5.Pollen, 20 for MMP')
 args = parser.parse_args()
 
+discreteStr = ''
+if args.discreteTag:
+    discreteStr = 'D'
+
 if args.benchmark:
     labelFilename = args.labelFilename
     cellFilename  = args.cellFilename
@@ -63,7 +70,8 @@ if args.benchmark:
     true_labels = readTrueLabelList(labelFilename, cellFilename, cellIndexFilename)
 
 print("Original PCA")
-x = pd.read_csv(args.originalFile,header=None)
+originalFile = '../data/sc/{}/{}.features.csv'.format(args.datasetName,args.datasetName)
+x = pd.read_csv(originalFile,header=None)
 x, re = pcaFunc(x, n_components=100)
 # para = 'euclidean:10'
 adj, edgeList = generateAdj(x, graphType='KNNgraphML', para = args.knn_distance+':'+str(args.k))
@@ -80,7 +88,7 @@ else:
     test_clustering_results(x, edgeList, args)
 
 print("Proposed Method")
-z = np.load(args.npyDir+args.zFilename)
+z = np.load(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_z'+args.reconstr+'.npy')
 # para = 'euclidean:10'
 adj, edgeList = generateAdj(z, graphType='KNNgraphML', para = args.knn_distance+':'+str(args.k))
 

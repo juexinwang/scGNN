@@ -38,6 +38,7 @@ source activate my_environment
 
 We totally have 28 methods in testing:
 * for using R support: geneLouvianCluster.py, otherwise we do not use rpy2
+
     experiment_1_g_e.sh
     experiment_1_g_f.sh
     experiment_1_n_e.sh
@@ -79,11 +80,28 @@ We totally have 28 methods in testing:
     submitCluster_Celltype.sh
     submitCluster_Impute.sh
 
-3. Parsing results when ready:
+3. Get results in cluster
+
+    3.1 Generating results shells
+
+    cd results
+    python results_Reading.py --methodName 0 > run_Results_Celltype_0.sh
+    python results_Reading.py --methodName 4 > run_Results_Celltype_4.sh
+
+    python results_Reading.py --methodName 0 --imputeMode > run_Results_Impute_0.sh
+    python results_Reading.py --methodName 4 --imputeMode > run_Results_Impute_4.sh
+
+    3.2 Submit scripts to cluster
+
+
+
+
+
+3.X (Localmachine)Parsing results when ready:
 
     cd results
     python results_Reading.py --methodName 0
-    python results_Reading.py --methodName 0 --imputeMode
+    python results_Reading.py --methodName 0 --imputeMode 
 
 
 Reference:
