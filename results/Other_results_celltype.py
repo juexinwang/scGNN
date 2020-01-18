@@ -68,7 +68,7 @@ if args.benchmark:
 
 clusters         = np.load(args.npyDir+datasetNameStr+'_clusters.npy')
 
-z = np.load(args.npyDir+args.datasetNameStr+'_z.npy')
+z = np.load(args.npyDir+datasetNameStr+'_z.npy')
 # para = 'euclidean:10'
 adj, edgeList = generateAdj(z, graphType='KNNgraphML', para = args.knn_distance+':'+str(args.k))
 
