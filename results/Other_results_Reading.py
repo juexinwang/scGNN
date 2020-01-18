@@ -30,8 +30,8 @@ datasetList = [
     '8.Pollen',
     '8.Pollen --discreteTag',
     '8.Pollen_LTMG',
-    '11_Kolodziejczyk',
-    '11_Kolodziejczyk --discreteTag'
+    '11.Kolodziejczyk',
+    '11.Kolodziejczyk --discreteTag'
     ]
     #TODO: we wait for 11.Kolodziejczyk_LTMG
 

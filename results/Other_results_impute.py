@@ -48,7 +48,22 @@ dropj            = np.load(args.npyDir+datasetNameStr+'_'+args.ratio+'_dropj.npy
 dropix           = np.load(args.npyDir+datasetNameStr+'_'+args.ratio+'_dropix.npy')
 clusters         = np.load(args.npyDir+datasetNameStr+'_'+args.ratio+'_clusters.npy')
 
-l1ErrorMean, l1ErrorMedian, l1ErrorMin, l1ErrorMax = imputation_error(featuresImpute, featuresOriginal, features, dropi, dropj, dropix)
+def imputation_error_(X_mean, X, X_zero, i, j, ix):
+    """
+    X_mean: imputed dataset
+    X: original dataset
+    X_zero: zeros dataset, does not need 
+    i, j, ix: indices of where dropout was applied
+    ========
+    returns:
+    median L1 distance between datasets at indices given
+    """
+    all_index = i[ix], j[ix]
+    x, y = X_mean[all_index], X[all_index]
+    result = np.abs(x - y)
+    return np.mean(result), np.median(result), np.min(result), np.max(result)
+
+l1ErrorMean, l1ErrorMedian, l1ErrorMin, l1ErrorMax = imputation_error_(featuresImpute, featuresOriginal, features, dropi, dropj, dropix)
 print('{:.4f} {:.4f} {:.4f} {:.4f} '.format(l1ErrorMean, l1ErrorMedian, l1ErrorMin, l1ErrorMax), end='')
 
 def imputeResult(inputData):
