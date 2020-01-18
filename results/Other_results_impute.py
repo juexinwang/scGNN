@@ -20,6 +20,8 @@ parser.add_argument('--npyDir', type=str, default='../otherResults/SAUCIE_I/',
                     help='directory of npy')
 parser.add_argument('--ratio', type=str, default='0.1',
                     help='dropoutratio')
+parser.add_argument('--clusterTag', action='store_true', default=False,
+                    help='whether the method has clusters (default: False)')
 # if have benchmark: use cell File
 parser.add_argument('--benchmark',action='store_true', default=False, help="whether have benchmark")
 parser.add_argument('--labelFilename',type=str,default='/home/wangjue/biodata/scData/AnjunBenchmark/11.Kolodziejczyk/Kolodziejczyk_cell_label.csv',help="label Filename")
@@ -46,7 +48,7 @@ featuresOriginal = np.load(args.npyDir+datasetNameStr+'_'+args.ratio+'_featuresO
 dropi            = np.load(args.npyDir+datasetNameStr+'_'+args.ratio+'_dropi.npy')
 dropj            = np.load(args.npyDir+datasetNameStr+'_'+args.ratio+'_dropj.npy')
 dropix           = np.load(args.npyDir+datasetNameStr+'_'+args.ratio+'_dropix.npy')
-clusters         = np.load(args.npyDir+datasetNameStr+'_'+args.ratio+'_clusters.npy')
+
 
 def imputation_error_(X_mean, X, X_zero, i, j, ix):
     """
@@ -96,9 +98,11 @@ imputeResult(featuresImpute)
 imputeResult(featuresOriginal)
 
 if args.benchmark:
-# Methods provided
-    ari, ami, nmi, cs, fms, vms, hs = measureClusteringTrueLabel(true_labels, clusters)
-    print('{:.4f} {:.4f} {:.4f} {:.4f} {:.4f} {:.4f} {:.4f} '.format(ari, ami, nmi, cs, fms, vms, hs), end='')
+    if args.clusterTag:
+        clusters         = np.load(args.npyDir+datasetNameStr+'_'+args.ratio+'_clusters.npy')
+        # Methods provided
+        ari, ami, nmi, cs, fms, vms, hs = measureClusteringTrueLabel(true_labels, clusters)
+        print('{:.4f} {:.4f} {:.4f} {:.4f} {:.4f} {:.4f} {:.4f} '.format(ari, ami, nmi, cs, fms, vms, hs), end='')
 
 print('')
 

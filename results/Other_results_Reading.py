@@ -38,12 +38,13 @@ datasetList = [
 if args.imputeMode:
     pyStr = 'Other_results_impute.py'
     npyList = [
-        '../otherResults/SAUCIE_I/'
+        '../otherResults/SAUCIE_I/ --clusterTag'
+        '../otherResults/MAGIC/'
         ]
 else:
     pyStr = 'Other_results_celltype.py'
     npyList = [
-        '../otherResults/SAUCIE/'
+        '../otherResults/SAUCIE/ --clusterTag'
         ]
 
 npyStr = npyList[args.methodName]
@@ -100,7 +101,7 @@ if not args.runMode:
     "######################### Batch Headers #########################\n"\
     "#SBATCH -A xulab\n"\
     "#SBATCH -p BioCompute               # use the BioCompute partition\n"\
-    "#SBATCH -J R" + imputeStr + str(args.methodName) +              " \n"\
+    "#SBATCH -J O" + imputeStr + str(args.methodName) +              " \n"\
     "#SBATCH -o results-%j.out           # give the job output a custom name\n"\
     "#SBATCH -t 2-00:00                  # two days time limit\n"\
     "#SBATCH -N 1                        # number of nodes\n"\
