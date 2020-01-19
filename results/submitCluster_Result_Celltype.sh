@@ -15,7 +15,7 @@ for i in {0..27}
 do
 for j in {0..1}
 do
-python results_Reading.py --methodName $i --splitMode --batchStr $j > run_Results_Celltype_$i_$j.sh
+python results_Reading.py --methodName $i --splitMode --batchStr $j > run_Results_Celltype_$i-$j.sh
 done
 done
 
@@ -24,7 +24,7 @@ for i in {0..27}
 do
 for j in {0..1}
 do
-sbatch run_Results_Celltype_$i_$j.sh
+sbatch run_Results_Celltype_$i-$j.sh
 sleep 3
 done
 done
