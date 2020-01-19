@@ -38,7 +38,7 @@ datasetList = [
 if args.imputeMode:
     pyStr = 'Other_results_impute.py'
     npyList = [
-        '../otherResults/SAUCIE_I/ --clusterTag'
+        '../otherResults/SAUCIE_I/ --clusterTag',
         '../otherResults/MAGIC/'
         ]
 else:
