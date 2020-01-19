@@ -6,8 +6,8 @@ parser.add_argument('--outFileName', type=str, default='RC_1_0.txt', help="outFi
 args = parser.parse_args()
 
 fileDir = args.fileDir
-fileName = 'results-18979328.out'
-outFileName = 'RC_1_0.txt'
+fileName = args.fileName
+outFileName = args.outFileName
 keyDict = {'Louvain':None,'KMeans':None,'SpectralClustering':None,'AffinityPropagation':None,'AgglomerativeClustering':None,'Birch':None, 'OPTICS':None,'Original PCA':None, 'Proposed Method':None}
 
 outLines = []
