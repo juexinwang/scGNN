@@ -44,7 +44,7 @@ if args.imputeMode:
 else:
     pyStr = 'Other_results_celltype.py'
     npyList = [
-        '../otherResults/SAUCIE/ --clusterTag'
+        '../otherResults/SAUCIE/'
         ]
 
 npyStr = npyList[args.methodName]
