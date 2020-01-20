@@ -290,40 +290,59 @@ def test_clustering_benchmark_results(z, edgeList, true_labels, args):
     '''
     Try different clustring with known celltypes
     '''
-    #graph Louvain
-    print("Louvain")
-    listResult,size = generateLouvainCluster(edgeList)
-    measure_clustering_benchmark_results(z,listResult, true_labels)
+    # Add try except
+    try:
+        #graph Louvain
+        print("Louvain")
+        listResult,size = generateLouvainCluster(edgeList)
+        measure_clustering_benchmark_results(z,listResult, true_labels)
+    except:
+        pass
 
-    #KMeans
-    print("KMeans")
-    clustering = KMeans(n_clusters=args.n_clusters, random_state=0).fit(z)
-    listResult = clustering.predict(z)
-    measure_clustering_benchmark_results(z,listResult, true_labels)
+    try:
+        #KMeans
+        print("KMeans")
+        clustering = KMeans(n_clusters=args.n_clusters, random_state=0).fit(z)
+        listResult = clustering.predict(z)
+        measure_clustering_benchmark_results(z,listResult, true_labels)
+    except:
+        pass
 
-    #Spectral Clustering
-    print("SpectralClustering")
-    clustering = SpectralClustering(n_clusters=args.n_clusters, assign_labels="discretize", random_state=0).fit(z)
-    listResult = clustering.labels_.tolist()
-    measure_clustering_benchmark_results(z,listResult, true_labels)
+    try:
+        #Spectral Clustering
+        print("SpectralClustering")
+        clustering = SpectralClustering(n_clusters=args.n_clusters, assign_labels="discretize", random_state=0).fit(z)
+        listResult = clustering.labels_.tolist()
+        measure_clustering_benchmark_results(z,listResult, true_labels)
+    except:
+        pass
 
-    #AffinityPropagation
-    print("AffinityPropagation")
-    clustering = AffinityPropagation().fit(z)
-    listResult = clustering.predict(z)
-    measure_clustering_benchmark_results(z,listResult, true_labels)
+    try:
+        #AffinityPropagation
+        print("AffinityPropagation")
+        clustering = AffinityPropagation().fit(z)
+        listResult = clustering.predict(z)
+        measure_clustering_benchmark_results(z,listResult, true_labels)
+    except:
+        pass
 
-    #AgglomerativeClustering
-    print("AgglomerativeClustering")
-    clustering = AgglomerativeClustering().fit(z)
-    listResult = clustering.labels_.tolist()
-    measure_clustering_benchmark_results(z,listResult, true_labels)
+    try:
+        #AgglomerativeClustering
+        print("AgglomerativeClustering")
+        clustering = AgglomerativeClustering().fit(z)
+        listResult = clustering.labels_.tolist()
+        measure_clustering_benchmark_results(z,listResult, true_labels)
+    except:
+        pass
 
-    #Birch
-    print("Birch")
-    clustering = Birch(n_clusters=args.n_clusters).fit(z)
-    listResult = clustering.predict(z)
-    measure_clustering_benchmark_results(z,listResult, true_labels)
+    try:
+        #Birch
+        print("Birch")
+        clustering = Birch(n_clusters=args.n_clusters).fit(z)
+        listResult = clustering.predict(z)
+        measure_clustering_benchmark_results(z,listResult, true_labels)
+    except:
+        pass
 
     # #DBSCAN
     # print("DBSCAN")
@@ -343,51 +362,73 @@ def test_clustering_benchmark_results(z, edgeList, true_labels, args):
     # listResult = clustering.predict(z)
     # measure_clustering_benchmark_results(z,listResult, true_labels)
 
-    #OPTICS
-    print("OPTICS")
-    clustering = OPTICS().fit(z)
-    listResult = clustering.labels_.tolist()
-    measure_clustering_benchmark_results(z,listResult, true_labels)
+    try:
+        #OPTICS
+        print("OPTICS")
+        clustering = OPTICS().fit(z)
+        listResult = clustering.labels_.tolist()
+        measure_clustering_benchmark_results(z,listResult, true_labels)
+    except:
+        pass
+    
 
 # Benchmark
 def test_clustering_results(z, edgeList, args):
     '''
     Try different clustring without known celltypes
     '''
-    #graph Louvain
-    print("Louvain")
-    listResult,size = generateLouvainCluster(edgeList)
-    measure_clustering_results(z,listResult)
+    try:
+        #graph Louvain
+        print("Louvain")
+        listResult,size = generateLouvainCluster(edgeList)
+        measure_clustering_results(z,listResult)
+    except:
+        pass
 
-    #KMeans
-    print("KMeans")
-    clustering = KMeans(n_clusters=args.n_clusters, random_state=0).fit(z)
-    listResult = clustering.predict(z)
-    measure_clustering_results(z,listResult)
+    try:
+        #KMeans
+        print("KMeans")
+        clustering = KMeans(n_clusters=args.n_clusters, random_state=0).fit(z)
+        listResult = clustering.predict(z)
+        measure_clustering_results(z,listResult)
+    except:
+        pass
 
-    #Spectral Clustering
-    print("SpectralClustering")
-    clustering = SpectralClustering(n_clusters=args.n_clusters, assign_labels="discretize", random_state=0).fit(z)
-    listResult = clustering.labels_.tolist()
-    measure_clustering_results(z,listResult)
+    try:
+        #Spectral Clustering
+        print("SpectralClustering")
+        clustering = SpectralClustering(n_clusters=args.n_clusters, assign_labels="discretize", random_state=0).fit(z)
+        listResult = clustering.labels_.tolist()
+        measure_clustering_results(z,listResult)
+    except:
+        pass
 
-    #AffinityPropagation
-    print("AffinityPropagation")
-    clustering = AffinityPropagation().fit(z)
-    listResult = clustering.predict(z)
-    measure_clustering_results(z,listResult)
+    try:
+        #AffinityPropagation
+        print("AffinityPropagation")
+        clustering = AffinityPropagation().fit(z)
+        listResult = clustering.predict(z)
+        measure_clustering_results(z,listResult)
+    except:
+        pass
 
-    #AgglomerativeClustering
-    print("AgglomerativeClustering")
-    clustering = AgglomerativeClustering().fit(z)
-    listResult = clustering.labels_.tolist()
-    measure_clustering_results(z,listResult)
+    try:
+        #AgglomerativeClustering
+        print("AgglomerativeClustering")
+        clustering = AgglomerativeClustering().fit(z)
+        listResult = clustering.labels_.tolist()
+        measure_clustering_results(z,listResult)
+    except:
+        pass
 
-    #Birch
-    print("Birch")
-    clustering = Birch(n_clusters=args.n_clusters).fit(z)
-    listResult = clustering.predict(z)
-    measure_clustering_results(z,listResult)
+    try:
+        #Birch
+        print("Birch")
+        clustering = Birch(n_clusters=args.n_clusters).fit(z)
+        listResult = clustering.predict(z)
+        measure_clustering_results(z,listResult)
+    except:
+        pass
 
     # #DBSCAN
     # print("DBSCAN")
@@ -407,11 +448,14 @@ def test_clustering_results(z, edgeList, args):
     # listResult = clustering.predict(z)
     # measure_clustering_results(z,listResult)
 
-    #OPTICS
-    print("OPTICS")
-    clustering = OPTICS().fit(z)
-    listResult = clustering.labels_.tolist()
-    measure_clustering_results(z,listResult)
+    try:
+        #OPTICS
+        print("OPTICS")
+        clustering = OPTICS().fit(z)
+        listResult = clustering.labels_.tolist()
+        measure_clustering_results(z,listResult)
+    except:
+        pass
 
 
 def impute_dropout(X, rate=0.1):

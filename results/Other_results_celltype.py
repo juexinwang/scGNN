@@ -72,6 +72,7 @@ z = np.load(args.npyDir+datasetNameStr+'_z.npy')
 # para = 'euclidean:10'
 adj, edgeList = generateAdj(z, graphType='KNNgraphML', para = args.knn_distance+':'+str(args.k))
 
+print(datasetNameStr)
 if args.benchmark:
     ari, ami, nmi, cs, fms, vms, hs = measureClusteringTrueLabel(true_labels, clusters)
     print('{:.4f} {:.4f} {:.4f} {:.4f} {:.4f} {:.4f} {:.4f} '.format(ari, ami, nmi, cs, fms, vms, hs), end='')
