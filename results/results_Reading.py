@@ -17,26 +17,7 @@ args = parser.parse_args()
 # We are not use runpy.run_path('main_result.py') for it is hard to pass arguments
 # We are not use subprocess.call("python main_result.py", shell=True) for it runs scripts parallel
 # So we use os.system('') here
-datasetList = [
-    'MMPbasal_2000',
-    'MMPbasal_2000 --discreteTag',
-    'MMPbasal_2000_LTMG',
-    '4.Yan',
-    '4.Yan --discreteTag',
-    '4.Yan_LTMG',
-    '5.Goolam',
-    '5.Goolam --discreteTag',
-    '5.Goolam_LTMG',
-    '7.Deng',
-    '7.Deng --discreteTag',
-    '7.Deng_LTMG',
-    '8.Pollen',
-    '8.Pollen --discreteTag',
-    '8.Pollen_LTMG',
-    '11.Kolodziejczyk',
-    '11.Kolodziejczyk --discreteTag'
-    ]
-    #TODO: we wait for 11.Kolodziejczyk_LTMG
+
 if args.splitMode:
     if args.batchStr == 0:
         datasetList = [
@@ -61,6 +42,27 @@ if args.splitMode:
         '11.Kolodziejczyk',
         '11.Kolodziejczyk --discreteTag'
         ]
+else:
+    datasetList = [
+    'MMPbasal_2000',
+    'MMPbasal_2000 --discreteTag',
+    'MMPbasal_2000_LTMG',
+    '4.Yan',
+    '4.Yan --discreteTag',
+    '4.Yan_LTMG',
+    '5.Goolam',
+    '5.Goolam --discreteTag',
+    '5.Goolam_LTMG',
+    '7.Deng',
+    '7.Deng --discreteTag',
+    '7.Deng_LTMG',
+    '8.Pollen',
+    '8.Pollen --discreteTag',
+    '8.Pollen_LTMG',
+    '11.Kolodziejczyk',
+    '11.Kolodziejczyk --discreteTag'
+    ]
+    #TODO: we wait for 11.Kolodziejczyk_LTMG
 
 
 if args.imputeMode:
