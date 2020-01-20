@@ -65,6 +65,7 @@ def imputation_error_(X_mean, X, X_zero, i, j, ix):
     result = np.abs(x - y)
     return np.mean(result), np.median(result), np.min(result), np.max(result)
 
+print(datasetNameStr)
 l1ErrorMean, l1ErrorMedian, l1ErrorMin, l1ErrorMax = imputation_error_(featuresImpute, featuresOriginal, features, dropi, dropj, dropix)
 print('{:.4f} {:.4f} {:.4f} {:.4f} '.format(l1ErrorMean, l1ErrorMedian, l1ErrorMin, l1ErrorMax), end='')
 
