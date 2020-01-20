@@ -11,6 +11,7 @@ outFileName = args.outFileName
 keyDict = {'Louvain':None,'KMeans':None,'SpectralClustering':None,'AffinityPropagation':None,'AgglomerativeClustering':None,'Birch':None, 'OPTICS':None,'Original PCA':None, 'Proposed Method':None}
 
 outLines = []
+tmpstr = ''
 count = 0
 with open(fileDir+fileName) as f:
     lines = f.readlines()
@@ -19,10 +20,11 @@ with open(fileDir+fileName) as f:
         line = line.strip()
         if line in keyDict:
             tag = True
-            outLines.append(line+'\n')
+            tmpstr = line+'\t'
         elif tag:
-            outLines.append(line+'\n')
+            outLines.append(tmpstr+line+'\n')
             tag = False
+            tmpstr = ''
     f.close()
 
 with open(outFileName,'w') as fw:
