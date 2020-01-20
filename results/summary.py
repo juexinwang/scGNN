@@ -8,23 +8,33 @@ args = parser.parse_args()
 fileDir = args.fileDir
 fileName = args.fileName
 outFileName = args.outFileName
-keyDict = {'Louvain':None,'KMeans':None,'SpectralClustering':None,'AffinityPropagation':None,'AgglomerativeClustering':None,'Birch':None, 'OPTICS':None,'Original PCA':None, 'Proposed Method':None}
+keyDict = {'Louvain':0,'KMeans':0,'SpectralClustering':0,'AffinityPropagation':0,'AgglomerativeClustering':0,'Birch':0, 'OPTICS':0}
 
+tabuDict =[3,4,6,7,9,10,12,13,15,16]
 outLines = []
 tmpstr = ''
 count = 0
 with open(fileDir+fileName) as f:
     lines = f.readlines()
     tag = False
+    otag = False
     for line in lines:
         line = line.strip()
-        if line in keyDict:
+        if line in keyDict:            
+            # if line == 'Original PCA':
+            #     if keyDict[line]%18 == 0:
+            #         otag = True
+            #     else:
+            #         otag = False
+            # else:
             tag = True
             tmpstr = line+'\t'
+            keyDict[line] = keyDict[line]+1
         elif tag:
-            outLines.append(tmpstr+line+'\n')
-            tag = False
-            tmpstr = ''
+            if not keyDict['Lovain']%18 in tabuDict:
+                outLines.append(tmpstr+line+'\n')
+                tag = False
+                tmpstr = ''
     f.close()
 
 with open(outFileName,'w') as fw:
