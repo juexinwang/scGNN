@@ -31,7 +31,7 @@ with open(fileDir+fileName) as f:
             tmpstr = line+'\t'
             keyDict[line] = keyDict[line]+1
         elif tag:
-            if not keyDict['Lovain']%18 in tabuDict:
+            if not keyDict['Louvain'] in tabuDict:
                 outLines.append(tmpstr+line+'\n')
                 tag = False
                 tmpstr = ''
