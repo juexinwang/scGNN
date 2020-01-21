@@ -39,7 +39,7 @@ if args.imputeMode:
     pyStr = 'Other_results_impute.py'
     npyList = [
         '../otherResults/SAUCIE_I/ --clusterTag',
-        '../otherResults/MAGIC/'
+        '../otherResults/MAGIC/',
         '../otherResults/MAGIC_k10/'
         ]
 else:
