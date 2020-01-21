@@ -22,14 +22,27 @@ with open(fileDir+fileName) as f:
     for line in lines:
         line = line.strip()
         if line in keyDict:            
-            # if line == 'Original PCA':
-            #     if keyDict[line]%18 == 0:
-            #         otag = True
-            #     else:
-            #         otag = False
-            # else:
             tag = True
-            tmpstr = line+'\t'
+            tmpstr = '\t'+line+'\t'
+            if line == 'Louvain':
+                val = keyDict['Louvain']%18
+                if val == 0:
+                    priorstr = 'Graph'
+                elif val == 1:
+                    priorstr = 'NoGraph'
+                elif val == 2:
+                    priorstr = 'Z'
+                elif val == 5:
+                    priorstr = 'Z0'
+                elif val == 8:
+                    priorstr = 'Z1'
+                elif val == 11:
+                    priorstr = 'Z2'
+                elif val == 14:
+                    priorstr = 'Z3'
+                elif val == 17:
+                    priorstr = 'Z4'
+                tmpstr = priorstr + tmpstr 
             keyDict[line] = keyDict[line]+1
         elif tag:
             val = (keyDict['Louvain']-1)%18
