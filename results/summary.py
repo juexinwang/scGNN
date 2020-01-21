@@ -10,7 +10,8 @@ fileName = args.fileName
 outFileName = args.outFileName
 keyDict = {'Louvain':0,'KMeans':0,'SpectralClustering':0,'AffinityPropagation':0,'AgglomerativeClustering':0,'Birch':0, 'OPTICS':0}
 
-tabuDict =[1,2,3,6,9,12,15,18]
+# tabuDict =[1,2,3,6,9,12,15,18]
+tabuDict =[0,1,2,5,8,11,14,17]
 outLines = []
 tmpstr = ''
 count = 0
@@ -31,7 +32,8 @@ with open(fileDir+fileName) as f:
             tmpstr = line+'\t'
             keyDict[line] = keyDict[line]+1
         elif tag:
-            if keyDict['Louvain'] in tabuDict:
+            val = (keyDict['Louvain']-1)%18
+            if val in tabuDict:
                 outLines.append(tmpstr+line+'\n')
                 tag = False
                 tmpstr = ''
