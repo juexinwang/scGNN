@@ -40,6 +40,7 @@ if args.imputeMode:
     npyList = [
         '../otherResults/SAUCIE_I/ --clusterTag',
         '../otherResults/MAGIC/'
+        '../otherResults/MAGIC_k10/'
         ]
 else:
     pyStr = 'Other_results_celltype.py'
