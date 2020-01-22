@@ -79,6 +79,10 @@ def imputeResult(inputData):
     z,_ = pcaFunc(inputData)
     _, edgeList = generateAdj(z, graphType='KNNgraphML', para = 'euclidean:10')
     listResult,size = generateLouvainCluster(edgeList)
+    # modularity = calcuModularity(listResult, edgeList)
+    # print('{:.4f}'.format(modularity))
+    silhouette, chs, dbs = measureClusteringNoLabel(z, listResult)
+    print('{:.4f} {:.4f} {:.4f} '.format(silhouette, chs, dbs), end='')
     if args.benchmark:
         # Louvain
         ari, ami, nmi, cs, fms, vms, hs = measureClusteringTrueLabel(true_labels, listResult)
@@ -88,11 +92,6 @@ def imputeResult(inputData):
         listResult = clustering.predict(z)
         ari, ami, nmi, cs, fms, vms, hs = measureClusteringTrueLabel(true_labels, listResult)
         print('{:.4f} {:.4f} {:.4f} {:.4f} {:.4f} {:.4f} {:.4f} '.format(ari, ami, nmi, cs, fms, vms, hs), end='')
-    else:
-        # modularity = calcuModularity(listResult, edgeList)
-        # print('{:.4f}'.format(modularity))
-        silhouette, chs, dbs = measureClusteringNoLabel(z, listResult)
-        print('{:.4f} {:.4f} {:.4f} '.format(silhouette, chs, dbs), end='')
     
 
 imputeResult(featuresImpute)

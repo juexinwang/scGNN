@@ -89,7 +89,7 @@ if not args.imputeMode:
     scData = scDataset(args.datasetName, args.discreteTag)
 else:
     scData = scDatasetDropout(args.datasetName, args.discreteTag, args.dropoutRatio)
-train_loader = DataLoader(scData, batch_size=args.batch_size, shuffle=True, **kwargs)
+train_loader = DataLoader(scData, batch_size=args.batch_size, shuffle=False, **kwargs)
 
 # Original
 if args.model == 'VAE':
@@ -268,7 +268,7 @@ if __name__ == "__main__":
             for clusterIndex in clusterIndexList:
                 reconUsage = recon[clusterIndex]
                 scDataInter = scDatasetInter(reconUsage)
-                train_loader = DataLoader(scDataInter, batch_size=args.batch_size, shuffle=True, **kwargs)
+                train_loader = DataLoader(scDataInter, batch_size=args.batch_size, shuffle=False, **kwargs)
                 for epoch in range(1, args.celltype_epochs + 1):
                     reconCluster, originalCluster, zCluster = train(epoch, EMFlag=True)                
                 count = 0
@@ -280,7 +280,7 @@ if __name__ == "__main__":
         
         # Use new dataloader
         scDataInter = scDatasetInter(recon)
-        train_loader = DataLoader(scDataInter, batch_size=args.batch_size, shuffle=True, **kwargs)
+        train_loader = DataLoader(scDataInter, batch_size=args.batch_size, shuffle=False, **kwargs)
 
         for epoch in range(1, args.epochs + 1):
             recon, original, z = train(epoch, EMFlag=True)
