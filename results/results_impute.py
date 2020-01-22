@@ -29,8 +29,6 @@ parser.add_argument('--labelFilename',type=str,default='/home/wangjue/biodata/sc
 parser.add_argument('--cellFilename', type=str,default='/home/wangjue/biodata/scData/11.Kolodziejczyk.cellname.txt',help="cell Filename")
 parser.add_argument('--cellIndexname',type=str,default='/home/wangjue/myprojects/scGNN/data/sc/11.Kolodziejczyk/ind.11.Kolodziejczyk.cellindex.txt',help="cell index Filename")
 parser.add_argument('--n-clusters', default=20, type=int, help='number of clusters, 7 for cora, 6 for citeseer, 11 for 5.Pollen, 20 for MMP')
-# Whether PCA
-parser.add_argument('--pcaTag',action='store_true', default=False, help="using PCA")
 
 args = parser.parse_args()
 
