@@ -22,6 +22,8 @@ parser.add_argument('--ratio', type=str, default='0.1',
                     help='dropoutratio')
 parser.add_argument('--clusterTag', action='store_true', default=False,
                     help='whether the method has clusters (default: False)')
+parser.add_argument('--pcaNum', type=int, default=100,
+                    help='Number of principle components (default: 100)')
 # if have benchmark: use cell File
 parser.add_argument('--benchmark',action='store_true', default=False, help="whether have benchmark")
 parser.add_argument('--labelFilename',type=str,default='/home/wangjue/biodata/scData/AnjunBenchmark/11.Kolodziejczyk/Kolodziejczyk_cell_label.csv',help="label Filename")
@@ -76,7 +78,10 @@ def imputeResult(inputData):
     '''
     if type(inputData) is scipy.sparse.lil.lil_matrix:
         inputData = scipy.sparse.lil.lil_matrix.todense(inputData)
-    z,_ = pcaFunc(inputData)
+    if inputData.shape[0]>args.pcaNum:
+        z,_ = pcaFunc(inputData, n_components=args.pcaNum)
+    else:
+        z = inputData
     _, edgeList = generateAdj(z, graphType='KNNgraphML', para = 'euclidean:10')
     listResult,size = generateLouvainCluster(edgeList)
     # modularity = calcuModularity(listResult, edgeList)

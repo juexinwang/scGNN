@@ -48,6 +48,8 @@ parser.add_argument('--k', type=int, default=10,
                     help='parameter k in KNN graph (default: 10)')
 parser.add_argument('--knn-distance', type=str, default='euclidean',
                     help='KNN graph distance type (default: euclidean)')
+parser.add_argument('--pcaNum', type=int, default=100,
+                    help='Number of principle components (default: 100)')
 # GAE related
 parser.add_argument('--GAEmodel', type=str, default='gcn_vae', help="models used")
 parser.add_argument('--GAEepochs', type=int, default=200, help='Number of epochs to train.')
@@ -72,7 +74,9 @@ if args.benchmark:
 print("Original PCA")
 originalFile = '../data/sc/{}/{}.features.csv'.format(args.datasetName,args.datasetName)
 x = pd.read_csv(originalFile,header=None)
-x, re = pcaFunc(x, n_components=100)
+# PCA only number of cells larger than args.pcaNum, aka 100
+if x.shape[0]>args.pcaNum:
+    x, re = pcaFunc(x, n_components=args.pcaNum)
 # para = 'euclidean:10'
 adj, edgeList = generateAdj(x, graphType='KNNgraphML', para = args.knn_distance+':'+str(args.k))
 
