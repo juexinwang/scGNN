@@ -61,6 +61,9 @@ parser.add_argument('--useGAEembedding', action='store_true', default=False,
                     help='whether use GAE embedding before clustering(default: False)')
 parser.add_argument('--clustering-method', type=str, default='Louvain',
                     help='Clustering method: Louvain/KMeans/SpectralClustering/AffinityPropagation/AgglomerativeClustering/Birch')
+parser.add_argument('--maxCluster', type=int, default=100,
+                    help='max cluster for celltypeEM without setting number of clusters (default: 100)') 
+       
 #GAE related
 parser.add_argument('--GAEmodel', type=str, default='gcn_vae', help="models used")
 parser.add_argument('--GAEepochs', type=int, default=200, help='Number of epochs to train.')
@@ -160,7 +163,8 @@ if __name__ == "__main__":
 
     # Save results only when impute
     if args.imputeMode:
-        save_sparse_matrix(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_'+str(args.dropoutRatio)+'_features.npz',scData.features)
+        # Does not need now
+        # save_sparse_matrix(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_'+str(args.dropoutRatio)+'_features.npz',scData.features)
         # sp.save_npz(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_'+str(args.dropoutRatio)+'_features.npz',scData.features)
         # np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_'+str(args.dropoutRatio)+'_features.npy',scData.features)
         np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_'+str(args.dropoutRatio)+'_dropi.npy',scData.i)
@@ -246,6 +250,11 @@ if __name__ == "__main__":
             else:
                 print("Error: Clustering method not appropriate")
             print("---Clustering takes %s seconds ---" % (time.time() - clustering_time))
+
+            # If clusters more than maxclusters, then have to stop
+            if len(set(listResult))>args.maxCluster or len(set(listResult))<=1:
+                print("Stopping: Number of clusters is " + str(len(set(listResult))) + ".")
+                return None
             
             #Calculate silhouette
             measure_clustering_results(zOut, listResult)
