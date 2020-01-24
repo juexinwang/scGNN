@@ -45,6 +45,12 @@
 # python Preprocessing_scFile.py --inputfile /home/wangjue/biodata/scData/AnjunBenchmark/5.Goolam/T2000_OneSign_LTMG.txt --outputfile /home/wangjue/biodata/scData/5.Goolam_LTMG.csv --outputfileCellName /home/wangjue/biodata/scData/5.Goolam_LTMG.cellname.txt --cellcount 124 --genecount 2000 --split space --cellheadflag False
 # python Preprocessing_scFile.py --inputfile /home/wangjue/biodata/scData/AnjunBenchmark/7.Deng/T2000_OneSign_LTMG.txt --outputfile /home/wangjue/biodata/scData/7.Deng_LTMG.csv --outputfileCellName /home/wangjue/biodata/scData/7.Deng_LTMG.cellname.txt --cellcount 268 --genecount 2000 --split space --cellheadflag False
 # python Preprocessing_scFile.py --inputfile /home/wangjue/biodata/scData/AnjunBenchmark/8.Pollen/T2000_OneSign_LTMG.txt --outputfile /home/wangjue/biodata/scData/8.Pollen_LTMG.csv --outputfileCellName /home/wangjue/biodata/scData/8.Pollen_LTMG.cellname.txt --cellcount 301 --genecount 2000 --split space --cellheadflag False
+#
+# 12,13,20,30
+# python Preprocessing_scFile.py --inputfile /home/wangjue/biodata/scData/AnjunBenchmark/12.Klein/OneSign_LTMG.txt --outputfile /home/wangjue/biodata/scData/12.Klein_LTMG.csv --outputfileCellName /home/wangjue/biodata/scData/12.Klein_LTMG.cellname.txt --cellcount 2717 --genecount 21221 --split space --cellheadflag False
+# python Preprocessing_scFile.py --inputfile /home/wangjue/biodata/scData/AnjunBenchmark/13.Zeisel/OneSign_LTMG.txt --outputfile /home/wangjue/biodata/scData/13.Zeisel_LTMG.csv --outputfileCellName /home/wangjue/biodata/scData/13.Zeisel_LTMG.cellname.txt --cellcount 3005 --genecount 21221 --split space --cellheadflag False
+# python Preprocessing_scFile.py --inputfile /home/wangjue/biodata/scData/AnjunBenchmark/20.10X_2700_seurat/OneSign_LTMG.txt --outputfile /home/wangjue/biodata/scData/20.10X_2700_seurat_LTMG.csv --outputfileCellName /home/wangjue/biodata/scData/20.10X_2700_seurat_LTMG.cellname.txt --cellcount 2698 --genecount 21221 --split space --cellheadflag False
+# python Preprocessing_scFile.py --inputfile /home/wangjue/biodata/scData/AnjunBenchmark/30.Schafer/OneSign_LTMG.txt --outputfile /home/wangjue/biodata/scData/30.Schafer_LTMG.csv --outputfileCellName /home/wangjue/biodata/scData/30.Schafer_LTMG.cellname.txt --cellcount 2552 --genecount 21221 --split space --cellheadflag False
 
 
 import numpy as np
