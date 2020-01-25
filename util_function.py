@@ -385,7 +385,7 @@ def trimClustering(listResult,minMemberinCluster=5,maxClusterNumber=100):
     '''
     numDict = {}
     for item in listResult:
-        if not item in listResult:
+        if not item in numDict:
             numDict[item] = 0
         else:
             numDict[item] = numDict[item]+1
@@ -394,11 +394,12 @@ def trimClustering(listResult,minMemberinCluster=5,maxClusterNumber=100):
     changeDict = {}
     for item in range(size):
         if numDict[item]<minMemberinCluster:
-            changeDict[item]=''
+            changeDict[item] = ''
     
     count = 0
     for item in listResult:
         if item in changeDict:
-            listResult[count]=maxClusterNumber
+            listResult[count] = maxClusterNumber
+        count += 1
 
     return listResult
