@@ -61,8 +61,10 @@ parser.add_argument('--useGAEembedding', action='store_true', default=False,
                     help='whether use GAE embedding before clustering(default: False)')
 parser.add_argument('--clustering-method', type=str, default='Louvain',
                     help='Clustering method: Louvain/KMeans/SpectralClustering/AffinityPropagation/AgglomerativeClustering/Birch')
-parser.add_argument('--maxCluster', type=int, default=100,
+parser.add_argument('--maxClusterNumber', type=int, default=100,
                     help='max cluster for celltypeEM without setting number of clusters (default: 100)') 
+parser.add_argument('--minMemberinCluster', type=int, default=5,
+                    help='max cluster for celltypeEM without setting number of clusters (default: 100)')
        
 #GAE related
 parser.add_argument('--GAEmodel', type=str, default='gcn_vae', help="models used")
@@ -101,6 +103,30 @@ if args.model == 'VAE':
 elif args.model == 'AE':
     model = AE(dim=scData.features.shape[1]).to(device)
 optimizer = optim.Adam(model.parameters(), lr=1e-3)
+
+def trimClustering(listResult):
+    '''
+    If the clustering numbers larger than certain number, use this function to trim. May have better solution
+    '''
+    numDict = {}
+    for item in listResult:
+        if not item in listResult:
+            numDict[item] = 0
+        else:
+            numDict[item] = numDict[item]+1
+    
+    size = len(set(listResult))
+    changeDict = {}
+    for item in range(size):
+        if numDict[item]<args.minMemberinCluster:
+            changeDict[item]=''
+    
+    count = 0
+    for item in listResult:
+        if item in changeDict:
+            listResult[count]=args.maxClusterNumber
+
+    return listResult
 
 #TODO: have to implement batch
 #TODO: have to improve save npy
@@ -254,7 +280,10 @@ if __name__ == "__main__":
             # If clusters more than maxclusters, then have to stop
             if len(set(listResult))>args.maxCluster or len(set(listResult))<=1:
                 print("Stopping: Number of clusters is " + str(len(set(listResult))) + ".")
-                return None
+                # Exit
+                # return None
+                # Else: dealing with the number
+                listResult = trimClustering(listResult)
             
             #Calculate silhouette
             measure_clustering_results(zOut, listResult)
