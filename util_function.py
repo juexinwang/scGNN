@@ -378,3 +378,27 @@ def load_sparse_matrix(filename):
     y = np.load(filename)
     z = scipy.sparse.coo_matrix((y['data'], (y['row'], y['col'])), shape=y['shape'])
     return z
+
+def trimClustering(listResult,minMemberinCluster=5,maxClusterNumber=100):
+    '''
+    If the clustering numbers larger than certain number, use this function to trim. May have better solution
+    '''
+    numDict = {}
+    for item in listResult:
+        if not item in listResult:
+            numDict[item] = 0
+        else:
+            numDict[item] = numDict[item]+1
+    
+    size = len(set(listResult))
+    changeDict = {}
+    for item in range(size):
+        if numDict[item]<minMemberinCluster:
+            changeDict[item]=''
+    
+    count = 0
+    for item in listResult:
+        if item in changeDict:
+            listResult[count]=maxClusterNumber
+
+    return listResult

@@ -104,30 +104,6 @@ elif args.model == 'AE':
     model = AE(dim=scData.features.shape[1]).to(device)
 optimizer = optim.Adam(model.parameters(), lr=1e-3)
 
-def trimClustering(listResult):
-    '''
-    If the clustering numbers larger than certain number, use this function to trim. May have better solution
-    '''
-    numDict = {}
-    for item in listResult:
-        if not item in listResult:
-            numDict[item] = 0
-        else:
-            numDict[item] = numDict[item]+1
-    
-    size = len(set(listResult))
-    changeDict = {}
-    for item in range(size):
-        if numDict[item]<args.minMemberinCluster:
-            changeDict[item]=''
-    
-    count = 0
-    for item in listResult:
-        if item in changeDict:
-            listResult[count]=args.maxClusterNumber
-
-    return listResult
-
 #TODO: have to implement batch
 #TODO: have to improve save npy
 def train(epoch, train_loader=train_loader, EMFlag=False):
@@ -283,7 +259,7 @@ if __name__ == "__main__":
                 # Exit
                 # return None
                 # Else: dealing with the number
-                listResult = trimClustering(listResult)
+                listResult = trimClustering(listResult,minMemberinCluster=args.minMemberinCluster,maxClusterNumber=args.maxClusterNumber)
             
             #Calculate silhouette
             measure_clustering_results(zOut, listResult)
