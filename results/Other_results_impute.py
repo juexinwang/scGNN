@@ -6,7 +6,8 @@ sys.path.append('../')
 from util_function import *
 from benchmark_util import *
 from R_util import generateLouvainCluster
-from sklearn.cluster import KMeans 
+from sklearn.cluster import KMeans
+from benchmark_util import imputation_error 
 
 #Evaluating imputing results from other methods
 # Note: It is slightly different from results_impute.py

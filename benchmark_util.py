@@ -457,7 +457,7 @@ def test_clustering_results(z, edgeList, args):
     except:
         pass
 
-
+# Revised freom Original version in scVI
 def impute_dropout(X, rate=0.1):
     """
     X: original testing set
@@ -466,9 +466,17 @@ def impute_dropout(X, rate=0.1):
     X_zero: copy of X with zeros
     i, j, ix: indices of where dropout is applied
     """
-    X_zero = scipy.sparse.lil_matrix.copy(X)
-    # select non-zero subset
-    i,j = X_zero.nonzero()
+
+    #If the input is a matrix
+    if isinstance(X, np.ndarray):
+        X_zero = np.copy(X)
+        # select non-zero subset
+        i,j = np.nonzero(X_zero)
+    # If the input is a sparse matrix
+    else:
+        X_zero = scipy.sparse.lil_matrix.copy(X)
+        # select non-zero subset
+        i,j = X_zero.nonzero()
     
     # choice number 1 : select 10 percent of the non zero values (so that distributions overlap enough)
     ix = np.random.choice(range(len(i)), int(np.floor(0.1 * len(i))), replace=False)
@@ -478,30 +486,6 @@ def impute_dropout(X, rate=0.1):
     #ix = np.random.choice(range(len(i)), int(slice_prop * np.floor(len(i))), replace=False)
     #X_zero[i[ix], j[ix]] = np.random.binomial(X_zero[i[ix], j[ix]].astype(np.int), rate)
     return X_zero, i, j, ix
-
-# TODO
-def impute_dropout_sparse(X, rate=0.1):
-    """
-    X: original testing set
-    ========
-    returns:
-    X_zero: copy of X with zeros
-    i, j, ix: indices of where dropout is applied
-    """
-    X_zero = np.copy(X)
-    # select non-zero subset
-    i,j = np.nonzero(X_zero)
-    
-    # choice number 1 : select 10 percent of the non zero values (so that distributions overlap enough)
-    ix = np.random.choice(range(len(i)), int(np.floor(0.1 * len(i))), replace=False)
-    X_zero[i[ix], j[ix]] *= np.random.binomial(1, rate)
-       
-    # choice number 2, focus on a few but corrupt binomially
-    #ix = np.random.choice(range(len(i)), int(slice_prop * np.floor(len(i))), replace=False)
-    #X_zero[i[ix], j[ix]] = np.random.binomial(X_zero[i[ix], j[ix]].astype(np.int), rate)
-    return X_zero, i, j, ix
-
-
 
 # IMPUTATION METRICS
 # Ref:
@@ -516,6 +500,11 @@ def imputation_error(X_mean, X, X_zero, i, j, ix):
     returns:
     median L1 distance between datasets at indices given
     """
+
+    all_index = i[ix], j[ix]
+    x, y = X_mean[all_index], X[all_index]
+    result = np.abs(x - y)
+    
     all_index = i[ix], j[ix]
     x = X_mean[all_index[0],all_index[1]]
     y =      X[all_index[0],all_index[1]]
