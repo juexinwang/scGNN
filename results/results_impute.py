@@ -11,7 +11,7 @@ from sklearn.cluster import KMeans
 #Evaluating imputing results
 #Used to postprocess results of imputation
 parser = argparse.ArgumentParser(description='Imputation Results')
-parser.add_argument('--datasetName', type=str, default='MMPbasal',
+parser.add_argument('--datasetName', type=str, default='4.Yan',
                     help='databaseName')
 parser.add_argument('--discreteTag', action='store_true', default=False,
                     help='whether input is raw or 0/1 (default: False)')

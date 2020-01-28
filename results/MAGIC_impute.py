@@ -4,6 +4,8 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import numpy as np
 import argparse
+import sys
+sys.path.append('../')
 from benchmark_util import impute_dropout
 
 parser = argparse.ArgumentParser(description='')

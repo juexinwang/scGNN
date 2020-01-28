@@ -458,6 +458,8 @@ def test_clustering_results(z, edgeList, args):
         pass
 
 # Revised freom Original version in scVI
+# Ref:
+# https://github.com/romain-lopez/scVI-reproducibility/blob/master/demo_code/benchmarking.py
 def impute_dropout(X, rate=0.1):
     """
     X: original testing set
@@ -467,7 +469,7 @@ def impute_dropout(X, rate=0.1):
     i, j, ix: indices of where dropout is applied
     """
 
-    #If the input is a matrix
+    #If the input is a dense matrix
     if isinstance(X, np.ndarray):
         X_zero = np.copy(X)
         # select non-zero subset
@@ -488,6 +490,7 @@ def impute_dropout(X, rate=0.1):
     return X_zero, i, j, ix
 
 # IMPUTATION METRICS
+# Revised freom Original version in scVI
 # Ref:
 # https://github.com/romain-lopez/scVI-reproducibility/blob/master/demo_code/benchmarking.py
 def imputation_error(X_mean, X, X_zero, i, j, ix):
@@ -501,30 +504,18 @@ def imputation_error(X_mean, X, X_zero, i, j, ix):
     median L1 distance between datasets at indices given
     """
 
-    all_index = i[ix], j[ix]
-    x, y = X_mean[all_index], X[all_index]
-    result = np.abs(x - y)
-    
-    all_index = i[ix], j[ix]
-    x = X_mean[all_index[0],all_index[1]]
-    y =      X[all_index[0],all_index[1]]
-    yuse = scipy.sparse.lil_matrix.todense(y)
-    yuse = np.asarray(yuse).reshape(-1)
-    result = np.abs(x - yuse)
+    #If the input is a dense matrix
+    if isinstance(X, np.ndarray):
+        all_index = i[ix], j[ix]
+        x, y = X_mean[all_index], X[all_index]
+        result = np.abs(x - y)
+    # If the input is a sparse matrix
+    else:
+        all_index = i[ix], j[ix]
+        x = X_mean[all_index[0],all_index[1]]
+        y =      X[all_index[0],all_index[1]]
+        yuse = scipy.sparse.lil_matrix.todense(y)
+        yuse = np.asarray(yuse).reshape(-1)
+        result = np.abs(x - yuse)
     # return np.median(np.abs(x - yuse))
     return np.mean(result), np.median(result), np.min(result), np.max(result)
-
-#TODO
-def imputation_error_sparse(X_mean, X, X_zero, i, j, ix):
-    """
-    X_mean: imputed dataset
-    X: original dataset
-    X_zero: zeros dataset, does not need 
-    i, j, ix: indices of where dropout was applied
-    ========
-    returns:
-    median L1 distance between datasets at indices given
-    """
-    all_index = i[ix], j[ix]
-    x, y = X_mean[all_index], X[all_index]
-    return np.median(np.abs(x - y))

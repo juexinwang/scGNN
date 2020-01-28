@@ -13,11 +13,11 @@ from benchmark_util import imputation_error
 # Note: It is slightly different from results_impute.py
 #Used to postprocess results of imputation
 parser = argparse.ArgumentParser(description='Imputation Results')
-parser.add_argument('--datasetName', type=str, default='MMPbasal',
+parser.add_argument('--datasetName', type=str, default='MMPbasal_2000',
                     help='databaseName')
 parser.add_argument('--discreteTag', action='store_true', default=False,
                     help='whether input is raw or 0/1 (default: False)')
-parser.add_argument('--npyDir', type=str, default='../otherResults/SAUCIE_I/',
+parser.add_argument('--npyDir', type=str, default='/home/wangjue/myprojects/scGNN/otherResults/SAUCIE_I/',
                     help='directory of npy')
 parser.add_argument('--ratio', type=str, default='0.1',
                     help='dropoutratio')
@@ -52,24 +52,8 @@ dropi            = np.load(args.npyDir+datasetNameStr+'_'+args.ratio+'_dropi.npy
 dropj            = np.load(args.npyDir+datasetNameStr+'_'+args.ratio+'_dropj.npy')
 dropix           = np.load(args.npyDir+datasetNameStr+'_'+args.ratio+'_dropix.npy')
 
-
-def imputation_error_(X_mean, X, X_zero, i, j, ix):
-    """
-    X_mean: imputed dataset
-    X: original dataset
-    X_zero: zeros dataset, does not need 
-    i, j, ix: indices of where dropout was applied
-    ========
-    returns:
-    median L1 distance between datasets at indices given
-    """
-    all_index = i[ix], j[ix]
-    x, y = X_mean[all_index], X[all_index]
-    result = np.abs(x - y)
-    return np.mean(result), np.median(result), np.min(result), np.max(result)
-
 print(datasetNameStr)
-l1ErrorMean, l1ErrorMedian, l1ErrorMin, l1ErrorMax = imputation_error_(featuresImpute, featuresOriginal, features, dropi, dropj, dropix)
+l1ErrorMean, l1ErrorMedian, l1ErrorMin, l1ErrorMax = imputation_error(featuresImpute, featuresOriginal, features, dropi, dropj, dropix)
 print('{:.4f} {:.4f} {:.4f} {:.4f} '.format(l1ErrorMean, l1ErrorMedian, l1ErrorMin, l1ErrorMax), end='')
 
 def imputeResult(inputData):
