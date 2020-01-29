@@ -161,7 +161,7 @@ def train(epoch, train_loader=train_loader, EMFlag=False):
     print('====> Epoch: {} Average loss: {:.4f}'.format(
           epoch, train_loss / len(train_loader.dataset)))
 
-    return recon_batch, data, z
+    return recon_batch_all, data_all, z_all
 
 if __name__ == "__main__":
     start_time = time.time()
