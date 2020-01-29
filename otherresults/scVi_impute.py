@@ -64,5 +64,6 @@ full = trainer.create_posterior(trainer.model, gene_dataset, indices=np.arange(l
 latent, batch_indices, labels = full.sequential().get_latent()
 batch_indices = batch_indices.ravel()
 
+# use imputation
 imputed_values = full.sequential().imputation()
-normalized_values = full.sequential().get_sample_scale()
+# normalized_values = full.sequential().get_sample_scale()
