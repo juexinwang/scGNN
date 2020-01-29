@@ -28,7 +28,10 @@ featuresOriginal = np.copy(x)
 features, dropi, dropj, dropix = impute_dropout(featuresOriginal, rate=float(args.ratio))
 x = features
 
-magic_operator = magic.MAGIC(knn=10)
+# Load single-cell RNA-seq data
+# Default is KNN=5
+magic_operator = magic.MAGIC()
+# magic_operator = magic.MAGIC(knn=10)
 X_magic = magic_operator.fit_transform(x, genes="all_genes")
 recon = X_magic
 
@@ -42,3 +45,13 @@ np.save('/home/wangjue/myprojects/scGNN/otherResults/MAGIC_k10/{}_{}_featuresOri
 np.save('/home/wangjue/myprojects/scGNN/otherResults/MAGIC_k10/{}_{}_dropi.npy'.format(datasetNameStr,args.ratio),dropi)
 np.save('/home/wangjue/myprojects/scGNN/otherResults/MAGIC_k10/{}_{}_dropj.npy'.format(datasetNameStr,args.ratio),dropj)
 np.save('/home/wangjue/myprojects/scGNN/otherResults/MAGIC_k10/{}_{}_dropix.npy'.format(datasetNameStr,args.ratio),dropix)
+
+# From scVI
+# # Load single-cell RNA-seq data
+# scdata = magic.mg.SCData(x, "sc-seq")
+# print(scdata)
+
+# scdata.run_magic(n_pca_components=20, random_pca=True, t=6, k=30, ka=10, epsilon=1, rescale_percent=99)
+
+# if len(sys.argv) == 2:
+#     np.save("t_MAGIC.npy", scdata.magic.data.as_matrix())

@@ -1,1 +1,0 @@
-# Analysis using SAUCIE method 
