@@ -2,11 +2,11 @@ import os
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
-from scvi.dataset import CortexDataset, RetinaDataset
+from scvi.dataset import CortexDataset, RetinaDataset, CsvDataset
 from scvi.models import VAE
 from scvi.inference import UnsupervisedTrainer
 import torch
-
+import csv
 import argparse
 import sys
 sys.path.append('../')
@@ -18,6 +18,8 @@ parser.add_argument('--discreteTag', action='store_true', default=False,
                     help='whether input is raw or 0/1 (default: False)')
 parser.add_argument('--ratio', type=str, default='0.1',
                     help='dropoutratio')
+parser.add_argument('--filefolder', type=str, default='/home/wangjue/myprojects/scGNN/otherResults/scVi/',
+                    help='output filefolder')
 args = parser.parse_args()
 
 # Ref:
@@ -27,10 +29,22 @@ if args.discreteTag:
     filename = '/home/wangjue/myprojects/scGNN/data/sc/{}/{}.features.D.csv'.format(args.datasetName,args.datasetName)
 else:
     filename = '/home/wangjue/myprojects/scGNN/data/sc/{}/{}.features.csv'.format(args.datasetName,args.datasetName)
-save_path = filefolder
+save_path = args.filefolder
+
+x = pd.read_csv(filename,header=None)
+x = x.to_numpy()
+
+featuresOriginal = np.copy(x)
+features, dropi, dropj, dropix = impute_dropout(featuresOriginal, rate=float(args.ratio))
+
+#write
+dropout_filename = save_path+"output.csv"
+with open(dropout_filename, "w") as f:
+    writer = csv.writer(f)
+    writer.writerows(features)
 
 # gene_dataset = CortexDataset(save_path=save_path, total_genes=558)
-gene_dataset = CsvDataset(filename, save_path=save_path)
+gene_dataset = CsvDataset(dropout_filename, save_path=save_path)
 
 n_epochs = 400 
 lr = 1e-3
@@ -75,11 +89,11 @@ if args.discreteTag:
     discreteStr = 'D'
 datasetNameStr = args.datasetName+discreteStr
 
-np.save('/home/wangjue/myprojects/scGNN/otherResults/scVi/{}_{}_recon.npy'.format(datasetNameStr,args.ratio),imputed_values)
-np.save('/home/wangjue/myprojects/scGNN/otherResults/scVi/{}_{}_featuresOriginal.npy'.format(datasetNameStr,args.ratio),gene_dataset.X)
-np.save('/home/wangjue/myprojects/scGNN/otherResults/scVi/{}_{}_dropi.npy'.format(datasetNameStr,args.ratio),dropi)
-np.save('/home/wangjue/myprojects/scGNN/otherResults/scVi/{}_{}_dropj.npy'.format(datasetNameStr,args.ratio),dropj)
-np.save('/home/wangjue/myprojects/scGNN/otherResults/scVi/{}_{}_dropix.npy'.format(datasetNameStr,args.ratio),dropix)
+np.save(save_path+'{}_{}_recon.npy'.format(datasetNameStr,args.ratio),imputed_values)
+np.save(save_path+'{}_{}_featuresOriginal.npy'.format(datasetNameStr,args.ratio),featuresOriginal)
+np.save(save_path+'{}_{}_dropi.npy'.format(datasetNameStr,args.ratio),dropi)
+np.save(save_path+'{}_{}_dropj.npy'.format(datasetNameStr,args.ratio),dropj)
+np.save(save_path+'{}_{}_dropix.npy'.format(datasetNameStr,args.ratio),dropix)
 
-
-np.save('/home/wangjue/myprojects/scGNN/otherResults/scVi/{}_{}_z.npy'.format(datasetNameStr,args.ratio),latent)
+# celltype:
+np.save(save_path+'{}_{}_z.npy'.format(datasetNameStr,args.ratio),latent)
