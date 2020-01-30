@@ -104,7 +104,6 @@ elif args.model == 'AE':
     model = AE(dim=scData.features.shape[1]).to(device)
 optimizer = optim.Adam(model.parameters(), lr=1e-3)
 
-#TODO: have to implement batch
 #TODO: have to improve save npy
 def train(epoch, train_loader=train_loader, EMFlag=False):
     '''
