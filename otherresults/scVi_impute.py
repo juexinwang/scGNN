@@ -18,7 +18,7 @@ parser.add_argument('--discreteTag', action='store_true', default=False,
                     help='whether input is raw or 0/1 (default: False)')
 parser.add_argument('--ratio', type=str, default='0.1',
                     help='dropoutratio')
-parser.add_argument('--filefolder', type=str, default='/home/wangjue/myprojects/scGNN/otherResults/scVi/',
+parser.add_argument('--outfolder', type=str, default='/home/wangjue/myprojects/scGNN/otherResults/scVi/',
                     help='output filefolder')
 args = parser.parse_args()
 
@@ -29,7 +29,13 @@ if args.discreteTag:
     filename = '/home/wangjue/myprojects/scGNN/data/sc/{}/{}.features.D.csv'.format(args.datasetName,args.datasetName)
 else:
     filename = '/home/wangjue/myprojects/scGNN/data/sc/{}/{}.features.csv'.format(args.datasetName,args.datasetName)
-save_path = args.filefolder
+filenameFull = filename
+save_path = args.outfolder
+
+discreteStr = ''
+if args.discreteTag:
+    discreteStr = 'D'
+datasetNameStr = args.datasetName+discreteStr
 
 x = pd.read_csv(filename,header=None)
 x = x.to_numpy()
@@ -38,7 +44,7 @@ featuresOriginal = np.copy(x)
 features, dropi, dropj, dropix = impute_dropout(featuresOriginal, rate=float(args.ratio))
 
 #write
-dropout_filename = save_path+"output.csv"
+dropout_filename = save_path+datasetNameStr+"_dropout.csv"
 with open(dropout_filename, "w") as f:
     writer = csv.writer(f)
     writer.writerows(features)
@@ -83,11 +89,6 @@ batch_indices = batch_indices.ravel()
 # use imputation
 imputed_values = full.sequential().imputation()
 # normalized_values = full.sequential().get_sample_scale()
-
-discreteStr = ''
-if args.discreteTag:
-    discreteStr = 'D'
-datasetNameStr = args.datasetName+discreteStr
 
 np.save(save_path+'{}_{}_recon.npy'.format(datasetNameStr,args.ratio),imputed_values)
 np.save(save_path+'{}_{}_featuresOriginal.npy'.format(datasetNameStr,args.ratio),featuresOriginal)
