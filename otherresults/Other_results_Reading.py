@@ -64,32 +64,22 @@ def getBenchmarkStr(count):
     if int(count/3)==1:
         benchmarkStr = ' --benchmark '\
             '--labelFilename ' + labelFileDir + '4.Yan/Yan_cell_label.csv '\
-            '--cellFilename ' + cellFileDir + '4.Yan.cellname.txt '\
-            '--cellIndexname ' + cellIndexDir + '4.Yan/ind.4.Yan.cellindex.txt '\
             '--n-clusters 7 '
     elif int(count/3)==2:
         benchmarkStr = ' --benchmark '\
             '--labelFilename ' + labelFileDir + '5.Goolam/Goolam_cell_label.csv '\
-            '--cellFilename ' + cellFileDir + '5.Goolam.cellname.txt '\
-            '--cellIndexname ' + cellIndexDir + '5.Goolam/ind.5.Goolam.cellindex.txt '\
             '--n-clusters 5 '
     elif int(count/3)==3:
         benchmarkStr = ' --benchmark '\
             '--labelFilename ' + labelFileDir + '7.Deng/Deng_cell_label.csv '\
-            '--cellFilename ' + cellFileDir + '7.Deng.cellname.txt '\
-            '--cellIndexname ' + cellIndexDir + '7.Deng/ind.7.Deng.cellindex.txt '\
             '--n-clusters 10 '
     elif int(count/3)==4:
         benchmarkStr = ' --benchmark '\
             '--labelFilename ' + labelFileDir + '8.Pollen/Pollen_cell_label.csv '\
-            '--cellFilename ' + cellFileDir + '8.Pollen.cellname.txt '\
-            '--cellIndexname ' + cellIndexDir + '8.Pollen/ind.8.Pollen.cellindex.txt '\
             '--n-clusters 11 '
     elif int(count/3)==5:
         benchmarkStr = ' --benchmark '\
             '--labelFilename ' + labelFileDir + '11.Kolodziejczyk/Kolodziejczyk_cell_label.csv '\
-            '--cellFilename ' + cellFileDir + '11.Kolodziejczyk.cellname.txt '\
-            '--cellIndexname ' + cellIndexDir + '11.Kolodziejczyk/ind.11.Kolodziejczyk.cellindex.txt '\
             '--n-clusters 3 '
     return benchmarkStr
 

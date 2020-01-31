@@ -31,9 +31,11 @@ def main(raw_args=None):
     parser.add_argument('--benchmark',type=bool,default=True,help="whether have benchmark")
     # cell File
     parser.add_argument('--labelFilename',type=str,default='/home/wangjue/biodata/scData/AnjunBenchmark/5.Pollen/Pollen_cell_label.csv',help="label Filename")
+    parser.add_argument('--originalFile',type=str,default='data/sc/5.Pollen_all/5.Pollen_all.features.csv',help="original csv Filename")
+    # if use only part of the cells
     parser.add_argument('--cellFilename',type=str,default='/home/wangjue/biodata/scData/5.Pollen.cellname.txt',help="cell Filename")
     parser.add_argument('--cellIndexname',type=str,default='/home/wangjue/myprojects/scGNN/data/sc/5.Pollen_all/ind.5.Pollen_all.cellindex.txt',help="cell index Filename")
-    parser.add_argument('--originalFile',type=str,default='data/sc/5.Pollen_all/5.Pollen_all.features.csv',help="original csv Filename")
+
     # GAE
     parser.add_argument('--GAEmodel', type=str, default='gcn_vae', help="models used")
     parser.add_argument('--dw', type=int, default=0, help="whether to use deepWalk regularization, 0/1")

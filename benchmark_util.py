@@ -224,9 +224,9 @@ def measureClusteringTrueLabel(labels_true, labels_pred):
 # labelFilename:     /home/wangjue/biodata/scData/AnjunBenchmark/5.Pollen/Pollen_cell_label.csv
 # cellFilename:      /home/wangjue/biodata/scData/5.Pollen.cellname.txt
 # cellIndexFilename: /home/wangjue/myprojects/scGNN/data/sc/5.Pollen/ind.5.Pollen.cellindex.txt
-def readTrueLabelList(labelFilename, cellFilename, cellIndexFilename):
+def readTrueLabelListPartCell(labelFilename, cellFilename, cellIndexFilename):
     '''
-    Read gold standard label from file
+    Read gold standard label from file, this function used for parts of cells
     '''
     cellDict = {}
     count = -1
@@ -266,6 +266,25 @@ def readTrueLabelList(labelFilename, cellFilename, cellIndexFilename):
             count += 1
         f.close()
 
+    return labelList
+
+# labelFilename:     /home/wangjue/biodata/scData/AnjunBenchmark/5.Pollen/Pollen_cell_label.csv
+def readTrueLabelList(labelFilename):
+    '''
+    Read gold standard label from file
+    '''
+    labelList = []
+    count = -1
+    with open(labelFilename, 'r') as f:
+        lines = f.readlines()
+        for line in lines:
+            if count >= 0:
+                line = line.strip()
+                words = line.split(',')
+                labelList.append(int(words[1])-1)
+            count += 1
+        f.close()
+        
     return labelList
 
 # Benchmark

@@ -55,9 +55,9 @@
 # TODO: Input:
 # Gradient
 # python Preprocessing_scFile.py --inputfile /home/wangjue/biodata/scData/gradient/11.Kolodziejczyk/T1000/T1000Discretization_LTMG.txt --outputfile /home/wangjue/biodata/scData/T1000_LTMG.csv --cellcount 704 --genecount 1000 --split space --cellheadflag False
-# python Preprocessing_scFile.py --inputfile /home/wangjue/biodata/scData/gradient/11.Kolodziejczyk/T1000/T2000Discretization_LTMG.txt --outputfile /home/wangjue/biodata/scData/T2000_LTMG.csv --cellcount 704 --genecount 2000 --split space --cellheadflag False
-# python Preprocessing_scFile.py --inputfile /home/wangjue/biodata/scData/gradient/11.Kolodziejczyk/T1000/T4000Discretization_LTMG.txt --outputfile /home/wangjue/biodata/scData/T4000_LTMG.csv --cellcount 704 --genecount 4000 --split space --cellheadflag False
-# python Preprocessing_scFile.py --inputfile /home/wangjue/biodata/scData/gradient/11.Kolodziejczyk/T1000/T8000Discretization_LTMG.txt --outputfile /home/wangjue/biodata/scData/T8000_LTMG.csv --cellcount 704 --genecount 8000 --split space --cellheadflag False
+# python Preprocessing_scFile.py --inputfile /home/wangjue/biodata/scData/gradient/11.Kolodziejczyk/T2000/T2000Discretization_LTMG.txt --outputfile /home/wangjue/biodata/scData/T2000_LTMG.csv --cellcount 704 --genecount 2000 --split space --cellheadflag False
+# python Preprocessing_scFile.py --inputfile /home/wangjue/biodata/scData/gradient/11.Kolodziejczyk/T4000/T4000Discretization_LTMG.txt --outputfile /home/wangjue/biodata/scData/T4000_LTMG.csv --cellcount 704 --genecount 4000 --split space --cellheadflag False
+# python Preprocessing_scFile.py --inputfile /home/wangjue/biodata/scData/gradient/11.Kolodziejczyk/T8000/T8000Discretization_LTMG.txt --outputfile /home/wangjue/biodata/scData/T8000_LTMG.csv --cellcount 704 --genecount 8000 --split space --cellheadflag False
 
 
 import numpy as np
@@ -125,4 +125,3 @@ with open(outputfile, 'w') as fw:
             fw.write(str(contentArray[i][j])+',')
         fw.write('\n')
     fw.close()
-    
