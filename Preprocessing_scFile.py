@@ -51,6 +51,13 @@
 # python Preprocessing_scFile.py --inputfile /home/wangjue/biodata/scData/AnjunBenchmark/13.Zeisel/OneSign_LTMG.txt --outputfile /home/wangjue/biodata/scData/13.Zeisel_LTMG.csv --outputfileCellName /home/wangjue/biodata/scData/13.Zeisel_LTMG.cellname.txt --cellcount 3005 --genecount 21221 --split space --cellheadflag False
 # python Preprocessing_scFile.py --inputfile /home/wangjue/biodata/scData/AnjunBenchmark/20.10X_2700_seurat/OneSign_LTMG.txt --outputfile /home/wangjue/biodata/scData/20.10X_2700_seurat_LTMG.csv --outputfileCellName /home/wangjue/biodata/scData/20.10X_2700_seurat_LTMG.cellname.txt --cellcount 2698 --genecount 21221 --split space --cellheadflag False
 # python Preprocessing_scFile.py --inputfile /home/wangjue/biodata/scData/AnjunBenchmark/30.Schafer/OneSign_LTMG.txt --outputfile /home/wangjue/biodata/scData/30.Schafer_LTMG.csv --outputfileCellName /home/wangjue/biodata/scData/30.Schafer_LTMG.cellname.txt --cellcount 2552 --genecount 21221 --split space --cellheadflag False
+#
+# TODO: Input:
+# Gradient
+# python Preprocessing_scFile.py --inputfile /home/wangjue/biodata/scData/gradient/11.Kolodziejczyk/T1000/T1000Discretization_LTMG.txt --outputfile /home/wangjue/biodata/scData/T1000_LTMG.csv --cellcount 704 --genecount 1000 --split space --cellheadflag False
+# python Preprocessing_scFile.py --inputfile /home/wangjue/biodata/scData/gradient/11.Kolodziejczyk/T1000/T2000Discretization_LTMG.txt --outputfile /home/wangjue/biodata/scData/T2000_LTMG.csv --cellcount 704 --genecount 2000 --split space --cellheadflag False
+# python Preprocessing_scFile.py --inputfile /home/wangjue/biodata/scData/gradient/11.Kolodziejczyk/T1000/T4000Discretization_LTMG.txt --outputfile /home/wangjue/biodata/scData/T4000_LTMG.csv --cellcount 704 --genecount 4000 --split space --cellheadflag False
+# python Preprocessing_scFile.py --inputfile /home/wangjue/biodata/scData/gradient/11.Kolodziejczyk/T1000/T8000Discretization_LTMG.txt --outputfile /home/wangjue/biodata/scData/T8000_LTMG.csv --cellcount 704 --genecount 8000 --split space --cellheadflag False
 
 
 import numpy as np
@@ -61,8 +68,6 @@ parser.add_argument('--inputfile', type=str, default='/home/wangjue/biodata/scDa
                     help='inputfile name')
 parser.add_argument('--outputfile', type=str, default='/home/wangjue/biodata/scData/sci-CAR_LTMG.csv',
                     help='outputfile name')
-parser.add_argument('--outputfileCellName', type=str, default='/home/wangjue/biodata/scData/sci-CAR.cellname.txt',
-                    help='outputfile cell name')
 parser.add_argument('--cellcount', type=int, default=1414,
                     help='total cell count')
 parser.add_argument('--genecount', type=int, default=19467,
@@ -75,7 +80,6 @@ args = parser.parse_args()
 
 inputfile = args.inputfile
 outputfile = args.outputfile
-outputfileCellName = args.outputfileCellName
 cellcount = args.cellcount
 genecount = args.genecount
 splitChar = ''
@@ -84,7 +88,6 @@ if args.split == 'space':
 elif args.split == 'comma':
     splitChar = ',' 
 
-cellNames = []
 geneNamesLine = ''
 
 #cell as the row, col as the gene
@@ -103,8 +106,6 @@ with open(inputfile, 'r') as f:
         if count == -1:
             colcount = -1
             for word in words:
-                if args.cellheadflag or colcount > -1:
-                    cellNames.append(word)
                 colcount += 1
         else:
             colcount = -1
@@ -124,8 +125,4 @@ with open(outputfile, 'w') as fw:
             fw.write(str(contentArray[i][j])+',')
         fw.write('\n')
     fw.close()
-
-with open(outputfileCellName, 'w') as fw:
-    for cell in cellNames:
-        fw.write(str(cell)+'\n')
-    fw.close()
+    
