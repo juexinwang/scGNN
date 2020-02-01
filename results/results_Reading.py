@@ -44,25 +44,36 @@ if args.splitMode:
         ]
 else:
     datasetList = [
-    'MMPbasal_2000',
-    'MMPbasal_2000 --discreteTag',
-    'MMPbasal_2000_LTMG',
-    '4.Yan',
-    '4.Yan --discreteTag',
-    '4.Yan_LTMG',
-    '5.Goolam',
-    '5.Goolam --discreteTag',
-    '5.Goolam_LTMG',
-    '7.Deng',
-    '7.Deng --discreteTag',
-    '7.Deng_LTMG',
-    '8.Pollen',
-    '8.Pollen --discreteTag',
-    '8.Pollen_LTMG',
-    '11.Kolodziejczyk',
-    '11.Kolodziejczyk --discreteTag'
+    # 'MMPbasal_2000',
+    # 'MMPbasal_2000 --discreteTag',
+    # 'MMPbasal_2000_LTMG',
+    # '4.Yan',
+    # '4.Yan --discreteTag',
+    # '4.Yan_LTMG',
+    # '5.Goolam',
+    # '5.Goolam --discreteTag',
+    # '5.Goolam_LTMG',
+    # '7.Deng',
+    # '7.Deng --discreteTag',
+    # '7.Deng_LTMG',
+    # '8.Pollen',
+    # '8.Pollen --discreteTag',
+    # '8.Pollen_LTMG',
+    # '11.Kolodziejczyk',
+    # '11.Kolodziejczyk --discreteTag'
+    'T1000',
+    'T1000 --discreteTag',
+    'T1000_LTMG',
+    'T2000',
+    'T2000 --discreteTag',
+    'T2000_LTMG',
+    'T4000',
+    'T4000 --discreteTag',
+    'T4000_LTMG',
+    'T8000',
+    'T8000 --discreteTag',
+    'T8000_LTMG'
     ]
-    #TODO: we wait for 11.Kolodziejczyk_LTMG
 
 
 if args.imputeMode:
@@ -143,50 +154,49 @@ benchmarkStr = ''
 
 if args.runMode:
     labelFileDir = '/home/wangjue/biodata/scData/AnjunBenchmark/'
-    cellFileDir  = '/home/wangjue/biodata/scData/'
-    cellIndexDir = '/home/wangjue/myprojects/scGNN/data/sc/'
 else:
     labelFileDir = '/home/jwang/data/scData/'
-    cellFileDir  = '/home/jwang/data/scData/'
-    cellIndexDir = '/home/jwang/data/scData/'
     
 def getBenchmarkStr(count):
-    benchmarkStr = ''
-    if int(count/3)==1:
-        benchmarkStr = ' --benchmark '\
-            '--labelFilename ' + labelFileDir + '4.Yan/Yan_cell_label.csv '\
-            '--n-clusters 7 '
-    elif int(count/3)==2:
-        benchmarkStr = ' --benchmark '\
-            '--labelFilename ' + labelFileDir + '5.Goolam/Goolam_cell_label.csv '\
-            '--n-clusters 5 '    
-    if not args.splitMode: 
-        if int(count/3)==3:
-            benchmarkStr = ' --benchmark '\
-                '--labelFilename ' + labelFileDir + '7.Deng/Deng_cell_label.csv '\
-                '--n-clusters 10 '   
-        elif int(count/3)==4:
-            benchmarkStr = ' --benchmark '\
-                '--labelFilename ' + labelFileDir + '8.Pollen/Pollen_cell_label.csv '\
-                '--n-clusters 11 '
-        elif int(count/3)==5:
-            benchmarkStr = ' --benchmark '\
-                '--labelFilename ' + labelFileDir + '11.Kolodziejczyk/Kolodziejczyk_cell_label.csv '\
-                '--n-clusters 3 '
-    else:
-        if not args.batchStr == 0:
-            if int(count/3)==0:
-                benchmarkStr = ' --benchmark '\
-                    '--labelFilename ' + labelFileDir + '7.Deng/Deng_cell_label.csv '\
-                    '--n-clusters 10 '
-            elif int(count/3)==1:
-                benchmarkStr = ' --benchmark '\
-                    '--labelFilename ' + labelFileDir + '8.Pollen/Pollen_cell_label.csv '\
-                    '--n-clusters 11 '
-            elif int(count/3)==2:
-                benchmarkStr = ' --benchmark '\
+    benchmarkStr = ' --benchmark '\
                     '--labelFilename ' + labelFileDir + '11.Kolodziejczyk/Kolodziejczyk_cell_label.csv '\
                     '--n-clusters 3 '
+    # benchmarkStr = ''
+    # if int(count/3)==1:
+    #     benchmarkStr = ' --benchmark '\
+    #         '--labelFilename ' + labelFileDir + '4.Yan/Yan_cell_label.csv '\
+    #         '--n-clusters 7 '
+    # elif int(count/3)==2:
+    #     benchmarkStr = ' --benchmark '\
+    #         '--labelFilename ' + labelFileDir + '5.Goolam/Goolam_cell_label.csv '\
+    #         '--n-clusters 5 '    
+    # if not args.splitMode: 
+    #     if int(count/3)==3:
+    #         benchmarkStr = ' --benchmark '\
+    #             '--labelFilename ' + labelFileDir + '7.Deng/Deng_cell_label.csv '\
+    #             '--n-clusters 10 '   
+    #     elif int(count/3)==4:
+    #         benchmarkStr = ' --benchmark '\
+    #             '--labelFilename ' + labelFileDir + '8.Pollen/Pollen_cell_label.csv '\
+    #             '--n-clusters 11 '
+    #     elif int(count/3)==5:
+    #         benchmarkStr = ' --benchmark '\
+    #             '--labelFilename ' + labelFileDir + '11.Kolodziejczyk/Kolodziejczyk_cell_label.csv '\
+    #             '--n-clusters 3 '
+    # else:
+    #     if not args.batchStr == 0:
+    #         if int(count/3)==0:
+    #             benchmarkStr = ' --benchmark '\
+    #                 '--labelFilename ' + labelFileDir + '7.Deng/Deng_cell_label.csv '\
+    #                 '--n-clusters 10 '
+    #         elif int(count/3)==1:
+    #             benchmarkStr = ' --benchmark '\
+    #                 '--labelFilename ' + labelFileDir + '8.Pollen/Pollen_cell_label.csv '\
+    #                 '--n-clusters 11 '
+    #         elif int(count/3)==2:
+    #             benchmarkStr = ' --benchmark '\
+    #                 '--labelFilename ' + labelFileDir + '11.Kolodziejczyk/Kolodziejczyk_cell_label.csv '\
+    #                 '--n-clusters 3 '
     return benchmarkStr
 
 
