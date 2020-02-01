@@ -263,7 +263,7 @@ if __name__ == "__main__":
             print("---Clustering takes %s seconds ---" % (time.time() - clustering_time))
 
             # If clusters more than maxclusters, then have to stop
-            if len(set(listResult))>args.maxCluster or len(set(listResult))<=1:
+            if len(set(listResult))>args.maxClusterNumber or len(set(listResult))<=1:
                 print("Stopping: Number of clusters is " + str(len(set(listResult))) + ".")
                 # Exit
                 # return None
