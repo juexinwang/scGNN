@@ -349,6 +349,14 @@ elif args.expression_name=='T4000_LTMG':
     expressionname = 'T4000_LTMG.csv'
 elif args.expression_name=='T8000_LTMG':
     expressionname = 'T8000_LTMG.csv'
+elif args.expression_name=='T1000':
+    expressionname = 'T1000.csv'
+elif args.expression_name=='T2000':
+    expressionname = 'T2000.csv'
+elif args.expression_name=='T4000':
+    expressionname = 'T4000.csv'
+elif args.expression_name=='T8000':
+    expressionname = 'T8000.csv'
 elif args.expression_name=='test':
     expressionname = 'test_data.csv'
 
