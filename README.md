@@ -70,13 +70,11 @@ We totally have 28 methods in testing:
 
 1. Generating shells for sbatch: This will generate lots of shell files!
 
-    cd clusterScripts
-    bash generateBatchshell_Celltype.sh
-    bash generateBatchshell_Impute.sh
+    python generatingMethodsBatchshell.py
+    python generatingMethodsBatchshell.py --imputeMode
 
 2. Submit shells in cluster (Lewis in University of Missouri):
 
-    cd ..
     submitCluster_Celltype.sh
     submitCluster_Impute.sh
 
