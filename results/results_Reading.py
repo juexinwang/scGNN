@@ -19,6 +19,7 @@ args = parser.parse_args()
 # So we use os.system('') here
 
 if args.splitMode:
+    #The split of batch, more batches, more parallel
     if args.batchStr == 0:
         datasetList = [
         'MMPbasal_2000',
@@ -31,7 +32,7 @@ if args.splitMode:
         '5.Goolam --discreteTag',
         '5.Goolam_LTMG',
         ]
-    else:
+    elif args.batchStr == 1:
         datasetList = [
         '7.Deng',
         '7.Deng --discreteTag',
