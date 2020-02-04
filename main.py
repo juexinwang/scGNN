@@ -58,7 +58,9 @@ parser.add_argument('--log-interval', type=int, default=100, metavar='N',
                     help='how many batches to wait before logging training status')
 #Clustering related
 parser.add_argument('--useGAEembedding', action='store_true', default=False, 
-                    help='whether use GAE embedding before clustering(default: False)')
+                    help='whether use GAE embedding for clustering(default: False)')
+parser.add_argument('--useBothembedding', action='store_true', default=False, 
+                    help='whether use both embedding and Graph embedding for clustering(default: False)')
 parser.add_argument('--clustering-method', type=str, default='Louvain',
                     help='Clustering method: Louvain/KMeans/SpectralClustering/AffinityPropagation/AgglomerativeClustering/Birch')
 parser.add_argument('--maxClusterNumber', type=int, default=100,
@@ -203,10 +205,14 @@ if __name__ == "__main__":
             np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_z.npy',zOut)
     
     # Whether use GAE embedding
-    if args.useGAEembedding:
+    if args.useGAEembedding or args.useBothembedding:
         zDiscret = zOut>np.mean(zOut,axis=0)
         zDiscret = 1.0*zDiscret
-        zOut=GAEembedding(zDiscret, adj, args)
+        if args.useGAEembedding:
+            zOut=GAEembedding(zDiscret, adj, args)
+        elif args.useBothembedding:
+            zEmbedding=GAEembedding(zDiscret, adj, args)
+            zOut=np.concatenate((zOut,zEmbedding),axis=1)
         prune_time = time.time()
         # Here para = 'euclidean:10'
         adj, edgeList = generateAdj(zOut, graphType='KNNgraphML', para = args.knn_distance+':'+str(args.k)) 
@@ -318,10 +324,14 @@ if __name__ == "__main__":
         print("---Pruning takes %s seconds ---" % (time.time() - prune_time))
 
         # Whether use GAE embedding
-        if args.useGAEembedding:
+        if args.useGAEembedding or args.useBothembedding:
             zDiscret = zOut>np.mean(zOut,axis=0)
             zDiscret = 1.0*zDiscret
-            zOut=GAEembedding(zDiscret, adj, args)
+            if args.useGAEembedding:
+                zOut=GAEembedding(zDiscret, adj, args)
+            elif args.useBothembedding:
+                zEmbedding=GAEembedding(zDiscret, adj, args)
+                zOut=np.concatenate((zOut,zEmbedding),axis=1)
             prune_time = time.time()
             # Here para = 'euclidean:10'
             adj, edgeList = generateAdj(zOut, graphType='KNNgraphML', para = args.knn_distance+':'+str(args.k)) 

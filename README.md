@@ -36,37 +36,51 @@ module load miniconda3
 conda create -n my_environment python=3.7
 source activate my_environment
 
-We totally have 28 methods in testing:
+Now We totally have 42 methods in testing:
 * for using R support: geneLouvianCluster.py, otherwise we do not use rpy2
 
+    experiment_1_g_b.sh
     experiment_1_g_e.sh
     experiment_1_g_f.sh
+    experiment_1_n_b.sh
     experiment_1_n_e.sh
     experiment_1_n_f.sh
+    experiment_2_g_b_AffinityPropagation.sh
+    experiment_2_g_b_AgglomerativeClustering.sh
+    experiment_2_g_b_Birch.sh
+    experiment_2_g_b_KMeans.sh
+    experiment_2_g_b_SpectralClustering.sh
+    experiment_2_g_b.sh *
     experiment_2_g_e_AffinityPropagation.sh
     experiment_2_g_e_AgglomerativeClustering.sh
     experiment_2_g_e_Birch.sh
     experiment_2_g_e_KMeans.sh
     experiment_2_g_e_SpectralClustering.sh
-    experiment_2_g_e.sh *
+    experiment_2_g_e.sh *   
     experiment_2_g_f_AffinityPropagation.sh
     experiment_2_g_f_AgglomerativeClustering.sh
     experiment_2_g_f_Birch.sh
     experiment_2_g_f_KMeans.sh
     experiment_2_g_f_SpectralClustering.sh
-    experiment_2_g_f.sh *
+    experiment_2_g_f.sh * 
+    experiment_2_n_b_AffinityPropagation.sh
+    experiment_2_n_b_AgglomerativeClustering.sh
+    experiment_2_n_b_Birch.sh
+    experiment_2_n_b_KMeans.sh
+    experiment_2_n_b_SpectralClustering.sh
+    experiment_2_n_b.sh *   
     experiment_2_n_e_AffinityPropagation.sh
     experiment_2_n_e_AgglomerativeClustering.sh
     experiment_2_n_e_Birch.sh
     experiment_2_n_e_KMeans.sh
     experiment_2_n_e_SpectralClustering.sh
-    experiment_2_n_e.sh *
+    experiment_2_n_e.sh *    
     experiment_2_n_f_AffinityPropagation.sh
     experiment_2_n_f_AgglomerativeClustering.sh
     experiment_2_n_f_Birch.sh
     experiment_2_n_f_KMeans.sh
     experiment_2_n_f_SpectralClustering.sh
-    experiment_2_n_f.sh *
+    experiment_2_n_f.sh *   
 
 1. Generating shells for sbatch: This will generate lots of shell files!
 
