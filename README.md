@@ -91,6 +91,15 @@ We totally have 28 methods in testing:
         ...
         python results_Reading.py --methodName 27 --imputeMode > run_Results_Impute_27.sh
 
+    3.1.1 Batch mode
+        python results_Reading.py --method 3 --splitMode --batchStr 0 > run_Results_Celltype_3_0.sh
+        ...
+        python results_Reading.py --method 3 --splitMode --batchStr 3 > run_Results_Celltype_3_3.sh
+
+        python results_Reading.py --method 3 --splitMode --batchStr 0 --imputeMode> run_Results_Impute_3_0.sh
+        ...
+        python results_Reading.py --method 3 --splitMode --batchStr 3 --imputeMode> run_Results_Impute_3_3.sh
+
     3.2 Submit scripts to cluster
 
         bash submitCluster_Result_Celltype.sh

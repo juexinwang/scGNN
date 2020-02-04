@@ -19,7 +19,7 @@ args = parser.parse_args()
 # So we use os.system('') here
 
 if args.splitMode:
-    #The split of batch, more batches, more parallel
+    #The split of batch, more batches, more paralle
     if args.batchStr == 0:
         datasetList = [
         'MMPbasal_2000',
