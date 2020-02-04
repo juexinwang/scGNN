@@ -19,29 +19,53 @@ args = parser.parse_args()
 # So we use os.system('') here
 
 if args.splitMode:
-    #The split of batch, more batches, more paralle
+    #The split of batch, more batches, more parallel
+    # if args.batchStr == 0:
+    #     datasetList = [
+    #     'MMPbasal_2000',
+    #     'MMPbasal_2000 --discreteTag',
+    #     'MMPbasal_2000_LTMG',
+    #     '4.Yan',
+    #     '4.Yan --discreteTag',
+    #     '4.Yan_LTMG',
+    #     '5.Goolam',
+    #     '5.Goolam --discreteTag',
+    #     '5.Goolam_LTMG',
+    #     ]
+    # elif args.batchStr == 1:
+    #     datasetList = [
+    #     '7.Deng',
+    #     '7.Deng --discreteTag',
+    #     '7.Deng_LTMG',
+    #     '8.Pollen',
+    #     '8.Pollen --discreteTag',
+    #     '8.Pollen_LTMG',
+    #     '11.Kolodziejczyk',
+    #     '11.Kolodziejczyk --discreteTag'
+    #     ]
     if args.batchStr == 0:
         datasetList = [
-        'MMPbasal_2000',
-        'MMPbasal_2000 --discreteTag',
-        'MMPbasal_2000_LTMG',
-        '4.Yan',
-        '4.Yan --discreteTag',
-        '4.Yan_LTMG',
-        '5.Goolam',
-        '5.Goolam --discreteTag',
-        '5.Goolam_LTMG',
+        'T1000',
+        'T1000 --discreteTag',
+        'T1000_LTMG'
         ]
     elif args.batchStr == 1:
         datasetList = [
-        '7.Deng',
-        '7.Deng --discreteTag',
-        '7.Deng_LTMG',
-        '8.Pollen',
-        '8.Pollen --discreteTag',
-        '8.Pollen_LTMG',
-        '11.Kolodziejczyk',
-        '11.Kolodziejczyk --discreteTag'
+        'T2000',
+        'T2000 --discreteTag',
+        'T2000_LTMG'
+        ]
+    elif args.batchStr == 2:
+        datasetList = [
+        'T4000',
+        'T4000 --discreteTag',
+        'T4000_LTMG'
+        ]
+    elif args.batchStr == 3:
+        datasetList = [
+        'T8000',
+        'T8000 --discreteTag',
+        'T8000_LTMG'
         ]
 else:
     datasetList = [
