@@ -167,8 +167,11 @@ class scDatasetDropout(Dataset):
         return sample
 
 # Original
-# Reconstruction + KL divergence losses summed over all elements and batch
 def loss_function(recon_x, x, mu, logvar):
+    '''
+    Original: Classical loss function
+    Reconstruction + KL divergence losses summed over all elements and batch
+    '''
     # Original 
     BCE = F.binary_cross_entropy(recon_x, x.view(-1, 784), reduction='sum')
 
@@ -180,9 +183,12 @@ def loss_function(recon_x, x, mu, logvar):
 
     return BCE + KLD
 
-# Reconstruction + KL divergence losses summed over all elements and batch
-# graph
+# Graph
 def loss_function_graph(recon_x, x, mu, logvar, adjsample, adjfeature, regulized_type, modelusage):
+    '''
+    Regularized by the graph information
+    Reconstruction + KL divergence losses summed over all elements and batch
+    '''
     # Original 
     # BCE = F.binary_cross_entropy(recon_x, x.view(-1, 784), reduction='sum')
     # Graph
@@ -284,8 +290,9 @@ def graph_mse_loss_function(input, target, adjsample, adjfeature, regulized_type
     if size_average is not None or reduce is not None:
         reduction = legacy_get_string(size_average, reduce)
     if target.requires_grad:
+        # regulized_type == 'noregu'
         ret = (input - target) ** 2
-        #key is here
+        # if regulized_type == 'Graph', then add regularizor here
         if regulized_type == 'Graph':
             if adjsample != None:
                 ret = torch.matmul(adjsample, ret)
