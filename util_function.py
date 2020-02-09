@@ -184,7 +184,7 @@ def loss_function(recon_x, x, mu, logvar):
     return BCE + KLD
 
 # Graph
-def loss_function_graph(recon_x, x, mu, logvar, adjsample, adjfeature, regulized_type, modelusage):
+def loss_function_graph(recon_x, x, mu, logvar, adjsample, adjfeature, regularizer_type, modelusage):
     '''
     Regularized by the graph information
     Reconstruction + KL divergence losses summed over all elements and batch
@@ -193,9 +193,10 @@ def loss_function_graph(recon_x, x, mu, logvar, adjsample, adjfeature, regulized
     # BCE = F.binary_cross_entropy(recon_x, x.view(-1, 784), reduction='sum')
     # Graph
     target = x
-    # target.requires_grad = True
+    if regularizer_type == 'Graph':
+        target.requires_grad = True
     # Euclidean
-    BCE = graph_mse_loss_function(recon_x, target, adjsample, adjfeature, regulized_type='noregu', reduction='sum')
+    BCE = graph_mse_loss_function(recon_x, target, adjsample, adjfeature, regularizer_type, reduction='sum')
     # Entropy
     # BCE = graph_binary_cross_entropy(recon_x, target, adj, reduction='sum')
     # BCE = F.binary_cross_entropy(recon_x, target, reduction='sum')
@@ -275,9 +276,9 @@ def loss_function_graph(recon_x, x, mu, logvar, adjsample, adjfeature, regulized
 #         input, target, weight, reduction_enum)
 
 # graphical mse
-def graph_mse_loss_function(input, target, adjsample, adjfeature, regulized_type='noregu', size_average=None, reduce=None, reduction='mean'):
+def graph_mse_loss_function(input, target, adjsample, adjfeature, regularizer_type='noregu', size_average=None, reduce=None, reduction='mean'):
     # type: (Tensor, Tensor, Optional[bool], Optional[bool], str) -> Tensor
-    r"""graph_mse_loss_function(input, target, adj, regulized_type, size_average=None, reduce=None, reduction='mean') -> Tensor
+    r"""graph_mse_loss_function(input, target, adj, regularizer_type, size_average=None, reduce=None, reduction='mean') -> Tensor
 
     Measures the element-wise mean squared error.
 
@@ -289,20 +290,22 @@ def graph_mse_loss_function(input, target, adjsample, adjfeature, regulized_type
                       "Please ensure they have the same size.".format(target.size(), input.size()))
     if size_average is not None or reduce is not None:
         reduction = legacy_get_string(size_average, reduce)
-    if target.requires_grad:
-        # regulized_type == 'noregu'
+    if regularizer_type == 'noregu':
+        if target.requires_grad:
+            ret = (input - target) ** 2
+            if reduction != 'none':
+                ret = torch.mean(ret) if reduction == 'mean' else torch.sum(ret)
+        else:
+            expanded_input, expanded_target = torch.broadcast_tensors(input, target)
+            ret = torch._C._nn.mse_loss(expanded_input, expanded_target, get_enum(reduction))
+    elif regularizer_type == 'Graph':
         ret = (input - target) ** 2
-        # if regulized_type == 'Graph', then add regularizor here
-        if regulized_type == 'Graph':
-            if adjsample != None:
-                ret = torch.matmul(adjsample, ret)
-            if adjfeature != None:
-                ret = torch.matmul(ret, adjfeature)
+        if adjsample != None:
+            ret = torch.matmul(adjsample, ret)
+        if adjfeature != None:
+            ret = torch.matmul(ret, adjfeature)
         if reduction != 'none':
-            ret = torch.mean(ret) if reduction == 'mean' else torch.sum(ret)
-    else:
-        expanded_input, expanded_target = torch.broadcast_tensors(input, target)
-        ret = torch._C._nn.mse_loss(expanded_input, expanded_target, get_enum(reduction))
+            ret = torch.mean(ret) if reduction == 'mean' else torch.sum(ret)        
     return ret
 
 def legacy_get_enum(size_average, reduce, emit_warning=True):
