@@ -184,7 +184,7 @@ def loss_function(recon_x, x, mu, logvar):
     return BCE + KLD
 
 # Graph
-def loss_function_graph(recon_x, x, mu, logvar, adjsample, adjfeature, regularizer_type, modelusage):
+def loss_function_graph(recon_x, x, mu, logvar, adjsample=None, adjfeature=None, regulationMatrix=None, regularizer_type='noregu', modelusage='AE'):
     '''
     Regularized by the graph information
     Reconstruction + KL divergence losses summed over all elements and batch
@@ -193,10 +193,16 @@ def loss_function_graph(recon_x, x, mu, logvar, adjsample, adjfeature, regulariz
     # BCE = F.binary_cross_entropy(recon_x, x.view(-1, 784), reduction='sum')
     # Graph
     target = x
-    if regularizer_type == 'Graph':
+    if regularizer_type == 'Graph' or regularizer_type == 'LTMG':
         target.requires_grad = True
     # Euclidean
-    BCE = graph_mse_loss_function(recon_x, target, adjsample, adjfeature, regularizer_type, reduction='sum')
+    if regularizer_type == 'noregu':
+        BCE = vallina_mse_loss_function(recon_x, target, reduction='sum')
+    elif regularizer_type == 'Grap':
+        BCE = graph_mse_loss_function(recon_x, target, adjsample, adjfeature, reduction='sum')
+    elif regularizer_type == 'LTMG':
+        BCE = regulation_mse_loss_function(recon_x, target, regulationMatrix, reduction='sum')
+    
     # Entropy
     # BCE = graph_binary_cross_entropy(recon_x, target, adj, reduction='sum')
     # BCE = F.binary_cross_entropy(recon_x, target, reduction='sum')
@@ -275,12 +281,13 @@ def loss_function_graph(recon_x, x, mu, logvar, adjsample, adjfeature, regulariz
 #     return torch._C._nn.binary_cross_entropy(
 #         input, target, weight, reduction_enum)
 
-# graphical mse
-def graph_mse_loss_function(input, target, adjsample, adjfeature, regularizer_type='noregu', size_average=None, reduce=None, reduction='mean'):
-    # type: (Tensor, Tensor, Optional[bool], Optional[bool], str) -> Tensor
-    r"""graph_mse_loss_function(input, target, adj, regularizer_type, size_average=None, reduce=None, reduction='mean') -> Tensor
 
-    Measures the element-wise mean squared error.
+# vallina mse
+def vallina_mse_loss_function(input, target, size_average=None, reduce=None, reduction='mean'):
+    # type: (Tensor, Tensor, Optional[bool], Optional[bool], str) -> Tensor
+    r"""vallina_mse_loss_function(input, target, size_average=None, reduce=None, reduction='mean') -> Tensor
+
+    Original: Measures the element-wise mean squared error.
 
     See :revised from pytorch class:`~torch.nn.MSELoss` for details.
     """
@@ -290,22 +297,62 @@ def graph_mse_loss_function(input, target, adjsample, adjfeature, regularizer_ty
                       "Please ensure they have the same size.".format(target.size(), input.size()))
     if size_average is not None or reduce is not None:
         reduction = legacy_get_string(size_average, reduce)
-    if regularizer_type == 'noregu':
-        if target.requires_grad:
-            ret = (input - target) ** 2
-            if reduction != 'none':
-                ret = torch.mean(ret) if reduction == 'mean' else torch.sum(ret)
-        else:
-            expanded_input, expanded_target = torch.broadcast_tensors(input, target)
-            ret = torch._C._nn.mse_loss(expanded_input, expanded_target, get_enum(reduction))
-    elif regularizer_type == 'Graph':
+    # Now it use regulariz type to distinguish, it can be imporved later
+    if target.requires_grad:
         ret = (input - target) ** 2
-        if adjsample != None:
-            ret = torch.matmul(adjsample, ret)
-        if adjfeature != None:
-            ret = torch.matmul(ret, adjfeature)
         if reduction != 'none':
-            ret = torch.mean(ret) if reduction == 'mean' else torch.sum(ret)        
+            ret = torch.mean(ret) if reduction == 'mean' else torch.sum(ret)
+    else:
+        expanded_input, expanded_target = torch.broadcast_tensors(input, target)
+        ret = torch._C._nn.mse_loss(expanded_input, expanded_target, get_enum(reduction))     
+    return ret
+
+# graphical mse
+def graph_mse_loss_function(input, target, adjsample, adjfeature, size_average=None, reduce=None, reduction='mean'):
+    # type: (Tensor, Tensor, Optional[bool], Optional[bool], str) -> Tensor
+    r"""graph_mse_loss_function(input, target, adj, regularizer_type, size_average=None, reduce=None, reduction='mean') -> Tensor
+
+    Measures the element-wise mean squared error in graph regularizor.
+
+    See:revised from pytorch class:`~torch.nn.MSELoss` for details.
+    """
+    if not (target.size() == input.size()):
+        print("Using a target size ({}) that is different to the input size ({}). "
+                      "This will likely lead to incorrect results due to broadcasting. "
+                      "Please ensure they have the same size.".format(target.size(), input.size()))
+    if size_average is not None or reduce is not None:
+        reduction = legacy_get_string(size_average, reduce)
+    # Now it use regulariz type to distinguish, it can be imporved later
+    ret = (input - target) ** 2
+    if adjsample != None:
+        ret = torch.matmul(adjsample, ret)
+    if adjfeature != None:
+        ret = torch.matmul(ret, adjfeature)
+    if reduction != 'none':
+        ret = torch.mean(ret) if reduction == 'mean' else torch.sum(ret)      
+    return ret
+
+# Regulation mse as the regularizor
+# Now LTMG is set as the input
+def regulation_mse_loss_function(input, target, regulationMatrix, reguPara=0.1, size_average=None, reduce=None, reduction='mean'):
+    # type: (Tensor, Tensor, str, Optional[bool], Optional[bool], str) -> Tensor
+    r"""regulation_mse_loss_function(input, target, regulationMatrix, regularizer_type, size_average=None, reduce=None, reduction='mean') -> Tensor
+
+    Measures the element-wise mean squared error for regulation input, now only support LTMG.
+
+    See :revised from pytorch class:`~torch.nn.MSELoss` for details.
+    """
+    if not (target.size() == input.size()):
+        print("Using a target size ({}) that is different to the input size ({}). "
+                      "This will likely lead to incorrect results due to broadcasting. "
+                      "Please ensure they have the same size.".format(target.size(), input.size()))
+    if size_average is not None or reduce is not None:
+        reduction = legacy_get_string(size_average, reduce)
+    # Now it use regulariz type to distinguish, it can be imporved later
+    ret = (input - target) ** 2
+    ret = torch.multiple(ret, reguPara * regulationMatrix)
+    if reduction != 'none':
+        ret = torch.mean(ret) if reduction == 'mean' else torch.sum(ret)      
     return ret
 
 def legacy_get_enum(size_average, reduce, emit_warning=True):
@@ -413,3 +460,12 @@ def trimClustering(listResult,minMemberinCluster=5,maxClusterNumber=100):
         count += 1
 
     return listResult
+
+def readLTMG(datasetName):
+    '''
+    Read LTMG matrix
+    '''
+    matrix = pd.read_csv('biodata/scData/allBench/{}/T2000_UsingOriginalMatrix/T2000_LTMG.txt'.format(datasetName),header=None, delim_whitespace=True)
+    matrix = matrix.to_numpy()
+    matrix = matrix.transpose()
+    return matrix

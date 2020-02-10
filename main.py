@@ -36,7 +36,7 @@ parser.add_argument('--no-cuda', action='store_true', default=True,
 parser.add_argument('--seed', type=int, default=1, metavar='S',
                     help='random seed (default: 1)')
 parser.add_argument('--regulized-type', type=str, default='Graph',
-                    help='regulized type (default: Graph) in EM, otherwise: noregu')
+                    help='regulized type (default: Graph) in EM, otherwise: noregu/LTMG')
 parser.add_argument('--discreteTag', action='store_true', default=False, 
                     help='whether input is raw or 0/1 (default: False)')
 parser.add_argument('--k', type=int, default=10,
@@ -67,7 +67,7 @@ parser.add_argument('--maxClusterNumber', type=int, default=100,
                     help='max cluster for celltypeEM without setting number of clusters (default: 100)') 
 parser.add_argument('--minMemberinCluster', type=int, default=5,
                     help='max cluster for celltypeEM without setting number of clusters (default: 100)')
-       
+
 #GAE related
 parser.add_argument('--GAEmodel', type=str, default='gcn_vae', help="models used")
 parser.add_argument('--GAEepochs', type=int, default=200, help='Number of epochs to train.')
@@ -98,6 +98,8 @@ else:
     scData = scDatasetDropout(args.datasetName, args.discreteTag, args.dropoutRatio)
 train_loader = DataLoader(scData, batch_size=args.batch_size, shuffle=False, **kwargs)
 
+regulationMatrix = readLTMG(args.datasetName)
+
 # Original
 if args.model == 'VAE':
     # model = VAE(dim=scData.features.shape[1]).to(device)
@@ -125,9 +127,9 @@ def train(epoch, train_loader=train_loader, EMFlag=False):
             # Original
             # loss = loss_function(recon_batch, data, mu, logvar)
             if EMFlag:
-                loss = loss_function_graph(recon_batch, data.view(-1, recon_batch.shape[1]), mu, logvar, adjsample, adjfeature, args.regulized_type, args.model)
+                loss = loss_function_graph(recon_batch, data.view(-1, recon_batch.shape[1]), mu, logvar, adjsample, adjfeature, regulationMatrix=regulationMatrix, regularizer_type=args.regulized_type, modelusage=args.model)
             else:
-                loss = loss_function_graph(recon_batch, data.view(-1, recon_batch.shape[1]), mu, logvar, adjsample, adjfeature, 'noregu', args.model)
+                loss = loss_function_graph(recon_batch, data.view(-1, recon_batch.shape[1]), mu, logvar, adjsample, adjfeature, regulationMatrix=regulationMatrix, regularizer_type='noregu', modelusage=args.model)
             
         elif args.model == 'AE':
             recon_batch, z = model(data)
@@ -136,9 +138,9 @@ def train(epoch, train_loader=train_loader, EMFlag=False):
             # Original
             # loss = loss_function(recon_batch, data, mu, logvar)
             if EMFlag:
-                loss = loss_function_graph(recon_batch, data.view(-1, recon_batch.shape[1]), mu_dummy, logvar_dummy, adjsample, adjfeature, args.regulized_type, args.model)
+                loss = loss_function_graph(recon_batch, data.view(-1, recon_batch.shape[1]), mu_dummy, logvar_dummy, adjsample, adjfeature, regulationMatrix=regulationMatrix, regularizer_type=args.regulized_type, modelusage=args.model)
             else:
-                loss = loss_function_graph(recon_batch, data.view(-1, recon_batch.shape[1]), mu_dummy, logvar_dummy, adjsample, adjfeature, 'noregu', args.model)
+                loss = loss_function_graph(recon_batch, data.view(-1, recon_batch.shape[1]), mu_dummy, logvar_dummy, adjsample, adjfeature, regulationMatrix=regulationMatrix, regularizer_type='noregu', modelusage=args.model)
                
         loss.backward()
         train_loss += loss.item()
