@@ -65,8 +65,7 @@
 
 #Use 2000 data
 #TODO: will change the sparse saving and loading later
-# python Preprocessing_scFile.py --inputfile /home/wangjue/biodata/scData/allBench/1.Biase/T2000_UsingOriginalMatrix/T2000_expression.txt  --outputfile /home/wangjue/biodata/scData/13.Zeisel.csv --cellcount 3005 --genecount 21221 --split space --cellheadflag False
-
+# python Preprocessing_scFile.py --inputfile /home/wangjue/biodata/scData/allBench/13.Zeisel/T2000_UsingOriginalMatrix/T2000_expression.txt  --outputfile /home/wangjue/biodata/scData/13.Zeisel.csv --cellcount 3005 --genecount 2000 --split space --cellheadflag False
 
 import numpy as np
 import argparse

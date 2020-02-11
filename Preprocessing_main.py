@@ -19,8 +19,8 @@ parser.add_argument('--expression-name', type=str, default='11.Kolodziejczyk',
 # Dataset: 1-13 benchmark: 1.Biase/2.Li/3.Treutlein/4.Yan/5.Goolam/6.Guo/7.Deng/8.Pollen/9.Chung/10.Usoskin/11.Kolodziejczyk/12.Klein/13.Zeisel
 parser.add_argument('--data-type', type=str, default='float',
                     help='int/float')
-parser.add_argument('--geneNzThreshold', type=float, default=0.05,
-                    help='cells with genes not zero at least (default: 0.05)')  
+parser.add_argument('--geneNzThreshold', type=float, default=0.0,
+                    help='cells with genes not zero at least (default: 0.05) Choose 0.0 to let it as is')  
 parser.add_argument('--geneThreshold', type=int, default=2000,
                     help='how many genes are selected (default: 2000)')
 parser.add_argument('--countThreshold', action='store_true', default=False,
