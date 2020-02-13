@@ -29,6 +29,14 @@ parser.add_argument('--epochs', type=int, default=500, metavar='N',
                     help='number of epochs to train (default: 500)')
 parser.add_argument('--EM-iteration', type=int, default=5, metavar='N',
                     help='number of epochs in EM iteration (default: 3)')
+parser.add_argument('--EMtype', type=str, default='celltypeEM',
+                    help='EM process type (default: celltypeEM) or EM')
+parser.add_argument('--alpha', type=float, default=0.5,
+                    help='iteration alpha (default: 0.5) to control the converge rate, should be a number between 0~1')
+parser.add_argument('--converge-type', type=str, default='celltype',
+                    help='type of converge: celltype/graph (default: celltype) ')
+parser.add_argument('--converge-ratio', type=float, default=0.001,
+                    help='ratio of cell type change in EM iteration (default: 0.001)')
 parser.add_argument('--celltype-epochs', type=int, default=200, metavar='N',
                     help='number of epochs in celltype training (default: 200)')
 parser.add_argument('--no-cuda', action='store_true', default=True,
@@ -47,8 +55,7 @@ parser.add_argument('--model', type=str, default='AE',
                     help='VAE/AE (default: AE)')
 parser.add_argument('--zerofillFlag', action='store_true', default=False, 
                     help='fill zero or not before EM process (default: False)')
-parser.add_argument('--EMtype', type=str, default='celltypeEM',
-                    help='EM process type (default: celltypeEM) or EM')
+
 #Debug related
 parser.add_argument('--saveFlag', action='store_true', default=True, 
                     help='whether save npy results or not')
@@ -85,6 +92,10 @@ parser.add_argument('--dropoutRatio', type=float, default=0.1,
 
 args = parser.parse_args()
 args.cuda = not args.no_cuda and torch.cuda.is_available()
+
+#TODO
+#As we have lots of parameters, should check args
+checkargs(args)
 
 torch.manual_seed(args.seed)
 device = torch.device("cuda" if args.cuda else "cpu")
@@ -231,8 +242,14 @@ if __name__ == "__main__":
                 np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_zGAE.npy',zOut)
         # np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_init_edgeList.npy',edgeList)
     
+    # For iteration studies
+    G0 = nx.Graph()
+    G0.add_weighted_edges_from(edgeList)
+    nlG0=nx.normalized_laplacian_matrix(G0)
+    adjOld = nlG0
+
     #Fill the zeros before EM iteration
-    # TODO: better implementation
+    # TODO: better implementation later, now we don't filling zeros for now
     if args.zerofillFlag:
         for nz_index in range(len(scData.nz_i)):
             # tmp = scipy.sparse.lil_matrix.todense(scData.features[scData.nz_i[nz_index], scData.nz_j[nz_index]])
@@ -355,6 +372,24 @@ if __name__ == "__main__":
         
         print("---One iteration in EM process, proceeded %s seconds ---" % (time.time() - iteration_time))
 
+        #Iteration usage
+        Gc = nx.Graph()
+        Gc.add_weighted_edges_from(edgeList)
+        adjGc = nx.adjacency_matrix(Gc)
+        
+        # Update new adj
+        adjNew = args.alpha*nlG0 + (1-args.alpha) * adjGc/np.sum(adjGc,axis=0)
+        
+        if args.converge_type == 'graph':
+            if abs(np.mean(adjNew-adjOld))<args.converge_ratio*nlG0：
+                print('Converged now!')
+                break
+        elif args.converge_type == 'celltype':
+            # TODO
+
+        # Update
+        adjOld = adjNew
+            
     if args.saveFlag:
         if args.imputeMode:
             np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_'+str(args.dropoutRatio)+'_final_edgeList.npy',edgeList)

@@ -13,6 +13,12 @@ from torch.utils.data import Dataset, DataLoader
 from benchmark_util import *
 dir_path = os.path.dirname(os.path.realpath(__file__))
 
+def checkargs(args):
+    '''
+    check whether paramters meets requirements
+    '''
+    return
+
 def parse_index_file(filename):
     index = []
     for line in open(filename):
