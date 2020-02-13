@@ -350,7 +350,7 @@ def regulation_mse_loss_function(input, target, regulationMatrix, reguPara=0.1, 
         reduction = legacy_get_string(size_average, reduce)
     # Now it use regulariz type to distinguish, it can be imporved later
     ret = (input - target) ** 2
-    ret = torch.multiple(ret, reguPara * regulationMatrix)
+    ret = torch.mul(ret, reguPara * regulationMatrix)
     if reduction != 'none':
         ret = torch.mean(ret) if reduction == 'mean' else torch.sum(ret)      
     return ret
@@ -465,7 +465,9 @@ def readLTMG(datasetName):
     '''
     Read LTMG matrix
     '''
-    matrix = pd.read_csv('biodata/scData/allBench/{}/T2000_UsingOriginalMatrix/T2000_LTMG.txt'.format(datasetName),header=None, delim_whitespace=True)
+    matrix = pd.read_csv('/home/wangjue/biodata/scData/allBench/{}/T2000_UsingOriginalMatrix/T2000_LTMG.txt'.format(datasetName),header=None, index_col=None, delim_whitespace=True)
     matrix = matrix.to_numpy()
     matrix = matrix.transpose()
+    matrix = matrix[1:,1:]
+    matrix = matrix.astype(int)
     return matrix

@@ -99,6 +99,7 @@ else:
 train_loader = DataLoader(scData, batch_size=args.batch_size, shuffle=False, **kwargs)
 
 regulationMatrix = readLTMG(args.datasetName)
+regulationMatrix = torch.from_numpy(regulationMatrix)
 
 # Original
 if args.model == 'VAE':
@@ -140,7 +141,7 @@ def train(epoch, train_loader=train_loader, EMFlag=False):
             if EMFlag:
                 loss = loss_function_graph(recon_batch, data.view(-1, recon_batch.shape[1]), mu_dummy, logvar_dummy, adjsample, adjfeature, regulationMatrix=regulationMatrix, regularizer_type=args.regulized_type, modelusage=args.model)
             else:
-                loss = loss_function_graph(recon_batch, data.view(-1, recon_batch.shape[1]), mu_dummy, logvar_dummy, adjsample, adjfeature, regulationMatrix=regulationMatrix, regularizer_type='noregu', modelusage=args.model)
+                loss = loss_function_graph(recon_batch, data.view(-1, recon_batch.shape[1]), mu_dummy, logvar_dummy, adjsample, adjfeature, regulationMatrix=regulationMatrix, regularizer_type=args.regulized_type, modelusage=args.model)
                
         loss.backward()
         train_loss += loss.item()
