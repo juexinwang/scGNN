@@ -35,8 +35,10 @@ parser.add_argument('--alpha', type=float, default=0.5,
                     help='iteration alpha (default: 0.5) to control the converge rate, should be a number between 0~1')
 parser.add_argument('--converge-type', type=str, default='celltype',
                     help='type of converge: celltype/graph (default: celltype) ')
-parser.add_argument('--converge-ratio', type=float, default=0.001,
-                    help='ratio of cell type change in EM iteration (default: 0.001)')
+parser.add_argument('--converge-graphratio', type=float, default=0.001,
+                    help='ratio of cell type change in EM iteration (default: 0.001), 0-1')
+parser.add_argument('--converge-celltyperatio', type=float, default=0.99,
+                    help='ratio of cell type change in EM iteration (default: 0.99), 0-1')
 parser.add_argument('--celltype-epochs', type=int, default=200, metavar='N',
                     help='number of epochs in celltype training (default: 200)')
 parser.add_argument('--no-cuda', action='store_true', default=True,
@@ -246,7 +248,10 @@ if __name__ == "__main__":
     G0 = nx.Graph()
     G0.add_weighted_edges_from(edgeList)
     nlG0=nx.normalized_laplacian_matrix(G0)
+    # set iteration criteria for converge
     adjOld = nlG0
+    # set celltype criteria for converge
+    listResultOld = np.zeros((1,zOut.shape[0]))
 
     #Fill the zeros before EM iteration
     # TODO: better implementation later, now we don't filling zeros for now
@@ -262,46 +267,49 @@ if __name__ == "__main__":
     print("EM processes started")
     for bigepoch in range(0, args.EM_iteration):
         iteration_time = time.time()
+
+        # Now for both methods, we need do clustering, using clustering results to check converge
+        # TODO May reimplement later
+        # Clustering: Get cluster
+        clustering_time = time.time()
+        if args.clustering_method=='Louvain':
+            # Louvain: the only function has R dependent
+            # Seperate here for platforms without R support
+            from R_util import generateLouvainCluster
+            listResult,size = generateLouvainCluster(edgeList)
+        elif args.clustering_method=='KMeans':
+            clustering = KMeans(n_clusters=args.n_clusters, random_state=0).fit(zOut)
+            listResult = clustering.predict(zOut)
+        elif args.clustering_method=='SpectralClustering':
+            clustering = SpectralClustering(n_clusters=args.n_clusters, assign_labels="discretize", random_state=0).fit(zOut)
+            listResult = clustering.labels_.tolist()
+        elif args.clustering_method=='AffinityPropagation':
+            clustering = AffinityPropagation().fit(zOut)
+            listResult = clustering.predict(zOut)
+        elif args.clustering_method=='AgglomerativeClustering':
+            clustering = AgglomerativeClustering().fit(zOut)
+            listResult = clustering.labels_.tolist()
+        elif args.clustering_method=='Birch':
+            clustering = Birch(n_clusters=args.n_clusters).fit(zOut)
+            listResult = clustering.predict(zOut)
+        else:
+            print("Error: Clustering method not appropriate")
+        print("---Clustering takes %s seconds ---" % (time.time() - clustering_time))
+
+        # If clusters more than maxclusters, then have to stop
+        if len(set(listResult))>args.maxClusterNumber or len(set(listResult))<=1:
+            print("Stopping: Number of clusters is " + str(len(set(listResult))) + ".")
+            # Exit
+            # return None
+            # Else: dealing with the number
+            listResult = trimClustering(listResult,minMemberinCluster=args.minMemberinCluster,maxClusterNumber=args.maxClusterNumber)
+        
+        #Calculate silhouette
+        measure_clustering_results(zOut, listResult)
+        print('Total Cluster Number: '+str(len(set(listResult))))
+
         #Graph regulizated EM AE with celltype AE, do the additional AE
-        if args.EMtype == 'celltypeEM':            
-            # Clustering: Get cluster
-            clustering_time = time.time()
-            if args.clustering_method=='Louvain':
-                # Louvain: the only function has R dependent
-                # Seperate here for platforms without R support
-                from R_util import generateLouvainCluster
-                listResult,size = generateLouvainCluster(edgeList)
-            elif args.clustering_method=='KMeans':
-                clustering = KMeans(n_clusters=args.n_clusters, random_state=0).fit(zOut)
-                listResult = clustering.predict(zOut)
-            elif args.clustering_method=='SpectralClustering':
-                clustering = SpectralClustering(n_clusters=args.n_clusters, assign_labels="discretize", random_state=0).fit(zOut)
-                listResult = clustering.labels_.tolist()
-            elif args.clustering_method=='AffinityPropagation':
-                clustering = AffinityPropagation().fit(zOut)
-                listResult = clustering.predict(zOut)
-            elif args.clustering_method=='AgglomerativeClustering':
-                clustering = AgglomerativeClustering().fit(zOut)
-                listResult = clustering.labels_.tolist()
-            elif args.clustering_method=='Birch':
-                clustering = Birch(n_clusters=args.n_clusters).fit(zOut)
-                listResult = clustering.predict(zOut)
-            else:
-                print("Error: Clustering method not appropriate")
-            print("---Clustering takes %s seconds ---" % (time.time() - clustering_time))
-
-            # If clusters more than maxclusters, then have to stop
-            if len(set(listResult))>args.maxClusterNumber or len(set(listResult))<=1:
-                print("Stopping: Number of clusters is " + str(len(set(listResult))) + ".")
-                # Exit
-                # return None
-                # Else: dealing with the number
-                listResult = trimClustering(listResult,minMemberinCluster=args.minMemberinCluster,maxClusterNumber=args.maxClusterNumber)
-            
-            #Calculate silhouette
-            measure_clustering_results(zOut, listResult)
-            print('Total Cluster Number: '+str(len(set(listResult))))
-
+        if args.EMtype == 'celltypeEM': 
             # Each cluster has a autoencoder, and organize them back in iteraization
             clusterIndexList = []
             for i in range(len(set(listResult))):
@@ -380,15 +388,25 @@ if __name__ == "__main__":
         # Update new adj
         adjNew = args.alpha*nlG0 + (1-args.alpha) * adjGc/np.sum(adjGc,axis=0)
         
+        # graph criteria here
         if args.converge_type == 'graph':
-            if abs(np.mean(adjNew-adjOld))<args.converge_ratio*nlG0：
-                print('Converged now!')
+            #debug
+            print('adjNew:{} adjOld:{} threshold:{}'.format(adjNew,adjOld,args.converge_graphratio*nlG0))
+            if abs(np.mean(adjNew-adjOld))<args.converge_graphratio*nlG0：
+                print('Converge now!')
                 break
+        # celltype criteria here
         elif args.converge_type == 'celltype':
-            # TODO
+            ari, ami, nmi, cs, fms, vms, hs = measureClusteringTrueLabel(true_labels, listResult)
+            #debug
+            print('celltype similarity:'+str(ari))
+            if ari>args.converge_celltyperatio:
+                print('Converge now!')
+                break 
 
         # Update
         adjOld = adjNew
+        listResultOld = listResult
             
     if args.saveFlag:
         if args.imputeMode:

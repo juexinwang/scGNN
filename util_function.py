@@ -469,7 +469,7 @@ def trimClustering(listResult,minMemberinCluster=5,maxClusterNumber=100):
 
 def readLTMG(datasetName):
     '''
-    Read LTMG matrix
+    Read LTMG matrix as the regularizor
     '''
     matrix = pd.read_csv('/home/wangjue/biodata/scData/allBench/{}/T2000_UsingOriginalMatrix/T2000_LTMG.txt'.format(datasetName),header=None, index_col=None, delim_whitespace=True)
     matrix = matrix.to_numpy()
