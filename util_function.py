@@ -135,7 +135,7 @@ class scDataset(Dataset):
             sample = self.transform(sample)
 
         sample = torch.from_numpy(sample.toarray())
-        return sample
+        return sample,idx
 
 class scDatasetDropout(Dataset):
     def __init__(self, datasetName=None, discreteTag=False, ratio=0.1, transform=None):

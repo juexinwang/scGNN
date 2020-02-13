@@ -23,9 +23,9 @@ parser = argparse.ArgumentParser(description='Graph EM AutoEncoder for scRNA')
 parser.add_argument('--datasetName', type=str, default='13.Zeisel',
                     help='TGFb/sci-CAR/sci-CAR_LTMG/MMPbasal/MMPbasal_all/MMPbasal_allgene/MMPbasal_allcell/MMPepo/MMPbasal_LTMG/MMPbasal_all_LTMG/MMPbasal_2000')
 # Dataset: 1-13 benchmark: 1.Biase/2.Li/3.Treutlein/4.Yan/5.Goolam/6.Guo/7.Deng/8.Pollen/9.Chung/10.Usoskin/11.Kolodziejczyk/12.Klein/13.Zeisel
-parser.add_argument('--batch-size', type=int, default=128, metavar='N',
+parser.add_argument('--batch-size', type=int, default=12800, metavar='N',
                     help='input batch size for training (default: 128)')
-parser.add_argument('--epochs', type=int, default=2, metavar='N',
+parser.add_argument('--epochs', type=int, default=500, metavar='N',
                     help='number of epochs to train (default: 500)')
 parser.add_argument('--EM-iteration', type=int, default=5, metavar='N',
                     help='number of epochs in EM iteration (default: 3)')
@@ -119,18 +119,20 @@ def train(epoch, train_loader=train_loader, EMFlag=False):
     model.train()
     train_loss = 0 
     # for batch_idx, (data, _) in enumerate(train_loader):
-    for batch_idx, data in enumerate(train_loader):
+    # for batch_idx, data in enumerate(train_loader):
+    for batch_idx, (data, dataindex) in enumerate(train_loader):
         data = data.type(torch.FloatTensor)
         data = data.to(device)
+        regulationMatrixBatch = regulationMatrix[dataindex,:]
         optimizer.zero_grad()
         if args.model == 'VAE':
             recon_batch, mu, logvar, z = model(data)
             # Original
             # loss = loss_function(recon_batch, data, mu, logvar)
             if EMFlag:
-                loss = loss_function_graph(recon_batch, data.view(-1, recon_batch.shape[1]), mu, logvar, adjsample, adjfeature, regulationMatrix=regulationMatrix, regularizer_type=args.regulized_type, modelusage=args.model)
+                loss = loss_function_graph(recon_batch, data.view(-1, recon_batch.shape[1]), mu, logvar, adjsample, adjfeature, regulationMatrix=regulationMatrixBatch, regularizer_type=args.regulized_type, modelusage=args.model)
             else:
-                loss = loss_function_graph(recon_batch, data.view(-1, recon_batch.shape[1]), mu, logvar, adjsample, adjfeature, regulationMatrix=regulationMatrix, regularizer_type='noregu', modelusage=args.model)
+                loss = loss_function_graph(recon_batch, data.view(-1, recon_batch.shape[1]), mu, logvar, adjsample, adjfeature, regulationMatrix=regulationMatrixBatch, regularizer_type=args.regulized_type, modelusage=args.model)
             
         elif args.model == 'AE':
             recon_batch, z = model(data)
@@ -139,9 +141,9 @@ def train(epoch, train_loader=train_loader, EMFlag=False):
             # Original
             # loss = loss_function(recon_batch, data, mu, logvar)
             if EMFlag:
-                loss = loss_function_graph(recon_batch, data.view(-1, recon_batch.shape[1]), mu_dummy, logvar_dummy, adjsample, adjfeature, regulationMatrix=regulationMatrix, regularizer_type=args.regulized_type, modelusage=args.model)
+                loss = loss_function_graph(recon_batch, data.view(-1, recon_batch.shape[1]), mu_dummy, logvar_dummy, adjsample, adjfeature, regulationMatrix=regulationMatrixBatch, regularizer_type=args.regulized_type, modelusage=args.model)
             else:
-                loss = loss_function_graph(recon_batch, data.view(-1, recon_batch.shape[1]), mu_dummy, logvar_dummy, adjsample, adjfeature, regulationMatrix=regulationMatrix, regularizer_type=args.regulized_type, modelusage=args.model)
+                loss = loss_function_graph(recon_batch, data.view(-1, recon_batch.shape[1]), mu_dummy, logvar_dummy, adjsample, adjfeature, regulationMatrix=regulationMatrixBatch, regularizer_type=args.regulized_type, modelusage=args.model)
                
         loss.backward()
         train_loss += loss.item()
