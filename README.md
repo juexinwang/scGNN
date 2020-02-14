@@ -42,6 +42,9 @@ Now We totally have 42 methods in testing:
     experiment_1_g_b.sh
     experiment_1_g_e.sh
     experiment_1_g_f.sh
+    experiment_1_r_b.sh
+    experiment_1_r_e.sh
+    experiment_1_r_f.sh
     experiment_1_n_b.sh
     experiment_1_n_e.sh
     experiment_1_n_f.sh
@@ -62,7 +65,25 @@ Now We totally have 42 methods in testing:
     experiment_2_g_f_Birch.sh
     experiment_2_g_f_KMeans.sh
     experiment_2_g_f_SpectralClustering.sh
-    experiment_2_g_f.sh * 
+    experiment_2_g_f.sh *
+    experiment_2_r_b_AffinityPropagation.sh
+    experiment_2_r_b_AgglomerativeClustering.sh
+    experiment_2_r_b_Birch.sh
+    experiment_2_r_b_KMeans.sh
+    experiment_2_r_b_SpectralClustering.sh
+    experiment_2_r_b.sh *
+    experiment_2_r_e_AffinityPropagation.sh
+    experiment_2_r_e_AgglomerativeClustering.sh
+    experiment_2_r_e_Birch.sh
+    experiment_2_r_e_KMeans.sh
+    experiment_2_r_e_SpectralClustering.sh
+    experiment_2_r_e.sh *   
+    experiment_2_r_f_AffinityPropagation.sh
+    experiment_2_r_f_AgglomerativeClustering.sh
+    experiment_2_r_f_Birch.sh
+    experiment_2_r_f_KMeans.sh
+    experiment_2_r_f_SpectralClustering.sh
+    experiment_2_r_f.sh * 
     experiment_2_n_b_AffinityPropagation.sh
     experiment_2_n_b_AgglomerativeClustering.sh
     experiment_2_n_b_Birch.sh

@@ -27,7 +27,7 @@ parser.add_argument('--batch-size', type=int, default=12800, metavar='N',
                     help='input batch size for training (default: 128)')
 parser.add_argument('--epochs', type=int, default=500, metavar='N',
                     help='number of epochs to train (default: 500)')
-parser.add_argument('--EM-iteration', type=int, default=5, metavar='N',
+parser.add_argument('--EM-iteration', type=int, default=10, metavar='N',
                     help='number of epochs in EM iteration (default: 3)')
 parser.add_argument('--EMtype', type=str, default='EM',
                     help='EM process type (default: celltypeEM) or EM')
@@ -46,7 +46,7 @@ parser.add_argument('--no-cuda', action='store_true', default=True,
 parser.add_argument('--seed', type=int, default=1, metavar='S',
                     help='random seed (default: 1)')
 parser.add_argument('--regulized-type', type=str, default='LTMG',
-                    help='regulized type (default: Graph) in EM, otherwise: noregu/LTMG')
+                    help='regulized type (default: Graph) in EM, otherwise: noregu/LTMG/LTMG01')
 parser.add_argument('--discreteTag', action='store_true', default=False, 
                     help='whether input is raw or 0/1 (default: False)')
 parser.add_argument('--k', type=int, default=10,
@@ -251,7 +251,7 @@ if __name__ == "__main__":
     # set iteration criteria for converge
     adjOld = nlG0
     # set celltype criteria for converge
-    listResultOld = np.zeros((1,zOut.shape[0]))
+    listResultOld = [1 for i in range(zOut.shape[0])]
 
     #Fill the zeros before EM iteration
     # TODO: better implementation later, now we don't filling zeros for now
@@ -388,18 +388,17 @@ if __name__ == "__main__":
         # Update new adj
         adjNew = args.alpha*nlG0 + (1-args.alpha) * adjGc/np.sum(adjGc,axis=0)
         
+        #debug
+        print('adjNew:{} adjOld:{} threshold:{}'.format(adjNew, adjOld, args.converge_graphratio*nlG0))
+        ari, ami, nmi, cs, fms, vms, hs = measureClusteringTrueLabel(listResultOld, listResult)
+        print('celltype similarity:'+str(ari))
         # graph criteria here
-        if args.converge_type == 'graph':
-            #debug
-            print('adjNew:{} adjOld:{} threshold:{}'.format(adjNew, adjOld, args.converge_graphratio*nlG0))
+        if args.converge_type == 'graph':       
             if abs(np.mean(adjNew-adjOld)) < args.converge_graphratio * nlG0:
                 print('Converge now!')
                 break
         # celltype criteria here
-        elif args.converge_type == 'celltype':
-            ari, ami, nmi, cs, fms, vms, hs = measureClusteringTrueLabel(listResultOld, listResult)
-            #debug
-            print('celltype similarity:'+str(ari))
+        elif args.converge_type == 'celltype':            
             if ari>args.converge_celltyperatio:
                 print('Converge now!')
                 break 

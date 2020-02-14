@@ -1,7 +1,18 @@
+mkdir npyG1B
 mkdir npyG1E
 mkdir npyG1F
+mkdir npyR1B
+mkdir npyR1E
+mkdir npyR1F
+mkdir npyN1B
 mkdir npyN1E
 mkdir npyN1F
+mkdir npyG2B_AffinityPropagation
+mkdir npyG2B_AgglomerativeClustering
+mkdir npyG2B_Birch
+mkdir npyG2B_KMeans
+mkdir npyG2B_SpectralClustering
+mkdir npyG2B
 mkdir npyG2E_AffinityPropagation
 mkdir npyG2E_AgglomerativeClustering
 mkdir npyG2E_Birch
@@ -14,6 +25,30 @@ mkdir npyG2F_Birch
 mkdir npyG2F_KMeans
 mkdir npyG2F_SpectralClustering
 mkdir npyG2F
+mkdir npyR2B_AffinityPropagation
+mkdir npyR2B_AgglomerativeClustering
+mkdir npyR2B_Birch
+mkdir npyR2B_KMeans
+mkdir npyR2B_SpectralClustering
+mkdir npyR2B
+mkdir npyR2E_AffinityPropagation
+mkdir npyR2E_AgglomerativeClustering
+mkdir npyR2E_Birch
+mkdir npyR2E_KMeans
+mkdir npyR2E_SpectralClustering
+mkdir npyR2E
+mkdir npyR2F_AffinityPropagation
+mkdir npyR2F_AgglomerativeClustering
+mkdir npyR2F_Birch
+mkdir npyR2F_KMeans
+mkdir npyR2F_SpectralClustering
+mkdir npyR2F
+mkdir npyN2B_AffinityPropagation
+mkdir npyN2B_AgglomerativeClustering
+mkdir npyN2B_Birch
+mkdir npyN2B_KMeans
+mkdir npyN2B_SpectralClustering
+mkdir npyN2B
 mkdir npyN2E_AffinityPropagation
 mkdir npyN2E_AgglomerativeClustering
 mkdir npyN2E_Birch
@@ -27,93 +62,132 @@ mkdir npyN2F_KMeans
 mkdir npyN2F_SpectralClustering
 mkdir npyN2F
 
-for i in {9..25}
+for i in {0..62}
 do
+sbatch run_experiment_1_g_b_$i.sh
+sleep 1
 sbatch run_experiment_1_g_e_$i.sh
-sleep 3
-done
-
-for i in {9..25}
-do
+sleep 1
+sbatch run_experiment_1_g_f_$i.sh
+sleep 1
+sbatch run_experiment_1_r_b_$i.sh
+sleep 1
+sbatch run_experiment_1_r_e_$i.sh
+sleep 1
+sbatch run_experiment_1_r_f_$i.sh
+sleep 1
+sbatch run_experiment_1_n_b_$i.sh
+sleep 1
 sbatch run_experiment_1_n_e_$i.sh
-sleep 3
-done
-
-for i in {9..25}
-do
+sleep 1
 sbatch run_experiment_1_n_f_$i.sh
-sleep 3
-done
-
-for i in {9..25}
-do
+sleep 1
+sbatch run_experiment_2_g_b_AffinityPropagation_$i.sh
+sleep 1
+sbatch run_experiment_2_g_b_AgglomerativeClustering_$i.sh
+sleep 1
+sbatch run_experiment_2_g_b_Birch_$i.sh
+sleep 1
+sbatch run_experiment_2_g_b_KMeans_$i.sh
+sleep 1
+sbatch run_experiment_2_g_b_SpectralClustering_$i.sh
+sleep 1
+sbatch run_experiment_2_g_b_$i.sh
+sleep 1
+sbatch run_experiment_2_g_e_AffinityPropagation_$i.sh
+sleep 1
+sbatch run_experiment_2_g_e_AgglomerativeClustering_$i.sh
+sleep 1
+sbatch run_experiment_2_g_e_Birch_$i.sh
+sleep 1
+sbatch run_experiment_2_g_e_KMeans_$i.sh
+sleep 1
+sbatch run_experiment_2_g_e_SpectralClustering_$i.sh
+sleep 1
+sbatch run_experiment_2_g_e_$i.sh
+sleep 1
+sbatch run_experiment_2_g_f_AffinityPropagation_$i.sh
+sleep 1
+sbatch run_experiment_2_g_f_AgglomerativeClustering_$i.sh
+sleep 1
+sbatch run_experiment_2_g_f_Birch_$i.sh
+sleep 1
+sbatch run_experiment_2_g_f_KMeans_$i.sh
+sleep 1
+sbatch run_experiment_2_g_f_SpectralClustering_$i.sh
+sleep 1
+sbatch run_experiment_2_g_f_$i.sh
+sleep 1
+sbatch run_experiment_2_r_b_AffinityPropagation_$i.sh
+sleep 1
+sbatch run_experiment_2_r_b_AgglomerativeClustering_$i.sh
+sleep 1
+sbatch run_experiment_2_r_b_Birch_$i.sh
+sleep 1
+sbatch run_experiment_2_r_b_KMeans_$i.sh
+sleep 1
+sbatch run_experiment_2_r_b_SpectralClustering_$i.sh
+sleep 1
+sbatch run_experiment_2_r_b_$i.sh
+sleep 1
+sbatch run_experiment_2_r_e_AffinityPropagation_$i.sh
+sleep 1
+sbatch run_experiment_2_r_e_AgglomerativeClustering_$i.sh
+sleep 1
+sbatch run_experiment_2_r_e_Birch_$i.sh
+sleep 1
+sbatch run_experiment_2_r_e_KMeans_$i.sh
+sleep 1
+sbatch run_experiment_2_r_e_SpectralClustering_$i.sh
+sleep 1
+sbatch run_experiment_2_r_e_$i.sh
+sleep 1
+sbatch run_experiment_2_r_f_AffinityPropagation_$i.sh
+sleep 1
+sbatch run_experiment_2_r_f_AgglomerativeClustering_$i.sh
+sleep 1
+sbatch run_experiment_2_r_f_Birch_$i.sh
+sleep 1
+sbatch run_experiment_2_r_f_KMeans_$i.sh
+sleep 1
+sbatch run_experiment_2_r_f_SpectralClustering_$i.sh
+sleep 1
+sbatch run_experiment_2_r_f_$i.sh
+sleep 1
+sbatch run_experiment_2_n_b_AffinityPropagation_$i.sh
+sleep 1
+sbatch run_experiment_2_n_b_AgglomerativeClustering_$i.sh
+sleep 1
+sbatch run_experiment_2_n_b_Birch_$i.sh
+sleep 1
+sbatch run_experiment_2_n_b_KMeans_$i.sh
+sleep 1
+sbatch run_experiment_2_n_b_SpectralClustering_$i.sh
+sleep 1
+sbatch run_experiment_2_n_b_$i.sh
+sleep 1
 sbatch run_experiment_2_n_e_AffinityPropagation_$i.sh
-sleep 3
-done
-
-for i in {9..25}
-do
+sleep 1
 sbatch run_experiment_2_n_e_AgglomerativeClustering_$i.sh
-sleep 3
-done
-
-for i in {9..25}
-do
+sleep 1
 sbatch run_experiment_2_n_e_Birch_$i.sh
-sleep 3
-done
-
-for i in {9..25}
-do
+sleep 1
 sbatch run_experiment_2_n_e_KMeans_$i.sh
-sleep 3
-done
-
-for i in {9..25}
-do
+sleep 1
 sbatch run_experiment_2_n_e_SpectralClustering_$i.sh
-sleep 3
-done
-
-# for i in {9..25}
-# do
-# sbatch run_experiment_2_n_e_$i.sh
-# sleep 3
-# done
-
-for i in {9..25}
-do
+sleep 1
+sbatch run_experiment_2_n_e_$i.sh
+sleep 1
 sbatch run_experiment_2_n_f_AffinityPropagation_$i.sh
-sleep 3
-done
-
-for i in {9..25}
-do
+sleep 1
 sbatch run_experiment_2_n_f_AgglomerativeClustering_$i.sh
-sleep 3
-done
-
-for i in {9..25}
-do
+sleep 1
 sbatch run_experiment_2_n_f_Birch_$i.sh
-sleep 3
-done
-
-for i in {9..25}
-do
+sleep 1
 sbatch run_experiment_2_n_f_KMeans_$i.sh
-sleep 3
-done
-
-for i in {9..25}
-do
+sleep 1
 sbatch run_experiment_2_n_f_SpectralClustering_$i.sh
-sleep 3
+sleep 1
+sbatch run_experiment_2_n_f_$i.sh
+sleep 1
 done
-
-# for i in {9..25}
-# do
-# sbatch run_experiment_2_n_f_$i.sh
-# sleep 3
-# done
-

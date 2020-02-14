@@ -1,7 +1,18 @@
+mkdir npyImputeG1B
 mkdir npyImputeG1E
 mkdir npyImputeG1F
+mkdir npyImputeR1B
+mkdir npyImputeR1E
+mkdir npyImputeR1F
+mkdir npyImputeN1B
 mkdir npyImputeN1E
 mkdir npyImputeN1F
+mkdir npyImputeG2B_AffinityPropagation
+mkdir npyImputeG2B_AgglomerativeClustering
+mkdir npyImputeG2B_Birch
+mkdir npyImputeG2B_KMeans
+mkdir npyImputeG2B_SpectralClustering
+mkdir npyImputeG2B
 mkdir npyImputeG2E_AffinityPropagation
 mkdir npyImputeG2E_AgglomerativeClustering
 mkdir npyImputeG2E_Birch
@@ -14,6 +25,30 @@ mkdir npyImputeG2F_Birch
 mkdir npyImputeG2F_KMeans
 mkdir npyImputeG2F_SpectralClustering
 mkdir npyImputeG2F
+mkdir npyImputeR2B_AffinityPropagation
+mkdir npyImputeR2B_AgglomerativeClustering
+mkdir npyImputeR2B_Birch
+mkdir npyImputeR2B_KMeans
+mkdir npyImputeR2B_SpectralClustering
+mkdir npyImputeR2B
+mkdir npyImputeR2E_AffinityPropagation
+mkdir npyImputeR2E_AgglomerativeClustering
+mkdir npyImputeR2E_Birch
+mkdir npyImputeR2E_KMeans
+mkdir npyImputeR2E_SpectralClustering
+mkdir npyImputeR2E
+mkdir npyImputeR2F_AffinityPropagation
+mkdir npyImputeR2F_AgglomerativeClustering
+mkdir npyImputeR2F_Birch
+mkdir npyImputeR2F_KMeans
+mkdir npyImputeR2F_SpectralClustering
+mkdir npyImputeR2F
+mkdir npyImputeN2B_AffinityPropagation
+mkdir npyImputeN2B_AgglomerativeClustering
+mkdir npyImputeN2B_Birch
+mkdir npyImputeN2B_KMeans
+mkdir npyImputeN2B_SpectralClustering
+mkdir npyImputeN2B
 mkdir npyImputeN2E_AffinityPropagation
 mkdir npyImputeN2E_AgglomerativeClustering
 mkdir npyImputeN2E_Birch
@@ -27,93 +62,132 @@ mkdir npyImputeN2F_KMeans
 mkdir npyImputeN2F_SpectralClustering
 mkdir npyImputeN2F
 
-for i in {12..25}
+for i in {0..62}
 do
+sbatch run_experimentImpute_1_g_b_$i.sh
+sleep 1
 sbatch run_experimentImpute_1_g_e_$i.sh
-sleep 3
-done
-
-for i in {12..25}
-do
+sleep 1
+sbatch run_experimentImpute_1_g_f_$i.sh
+sleep 1
+sbatch run_experimentImpute_1_r_b_$i.sh
+sleep 1
+sbatch run_experimentImpute_1_r_e_$i.sh
+sleep 1
+sbatch run_experimentImpute_1_r_f_$i.sh
+sleep 1
+sbatch run_experimentImpute_1_n_b_$i.sh
+sleep 1
 sbatch run_experimentImpute_1_n_e_$i.sh
-sleep 3
-done
-
-for i in {12..25}
-do
+sleep 1
 sbatch run_experimentImpute_1_n_f_$i.sh
-sleep 3
-done
-
-for i in {9..25}
-do
+sleep 1
+sbatch run_experimentImpute_2_g_b_AffinityPropagation_$i.sh
+sleep 1
+sbatch run_experimentImpute_2_g_b_AgglomerativeClustering_$i.sh
+sleep 1
+sbatch run_experimentImpute_2_g_b_Birch_$i.sh
+sleep 1
+sbatch run_experimentImpute_2_g_b_KMeans_$i.sh
+sleep 1
+sbatch run_experimentImpute_2_g_b_SpectralClustering_$i.sh
+sleep 1
+sbatch run_experimentImpute_2_g_b_$i.sh
+sleep 1
+sbatch run_experimentImpute_2_g_e_AffinityPropagation_$i.sh
+sleep 1
+sbatch run_experimentImpute_2_g_e_AgglomerativeClustering_$i.sh
+sleep 1
+sbatch run_experimentImpute_2_g_e_Birch_$i.sh
+sleep 1
+sbatch run_experimentImpute_2_g_e_KMeans_$i.sh
+sleep 1
+sbatch run_experimentImpute_2_g_e_SpectralClustering_$i.sh
+sleep 1
+sbatch run_experimentImpute_2_g_e_$i.sh
+sleep 1
+sbatch run_experimentImpute_2_g_f_AffinityPropagation_$i.sh
+sleep 1
+sbatch run_experimentImpute_2_g_f_AgglomerativeClustering_$i.sh
+sleep 1
+sbatch run_experimentImpute_2_g_f_Birch_$i.sh
+sleep 1
+sbatch run_experimentImpute_2_g_f_KMeans_$i.sh
+sleep 1
+sbatch run_experimentImpute_2_g_f_SpectralClustering_$i.sh
+sleep 1
+sbatch run_experimentImpute_2_g_f_$i.sh
+sleep 1
+sbatch run_experimentImpute_2_r_b_AffinityPropagation_$i.sh
+sleep 1
+sbatch run_experimentImpute_2_r_b_AgglomerativeClustering_$i.sh
+sleep 1
+sbatch run_experimentImpute_2_r_b_Birch_$i.sh
+sleep 1
+sbatch run_experimentImpute_2_r_b_KMeans_$i.sh
+sleep 1
+sbatch run_experimentImpute_2_r_b_SpectralClustering_$i.sh
+sleep 1
+sbatch run_experimentImpute_2_r_b_$i.sh
+sleep 1
+sbatch run_experimentImpute_2_r_e_AffinityPropagation_$i.sh
+sleep 1
+sbatch run_experimentImpute_2_r_e_AgglomerativeClustering_$i.sh
+sleep 1
+sbatch run_experimentImpute_2_r_e_Birch_$i.sh
+sleep 1
+sbatch run_experimentImpute_2_r_e_KMeans_$i.sh
+sleep 1
+sbatch run_experimentImpute_2_r_e_SpectralClustering_$i.sh
+sleep 1
+sbatch run_experimentImpute_2_r_e_$i.sh
+sleep 1
+sbatch run_experimentImpute_2_r_f_AffinityPropagation_$i.sh
+sleep 1
+sbatch run_experimentImpute_2_r_f_AgglomerativeClustering_$i.sh
+sleep 1
+sbatch run_experimentImpute_2_r_f_Birch_$i.sh
+sleep 1
+sbatch run_experimentImpute_2_r_f_KMeans_$i.sh
+sleep 1
+sbatch run_experimentImpute_2_r_f_SpectralClustering_$i.sh
+sleep 1
+sbatch run_experimentImpute_2_r_f_$i.sh
+sleep 1
+sbatch run_experimentImpute_2_n_b_AffinityPropagation_$i.sh
+sleep 1
+sbatch run_experimentImpute_2_n_b_AgglomerativeClustering_$i.sh
+sleep 1
+sbatch run_experimentImpute_2_n_b_Birch_$i.sh
+sleep 1
+sbatch run_experimentImpute_2_n_b_KMeans_$i.sh
+sleep 1
+sbatch run_experimentImpute_2_n_b_SpectralClustering_$i.sh
+sleep 1
+sbatch run_experimentImpute_2_n_b_$i.sh
+sleep 1
 sbatch run_experimentImpute_2_n_e_AffinityPropagation_$i.sh
-sleep 3
-done
-
-for i in {9..25}
-do
+sleep 1
 sbatch run_experimentImpute_2_n_e_AgglomerativeClustering_$i.sh
-sleep 3
-done
-
-for i in {9..25}
-do
+sleep 1
 sbatch run_experimentImpute_2_n_e_Birch_$i.sh
-sleep 3
-done
-
-for i in {9..25}
-do
+sleep 1
 sbatch run_experimentImpute_2_n_e_KMeans_$i.sh
-sleep 3
-done
-
-for i in {9..25}
-do
+sleep 1
 sbatch run_experimentImpute_2_n_e_SpectralClustering_$i.sh
-sleep 3
-done
-
-# for i in {9..25}
-# do
-# sbatch run_experimentImpute_2_n_e_$i.sh
-# sleep 3
-# done
-
-for i in {9..25}
-do
+sleep 1
+sbatch run_experimentImpute_2_n_e_$i.sh
+sleep 1
 sbatch run_experimentImpute_2_n_f_AffinityPropagation_$i.sh
-sleep 3
-done
-
-for i in {9..25}
-do
+sleep 1
 sbatch run_experimentImpute_2_n_f_AgglomerativeClustering_$i.sh
-sleep 3
-done
-
-for i in {9..25}
-do
+sleep 1
 sbatch run_experimentImpute_2_n_f_Birch_$i.sh
-sleep 3
-done
-
-for i in {9..25}
-do
+sleep 1
 sbatch run_experimentImpute_2_n_f_KMeans_$i.sh
-sleep 3
-done
-
-for i in {9..25}
-do
+sleep 1
 sbatch run_experimentImpute_2_n_f_SpectralClustering_$i.sh
-sleep 3
+sleep 1
+sbatch run_experimentImpute_2_n_f_$i.sh
+sleep 1
 done
-
-# for i in {9..25}
-# do
-# sbatch run_experimentImpute_2_n_f_$i.sh
-# sleep 3
-# done
-

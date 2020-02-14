@@ -208,6 +208,8 @@ def loss_function_graph(recon_x, x, mu, logvar, adjsample=None, adjfeature=None,
         BCE = graph_mse_loss_function(recon_x, target, adjsample, adjfeature, reduction='sum')
     elif regularizer_type == 'LTMG':
         BCE = regulation_mse_loss_function(recon_x, target, regulationMatrix, reduction='sum')
+    elif regularizer_type == 'LTMG01':
+        BCE = regulation01_mse_loss_function(recon_x, target, regulationMatrix, reduction='sum')
     
     # Entropy
     # BCE = graph_binary_cross_entropy(recon_x, target, adj, reduction='sum')
@@ -340,7 +342,7 @@ def graph_mse_loss_function(input, target, adjsample, adjfeature, size_average=N
 
 # Regulation mse as the regularizor
 # Now LTMG is set as the input
-def regulation_mse_loss_function(input, target, regulationMatrix, reguPara=0.1, size_average=None, reduce=None, reduction='mean'):
+def regulation_mse_loss_function(input, target, regulationMatrix, reguPara=0.5, size_average=None, reduce=None, reduction='mean'):
     # type: (Tensor, Tensor, str, Optional[bool], Optional[bool], str) -> Tensor
     r"""regulation_mse_loss_function(input, target, regulationMatrix, regularizer_type, size_average=None, reduce=None, reduction='mean') -> Tensor
 
@@ -356,6 +358,30 @@ def regulation_mse_loss_function(input, target, regulationMatrix, reguPara=0.1, 
         reduction = legacy_get_string(size_average, reduce)
     # Now it use regulariz type to distinguish, it can be imporved later
     ret = (input - target) ** 2
+    ret = torch.mul(ret, reguPara * regulationMatrix)
+    if reduction != 'none':
+        ret = torch.mean(ret) if reduction == 'mean' else torch.sum(ret)      
+    return ret
+
+# Regulation mse as the regularizor
+# Now LTMG is set as the input
+def regulation01_mse_loss_function(input, target, regulationMatrix, reguPara=0.5, size_average=None, reduce=None, reduction='mean'):
+    # type: (Tensor, Tensor, str, Optional[bool], Optional[bool], str) -> Tensor
+    r"""regulation_mse_loss_function(input, target, regulationMatrix, regularizer_type, size_average=None, reduce=None, reduction='mean') -> Tensor
+
+    Measures the element-wise mean squared error for regulation input, now only support LTMG.
+
+    See :revised from pytorch class:`~torch.nn.MSELoss` for details.
+    """
+    if not (target.size() == input.size()):
+        print("Using a target size ({}) that is different to the input size ({}). "
+                      "This will likely lead to incorrect results due to broadcasting. "
+                      "Please ensure they have the same size.".format(target.size(), input.size()))
+    if size_average is not None or reduce is not None:
+        reduction = legacy_get_string(size_average, reduce)
+    # Now it use regulariz type to distinguish, it can be imporved later
+    ret = (input - target) ** 2
+    regulationMatrix[regulationMatrix>0]=1
     ret = torch.mul(ret, reguPara * regulationMatrix)
     if reduction != 'none':
         ret = torch.mean(ret) if reduction == 'mean' else torch.sum(ret)      

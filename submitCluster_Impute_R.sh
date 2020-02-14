@@ -1,3 +1,4 @@
+# For R usage, can be delete later
 for i in {9..25}
 do
 sbatch run_experimentImpute_2_n_e_$i.sh
