@@ -32,66 +32,94 @@ datasetList = [
 if args.imputeMode:
     pyStr = 'results_impute.py'
     npyList = [
-        '../npyImputeG1E/',
-        '../npyImputeG1F/',
-        '../npyImputeN1E/',
-        '../npyImputeN1F/',
-        '../npyImputeG2E_AffinityPropagation/',
-        '../npyImputeG2E_AgglomerativeClustering/',
-        '../npyImputeG2E_Birch/',
-        '../npyImputeG2E_KMeans/',
-        '../npyImputeG2E_SpectralClustering/',
-        '../npyImputeG2E/',
-        '../npyImputeG2F_AffinityPropagation/',
-        '../npyImputeG2F_AgglomerativeClustering/',
-        '../npyImputeG2F_Birch/',
-        '../npyImputeG2F_KMeans/',
-        '../npyImputeG2F_SpectralClustering/',
-        '../npyImputeG2F/',
-        '../npyImputeN2E_AffinityPropagation/',
-        '../npyImputeN2E_AgglomerativeClustering/',
-        '../npyImputeN2E_Birch/',
-        '../npyImputeN2E_KMeans/',
-        '../npyImputeN2E_SpectralClustering/',
-        '../npyImputeN2E/',
-        '../npyImputeN2F_AffinityPropagation/',
-        '../npyImputeN2F_AgglomerativeClustering/',
-        '../npyImputeN2F_Birch/',
-        '../npyImputeN2F_KMeans/',
-        '../npyImputeN2F_SpectralClustering/',
-        '../npyImputeN2F/'
+        '../npyImputeG1B/', #0
+        '../npyImputeG1E/', #1
+        '../npyImputeG1F/', #2
+        '../npyImputeN1B/', #3
+        '../npyImputeN1E/', #4
+        '../npyImputeN1F/', #5
+        '../npyImputeG2B_AffinityPropagation/',  #6
+        '../npyImputeG2B_AgglomerativeClustering/', #7
+        '../npyImputeG2B_Birch/', #8
+        '../npyImputeG2B_KMeans/',  #9
+        '../npyImputeG2B_SpectralClustering/', #10
+        '../npyImputeG2B/', #11
+        '../npyImputeG2E_AffinityPropagation/', #12
+        '../npyImputeG2E_AgglomerativeClustering/', #13
+        '../npyImputeG2E_Birch/', #14
+        '../npyImputeG2E_KMeans/', #15
+        '../npyImputeG2E_SpectralClustering/', #16
+        '../npyImputeG2E/', #17
+        '../npyImputeG2F_AffinityPropagation/', #18
+        '../npyImputeG2F_AgglomerativeClustering/', #19
+        '../npyImputeG2F_Birch/', #20
+        '../npyImputeG2F_KMeans/', #21
+        '../npyImputeG2F_SpectralClustering/', #22
+        '../npyImputeG2F/', #23
+        '../npyImputeN2B_AffinityPropagation/', #24
+        '../npyImputeN2B_AgglomerativeClustering/', #25
+        '../npyImputeN2B_Birch/', #26
+        '../npyImputeN2B_KMeans/', #27
+        '../npyImputeN2B_SpectralClustering/', #28
+        '../npyImputeN2B/', #29
+        '../npyImputeN2E_AffinityPropagation/', #30
+        '../npyImputeN2E_AgglomerativeClustering/', #31
+        '../npyImputeN2E_Birch/', #32
+        '../npyImputeN2E_KMeans/', #33
+        '../npyImputeN2E_SpectralClustering/', #34
+        '../npyImputeN2E/', #35
+        '../npyImputeN2F_AffinityPropagation/', #36
+        '../npyImputeN2F_AgglomerativeClustering/', #37
+        '../npyImputeN2F_Birch/',  #38
+        '../npyImputeN2F_KMeans/',  #39
+        '../npyImputeN2F_SpectralClustering/', #40
+        '../npyImputeN2F/'  #41
         ]
 else:
     pyStr = 'results_celltype.py'
     npyList = [
-        '../npyG1E/',
-        '../npyG1F/',
-        '../npyN1E/',
-        '../npyN1F/',
-        '../npyG2E_AffinityPropagation/',
-        '../npyG2E_AgglomerativeClustering/',
-        '../npyG2E_Birch/',
-        '../npyG2E_KMeans/',
-        '../npyG2E_SpectralClustering/',
-        '../npyG2E/',
-        '../npyG2F_AffinityPropagation/',
-        '../npyG2F_AgglomerativeClustering/',
-        '../npyG2F_Birch/',
-        '../npyG2F_KMeans/',
-        '../npyG2F_SpectralClustering/',
-        '../npyG2F/',
-        '../npyN2E_AffinityPropagation/',
-        '../npyN2E_AgglomerativeClustering/',
-        '../npyN2E_Birch/',
-        '../npyN2E_KMeans/',
-        '../npyN2E_SpectralClustering/',
-        '../npyN2E/',
-        '../npyN2F_AffinityPropagation/',
-        '../npyN2F_AgglomerativeClustering/',
-        '../npyN2F_Birch/',
-        '../npyN2F_KMeans/',
-        '../npyN2F_SpectralClustering/',
-        '../npyN2F/'
+        '../npyG1B/', #0
+        '../npyG1E/', #1
+        '../npyG1F/', #2
+        '../npyN1B/', #3
+        '../npyN1E/', #4
+        '../npyN1F/', #5
+        '../npyG2B_AffinityPropagation/', #6
+        '../npyG2B_AgglomerativeClustering/', #7
+        '../npyG2B_Birch/', #8
+        '../npyG2B_KMeans/', #9
+        '../npyG2B_SpectralClustering/', #10
+        '../npyG2B/', #11
+        '../npyG2E_AffinityPropagation/', #12
+        '../npyG2E_AgglomerativeClustering/', #13
+        '../npyG2E_Birch/', #14
+        '../npyG2E_KMeans/', #15
+        '../npyG2E_SpectralClustering/', #16
+        '../npyG2E/', #17
+        '../npyG2F_AffinityPropagation/', #18
+        '../npyG2F_AgglomerativeClustering/', #19
+        '../npyG2F_Birch/', #20
+        '../npyG2F_KMeans/', #21
+        '../npyG2F_SpectralClustering/', #22
+        '../npyG2F/', #23
+        '../npyN2B_AffinityPropagation/', #24
+        '../npyN2B_AgglomerativeClustering/', #25
+        '../npyN2B_Birch/', #26
+        '../npyN2B_KMeans/', #27
+        '../npyN2E_SpectralClustering/', #28
+        '../npyN2E/', #29
+        '../npyN2E_AffinityPropagation/', #30
+        '../npyN2E_AgglomerativeClustering/', #31
+        '../npyN2E_Birch/', #32
+        '../npyN2E_KMeans/', #33
+        '../npyN2E_SpectralClustering/', #34
+        '../npyN2E/', #35
+        '../npyN2F_AffinityPropagation/', #36
+        '../npyN2F_AgglomerativeClustering/', #37
+        '../npyN2F_Birch/', #38
+        '../npyN2F_KMeans/', #39
+        '../npyN2F_SpectralClustering/', #40
+        '../npyN2F/'  #41
         ]
 
 reguDict={2:None, 3:None}
