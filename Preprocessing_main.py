@@ -283,40 +283,6 @@ elif args.expression_name=='sci-CAR':
     expressionname = 'sci-CAR.csv'
 elif args.expression_name=='sci-CAR_LTMG':
     expressionname = 'sci-CAR_LTMG.csv'
-elif args.expression_name=='1.Biase':
-    expressionname = '1.Biase.csv'
-elif args.expression_name=='2.Li':
-    expressionname = '2.Li.csv'
-elif args.expression_name=='3.Treutlein':
-    expressionname = '3.Treutlein.csv'
-elif args.expression_name=='4.Yan':
-    expressionname = '4.Yan.csv'
-elif args.expression_name=='5.Goolam':
-    expressionname = '5.Goolam.csv'
-elif args.expression_name=='6.Guo':
-    expressionname = '6.Guo.csv'
-elif args.expression_name=='7.Deng':
-    expressionname = '7.Deng.csv'
-elif args.expression_name=='8.Pollen':
-    expressionname = '8.Pollen.csv'
-elif args.expression_name=='9.Chung':
-    expressionname = '9.Chung.csv'
-elif args.expression_name=='10.Usoskin':
-    expressionname = '10.Usoskin.csv'
-elif args.expression_name=='11.Kolodziejczyk':
-    expressionname = '11.Kolodziejczyk.csv'
-elif args.expression_name=='12.Klein':
-    expressionname = '12.Klein.csv'
-elif args.expression_name=='13.Zeisel':
-    expressionname = '13.Zeisel.csv'
-elif args.expression_name=='4.Yan_LTMG':
-    expressionname = '4.Yan_LTMG.csv'
-elif args.expression_name=='5.Goolam_LTMG':
-    expressionname = '5.Goolam_LTMG.csv'
-elif args.expression_name=='7.Deng_LTMG':
-    expressionname = '7.Deng_LTMG.csv'
-elif args.expression_name=='8.Pollen_LTMG':
-    expressionname = '8.Pollen_LTMG.csv'
 elif args.expression_name=='MMPbasal':
     expressionname = 'MMPbasal.csv'
 elif args.expression_name=='MMPbasal_all':
@@ -359,6 +325,33 @@ elif args.expression_name=='T8000':
     expressionname = 'T8000.csv'
 elif args.expression_name=='test':
     expressionname = 'test_data.csv'
+# Start working here
+elif args.expression_name=='1.Biase':
+    expressionname = '1.Biase.csv'
+elif args.expression_name=='2.Li':
+    expressionname = '2.Li.csv'
+elif args.expression_name=='3.Treutlein':
+    expressionname = '3.Treutlein.csv'
+elif args.expression_name=='4.Yan':
+    expressionname = '4.Yan.csv'
+elif args.expression_name=='5.Goolam':
+    expressionname = '5.Goolam.csv'
+elif args.expression_name=='6.Guo':
+    expressionname = '6.Guo.csv'
+elif args.expression_name=='7.Deng':
+    expressionname = '7.Deng.csv'
+elif args.expression_name=='8.Pollen':
+    expressionname = '8.Pollen.csv'
+elif args.expression_name=='9.Chung':
+    expressionname = '9.Chung.csv'
+elif args.expression_name=='10.Usoskin':
+    expressionname = '10.Usoskin.csv'
+elif args.expression_name=='11.Kolodziejczyk':
+    expressionname = '11.Kolodziejczyk.csv'
+elif args.expression_name=='12.Klein':
+    expressionname = '12.Klein.csv'
+elif args.expression_name=='13.Zeisel':
+    expressionname = '13.Zeisel.csv'
 
 out_folder = "data/sc/"+args.expression_name+"/"
 if not os.path.exists(out_folder):
