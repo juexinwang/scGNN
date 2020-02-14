@@ -391,8 +391,8 @@ if __name__ == "__main__":
         # graph criteria here
         if args.converge_type == 'graph':
             #debug
-            print('adjNew:{} adjOld:{} threshold:{}'.format(adjNew,adjOld,args.converge_graphratio*nlG0))
-            if abs(np.mean(adjNew-adjOld))<args.converge_graphratio*nlG0：
+            print('adjNew:{} adjOld:{} threshold:{}'.format(adjNew, adjOld, args.converge_graphratio*nlG0))
+            if abs(np.mean(adjNew-adjOld)) < args.converge_graphratio * nlG0:
                 print('Converge now!')
                 break
         # celltype criteria here
