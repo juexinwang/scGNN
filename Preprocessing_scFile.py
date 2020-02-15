@@ -77,8 +77,9 @@
 # python Preprocessing_scFile.py --inputfile /home/wangjue/biodata/scData/allBench/10.Usoskin/T2000_UsingOriginalMatrix/T2000_expression.txt --outputfile /home/wangjue/biodata/scData/10.Usoskin.csv --cellcount 622 --genecount 2000 --split space --cellheadflag False
 # python Preprocessing_scFile.py --inputfile /home/wangjue/biodata/scData/allBench/11.Kolodziejczyk/T2000_UsingOriginalMatrix/T2000_expression.txt --outputfile /home/wangjue/biodata/scData/11.Kolodziejczyk.csv --cellcount 704 --genecount 2000 --split space --cellheadflag False
 # python Preprocessing_scFile.py --inputfile /home/wangjue/biodata/scData/allBench/12.Klein/T2000_UsingOriginalMatrix/T2000_expression.txt --outputfile /home/wangjue/biodata/scData/12.Klein.csv --cellcount 2717 --genecount 2000 --split space --cellheadflag False
-
 # python Preprocessing_scFile.py --inputfile /home/wangjue/biodata/scData/allBench/13.Zeisel/T2000_UsingOriginalMatrix/T2000_expression.txt  --outputfile /home/wangjue/biodata/scData/13.Zeisel.csv --cellcount 3005 --genecount 2000 --split space --cellheadflag False
+
+
 
 import numpy as np
 import argparse

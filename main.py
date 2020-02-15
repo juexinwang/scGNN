@@ -20,7 +20,7 @@ from benchmark_util import *
 from gae_embedding import GAEembedding,measure_clustering_results,test_clustering_benchmark_results
 
 parser = argparse.ArgumentParser(description='Graph EM AutoEncoder for scRNA')
-parser.add_argument('--datasetName', type=str, default='13.Zeisel',
+parser.add_argument('--datasetName', type=str, default='1.Biase',
                     help='TGFb/sci-CAR/sci-CAR_LTMG/MMPbasal/MMPbasal_all/MMPbasal_allgene/MMPbasal_allcell/MMPepo/MMPbasal_LTMG/MMPbasal_all_LTMG/MMPbasal_2000')
 # Dataset: 1-13 benchmark: 1.Biase/2.Li/3.Treutlein/4.Yan/5.Goolam/6.Guo/7.Deng/8.Pollen/9.Chung/10.Usoskin/11.Kolodziejczyk/12.Klein/13.Zeisel
 parser.add_argument('--batch-size', type=int, default=12800, metavar='N',

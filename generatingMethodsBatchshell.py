@@ -92,41 +92,52 @@ methodsList = [
     ('run_experiment_2_n_f_SpectralClustering E2nfS','--regulized-type noregu --EMtype celltypeEM --clustering-method SpectralClustering --npyDir','npyN2F_SpectralClustering/')
 ]
 
-# datasetNameList = [
-#     'MMPbasal_2000',
-#     'MMPbasal_2000 --discreteTag',
-#     'MMPbasal_2000_LTMG',
-#     '4.Yan --n-clusters 7',
-#     '4.Yan --discreteTag --n-clusters 7',
-#     '4.Yan_LTMG --n-clusters 7',
-#     '5.Goolam --n-clusters 5',
-#     '5.Goolam --discreteTag --n-clusters 5',
-#     '5.Goolam_LTMG --n-clusters 5',
-#     '7.Deng --n-clusters 10',
-#     '7.Deng --discreteTag --n-clusters 10',
-#     '7.Deng_LTMG --n-clusters 10'
-#     '8.Pollen --n-clusters 11',
-#     '8.Pollen --discreteTag --n-clusters 11',
-#     '8.Pollen_LTMG --n-clusters 11',
-#     '11.Kolodziejczyk --n-clusters 3',
-#     '11.Kolodziejczyk --discreteTag --n-clusters 3',
-#     '11.Kolodziejczyk_LTMG --n-clusters 3'
-# ]
-
 datasetNameList = [
-    'T1000 --n-clusters 3',
-    'T1000 --discreteTag --n-clusters 3',
-    'T1000_LTMG --n-clusters 3',
-    'T2000 --n-clusters 3',
-    'T2000 --discreteTag --n-clusters 3',
-    'T2000_LTMG --n-clusters 3',
-    'T4000 --n-clusters 3',
-    'T4000 --discreteTag --n-clusters 3',
-    'T4000_LTMG --n-clusters 3',
-    'T8000 --n-clusters 3',
-    'T8000 --discreteTag --n-clusters 3',
-    'T8000_LTMG --n-clusters 3'
+    # 'MMPbasal_2000',
+    # 'MMPbasal_2000 --discreteTag',
+    # 'MMPbasal_2000_LTMG',
+    '1.Biase --n-clusters 3',
+    '1.Biase --discreteTag --n-clusters 3',
+    '2.Li --n-clusters 9',
+    '2.Li --discreteTag --n-clusters 9',
+    '3.Treutlein --n-clusters 5',
+    '3.Treutlein --discreteTag --n-clusters 5',
+    '4.Yan --n-clusters 7',
+    '4.Yan --discreteTag --n-clusters 7',
+    '5.Goolam --n-clusters 5',
+    '5.Goolam --discreteTag --n-clusters 5',
+    '6.Guo --n-clusters 9',
+    '6.Guo --discreteTag --n-clusters 9',
+    '7.Deng --n-clusters 10',
+    '7.Deng --discreteTag --n-clusters 10',
+    '8.Pollen --n-clusters 11',
+    '8.Pollen --discreteTag --n-clusters 11',
+    '9.Chung --n-clusters 4',
+    '9.Chung --discreteTag --n-clusters 4',
+    '10.Usoskin --n-clusters 11',
+    '10.Usoskin --discreteTag --n-clusters 11',
+    '11.Kolodziejczyk --n-clusters 3',
+    '11.Kolodziejczyk --discreteTag --n-clusters 3',
+    '12.Klein --n-clusters 4',
+    '12.Klein --discreteTag --n-clusters 4',
+    '13.Zeisel --n-clusters 7',
+    '13.Zeisel --discreteTag --n-clusters 7',
 ]
+
+# datasetNameList = [
+#     'T1000 --n-clusters 3',
+#     'T1000 --discreteTag --n-clusters 3',
+#     'T1000_LTMG --n-clusters 3',
+#     'T2000 --n-clusters 3',
+#     'T2000 --discreteTag --n-clusters 3',
+#     'T2000_LTMG --n-clusters 3',
+#     'T4000 --n-clusters 3',
+#     'T4000 --discreteTag --n-clusters 3',
+#     'T4000_LTMG --n-clusters 3',
+#     'T8000 --n-clusters 3',
+#     'T8000 --discreteTag --n-clusters 3',
+#     'T8000_LTMG --n-clusters 3'
+# ]
 
 # generate sbatch files:
 for item in methodsList:
