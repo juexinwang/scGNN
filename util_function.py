@@ -87,6 +87,7 @@ def load_data(datasetName, discreteTag):
 
     return features
 
+# TODO: transform does not work here, leave it, will work on it in next version
 class logtransform(object):
     '''
     log transform of the object
@@ -137,7 +138,9 @@ class scDataset(Dataset):
         # self.features = self.features.transpose()
         # save nonzero
         self.nz_i,self.nz_j = self.features.nonzero()
-        self.transform = transform        
+        self.transform = transform
+        # check whether log or not
+        self.discreteTag = discreteTag       
 
     def __len__(self):
         return self.features.shape[0]
@@ -152,6 +155,9 @@ class scDataset(Dataset):
         # transform after get the data
         if self.transform:
             sample = self.transform(sample)
+
+        if not self.discreteTag:
+            sample = torch.log(sample)
 
         return sample,idx
 
@@ -167,7 +173,9 @@ class scDatasetDropout(Dataset):
         self.features, self.i, self.j, self.ix = impute_dropout(self.featuresOriginal, rate=self.ratio) 
         # Now lines are cells, and cols are genes
         # self.features = self.features.transpose()
-        self.transform = transform        
+        self.transform = transform  
+        # check whether log or not
+        self.discreteTag = discreteTag       
 
     def __len__(self):
         return self.features.shape[0]
@@ -182,6 +190,9 @@ class scDatasetDropout(Dataset):
         # transform after get the data
         if self.transform:
             sample = self.transform(sample)
+        
+        if not self.discreteTag:
+            sample = torch.log(sample)
        
         return sample
 

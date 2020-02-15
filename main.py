@@ -106,15 +106,17 @@ kwargs = {'num_workers': 1, 'pin_memory': True} if args.cuda else {}
 print(args)
 
 if not args.imputeMode:
-    if args.discreteTag:
-        scData = scDataset(args.datasetName, args.discreteTag)
-    else:
-        scData = scDataset(args.datasetName, args.discreteTag, transform=logtransform)
+    # if args.discreteTag:
+    #     scData = scDataset(args.datasetName, args.discreteTag)
+    # else:
+    #     scData = scDataset(args.datasetName, args.discreteTag, transform=logtransform)
+    scData = scDataset(args.datasetName, args.discreteTag)
 else:
-    if args.discreteTag:
-        scData = scDatasetDropout(args.datasetName, args.discreteTag, args.dropoutRatio)
-    else:
-        scData = scDatasetDropout(args.datasetName, args.discreteTag, args.dropoutRatio, transform=logtransform)
+    # if args.discreteTag:
+    #     scData = scDatasetDropout(args.datasetName, args.discreteTag, args.dropoutRatio)
+    # else:
+    #     scData = scDatasetDropout(args.datasetName, args.discreteTag, args.dropoutRatio, transform=logtransform)
+    scData = scDatasetDropout(args.datasetName, args.discreteTag, args.dropoutRatio)
 train_loader = DataLoader(scData, batch_size=args.batch_size, shuffle=False, **kwargs)
 
 regulationMatrix = readLTMG(args.datasetName)
