@@ -91,6 +91,8 @@ class logtransform(object):
     '''
     log transform of the object
     '''
+    def __init__(self, sample):
+        self.sample = sample
     def __call__(self, sample):
         return torch.log(sample)
 
