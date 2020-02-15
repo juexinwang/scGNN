@@ -271,6 +271,7 @@ else:
     labelFileDir = '/home/jwang/data/scData/'
     
 def getBenchmarkStr(count):
+    benchmarkStr = ''
     if args.batchStr == 0:
         benchmarkStr = ' --benchmark '\
                     '--labelFilename ' + labelFileDir + '1.Biase/Biase_cell_label.csv '\

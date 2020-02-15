@@ -36,7 +36,7 @@ module load miniconda3
 conda create -n my_environment python=3.7
 source activate my_environment
 
-Now We totally have 42 methods in testing:
+Now We totally have 63 methods in testing:
 * for using R support: geneLouvianCluster.py, otherwise we do not use rpy2
 
     experiment_1_g_b.sh
@@ -154,6 +154,7 @@ Reference:
 
 1. VAE <https://github.com/pytorch/examples/tree/master/vae>
 2. GAE <https://github.com/tkipf/gae/tree/master/gae>
+3. scVI-reproducibility <https://github.com/romain-lopez/scVI-reproducibility>
 
 Contact:
 ---------

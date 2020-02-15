@@ -15,23 +15,34 @@ args = parser.parse_args()
 # We are not use subprocess.call("python main_result.py", shell=True) for it runs scripts parallel
 # So we use os.system('') here
 datasetList = [
-    'MMPbasal_2000',
-    'MMPbasal_2000 --discreteTag',
-    'MMPbasal_2000_LTMG',
+    '1.Biase',
+    '1.Biase --discreteTag',
+    '2.Li',
+    '2.Li --discreteTag',
+    '3.Treutlein',
+    '3.Treutlein --discreteTag',
     '4.Yan',
     '4.Yan --discreteTag',
-    '4.Yan_LTMG',
     '5.Goolam',
     '5.Goolam --discreteTag',
-    '5.Goolam_LTMG',
+    '6.Guo',
+    '6.Guo --discreteTag',
     '7.Deng',
     '7.Deng --discreteTag',
-    '7.Deng_LTMG',
     '8.Pollen',
     '8.Pollen --discreteTag',
-    '8.Pollen_LTMG',
+    '9.Chung',
+    '9.Chung --discreteTag',
+    '10.Usoskin',
+    '10.Usoskin --discreteTag',
     '11.Kolodziejczyk',
-    '11.Kolodziejczyk --discreteTag'
+    '11.Kolodziejczyk --discreteTag',
+    '12.Klein',
+    '12.Klein --discreteTag',
+    '13.Zeisel',
+    '13.Zeisel --discreteTag',
+    'MMPbasal_2000',
+    'MMPbasal_2000 --discreteTag'
     ]
     #TODO: we wait for 11.Kolodziejczyk_LTMG
 
@@ -61,26 +72,58 @@ else:
 
 def getBenchmarkStr(count):
     benchmarkStr = ''    
-    if int(count/3)==1:
+    if count == 0:
         benchmarkStr = ' --benchmark '\
-            '--labelFilename ' + labelFileDir + '4.Yan/Yan_cell_label.csv '\
-            '--n-clusters 7 '
-    elif int(count/3)==2:
+                    '--labelFilename ' + labelFileDir + '1.Biase/Biase_cell_label.csv '\
+                    '--n-clusters 3 '
+    elif count == 1:
         benchmarkStr = ' --benchmark '\
-            '--labelFilename ' + labelFileDir + '5.Goolam/Goolam_cell_label.csv '\
-            '--n-clusters 5 '
-    elif int(count/3)==3:
+                    '--labelFilename ' + labelFileDir + '2.Li/Li_cell_label.csv '\
+                    '--n-clusters 9 '
+    elif count == 2:
         benchmarkStr = ' --benchmark '\
-            '--labelFilename ' + labelFileDir + '7.Deng/Deng_cell_label.csv '\
-            '--n-clusters 10 '
-    elif int(count/3)==4:
+                    '--labelFilename ' + labelFileDir + '3.Treutlein/Treutlein_cell_label.csv '\
+                    '--n-clusters 5 '
+    elif count == 3:
         benchmarkStr = ' --benchmark '\
-            '--labelFilename ' + labelFileDir + '8.Pollen/Pollen_cell_label.csv '\
-            '--n-clusters 11 '
-    elif int(count/3)==5:
+                    '--labelFilename ' + labelFileDir + '4.Yan/Yan_cell_label.csv '\
+                    '--n-clusters 7 '
+    elif count == 4:
         benchmarkStr = ' --benchmark '\
-            '--labelFilename ' + labelFileDir + '11.Kolodziejczyk/Kolodziejczyk_cell_label.csv '\
-            '--n-clusters 3 '
+                    '--labelFilename ' + labelFileDir + '5.Goolam/Goolam_cell_label.csv '\
+                    '--n-clusters 5 '
+    elif count == 5:
+        benchmarkStr = ' --benchmark '\
+                    '--labelFilename ' + labelFileDir + '6.Guo/Guo_cell_label.csv '\
+                    '--n-clusters 9 '
+    elif count == 6:
+        benchmarkStr = ' --benchmark '\
+                    '--labelFilename ' + labelFileDir + '7.Deng/Deng_cell_label.csv '\
+                    '--n-clusters 10 '
+    elif count == 7:
+        benchmarkStr = ' --benchmark '\
+                    '--labelFilename ' + labelFileDir + '8.Pollen/Pollen_cell_label.csv '\
+                    '--n-clusters 11 '
+    elif count == 8:
+        benchmarkStr = ' --benchmark '\
+                    '--labelFilename ' + labelFileDir + '9.Chung/Chung_cell_label.csv '\
+                    '--n-clusters 4 '
+    elif count == 9:
+        benchmarkStr = ' --benchmark '\
+                    '--labelFilename ' + labelFileDir + '10.Usoskin/Usoskin_cell.csv '\
+                    '--n-clusters 11 '
+    elif count == 10:
+        benchmarkStr = ' --benchmark '\
+                    '--labelFilename ' + labelFileDir + '11.Kolodziejczyk/Kolodziejczyk_cell_label.csv '\
+                    '--n-clusters 3 '
+    elif count == 11:
+        benchmarkStr = ' --benchmark '\
+                    '--labelFilename ' + labelFileDir + '12.Klein/Klein_cell_label.csv '\
+                    '--n-clusters 4 '
+    elif count == 12:
+        benchmarkStr = ' --benchmark '\
+                    '--labelFilename ' + labelFileDir + '13.Zeisel/Zeisel_cell_label.csv '\
+                    '--n-clusters 7 '
     return benchmarkStr
 
 if not args.runMode:
