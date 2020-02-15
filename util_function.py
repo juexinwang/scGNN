@@ -91,8 +91,8 @@ class logtransform(object):
     '''
     log transform of the object
     '''
-    def __init__(self, sample):
-        self.sample = np.log(self.sample)
+    def __call__(self, sample):
+        return torch.log(sample)
 
 # Ref: https://pytorch.org/tutorials/beginner/data_loading_tutorial.html
 class scDatasetInter(Dataset):
