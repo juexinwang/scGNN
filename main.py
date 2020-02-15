@@ -1,4 +1,3 @@
-from __future__ import print_function
 import time
 import argparse
 import sys
@@ -20,13 +19,15 @@ from benchmark_util import *
 from gae_embedding import GAEembedding,measure_clustering_results,test_clustering_benchmark_results
 
 parser = argparse.ArgumentParser(description='Graph EM AutoEncoder for scRNA')
-parser.add_argument('--datasetName', type=str, default='13.Zeisel',
+parser.add_argument('--datasetName', type=str, default='1.Biase',
                     help='TGFb/sci-CAR/sci-CAR_LTMG/MMPbasal/MMPbasal_all/MMPbasal_allgene/MMPbasal_allcell/MMPepo/MMPbasal_LTMG/MMPbasal_all_LTMG/MMPbasal_2000')
 # Dataset: 1-13 benchmark: 1.Biase/2.Li/3.Treutlein/4.Yan/5.Goolam/6.Guo/7.Deng/8.Pollen/9.Chung/10.Usoskin/11.Kolodziejczyk/12.Klein/13.Zeisel
 parser.add_argument('--batch-size', type=int, default=12800, metavar='N',
                     help='input batch size for training (default: 128)')
 parser.add_argument('--epochs', type=int, default=500, metavar='N',
                     help='number of epochs to train (default: 500)')
+parser.add_argument('--EM-epochs', type=int, default=200, metavar='N',
+                    help='number of epochs to train in iteration EM (default: 200)')
 parser.add_argument('--EM-iteration', type=int, default=10, metavar='N',
                     help='number of epochs in EM iteration (default: 3)')
 parser.add_argument('--EMtype', type=str, default='EM',
@@ -349,7 +350,7 @@ if __name__ == "__main__":
         scDataInter = scDatasetInter(recon)
         train_loader = DataLoader(scDataInter, batch_size=args.batch_size, shuffle=False, **kwargs)
 
-        for epoch in range(1, args.epochs + 1):
+        for epoch in range(1, args.EM_epochs + 1):
             recon, original, z = train(epoch, EMFlag=True)
         
         zOut = z.detach().cpu().numpy()
