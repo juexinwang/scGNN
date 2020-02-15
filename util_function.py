@@ -91,9 +91,10 @@ class logtransform(object):
     '''
     log transform of the object
     '''
-    def __call__(self,sample):
-        return np.log(sample)
+    def __init__(self, sample):
+        self.sample = np.log(self.sample)
 
+# Ref: https://pytorch.org/tutorials/beginner/data_loading_tutorial.html
 class scDatasetInter(Dataset):
     def __init__(self, features, transform=None):
         """
@@ -114,11 +115,12 @@ class scDatasetInter(Dataset):
             idx = idx.tolist()
 
         sample = self.features[idx,:]
+        sample = torch.from_numpy(sample.toarray())
 
+        # transform after get the data
         if self.transform:
             sample = self.transform(sample)
 
-        sample = torch.from_numpy(sample.toarray())
         return sample
 
 class scDataset(Dataset):
@@ -143,11 +145,12 @@ class scDataset(Dataset):
             idx = idx.tolist()
 
         sample = self.features[idx,:]
+        sample = torch.from_numpy(sample.toarray())
 
+        # transform after get the data
         if self.transform:
             sample = self.transform(sample)
 
-        sample = torch.from_numpy(sample.toarray())
         return sample,idx
 
 class scDatasetDropout(Dataset):
@@ -172,11 +175,12 @@ class scDatasetDropout(Dataset):
             idx = idx.tolist()
 
         sample = self.features[idx,:]
+        sample = torch.from_numpy(sample.toarray())
 
+        # transform after get the data
         if self.transform:
             sample = self.transform(sample)
-
-        sample = torch.from_numpy(sample.toarray())
+       
         return sample
 
 # Original
