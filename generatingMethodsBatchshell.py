@@ -93,9 +93,6 @@ methodsList = [
 ]
 
 datasetNameList = [
-    # 'MMPbasal_2000',
-    # 'MMPbasal_2000 --discreteTag',
-    # 'MMPbasal_2000_LTMG',
     '1.Biase --n-clusters 3',
     '1.Biase --discreteTag --n-clusters 3',
     '2.Li --n-clusters 9',
@@ -122,6 +119,8 @@ datasetNameList = [
     '12.Klein --discreteTag --n-clusters 4',
     '13.Zeisel --n-clusters 7',
     '13.Zeisel --discreteTag --n-clusters 7',
+    'MMPbasal_2000',
+    'MMPbasal_2000 --discreteTag'
 ]
 
 # datasetNameList = [

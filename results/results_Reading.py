@@ -2,14 +2,14 @@ import os
 import argparse
 parser = argparse.ArgumentParser(description='Read Results in different methods')
 parser.add_argument('--methodName', type=int, default=0, 
-                    help="method used: 0-27")
+                    help="method used: 0-62")
 parser.add_argument('--imputeMode', default=False, action='store_true',
                     help='impute or not (default: False). Caution: usually change npuDir if set imputeMode as true')
 parser.add_argument('--runMode',action='store_true', default=False, help="Run or prepare cluster script")
 parser.add_argument('--splitMode', default=False, action='store_true',
                     help='whether split, used for long queue')
 parser.add_argument('--batchStr', type=int, default=0, 
-                    help="method used: 0-1")
+                    help="method used: 0-13")
 args = parser.parse_args()
 
 # Note:
@@ -20,29 +20,6 @@ args = parser.parse_args()
 
 if args.splitMode:
     #The split of batch, more batches, more parallel
-    # if args.batchStr == 0:
-    #     datasetList = [
-    #     'MMPbasal_2000',
-    #     'MMPbasal_2000 --discreteTag',
-    #     'MMPbasal_2000_LTMG',
-    #     '4.Yan',
-    #     '4.Yan --discreteTag',
-    #     '4.Yan_LTMG',
-    #     '5.Goolam',
-    #     '5.Goolam --discreteTag',
-    #     '5.Goolam_LTMG',
-    #     ]
-    # elif args.batchStr == 1:
-    #     datasetList = [
-    #     '7.Deng',
-    #     '7.Deng --discreteTag',
-    #     '7.Deng_LTMG',
-    #     '8.Pollen',
-    #     '8.Pollen --discreteTag',
-    #     '8.Pollen_LTMG',
-    #     '11.Kolodziejczyk',
-    #     '11.Kolodziejczyk --discreteTag'
-    #     ]
 
     # gradients
     # if args.batchStr == 0:
@@ -70,7 +47,6 @@ if args.splitMode:
     #     'T8000_LTMG'
     #     ]
 
-    # gradients
     if args.batchStr == 0:
         datasetList = [
         '1.Biase'
@@ -86,6 +62,46 @@ if args.splitMode:
     elif args.batchStr == 3:
         datasetList = [
         '4.Yan'
+        ]
+    elif args.batchStr == 4:
+        datasetList = [
+        '5.Goolam'
+        ]
+    elif args.batchStr == 5:
+        datasetList = [
+        '6.Guo'
+        ]
+    elif args.batchStr == 6:
+        datasetList = [
+        '7.Deng'
+        ]
+    elif args.batchStr == 7:
+        datasetList = [
+        '8.Pollen'
+        ]
+    elif args.batchStr == 8:
+        datasetList = [
+        '9.Chung'
+        ]
+    elif args.batchStr == 9:
+        datasetList = [
+        '10.Usoskin'
+        ]
+    elif args.batchStr == 10:
+        datasetList = [
+        '11.Kolodziejczyk'
+        ]
+    elif args.batchStr == 11:
+        datasetList = [
+        '12.Klein'
+        ]
+    elif args.batchStr == 12:
+        datasetList = [
+        '13.Zeisel'
+        ]
+    elif args.batchStr == 13:
+        datasetList = [
+        'MMPbasal_2000'
         ]
 else:
     datasetList = [
@@ -250,14 +266,63 @@ npyStr = npyList[args.methodName]
 benchmarkStr = ''
 
 if args.runMode:
-    labelFileDir = '/home/wangjue/biodata/scData/AnjunBenchmark/'
+    labelFileDir = '/home/wangjue/biodata/scData/allBench/'
 else:
     labelFileDir = '/home/jwang/data/scData/'
     
 def getBenchmarkStr(count):
-    benchmarkStr = ' --benchmark '\
+    if args.batchStr == 0:
+        benchmarkStr = ' --benchmark '\
+                    '--labelFilename ' + labelFileDir + '1.Biase/Biase_cell_label.csv '\
+                    '--n-clusters 3 '
+    elif args.batchStr == 1:
+        benchmarkStr = ' --benchmark '\
+                    '--labelFilename ' + labelFileDir + '2.Li/Li_cell_label.txt '\
+                    '--n-clusters 9 '
+    elif args.batchStr == 2:
+        benchmarkStr = ' --benchmark '\
+                    '--labelFilename ' + labelFileDir + '3.Treutlein/Treutlein_cell_label.csv '\
+                    '--n-clusters 5 '
+    elif args.batchStr == 3:
+        benchmarkStr = ' --benchmark '\
+                    '--labelFilename ' + labelFileDir + '4.Yan/Yan_cell_label.csv '\
+                    '--n-clusters 7 '
+    elif args.batchStr == 4:
+        benchmarkStr = ' --benchmark '\
+                    '--labelFilename ' + labelFileDir + '5.Goolam/Goolam_cell_label.csv '\
+                    '--n-clusters 5 '
+    elif args.batchStr == 5:
+        benchmarkStr = ' --benchmark '\
+                    '--labelFilename ' + labelFileDir + '6.Guo/Guo_cell_label.txt '\
+                    '--n-clusters 9 '
+    elif args.batchStr == 6:
+        benchmarkStr = ' --benchmark '\
+                    '--labelFilename ' + labelFileDir + '7.Deng/Deng_cell_label_updated.csv '\
+                    '--n-clusters 10 '
+    elif args.batchStr == 7:
+        benchmarkStr = ' --benchmark '\
+                    '--labelFilename ' + labelFileDir + '8.Pollen/Pollen_cell_label.csv '\
+                    '--n-clusters 11 '
+    elif args.batchStr == 8:
+        benchmarkStr = ' --benchmark '\
+                    '--labelFilename ' + labelFileDir + '9.Chung/Chung_cell_label.txt '\
+                    '--n-clusters 4 '
+    elif args.batchStr == 9:
+        benchmarkStr = ' --benchmark '\
+                    '--labelFilename ' + labelFileDir + '10.Usoskin/Usoskin_cell.csv '\
+                    '--n-clusters 11 '
+    elif args.batchStr == 10:
+        benchmarkStr = ' --benchmark '\
                     '--labelFilename ' + labelFileDir + '11.Kolodziejczyk/Kolodziejczyk_cell_label.csv '\
                     '--n-clusters 3 '
+    elif args.batchStr == 11:
+        benchmarkStr = ' --benchmark '\
+                    '--labelFilename ' + labelFileDir + '12.Klein/Klein_cell_label.csv '\
+                    '--n-clusters 4 '
+    elif args.batchStr == 12:
+        benchmarkStr = ' --benchmark '\
+                    '--labelFilename ' + labelFileDir + '13.Zeisel/Zeisel_7_label.csv '\
+                    '--n-clusters 7 '
     # benchmarkStr = ''
     # if int(count/3)==1:
     #     benchmarkStr = ' --benchmark '\
