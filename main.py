@@ -391,6 +391,8 @@ if __name__ == "__main__":
         #debug
         print('adjNew:{} adjOld:{} threshold:{}'.format(adjNew, adjOld, args.converge_graphratio*nlG0))
         ari, ami, nmi, cs, fms, vms, hs = measureClusteringTrueLabel(listResultOld, listResult)
+        print(listResultOld)
+        print(listResult)
         print('celltype similarity:'+str(ari))
         # graph criteria here
         if args.converge_type == 'graph':       
