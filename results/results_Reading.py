@@ -277,7 +277,7 @@ def getBenchmarkStr(count):
                     '--n-clusters 3 '
     elif args.batchStr == 1:
         benchmarkStr = ' --benchmark '\
-                    '--labelFilename ' + labelFileDir + '2.Li/Li_cell_label.txt '\
+                    '--labelFilename ' + labelFileDir + '2.Li/Li_cell_label.csv '\
                     '--n-clusters 9 '
     elif args.batchStr == 2:
         benchmarkStr = ' --benchmark '\
@@ -293,11 +293,11 @@ def getBenchmarkStr(count):
                     '--n-clusters 5 '
     elif args.batchStr == 5:
         benchmarkStr = ' --benchmark '\
-                    '--labelFilename ' + labelFileDir + '6.Guo/Guo_cell_label.txt '\
+                    '--labelFilename ' + labelFileDir + '6.Guo/Guo_cell_label.csv '\
                     '--n-clusters 9 '
     elif args.batchStr == 6:
         benchmarkStr = ' --benchmark '\
-                    '--labelFilename ' + labelFileDir + '7.Deng/Deng_cell_label_updated.csv '\
+                    '--labelFilename ' + labelFileDir + '7.Deng/Deng_cell_label.csv '\
                     '--n-clusters 10 '
     elif args.batchStr == 7:
         benchmarkStr = ' --benchmark '\
@@ -305,7 +305,7 @@ def getBenchmarkStr(count):
                     '--n-clusters 11 '
     elif args.batchStr == 8:
         benchmarkStr = ' --benchmark '\
-                    '--labelFilename ' + labelFileDir + '9.Chung/Chung_cell_label.txt '\
+                    '--labelFilename ' + labelFileDir + '9.Chung/Chung_cell_label.csv '\
                     '--n-clusters 4 '
     elif args.batchStr == 9:
         benchmarkStr = ' --benchmark '\
@@ -321,7 +321,7 @@ def getBenchmarkStr(count):
                     '--n-clusters 4 '
     elif args.batchStr == 12:
         benchmarkStr = ' --benchmark '\
-                    '--labelFilename ' + labelFileDir + '13.Zeisel/Zeisel_7_label.csv '\
+                    '--labelFilename ' + labelFileDir + '13.Zeisel/Zeisel_cell_label.csv '\
                     '--n-clusters 7 '
     # benchmarkStr = ''
     # if int(count/3)==1:
