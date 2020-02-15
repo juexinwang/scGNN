@@ -34,11 +34,11 @@ parser.add_argument('--EMtype', type=str, default='EM',
                     help='EM process type (default: celltypeEM) or EM')
 parser.add_argument('--alpha', type=float, default=0.5,
                     help='iteration alpha (default: 0.5) to control the converge rate, should be a number between 0~1')
-parser.add_argument('--converge-type', type=str, default='celltype',
-                    help='type of converge: celltype/graph (default: celltype) ')
+parser.add_argument('--converge-type', type=str, default='either',
+                    help='type of converge: celltype/graph/both/either (default: celltype) ')
 parser.add_argument('--converge-graphratio', type=float, default=0.001,
                     help='ratio of cell type change in EM iteration (default: 0.001), 0-1')
-parser.add_argument('--converge-celltyperatio', type=float, default=0.99,
+parser.add_argument('--converge-celltyperatio', type=float, default=0.95,
                     help='ratio of cell type change in EM iteration (default: 0.99), 0-1')
 parser.add_argument('--celltype-epochs', type=int, default=200, metavar='N',
                     help='number of epochs in celltype training (default: 200)')
@@ -398,22 +398,35 @@ if __name__ == "__main__":
         adjNew = args.alpha*nlG0 + (1-args.alpha) * adjGc/np.sum(adjGc,axis=0)
         
         #debug
+        graphChange = np.mean(abs(adjNew-adjOld))
+        graphChangeThreshold = args.converge_graphratio * np.mean(abs(nlG0))
         print('adjNew:{} adjOld:{} threshold:{}'.format(adjNew, adjOld, args.converge_graphratio*nlG0))
-        print('mean:{} threshold:{}'.format(abs(np.mean(adjNew-adjOld)), args.converge_graphratio * np.mean(abs(nlG0))))
+        print('mean:{} threshold:{}'.format(graphChange, graphChangeThreshold))
         ari, ami, nmi, cs, fms, vms, hs = measureClusteringTrueLabel(listResultOld, listResult)
         print(listResultOld)
         print(listResult)
         print('celltype similarity:'+str(ari))
-        # graph criteria here
+        
+        # graph criteria
         if args.converge_type == 'graph':       
-            if abs(np.mean(adjNew-adjOld)) < args.converge_graphratio * np.mean(abs(nlG0)):
+            if graphChange < graphChangeThreshold:
                 print('Converge now!')
                 break
-        # celltype criteria here
+        # celltype criteria
         elif args.converge_type == 'celltype':            
             if ari>args.converge_celltyperatio:
                 print('Converge now!')
-                break 
+                break
+        # if both criteria are meets
+        elif args.converge_type == 'both': 
+            if graphChange < graphChangeThreshold and ari > args.converge_celltyperatio:
+                print('Converge now!')
+                break
+        # if either criteria are meets
+        elif args.converge_type == 'either': 
+            if graphChange < graphChangeThreshold or ari > args.converge_celltyperatio:
+                print('Converge now!')
+                break
 
         # Update
         adjOld = adjNew
