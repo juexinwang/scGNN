@@ -87,6 +87,13 @@ def load_data(datasetName, discreteTag):
 
     return features
 
+class logtransform(object):
+    '''
+    log transform of the object
+    '''
+    def __call__(self,sample):
+        return np.log(sample)
+
 class scDatasetInter(Dataset):
     def __init__(self, features, transform=None):
         """
