@@ -27,7 +27,7 @@ parser.add_argument('--pcaNum', type=int, default=100,
                     help='Number of principle components (default: 100)')
 # if have benchmark: use cell File
 parser.add_argument('--benchmark',action='store_true', default=False, help="whether have benchmark")
-parser.add_argument('--labelFilename',type=str,default='/home/wangjue/biodata/scData/AnjunBenchmark/11.Kolodziejczyk/Kolodziejczyk_cell_label.csv',help="label Filename")
+parser.add_argument('--labelFilename',type=str,default='/home/wangjue/biodata/scData/AllBenchmark/11.Kolodziejczyk/Kolodziejczyk_cell_label.csv',help="label Filename")
 # if use only part of the cells
 parser.add_argument('--cellFilename', type=str,default='/home/wangjue/biodata/scData/11.Kolodziejczyk.cellname.txt',help="cell Filename")
 parser.add_argument('--cellIndexname',type=str,default='/home/wangjue/myprojects/scGNN/data/sc/11.Kolodziejczyk/ind.11.Kolodziejczyk.cellindex.txt',help="cell index Filename")

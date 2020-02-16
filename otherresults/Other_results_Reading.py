@@ -50,8 +50,7 @@ if args.imputeMode:
     pyStr = 'Other_results_impute.py'
     npyList = [
         '../otherResults/SAUCIE_I/ --clusterTag',
-        '../otherResults/MAGIC/',
-        '../otherResults/MAGIC_k10/'
+        '../otherResults/MAGIC/'
         ]
 else:
     pyStr = 'Other_results_celltype.py'
@@ -62,7 +61,7 @@ else:
 npyStr = npyList[args.methodName]
 
 if args.runMode:
-    labelFileDir = '/home/wangjue/biodata/scData/AnjunBenchmark/'
+    labelFileDir = '/home/wangjue/biodata/scData/AllBenchmark/'
     cellFileDir  = '/home/wangjue/biodata/scData/'
     cellIndexDir = '/home/wangjue/myprojects/scGNN/data/sc/'
 else:
