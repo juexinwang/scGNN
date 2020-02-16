@@ -33,7 +33,7 @@ methodsList = [
     ('run_experiment_1_r_b E1rb','--regulized-type LTMG01 --EMtype EM --useBothembedding --npyDir','npyR1B/'),
     ('run_experiment_1_r_e E1re','--regulized-type LTMG01 --EMtype EM --useGAEembedding --npyDir','npyR1E/'),
     ('run_experiment_1_r_f E1rf','--regulized-type LTMG01 --EMtype EM --npyDir','npyR1F/'),
-    ('run_experiment_1_n_e E1nb','--regulized-type noregu --EMtype EM --useBothembedding --npyDir','npyN1B/'),
+    ('run_experiment_1_n_b E1nb','--regulized-type noregu --EMtype EM --useBothembedding --npyDir','npyN1B/'),
     ('run_experiment_1_n_e E1ne','--regulized-type noregu --EMtype EM --useGAEembedding --npyDir','npyN1E/'),
     ('run_experiment_1_n_f E1nf','--regulized-type noregu --EMtype EM --npyDir','npyN1F/'),
     ('run_experiment_2_g_b E2gb','--regulized-type LTMG --EMtype celltypeEM --useBothembedding  --npyDir','npyG2B/'),
