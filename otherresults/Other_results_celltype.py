@@ -36,7 +36,7 @@ parser.add_argument('--discreteTag', action='store_true', default=False,
 parser.add_argument('--npyDir',   type=str,default='../npyGraph10/',help="npyDir")
 # if have benchmark: use cell File
 parser.add_argument('--benchmark',action='store_true', default=False, help="whether have benchmark")
-parser.add_argument('--labelFilename',type=str,default='/home/wangjue/biodata/scData/AllBenchmark/11.Kolodziejczyk/Kolodziejczyk_cell_label.csv',help="label Filename")
+parser.add_argument('--labelFilename',type=str,default='/home/wangjue/biodata/scData/AllBench/11.Kolodziejczyk/Kolodziejczyk_cell_label.csv',help="label Filename")
 # if use only part of the cells
 parser.add_argument('--cellFilename', type=str,default='/home/wangjue/biodata/scData/11.Kolodziejczyk.cellname.txt',help="cell Filename")
 parser.add_argument('--cellIndexname',type=str,default='/home/wangjue/myprojects/scGNN/data/sc/11.Kolodziejczyk/ind.11.Kolodziejczyk.cellindex.txt',help="cell index Filename")

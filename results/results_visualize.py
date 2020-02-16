@@ -102,7 +102,7 @@ silhouette, chs, dbs = measureClusteringNoLabel(z, listResult)
 print('{:.4f} {:.4f} {:.4f}'.format(silhouette, chs, dbs))
 
 if args.benchFlag:
-    labelFilename = '/home/wangjue/biodata/scData/AnjunBenchmark/5.Pollen/Pollen_cell_label.csv'
+    labelFilename = '/home/wangjue/biodata/scData/AllBench/5.Pollen/Pollen_cell_label.csv'
     cellFilename  = '/home/wangjue/biodata/scData/5.Pollen.cellname.txt'
     cellIndexFilename = '/home/wangjue/myprojects/scGNN/data/sc/5.Pollen/ind.5.Pollen.cellindex.txt'
     truelabel = readTrueLabelList(labelFilename)
