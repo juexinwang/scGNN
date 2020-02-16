@@ -65,7 +65,10 @@ parser.add_argument('--saveFlag', action='store_true', default=True,
 parser.add_argument('--npyDir', type=str, default='npyGraphTest/',
                     help='save npy results in directory')
 parser.add_argument('--log-interval', type=int, default=100, metavar='N',
-                    help='how many batches to wait before logging training status')
+                    help='how many batches to wait before logging training status')                   
+parser.add_argument('--LTMGDir', type=str, default='/home/jwang/data/scData/',
+                    help='directory of LTMGDir, default:(/home/wangjue/biodata/scData/allBench/)')
+
 #Clustering related
 parser.add_argument('--useGAEembedding', action='store_true', default=False, 
                     help='whether use GAE embedding for clustering(default: False)')
@@ -120,7 +123,7 @@ else:
     scData = scDatasetDropout(args.datasetName, args.discreteTag, args.dropoutRatio)
 train_loader = DataLoader(scData, batch_size=args.batch_size, shuffle=False, **kwargs)
 
-regulationMatrix = readLTMG(args.datasetName)
+regulationMatrix = readLTMG(args.LTMGDir, args.datasetName)
 regulationMatrix = torch.from_numpy(regulationMatrix)
 
 # Original
