@@ -62,7 +62,7 @@ mkdir npyImputeN2F_KMeans
 mkdir npyImputeN2F_SpectralClustering
 mkdir npyImputeN2F
 
-for i in {0..62}
+for i in {1..28}
 do
 sbatch run_experimentImpute_1_g_b_$i.sh
 sleep 1
