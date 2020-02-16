@@ -23,6 +23,8 @@ else:
     filename = '/home/wangjue/myprojects/scGNN/data/sc/{}/{}.features.csv'.format(args.datasetName,args.datasetName)
 x = pd.read_csv(filename,header=None)
 x = x.to_numpy()
+# Add log transformation
+x = np.log(x)
 
 featuresOriginal = np.copy(x)
 features, dropi, dropj, dropix = impute_dropout(featuresOriginal, rate=float(args.ratio))
