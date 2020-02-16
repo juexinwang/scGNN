@@ -5,6 +5,7 @@ parser.add_argument('--fileName', type=str, default='results-18979328.out', help
 parser.add_argument('--outFileName', type=str, default='RC_1_0.txt', help="outFileName")
 args = parser.parse_args()
 
+#TODO implement late
 fileDir = args.fileDir
 fileName = args.fileName
 outFileName = args.outFileName

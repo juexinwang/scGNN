@@ -105,18 +105,20 @@ if args.splitMode:
         ]
 else:
     datasetList = [
-    # 'MMPbasal_2000',
-    # 'MMPbasal_2000 --discreteTag',
-    # '4.Yan',
-    # '4.Yan --discreteTag',
-    # '5.Goolam',
-    # '5.Goolam --discreteTag',
-    # '7.Deng',
-    # '7.Deng --discreteTag',
-    # '8.Pollen',
-    # '8.Pollen --discreteTag',
-    # '11.Kolodziejczyk',
-    # '11.Kolodziejczyk --discreteTag'
+        '1.Biase',
+        '2.Li',
+        '3.Treutlein',
+        '4.Yan',
+        '5.Goolam',
+        '6.Guo',
+        '7.Deng',
+        '8.Pollen',
+        '9.Chung',
+        '10.Usoskin',
+        '11.Kolodziejczyk',
+        '12.Klein',
+        '13.Zeisel',
+        'MMPbasal_2000'
     ]
 
 if args.imputeMode:
@@ -254,12 +256,22 @@ else:
         '../npyN2F/'  #62
         ]
 
-reguDict={2:None, 3:None}
-for i in range(16,28):
-    reguDict[i]=None
+reguDict={}
+for i in range(0,3):
+    reguDict[i]='LTMG'
+for i in range(3,6):
+    reguDict[i]='LTMG01'
+for i in range(6,9):
+    reguDict[i]='noregu'
+for i in range(9,27):
+    reguDict[i]='LTMG'
+for i in range(27,45):
+    reguDict[i]='LTMG01'
+for i in range(45,63):
+    reguDict[i]='noregu'
 reguStr=''
 if args.methodName in reguDict:
-    reguStr=' --regulized-type noregu '
+    reguStr=' --regulized-type ' + reguDict[args.methodName] + ' '
 
 npyStr = npyList[args.methodName]
 
