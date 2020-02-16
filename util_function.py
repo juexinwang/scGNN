@@ -157,7 +157,7 @@ class scDataset(Dataset):
             sample = self.transform(sample)
 
         if not self.discreteTag:
-            sample = torch.log(sample)
+            sample = torch.log(sample+1)
 
         return sample,idx
 
@@ -192,7 +192,7 @@ class scDatasetDropout(Dataset):
             sample = self.transform(sample)
         
         if not self.discreteTag:
-            sample = torch.log(sample)
+            sample = torch.log(sample+1)
        
         return sample
 
