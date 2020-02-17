@@ -1,5 +1,6 @@
 import os
 import argparse
+import numpy as np
 parser = argparse.ArgumentParser(description='Read Results in different methods')
 parser.add_argument('--methodName', type=int, default=0, 
                     help="method used: 0-? 0: SAUICE")
@@ -70,6 +71,7 @@ else:
     cellIndexDir = '/home/jwang/data/scData/'
 
 def getBenchmarkStr(count):
+    count = np.floor(count/2)
     benchmarkStr = ''    
     if count == 0:
         benchmarkStr = ' --benchmark '\

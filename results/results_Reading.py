@@ -49,76 +49,104 @@ if args.splitMode:
 
     if args.batchStr == 0:
         datasetList = [
-        '1.Biase'
+        '1.Biase',
+        '1.Biase --discreteTag'
         ]
     elif args.batchStr == 1:
         datasetList = [
-        '2.Li'
+        '2.Li',
+        '2.Li --discreteTag'
         ]
     elif args.batchStr == 2:
         datasetList = [
-        '3.Treutlein'
+        '3.Treutlein',
+        '3.Treutlein --discreteTag'
         ]
     elif args.batchStr == 3:
         datasetList = [
-        '4.Yan'
+        '4.Yan',
+        '4.Yan --discreteTag'
         ]
     elif args.batchStr == 4:
         datasetList = [
-        '5.Goolam'
+        '5.Goolam',
+        '5.Goolam --discreteTag'
         ]
     elif args.batchStr == 5:
         datasetList = [
-        '6.Guo'
+        '6.Guo',
+        '6.Guo --discreteTag'
         ]
     elif args.batchStr == 6:
         datasetList = [
-        '7.Deng'
+        '7.Deng',
+        '7.Deng --discreteTag'
         ]
     elif args.batchStr == 7:
         datasetList = [
-        '8.Pollen'
+        '8.Pollen',
+        '8.Pollen --discreteTag'
         ]
     elif args.batchStr == 8:
         datasetList = [
-        '9.Chung'
+        '9.Chung',
+        '9.Chung --discreteTag'
         ]
     elif args.batchStr == 9:
         datasetList = [
-        '10.Usoskin'
+        '10.Usoskin',
+        '10.Usoskin --discreteTag'
         ]
     elif args.batchStr == 10:
         datasetList = [
-        '11.Kolodziejczyk'
+        '11.Kolodziejczyk',
+        '11.Kolodziejczyk --discreteTag'
         ]
     elif args.batchStr == 11:
         datasetList = [
-        '12.Klein'
+        '12.Klein',
+        '12.Klein --discreteTag'
         ]
     elif args.batchStr == 12:
         datasetList = [
-        '13.Zeisel'
+        '13.Zeisel',
+        '13.Zeisel --discreteTag'
         ]
     elif args.batchStr == 13:
         datasetList = [
-        'MMPbasal_2000'
+        'MMPbasal_2000',
+        'MMPbasal_2000 --discreteTag'
         ]
 else:
     datasetList = [
         '1.Biase',
+        '1.Biase --discreteTag',
         '2.Li',
+        '2.Li --discreteTag',
         '3.Treutlein',
+        '3.Treutlein --discreteTag',
         '4.Yan',
+        '4.Yan --discreteTag',
         '5.Goolam',
+        '5.Goolam --discreteTag',
         '6.Guo',
+        '6.Guo --discreteTag',
         '7.Deng',
+        '7.Deng --discreteTag',
         '8.Pollen',
+        '8.Pollen --discreteTag',
         '9.Chung',
+        '9.Chung --discreteTag',
         '10.Usoskin',
+        '10.Usoskin --discreteTag',
         '11.Kolodziejczyk',
+        '11.Kolodziejczyk --discreteTag',
         '12.Klein',
+        '12.Klein --discreteTag',
         '13.Zeisel',
-        'MMPbasal_2000'
+        '13.Zeisel --discreteTag',
+        'MMPbasal_2000',
+        'MMPbasal_2000 --discreteTag'
     ]
 
 if args.imputeMode:
