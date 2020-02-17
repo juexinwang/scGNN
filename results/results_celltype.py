@@ -73,6 +73,7 @@ if args.benchmark:
 print("Original PCA")
 originalFile = '../data/sc/{}/{}.features.csv'.format(args.datasetName,args.datasetName)
 x = pd.read_csv(originalFile,header=None)
+x = x.to_numpy()
 # PCA only number of cells larger than args.pcaNum, aka 100
 if x.shape[0]>args.pcaNum:
     x, re = pcaFunc(x, n_components=args.pcaNum)
