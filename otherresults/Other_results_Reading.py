@@ -61,7 +61,7 @@ else:
 npyStr = npyList[args.methodName]
 
 if args.runMode:
-    labelFileDir = '/home/wangjue/biodata/scData/AllBench/'
+    labelFileDir = '/home/wangjue/biodata/scData/allBench/'
     cellFileDir  = '/home/wangjue/biodata/scData/'
     cellIndexDir = '/home/wangjue/myprojects/scGNN/data/sc/'
 else:

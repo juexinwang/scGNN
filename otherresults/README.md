@@ -5,7 +5,7 @@ e.g. MAGIC
     unzip benchPreprocessData.zip
 3. Make sure the label files are ready: change directory in Other_results_impute.py accordingly (AllBench.zip can be downloaded from box)
     cd /home/wangjue/biodata/scData/ 
-    unzip AllBench.zip
+    unzip allBench.zip
 4. Run analysis
     cd otherresults
     bash MAGIC_analysis.sh
