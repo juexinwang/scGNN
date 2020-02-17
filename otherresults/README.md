@@ -12,3 +12,5 @@ e.g. MAGIC
 5. Change Other_results_Reading.py, check methods used. --runMode means running on the local machine, otherwise generate script for HPC
     bash Other_Results_Evaluation.sh
 6. Check results
+
+For all the other methods. don't forget add log(x+1)
