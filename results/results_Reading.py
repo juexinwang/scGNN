@@ -389,7 +389,7 @@ if not args.runMode:
     "#SBATCH -p BioCompute               # use the BioCompute partition\n"\
     "#SBATCH -J R" + imputeStr + splitStr + str(args.methodName) +              " \n"\
     "#SBATCH -o results-%j.out           # give the job output a custom name\n"\
-    "#SBATCH -t 2-00:00                  # two days time limit\n"\
+    "#SBATCH -t 0-16:00                  # two days time limit\n"\
     "#SBATCH -N 1                        # number of nodes\n"\
     "#SBATCH -n 8                        # number of cores (AKA tasks)\n"\
     "#SBATCH --mem=128G\n"\
