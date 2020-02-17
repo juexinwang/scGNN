@@ -42,11 +42,11 @@ if args.discreteTag:
     discreteStr = 'D'
 datasetNameStr = args.datasetName+discreteStr
 
-np.save('/home/wangjue/myprojects/scGNN/otherResults/MAGIC_k10/{}_{}_recon.npy'.format(datasetNameStr,args.ratio),recon)
-np.save('/home/wangjue/myprojects/scGNN/otherResults/MAGIC_k10/{}_{}_featuresOriginal.npy'.format(datasetNameStr,args.ratio),featuresOriginal)
-np.save('/home/wangjue/myprojects/scGNN/otherResults/MAGIC_k10/{}_{}_dropi.npy'.format(datasetNameStr,args.ratio),dropi)
-np.save('/home/wangjue/myprojects/scGNN/otherResults/MAGIC_k10/{}_{}_dropj.npy'.format(datasetNameStr,args.ratio),dropj)
-np.save('/home/wangjue/myprojects/scGNN/otherResults/MAGIC_k10/{}_{}_dropix.npy'.format(datasetNameStr,args.ratio),dropix)
+np.save('/home/wangjue/myprojects/scGNN/otherResults/MAGIC/{}_{}_recon.npy'.format(datasetNameStr,args.ratio),recon)
+np.save('/home/wangjue/myprojects/scGNN/otherResults/MAGIC/{}_{}_featuresOriginal.npy'.format(datasetNameStr,args.ratio),featuresOriginal)
+np.save('/home/wangjue/myprojects/scGNN/otherResults/MAGIC/{}_{}_dropi.npy'.format(datasetNameStr,args.ratio),dropi)
+np.save('/home/wangjue/myprojects/scGNN/otherResults/MAGIC/{}_{}_dropj.npy'.format(datasetNameStr,args.ratio),dropj)
+np.save('/home/wangjue/myprojects/scGNN/otherResults/MAGIC/{}_{}_dropix.npy'.format(datasetNameStr,args.ratio),dropix)
 
 # From scVI
 # # Load single-cell RNA-seq data

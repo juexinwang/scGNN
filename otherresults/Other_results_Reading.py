@@ -44,13 +44,13 @@ datasetList = [
     'MMPbasal_2000',
     'MMPbasal_2000 --discreteTag'
     ]
-    #TODO: we wait for 11.Kolodziejczyk_LTMG
 
+# All the impute methods should be listed here
 if args.imputeMode:
     pyStr = 'Other_results_impute.py'
     npyList = [
-        '../otherResults/SAUCIE_I/ --clusterTag',
         '../otherResults/MAGIC/'
+        '../otherResults/SAUCIE_I/ --clusterTag',        
         ]
 else:
     pyStr = 'Other_results_celltype.py'
