@@ -2,7 +2,8 @@ Comparing with other methods:
 e.g. MAGIC
 1. Install MAGIC <https://github.com/KrishnaswamyLab/MAGIC>
 2. Make sure the input files are ready: in the root directory of scGNN: (benchPreprocessData.zip can be downloaded from box)
-    unzip benchPreprocessData.zip
+    cd data/sc/
+    unzip scData.zip
 3. Make sure the label files are ready: change directory in Other_results_impute.py accordingly (AllBench.zip can be downloaded from box)
     cd /home/wangjue/biodata/scData/ 
     unzip allBench.zip
