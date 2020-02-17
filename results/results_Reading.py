@@ -382,12 +382,12 @@ if not args.runMode:
         imputeStr = 'C'
     splitStr = ''
     if args.splitMode:
-        splitStr = '_'+str(args.batchStr)+'_'
+        splitStr = '_'+str(args.batchStr)
     templateStr = "#! /bin/bash\n"\
     "######################### Batch Headers #########################\n"\
     "#SBATCH -A xulab\n"\
     "#SBATCH -p BioCompute               # use the BioCompute partition\n"\
-    "#SBATCH -J R" + imputeStr + splitStr + str(args.methodName) +              " \n"\
+    "#SBATCH -J R" + imputeStr + '_' + str(args.methodName) + splitStr +              " \n"\
     "#SBATCH -o results-%j.out           # give the job output a custom name\n"\
     "#SBATCH -t 0-16:00                  # two days time limit\n"\
     "#SBATCH -N 1                        # number of nodes\n"\
