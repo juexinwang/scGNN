@@ -55,16 +55,16 @@ with open(fileDir+fileName) as f:
                 elif val == 32:
                     priorstr = 'Z9'
                 tmpstr = priorstr + tmpstr 
-            keyDict[line] = keyDict[line]+1
+            keyDict[line] = keyDict[line]+1        
+        elif line.startswith('FileNotFoundError: [Errno 2] No such file or directory:'):
+            print(line)
+            break
         elif tag:
             val = (keyDict['Louvain']-1)%33
             if val in tabuDict:
                 outLines.append(tmpstr+line+'\n')
                 tag = False
                 tmpstr = ''
-        elif line.startswith('FileNotFoundError: [Errno 2] No such file or directory:'):
-            print(line)
-            break
     f.close()
 
 with open(outFileName,'w') as fw:
