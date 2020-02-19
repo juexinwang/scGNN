@@ -59,6 +59,8 @@ with open(fileDir+fileName) as f:
         elif line.startswith('FileNotFoundError: [Errno 2] No such file or directory:'):
             print(line)
             break
+        elif line.endswith('?it/s]'):
+            tag = False
         elif tag:
             val = (keyDict['Louvain']-1)%33
             if val in tabuDict:
