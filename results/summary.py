@@ -20,6 +20,7 @@ with open(fileDir+fileName) as f:
     lines = f.readlines()
     tag = False
     otag = False
+    convergetag = False
     for line in lines:
         line = line.strip()
         if line in keyDict:            
@@ -61,6 +62,9 @@ with open(fileDir+fileName) as f:
                 outLines.append(tmpstr+line+'\n')
                 tag = False
                 tmpstr = ''
+        elif line.startswith('FileNotFoundError: [Errno 2] No such file or directory:'):
+            print(line)
+            break
     f.close()
 
 with open(outFileName,'w') as fw:
