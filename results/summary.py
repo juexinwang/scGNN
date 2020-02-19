@@ -12,7 +12,7 @@ outFileName = args.outFileName
 keyDict = {'Louvain':0,'KMeans':0,'SpectralClustering':0,'AffinityPropagation':0,'AgglomerativeClustering':0,'Birch':0, 'OPTICS':0}
 
 # tabuDict =[1,2,3,6,9,12,15,18]
-tabuDict =[0,1,2,5,8,11,14,17]
+tabuDict =[0,1,2,5,8,11,14,17,20,23,26,29,32]
 outLines = []
 tmpstr = ''
 count = 0
@@ -26,7 +26,7 @@ with open(fileDir+fileName) as f:
             tag = True
             tmpstr = '\t'+line+'\t'
             if line == 'Louvain':
-                val = keyDict['Louvain']%18
+                val = keyDict['Louvain']%33
                 if val == 0:
                     priorstr = 'Graph'
                 elif val == 1:
@@ -43,10 +43,20 @@ with open(fileDir+fileName) as f:
                     priorstr = 'Z3'
                 elif val == 17:
                     priorstr = 'Z4'
+                elif val == 20:
+                    priorstr = 'Z5'
+                elif val == 23:
+                    priorstr = 'Z6'
+                elif val == 26:
+                    priorstr = 'Z7'
+                elif val == 29:
+                    priorstr = 'Z8'
+                elif val == 32:
+                    priorstr = 'Z9'
                 tmpstr = priorstr + tmpstr 
             keyDict[line] = keyDict[line]+1
         elif tag:
-            val = (keyDict['Louvain']-1)%18
+            val = (keyDict['Louvain']-1)%33
             if val in tabuDict:
                 outLines.append(tmpstr+line+'\n')
                 tag = False
