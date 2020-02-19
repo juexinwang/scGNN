@@ -61,6 +61,7 @@ with open(fileDir+fileName) as f:
             break
         elif line.endswith('?it/s]'):
             tag = False
+            tmpstr = ''
         elif tag:
             val = (keyDict['Louvain']-1)%33
             if val in tabuDict:

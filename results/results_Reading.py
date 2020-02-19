@@ -350,7 +350,7 @@ def getBenchmarkStr(count):
                     '--n-clusters 4 '
     elif args.batchStr == 9:
         benchmarkStr = ' --benchmark '\
-                    '--labelFilename ' + labelFileDir + '10.Usoskin/Usoskin_cell.csv '\
+                    '--labelFilename ' + labelFileDir + '10.Usoskin/Usoskin_cell_label.csv '\
                     '--n-clusters 11 '
     elif args.batchStr == 10:
         benchmarkStr = ' --benchmark '\
