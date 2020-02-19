@@ -1,7 +1,7 @@
 import argparse
 parser = argparse.ArgumentParser(description='Summary on Results from Cluster output results')
 parser.add_argument('--fileDir', type=str, default='', help="fileDir")
-parser.add_argument('--fileName', type=str, default='results-18979328.out', help="fileName")
+parser.add_argument('--fileName', type=str, default='results-19634250.out', help="fileName")
 parser.add_argument('--outFileName', type=str, default='RC_1_0.txt', help="outFileName")
 args = parser.parse_args()
 
