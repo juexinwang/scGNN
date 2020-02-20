@@ -114,8 +114,13 @@ if args.splitMode:
         ]
     elif args.batchStr == 13:
         datasetList = [
-        'MMPbasal_2000',
-        'MMPbasal_2000 --discreteTag'
+        '20.10X_2700_seurat',
+        '20.10X_2700_seurat --discreteTag'
+        ]
+    elif args.batchStr == 14:
+        datasetList = [
+        '30.Schafer',
+        '30.Schafer --discreteTag'
         ]
 else:
     datasetList = [
@@ -145,8 +150,10 @@ else:
         '12.Klein --discreteTag',
         '13.Zeisel',
         '13.Zeisel --discreteTag',
-        'MMPbasal_2000',
-        'MMPbasal_2000 --discreteTag'
+        '20.10X_2700_seurat',
+        '20.10X_2700_seurat --discreteTag',
+        '30.Schafer',
+        '30.Schafer --discreteTag'
     ]
 
 if args.imputeMode:

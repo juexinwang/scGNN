@@ -119,8 +119,10 @@ datasetNameList = [
     '12.Klein --discreteTag --n-clusters 4',
     '13.Zeisel --n-clusters 7',
     '13.Zeisel --discreteTag --n-clusters 7',
-    'MMPbasal_2000',
-    'MMPbasal_2000 --discreteTag'
+    '20.10X_2700_seurat',
+    '20.10X_2700_seurat --discreteTag',
+    '30.Schafer',
+    '30.Schafer --discreteTag'
 ]
 
 # datasetNameList = [

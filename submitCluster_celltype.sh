@@ -62,7 +62,8 @@ mkdir npyN2F_KMeans
 mkdir npyN2F_SpectralClustering
 mkdir npyN2F
 
-for i in {1..28}
+for i in {27..30}
+# for i in {1..30}
 do
 sbatch run_experiment_1_g_b_$i.sh
 sleep 1
