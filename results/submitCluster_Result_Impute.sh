@@ -22,7 +22,7 @@ done
 # submit
 # for i in {0..62}
 # do
-# for j in {0..14}
+# for j in {0..12}
 # sbatch run_Results_Impute_$i-$j.sh
 # sleep 1
 # done
