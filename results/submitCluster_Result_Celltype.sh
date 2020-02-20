@@ -20,11 +20,11 @@ done
 done
 
 # submit
-for i in {0..62}
-do
-for j in {0..14}
-do
-sbatch run_Results_Celltype_$i-$j.sh
-sleep 1
-done
-done
+# for i in {0..62}
+# do
+# for j in {0..14}
+# do
+# sbatch run_Results_Celltype_$i-$j.sh
+# sleep 1
+# done
+# done
