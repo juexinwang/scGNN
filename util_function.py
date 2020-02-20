@@ -194,7 +194,7 @@ class scDatasetDropout(Dataset):
         if not self.discreteTag:
             sample = torch.log(sample+1)
        
-        return sample
+        return sample,idx
 
 # Original
 def loss_function(recon_x, x, mu, logvar):
