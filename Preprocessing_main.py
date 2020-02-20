@@ -16,7 +16,7 @@ import csv
 parser = argparse.ArgumentParser()
 parser.add_argument('--expression-name', type=str, default='11.Kolodziejczyk',
                     help='TGFb from MAGIC/test also from MAGIC/sci-CAR/sci-CAR_LTMG/MMPbasal/MMPbasal_all/MMPbasal_allcell/MMPbasal_allgene/MMPepo/MMPepo_all/MMPepo_allcell/MMPepo_allgene/MMPbasal_LTMG/MMPbasal_all_LTMG/MMPbasal_2000/MMPbasal_2000_LTMG')
-# Dataset: 1-13 benchmark: 1.Biase/2.Li/3.Treutlein/4.Yan/5.Goolam/6.Guo/7.Deng/8.Pollen/9.Chung/10.Usoskin/11.Kolodziejczyk/12.Klein/13.Zeisel
+# Dataset: 1-13 benchmark: 1.Biase/2.Li/3.Treutlein/4.Yan/5.Goolam/6.Guo/7.Deng/8.Pollen/9.Chung/10.Usoskin/11.Kolodziejczyk/12.Klein/13.Zeisel/20.10X_2700_seurat/30.Schafer
 parser.add_argument('--data-type', type=str, default='float',
                     help='int/float')
 parser.add_argument('--geneNzThreshold', type=float, default=0.0,
@@ -352,6 +352,10 @@ elif args.expression_name=='12.Klein':
     expressionname = '12.Klein.csv'
 elif args.expression_name=='13.Zeisel':
     expressionname = '13.Zeisel.csv'
+elif args.expression_name=='20.10X_2700_seurat':
+    expressionname = '20.10X_2700_seurat.csv'
+elif args.expression_name=='30.Schafer':
+    expressionname = '30.Schafer.csv'
 
 out_folder = "data/sc/"+args.expression_name+"/"
 if not os.path.exists(out_folder):

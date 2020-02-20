@@ -52,7 +52,6 @@
 # python Preprocessing_scFile.py --inputfile /home/wangjue/biodata/scData/AnjunBenchmark/20.10X_2700_seurat/OneSign_LTMG.txt --outputfile /home/wangjue/biodata/scData/20.10X_2700_seurat_LTMG.csv --outputfileCellName /home/wangjue/biodata/scData/20.10X_2700_seurat_LTMG.cellname.txt --cellcount 2698 --genecount 21221 --split space --cellheadflag False
 # python Preprocessing_scFile.py --inputfile /home/wangjue/biodata/scData/AnjunBenchmark/30.Schafer/OneSign_LTMG.txt --outputfile /home/wangjue/biodata/scData/30.Schafer_LTMG.csv --outputfileCellName /home/wangjue/biodata/scData/30.Schafer_LTMG.cellname.txt --cellcount 2552 --genecount 21221 --split space --cellheadflag False
 #
-# TODO: Input:
 # Gradient
 # python Preprocessing_scFile.py --inputfile /home/wangjue/biodata/scData/gradient/11.Kolodziejczyk/T1000/T1000Discretization_LTMG.txt --outputfile /home/wangjue/biodata/scData/T1000_LTMG.csv --cellcount 704 --genecount 1000 --split space --cellheadflag False
 # python Preprocessing_scFile.py --inputfile /home/wangjue/biodata/scData/gradient/11.Kolodziejczyk/T2000/T2000Discretization_LTMG.txt --outputfile /home/wangjue/biodata/scData/T2000_LTMG.csv --cellcount 704 --genecount 2000 --split space --cellheadflag False
@@ -78,8 +77,8 @@
 # python Preprocessing_scFile.py --inputfile /home/wangjue/biodata/scData/allBench/11.Kolodziejczyk/T2000_UsingOriginalMatrix/T2000_expression.txt --outputfile /home/wangjue/biodata/scData/11.Kolodziejczyk.csv --cellcount 704 --genecount 2000 --split space --cellheadflag False
 # python Preprocessing_scFile.py --inputfile /home/wangjue/biodata/scData/allBench/12.Klein/T2000_UsingOriginalMatrix/T2000_expression.txt --outputfile /home/wangjue/biodata/scData/12.Klein.csv --cellcount 2717 --genecount 2000 --split space --cellheadflag False
 # python Preprocessing_scFile.py --inputfile /home/wangjue/biodata/scData/allBench/13.Zeisel/T2000_UsingOriginalMatrix/T2000_expression.txt  --outputfile /home/wangjue/biodata/scData/13.Zeisel.csv --cellcount 3005 --genecount 2000 --split space --cellheadflag False
-
-
+# python Preprocessing_scFile.py --inputfile /home/wangjue/biodata/scData/allBench/20.10X_2700_seurat/T2000_UsingOriginalMatrix/T2000_expression.txt  --outputfile /home/wangjue/biodata/scData/20.10X_2700_seurat.csv --cellcount 2700 --genecount 2000 --split space --cellheadflag False
+# python Preprocessing_scFile.py --inputfile /home/wangjue/biodata/scData/allBench/30.Schafer/T2000_UsingOriginalMatrix/T2000_expression.txt  --outputfile /home/wangjue/biodata/scData/30.Schafer.csv --cellcount 2552 --genecount 2000 --split space --cellheadflag False
 
 import numpy as np
 import argparse
