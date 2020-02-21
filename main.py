@@ -76,8 +76,8 @@ parser.add_argument('--useBothembedding', action='store_true', default=False,
                     help='whether use both embedding and Graph embedding for clustering(default: False)')
 parser.add_argument('--clustering-method', type=str, default='Louvain',
                     help='Clustering method: Louvain/KMeans/SpectralClustering/AffinityPropagation/AgglomerativeClustering/Birch')
-parser.add_argument('--maxClusterNumber', type=int, default=100,
-                    help='max cluster for celltypeEM without setting number of clusters (default: 100)') 
+parser.add_argument('--maxClusterNumber', type=int, default=30,
+                    help='max cluster for celltypeEM without setting number of clusters (default: 30)') 
 parser.add_argument('--minMemberinCluster', type=int, default=5,
                     help='max cluster for celltypeEM without setting number of clusters (default: 100)')
 
