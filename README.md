@@ -115,38 +115,15 @@ Now We totally have 63 methods in testing:
 
 3. Get results in cluster
 
-    3.1 Generating results shells
-
+    3.1 Generating results shells and Submit scripts to cluster, we use batch mode here
         cd results
-        python results_Reading.py --methodName 0 > run_Results_Celltype_0.sh
-        ...
-        python results_Reading.py --methodName 27 > run_Results_Celltype_27.sh
-
-        python results_Reading.py --methodName 0 --imputeMode > run_Results_Impute_0.sh
-        ...
-        python results_Reading.py --methodName 27 --imputeMode > run_Results_Impute_27.sh
-
-    3.1.1 Batch mode
-    
-        python results_Reading.py --method 3 --splitMode --batchStr 0 > run_Results_Celltype_3_0.sh
-        ...
-        python results_Reading.py --method 3 --splitMode --batchStr 3 > run_Results_Celltype_3_3.sh
-
-        python results_Reading.py --method 3 --splitMode --batchStr 0 --imputeMode> run_Results_Impute_3_0.sh
-        ...
-        python results_Reading.py --method 3 --splitMode --batchStr 3 --imputeMode> run_Results_Impute_3_3.sh
-
-    3.2 Submit scripts to cluster
-
         bash submitCluster_Result_Celltype.sh
         bash submitCluster_Result_Impute.sh
         
+    3.2 On cluster, store the job information as jobinfo.txt
 
-3.X (Localmachine)Parsing results when ready:
-
-    cd results
-    python results_Reading.py --methodName 0
-    python results_Reading.py --methodName 0 --imputeMode 
+    3.3 (on Localmachine)Parsing results when ready:
+        python summary_cmd.py 
 
 
 Reference:
