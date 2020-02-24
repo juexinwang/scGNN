@@ -170,6 +170,12 @@ def train(epoch, train_loader=train_loader, EMFlag=False):
             else:
                 loss = loss_function_graph(recon_batch, data.view(-1, recon_batch.shape[1]), mu_dummy, logvar_dummy, adjsample, adjfeature, regulationMatrix=regulationMatrixBatch, regularizer_type=args.regulized_type, modelusage=args.model)
                
+        # L1 regularization       
+        l1 = 0
+        for p in model.parameters():
+            l1 = l1 + p.abs().sum()
+        loss = loss + 0.001 * l1
+        
         loss.backward()
         train_loss += loss.item()
         optimizer.step()
