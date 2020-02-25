@@ -19,9 +19,9 @@ for i in range(63):
         # 'python summary.py --fileName results-19687313.out --outFileName RC_0_0.txt'
         name = 'RC_'+str(i)+'_'+str(j)
         if args.imputeMode:
-            commandStr = 'python summary.py --fileName results-' + reDict[name] + '.out --outFileName celltype/' + name + '.txt'    
+            commandStr = 'cat results-' + reDict[name] + '.out > imputation/' + name + '.txt'        
         else:
-            commandStr = 'cat results-' + reDict[name] + '.out > imputation/' + name + '.txt'
+            commandStr = 'python summary.py --fileName results-' + reDict[name] + '.out --outFileName celltype/' + name + '.txt'
         # print(commandStr)
         os.system(commandStr)
     
