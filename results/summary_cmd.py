@@ -25,5 +25,19 @@ for i in range(63):
             commandStr = 'python summary.py --fileName results-' + reDict[name] + '.out --outFileName celltype/' + name + '.txt'
         # print(commandStr)
         os.system(commandStr)
+
+for i in range(13):
+    allstr = []
+    for j in range(63):
+        allstr.append(j)
+        with open('imputation/RI_'+str(j)+'_'+str(i)+'.txt') as f:
+            lines = f.readlines()
+            for line in lines:
+                allstr.append('\t'+line)
+            f.close()
+    
+    with open('imputation/results_'+str(j)+'.txt','w') as fw:
+        fw.writelines("%s\n" % strr for strr in allstr)
+        fw.close()
     
 
