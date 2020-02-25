@@ -7,7 +7,7 @@ parser.add_argument('--runMode',action='store_true', default=False, help="Run or
 args = parser.parse_args()
 
 reDict = {}
-with open('jobinfo.txt') as f:
+with open('jobinfo_usage.txt') as f:
     lines = f.readlines()
     for line in lines:
         line = line.strip()
@@ -18,7 +18,8 @@ with open('jobinfo.txt') as f:
 for i in range(63):
     for j in range(13):
         # 'python summary.py --fileName results-19687313.out --outFileName RC_0_0.txt'
-        name = 'RC_'+str(i)+'_'+str(j)
+        # name = 'RC_'+str(i)+'_'+str(j)
+        name = 'RI_'+str(i)+'_'+str(j)
         commandStr = 'python summary.py --fileName results-' + reDict[name] + '.out --outFileName ' + name + '.txt'
         print(commandStr)
         # os.system(commandStr)
