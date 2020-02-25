@@ -37,7 +37,7 @@ for i in range(13):
             f.close()
     
     with open('imputation/results_'+str(i)+'.txt','w') as fw:
-        fw.writelines("%s\n" % strr for strr in allstr)
+        fw.writelines("%s" % strr for strr in allstr)
         fw.close()
     
 
