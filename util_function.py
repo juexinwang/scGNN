@@ -214,7 +214,7 @@ def loss_function(recon_x, x, mu, logvar):
     return BCE + KLD
 
 # Graph
-def loss_function_graph(recon_x, x, mu, logvar, adjsample=None, adjfeature=None, regulationMatrix=None, regularizer_type='noregu', modelusage='AE'):
+def loss_function_graph(recon_x, x, mu, logvar, adjsample=None, adjfeature=None, regulationMatrix=None, regularizer_type='noregu', reguPara=0.001, modelusage='AE'):
     '''
     Regularized by the graph information
     Reconstruction + KL divergence losses summed over all elements and batch
@@ -223,22 +223,19 @@ def loss_function_graph(recon_x, x, mu, logvar, adjsample=None, adjfeature=None,
     # BCE = F.binary_cross_entropy(recon_x, x.view(-1, 784), reduction='sum')
     # Graph
     target = x
-    if regularizer_type == 'Graph' or regularizer_type == 'LTMG':
+    if regularizer_type == 'Graph' or regularizer_type == 'LTMG' or regularizer_type == 'LTMG01':
         target.requires_grad = True
     # Euclidean
+    BCE = vallina_mse_loss_function(recon_x, target, reduction='sum')
     if regularizer_type == 'noregu':
-        BCE = vallina_mse_loss_function(recon_x, target, reduction='sum')
-    elif regularizer_type == 'Grap':
-        BCE = graph_mse_loss_function(recon_x, target, adjsample, adjfeature, reduction='sum')
+        loss = BCE
+    elif regularizer_type == 'Graph':
+        loss = BCE + graph_mse_loss_function(recon_x, target, adjsample, adjfeature, reduction='sum')
     elif regularizer_type == 'LTMG':
-        BCE = regulation_mse_loss_function(recon_x, target, regulationMatrix, reduction='sum')
+        loss = BCE + reguPara * regulation_mse_loss_function(recon_x, target, regulationMatrix, reduction='sum')
     elif regularizer_type == 'LTMG01':
-        BCE = regulation01_mse_loss_function(recon_x, target, regulationMatrix, reduction='sum')
-    
-    # Entropy
-    # BCE = graph_binary_cross_entropy(recon_x, target, adj, reduction='sum')
-    # BCE = F.binary_cross_entropy(recon_x, target, reduction='sum')
-    loss = BCE
+        loss = BCE + reguPara * regulation01_mse_loss_function(recon_x, target, regulationMatrix, reduction='sum')
+
 
     # see Appendix B from VAE paper:
     # Kingma and Welling. Auto-Encoding Variational Bayes. ICLR, 2014
@@ -366,7 +363,7 @@ def graph_mse_loss_function(input, target, adjsample, adjfeature, size_average=N
 
 # Regulation mse as the regularizor
 # Now LTMG is set as the input
-def regulation_mse_loss_function(input, target, regulationMatrix, reguPara=0.5, size_average=None, reduce=None, reduction='mean'):
+def regulation_mse_loss_function(input, target, regulationMatrix, size_average=None, reduce=None, reduction='mean'):
     # type: (Tensor, Tensor, str, Optional[bool], Optional[bool], str) -> Tensor
     r"""regulation_mse_loss_function(input, target, regulationMatrix, regularizer_type, size_average=None, reduce=None, reduction='mean') -> Tensor
 
@@ -382,14 +379,14 @@ def regulation_mse_loss_function(input, target, regulationMatrix, reguPara=0.5, 
         reduction = legacy_get_string(size_average, reduce)
     # Now it use regulariz type to distinguish, it can be imporved later
     ret = (input - target) ** 2
-    ret = torch.mul(ret, reguPara * regulationMatrix)
+    ret = torch.mul(ret, regulationMatrix)
     if reduction != 'none':
         ret = torch.mean(ret) if reduction == 'mean' else torch.sum(ret)      
     return ret
 
 # Regulation mse as the regularizor
 # Now LTMG is set as the input
-def regulation01_mse_loss_function(input, target, regulationMatrix, reguPara=0.5, size_average=None, reduce=None, reduction='mean'):
+def regulation01_mse_loss_function(input, target, regulationMatrix, size_average=None, reduce=None, reduction='mean'):
     # type: (Tensor, Tensor, str, Optional[bool], Optional[bool], str) -> Tensor
     r"""regulation_mse_loss_function(input, target, regulationMatrix, regularizer_type, size_average=None, reduce=None, reduction='mean') -> Tensor
 
@@ -406,7 +403,7 @@ def regulation01_mse_loss_function(input, target, regulationMatrix, reguPara=0.5
     # Now it use regulariz type to distinguish, it can be imporved later
     ret = (input - target) ** 2
     regulationMatrix[regulationMatrix>0]=1
-    ret = torch.mul(ret, reguPara * regulationMatrix)
+    ret = torch.mul(ret, regulationMatrix)
     if reduction != 'none':
         ret = torch.mean(ret) if reduction == 'mean' else torch.sum(ret)      
     return ret

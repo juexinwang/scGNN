@@ -48,6 +48,10 @@ parser.add_argument('--seed', type=int, default=1, metavar='S',
                     help='random seed (default: 1)')
 parser.add_argument('--regulized-type', type=str, default='LTMG',
                     help='regulized type (default: Graph) in EM, otherwise: noregu/LTMG/LTMG01')
+parser.add_argument('--regularizePara', type=float, default=0.001,
+                    help='regulized parameter (default: 0.001)')
+parser.add_argument('--L1Para', type=float, default=0.0,
+                    help='regulized parameter (default: 0.001)')
 parser.add_argument('--discreteTag', action='store_true', default=False, 
                     help='whether input is raw or 0/1 (default: False)')
 parser.add_argument('--k', type=int, default=10,
@@ -155,9 +159,9 @@ def train(epoch, train_loader=train_loader, EMFlag=False):
             # Original
             # loss = loss_function(recon_batch, data, mu, logvar)
             if EMFlag:
-                loss = loss_function_graph(recon_batch, data.view(-1, recon_batch.shape[1]), mu, logvar, adjsample, adjfeature, regulationMatrix=regulationMatrixBatch, regularizer_type=args.regulized_type, modelusage=args.model)
+                loss = loss_function_graph(recon_batch, data.view(-1, recon_batch.shape[1]), mu, logvar, adjsample, adjfeature, regulationMatrix=regulationMatrixBatch, regularizer_type=args.regulized_type, reguPara=args.regularizePara, modelusage=args.model)
             else:
-                loss = loss_function_graph(recon_batch, data.view(-1, recon_batch.shape[1]), mu, logvar, adjsample, adjfeature, regulationMatrix=regulationMatrixBatch, regularizer_type=args.regulized_type, modelusage=args.model)
+                loss = loss_function_graph(recon_batch, data.view(-1, recon_batch.shape[1]), mu, logvar, adjsample, adjfeature, regulationMatrix=regulationMatrixBatch, regularizer_type=args.regulized_type, reguPara=args.regularizePara, modelusage=args.model)
             
         elif args.model == 'AE':
             recon_batch, z = model(data)
@@ -166,15 +170,16 @@ def train(epoch, train_loader=train_loader, EMFlag=False):
             # Original
             # loss = loss_function(recon_batch, data, mu, logvar)
             if EMFlag:
-                loss = loss_function_graph(recon_batch, data.view(-1, recon_batch.shape[1]), mu_dummy, logvar_dummy, adjsample, adjfeature, regulationMatrix=regulationMatrixBatch, regularizer_type=args.regulized_type, modelusage=args.model)
+                loss = loss_function_graph(recon_batch, data.view(-1, recon_batch.shape[1]), mu_dummy, logvar_dummy, adjsample, adjfeature, regulationMatrix=regulationMatrixBatch, regularizer_type=args.regulized_type, reguPara=args.regularizePara, modelusage=args.model)
             else:
-                loss = loss_function_graph(recon_batch, data.view(-1, recon_batch.shape[1]), mu_dummy, logvar_dummy, adjsample, adjfeature, regulationMatrix=regulationMatrixBatch, regularizer_type=args.regulized_type, modelusage=args.model)
+                loss = loss_function_graph(recon_batch, data.view(-1, recon_batch.shape[1]), mu_dummy, logvar_dummy, adjsample, adjfeature, regulationMatrix=regulationMatrixBatch, regularizer_type=args.regulized_type, reguPara=args.regularizePara, modelusage=args.model)
                
-        # L1 regularization       
+        # L1 regularization
+        # 0.0 for no regularization 
         l1 = 0
         for p in model.parameters():
             l1 = l1 + p.abs().sum()
-        loss = loss + 0.001 * l1
+        loss = loss + args.L1Para * l1
         
         loss.backward()
         train_loss += loss.item()
