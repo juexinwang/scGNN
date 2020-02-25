@@ -34,6 +34,7 @@ for i in range(13):
         tag = True
         with open('imputation/RI_'+str(j)+'_'+str(i)+'.txt') as f:
             lines = f.readlines()
+            count = 0
             for line in lines:
                 if line.startswith('Traceback (most recent call last):'):
                     tag = False
