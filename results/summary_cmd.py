@@ -30,10 +30,16 @@ for i in range(13):
     allstr = []
     for j in range(63):
         allstr.append(j)
+        tag = True
         with open('imputation/RI_'+str(j)+'_'+str(i)+'.txt') as f:
             lines = f.readlines()
             for line in lines:
-                allstr.append('\t'+line)
+                if line.startswith('Traceback (most recent call last):'):
+                    tag = False
+                elif line.startswith('FileNotFoundError:'):
+                    tag = True
+                elif tag:
+                    allstr.append('\t'+line)
             f.close()
     
     with open('imputation/results_'+str(i)+'.txt','w') as fw:
