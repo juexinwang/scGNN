@@ -16,11 +16,12 @@ with open('jobinfo_usage.txt') as f:
 
 for i in range(63):
     for j in range(13):
-        # 'python summary.py --fileName results-19687313.out --outFileName RC_0_0.txt'
-        name = 'RC_'+str(i)+'_'+str(j)
+        # 'python summary.py --fileName results-19687313.out --outFileName RC_0_0.txt'        
         if args.imputeMode:
+            name = 'RI_'+str(i)+'_'+str(j)
             commandStr = 'cat results-' + reDict[name] + '.out > imputation/' + name + '.txt'        
         else:
+            name = 'RC_'+str(i)+'_'+str(j)
             commandStr = 'python summary.py --fileName results-' + reDict[name] + '.out --outFileName celltype/' + name + '.txt'
         # print(commandStr)
         os.system(commandStr)
