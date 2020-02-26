@@ -1,3 +1,4 @@
+import math
 import argparse
 parser = argparse.ArgumentParser(description='Summary on Results from Cluster output results')
 parser.add_argument('--fileDir', type=str, default='', help="fileDir")
@@ -20,9 +21,12 @@ with open(fileDir+fileName) as f:
     lines = f.readlines()
     tag = False
     otag = False
+    abstag = False
     convergetag = False
     for line in lines:
         line = line.strip()
+        if math.floor(keyDict['Louvain']%33)==1:
+            abstag = False
         if line in keyDict:            
             tag = True
             tmpstr = '\t'+line+'\t'
@@ -58,16 +62,18 @@ with open(fileDir+fileName) as f:
             keyDict[line] = keyDict[line]+1        
         elif line.startswith('FileNotFoundError: [Errno 2] No such file or directory:'):
             print(line)
-            break
+            abstag = True
+            # break
         elif line.endswith('?it/s]'):
             tag = False
             tmpstr = ''
-        elif tag:
-            val = (keyDict['Louvain']-1)%33
-            if val in tabuDict:
-                outLines.append(tmpstr+line+'\n')
-                tag = False
-                tmpstr = ''
+        elif not abstag:
+            if tag:
+                val = (keyDict['Louvain']-1)%33               
+                if val in tabuDict:
+                    outLines.append(tmpstr+line+'\n')
+                    tag = False
+                    tmpstr = ''        
     f.close()
 
 with open(outFileName,'w') as fw:
