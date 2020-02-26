@@ -63,21 +63,22 @@ for i in range(13):
 
                     line = line.strip()
                     words = line.split()
-                    if words[0]=='Graph':                        
-                        if count==1:
-                            tstr = tmpstr
-                            tstr1 = tmpstr1
-                        count+=1
+                    if len(words)>3:
+                        if words[0]=='Graph':                        
+                            if count==1:
+                                tstr = tmpstr
+                                tstr1 = tmpstr1
+                            count+=1
 
-                    elif words[0] in nameDict:
-                        tmpstr =''
-                        tmpstr1=''
-                    if words[1]=='Louvain':
-                        tmpstr = tmpstr + words[2] + ',' 
-                        tmpstr1 = tmpstr1 + words[5] + ',' 
-                    if words[0]=='KMeans' or words[0]=='SpectralClustering' or words[0]=='Birch':
-                        tmpstr = tmpstr + words[1] + ','
-                        tmpstr1 = tmpstr1 + words[4] + ','
+                        elif words[0] in nameDict:
+                            tmpstr =''
+                            tmpstr1=''
+                        if words[1]=='Louvain':
+                            tmpstr = tmpstr + words[2] + ',' 
+                            tmpstr1 = tmpstr1 + words[5] + ',' 
+                        if words[0]=='KMeans' or words[0]=='SpectralClustering' or words[0]=='Birch':
+                            tmpstr = tmpstr + words[1] + ','
+                            tmpstr1 = tmpstr1 + words[4] + ','
                 selstr.append(str(j)+','+tstr+tstr1+tmpstr+tmpstr1)
                 f.close() 
             
