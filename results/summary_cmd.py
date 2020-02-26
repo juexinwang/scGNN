@@ -79,7 +79,7 @@ for i in range(13):
                         if words[0]=='KMeans' or words[0]=='SpectralClustering' or words[0]=='Birch':
                             tmpstr = tmpstr + words[1] + ','
                             tmpstr1 = tmpstr1 + words[4] + ','
-                selstr.append(str(j)+','+tstr+tstr1+tmpstr+tmpstr1)
+                selstr.append(str(j)+','+tstr+tstr1+tmpstr+tmpstr1+'\n')
                 f.close() 
             
     if args.imputeMode:
