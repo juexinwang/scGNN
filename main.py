@@ -79,7 +79,7 @@ parser.add_argument('--useGAEembedding', action='store_true', default=False,
 parser.add_argument('--useBothembedding', action='store_true', default=False, 
                     help='whether use both embedding and Graph embedding for clustering(default: False)')
 parser.add_argument('--clustering-method', type=str, default='Louvain',
-                    help='Clustering method: Louvain/KMeans/SpectralClustering/AffinityPropagation/AgglomerativeClustering/Birch')
+                    help='Clustering method: Louvain/KMeans/SpectralClustering/AffinityPropagation/AgglomerativeClustering/Birch/BirchN')
 parser.add_argument('--maxClusterNumber', type=int, default=30,
                     help='max cluster for celltypeEM without setting number of clusters (default: 30)') 
 parser.add_argument('--minMemberinCluster', type=int, default=5,
@@ -93,7 +93,7 @@ parser.add_argument('--GAEhidden2', type=int, default=16, help='Number of units 
 parser.add_argument('--GAElr', type=float, default=0.01, help='Initial learning rate.')
 parser.add_argument('--GAEdropout', type=float, default=0., help='Dropout rate (1 - keep probability).')
 parser.add_argument('--GAElr_dw', type=float, default=0.001, help='Initial learning rate for regularization.')
-parser.add_argument('--n-clusters', default=20, type=int, help='number of clusters, 7 for cora, 6 for citeseer, 11 for 5.Pollen, 20 for MMP')
+parser.add_argument('--n-clusters', default=20, type=float, help='number of clusters, 7 for cora, 6 for citeseer, 11 for 5.Pollen, 20 for MMP')
 #Start Impute or not, only used for evaluating Impute
 parser.add_argument('--imputeMode', default=False, action='store_true',
                     help='impute or not (default: False). Caution: usually change npuDir if set imputeMode as true')
@@ -314,6 +314,9 @@ if __name__ == "__main__":
             listResult = clustering.labels_.tolist()
         elif args.clustering_method=='Birch':
             clustering = Birch(n_clusters=args.n_clusters).fit(zOut)
+            listResult = clustering.predict(zOut)
+        elif args.clustering_method=='BirchN':
+            clustering = Birch(n_clusters=None).fit(zOut)
             listResult = clustering.predict(zOut)
         else:
             print("Error: Clustering method not appropriate")
