@@ -56,7 +56,7 @@ dropj            = np.load(args.npyDir+args.datasetName+'_'+args.regulized_type+
 dropix           = np.load(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_'+args.ratio+'_dropix.npy')
 
 featuresImpute   = np.load(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_'+args.ratio+'_recon'+args.reconstr+'.npy')
-l1ErrorMean, l1ErrorMedian, l1ErrorMin, l1ErrorMax = imputation_error(featuresImpute, featuresOriginal, features, dropi, dropj, dropix)
+l1ErrorMean, l1ErrorMedian, l1ErrorMin, l1ErrorMax = imputation_error_log(featuresImpute, featuresOriginal, features, dropi, dropj, dropix)
 print('{:.4f} {:.4f} {:.4f} {:.4f} '.format(l1ErrorMean, l1ErrorMedian, l1ErrorMin, l1ErrorMax), end='')
 
 def imputeResult(inputData):
