@@ -503,7 +503,7 @@ def trimClustering(listResult,minMemberinCluster=5,maxClusterNumber=30):
     size = len(set(listResult))
     changeDict = {}
     for item in range(size):
-        if numDict[item]<minMemberinCluster:
+        if numDict[item]<minMemberinCluster and item>=maxClusterNumber:
             changeDict[item] = ''
     
     count = 0
