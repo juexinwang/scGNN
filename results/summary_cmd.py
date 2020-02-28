@@ -90,6 +90,7 @@ for i in range(13):
     with open(outputfilename,'w') as fw:
         fw.writelines("%s" % strr for strr in allstr)
         fw.close()
-    with open(seloutputfilename,'w') as fw:
-        fw.writelines("%s" % strr for strr in selstr)
-        fw.close()
+    if not args.imputeMode:
+        with open(seloutputfilename,'w') as fw:
+            fw.writelines("%s" % strr for strr in selstr)
+            fw.close()
