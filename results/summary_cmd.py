@@ -48,7 +48,7 @@ for i in range(13):
                         count += 1
                     elif tag:
                         allstr.append(str(j)+'\t'+numDict[count]+'\t'+line)
-                        lastline = str(j)+'\t'+numDict[count]+'\t'+line
+                        lastline = str(j)+','+numDict[count]+','+line
                         count += 1
                 f.close()
                 selstr.append(lastline)
