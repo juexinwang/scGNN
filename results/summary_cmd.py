@@ -87,6 +87,7 @@ for i in range(13):
             
     if args.imputeMode:
         outputfilename = 'imputation/results_'+str(i)+'.txt'
+        seloutputfilename = 'celltype/sel_results_'+str(i)+'.csv'
     else:
         outputfilename = 'celltype/results_'+str(i)+'.txt'
         seloutputfilename = 'celltype/sel_results_'+str(i)+'.csv'
