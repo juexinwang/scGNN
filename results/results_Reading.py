@@ -50,77 +50,77 @@ if args.splitMode:
     if args.batchStr == 0:
         datasetList = [
         '1.Biase',
-        '1.Biase --discreteTag'
+        # '1.Biase --discreteTag'
         ]
     elif args.batchStr == 1:
         datasetList = [
         '2.Li',
-        '2.Li --discreteTag'
+        # '2.Li --discreteTag'
         ]
     elif args.batchStr == 2:
         datasetList = [
         '3.Treutlein',
-        '3.Treutlein --discreteTag'
+        # '3.Treutlein --discreteTag'
         ]
     elif args.batchStr == 3:
         datasetList = [
         '4.Yan',
-        '4.Yan --discreteTag'
+        # '4.Yan --discreteTag'
         ]
     elif args.batchStr == 4:
         datasetList = [
         '5.Goolam',
-        '5.Goolam --discreteTag'
+        # '5.Goolam --discreteTag'
         ]
     elif args.batchStr == 5:
         datasetList = [
         '6.Guo',
-        '6.Guo --discreteTag'
+        # '6.Guo --discreteTag'
         ]
     elif args.batchStr == 6:
         datasetList = [
         '7.Deng',
-        '7.Deng --discreteTag'
+        # '7.Deng --discreteTag'
         ]
     elif args.batchStr == 7:
         datasetList = [
         '8.Pollen',
-        '8.Pollen --discreteTag'
+        # '8.Pollen --discreteTag'
         ]
     elif args.batchStr == 8:
         datasetList = [
         '9.Chung',
-        '9.Chung --discreteTag'
+        # '9.Chung --discreteTag'
         ]
     elif args.batchStr == 9:
         datasetList = [
         '10.Usoskin',
-        '10.Usoskin --discreteTag'
+        # '10.Usoskin --discreteTag'
         ]
     elif args.batchStr == 10:
         datasetList = [
         '11.Kolodziejczyk',
-        '11.Kolodziejczyk --discreteTag'
+        # '11.Kolodziejczyk --discreteTag'
         ]
     elif args.batchStr == 11:
         datasetList = [
         '12.Klein',
-        '12.Klein --discreteTag'
+        # '12.Klein --discreteTag'
         ]
     elif args.batchStr == 12:
         datasetList = [
         '13.Zeisel',
-        '13.Zeisel --discreteTag'
+        # '13.Zeisel --discreteTag'
         ]
     elif args.batchStr == 13:
         datasetList = [
         '20.10X_2700_seurat',
-        '20.10X_2700_seurat --discreteTag'
+        # '20.10X_2700_seurat --discreteTag'
         ]
     elif args.batchStr == 14:
         datasetList = [
         '30.Schafer',
-        '30.Schafer --discreteTag'
+        # '30.Schafer --discreteTag'
         ]
 else:
     datasetList = [
