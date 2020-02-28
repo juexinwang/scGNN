@@ -36,6 +36,7 @@ for i in range(13):
     for j in range(63):
         tag = True
         if args.imputeMode:
+            lastline = ''
             with open('imputation/RI_'+str(j)+'_'+str(i)+'.txt') as f:
                 lines = f.readlines()
                 count = 0
@@ -47,8 +48,10 @@ for i in range(13):
                         count += 1
                     elif tag:
                         allstr.append(str(j)+'\t'+numDict[count]+'\t'+line)
+                        lastline = str(j)+'\t'+numDict[count]+'\t'+line
                         count += 1
                 f.close()
+                selstr.append(lastline)
         else:
             with open('celltype/RC_'+str(j)+'_'+str(i)+'.txt') as f:
                 lines = f.readlines()
@@ -90,7 +93,6 @@ for i in range(13):
     with open(outputfilename,'w') as fw:
         fw.writelines("%s" % strr for strr in allstr)
         fw.close()
-    if not args.imputeMode:
-        with open(seloutputfilename,'w') as fw:
-            fw.writelines("%s" % strr for strr in selstr)
-            fw.close()
+    with open(seloutputfilename,'w') as fw:
+        fw.writelines("%s" % strr for strr in selstr)
+        fw.close()
