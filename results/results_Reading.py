@@ -338,18 +338,33 @@ else:
         ]
 
 reguDict={}
-for i in range(0,3):
+#complex
+# for i in range(0,3):
+#     reguDict[i]='LTMG'
+# for i in range(3,6):
+#     reguDict[i]='LTMG01'
+# for i in range(6,9):
+#     reguDict[i]='noregu'
+# for i in range(9,27):
+#     reguDict[i]='LTMG'
+# for i in range(27,45):
+#     reguDict[i]='LTMG01'
+# for i in range(45,63):
+#     reguDict[i]='noregu'
+
+#select:
+for i in range(0,2):
     reguDict[i]='LTMG'
-for i in range(3,6):
+for i in range(2,4):
     reguDict[i]='LTMG01'
-for i in range(6,9):
-    reguDict[i]='noregu'
-for i in range(9,27):
+for i in range(4,6):
     reguDict[i]='LTMG'
-for i in range(27,45):
+for i in range(6,8):
     reguDict[i]='LTMG01'
-for i in range(45,63):
-    reguDict[i]='noregu'
+for i in range(8,14):
+    reguDict[i]='LTMG'
+for i in range(14,20):
+    reguDict[i]='LTMG01'
 reguStr=''
 if args.methodName in reguDict:
     reguStr=' --regulized-type ' + reguDict[args.methodName] + ' '
