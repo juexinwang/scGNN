@@ -6,7 +6,8 @@ parser.add_argument('--imputeMode', default=False, action='store_true',
 args = parser.parse_args()
 
 reDict = {}
-with open('jobinfo_imp.txt') as f:
+# with open('jobinfo_imp_sel.txt') as f:
+with open('jobinfo_usage_sel.txt') as f:
     lines = f.readlines()
     for line in lines:
         line = line.strip()
