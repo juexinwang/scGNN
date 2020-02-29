@@ -10,16 +10,17 @@
 # sleep 1
 # done
 
+## complex
 ## split mode
-for i in {0..62}
-do
-for j in {0..12}
-do
-python results_Reading.py --methodName $i --splitMode --batchStr $j --imputeMode > run_Results_Impute_$i-$j.sh
-done
-done
+# for i in {0..62}
+# do
+# for j in {0..12}
+# do
+# python results_Reading.py --methodName $i --splitMode --batchStr $j --imputeMode > run_Results_Impute_$i-$j.sh
+# done
+# done
 
-# submit
+# # submit
 # for i in {0..62}
 # do
 # for j in {0..12}
@@ -28,3 +29,23 @@ done
 # sleep 1
 # done
 # done
+
+## selected
+## split mode
+for i in {0..20}
+do
+for j in {0..12}
+do
+python results_Reading.py --methodName $i --splitMode --batchStr $j --imputeMode > run_Results_Impute_$i-$j.sh
+done
+done
+
+# submit
+for i in {0..20}
+do
+for j in {0..12}
+do
+sbatch run_Results_Impute_$i-$j.sh
+sleep 1
+done
+done

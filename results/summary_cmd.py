@@ -6,8 +6,11 @@ parser.add_argument('--imputeMode', default=False, action='store_true',
 args = parser.parse_args()
 
 reDict = {}
-# with open('jobinfo_imp_sel.txt') as f:
-with open('jobinfo_usage_sel.txt') as f:
+if args.imputeMode:
+    filename = 'jobinfo_imp_sel.txt'
+else:
+    filename = 'jobinfo_usage_sel.txt'
+with open(filename) as f:
     lines = f.readlines()
     for line in lines:
         line = line.strip()
@@ -15,7 +18,8 @@ with open('jobinfo_usage_sel.txt') as f:
         reDict[words[2]] = words[0]
     f.close()
 
-for i in range(63):
+# complex: 63, select: 20
+for i in range(20):
     for j in range(13):
         # 'python summary.py --fileName results-19687313.out --outFileName RC_0_0.txt'        
         if args.imputeMode:
@@ -34,7 +38,8 @@ nameDict={'Z0':'','Z1':'','Z2':'','Z3':'','Z4':'','Z5':'','Z6':'','Z7':'','Z8':'
 for i in range(13):
     allstr = []
     selstr = []
-    for j in range(63):
+    # complex: 63, select: 20 
+    for j in range(20):
         tag = True
         if args.imputeMode:
             lastline = ''
