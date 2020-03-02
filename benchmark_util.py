@@ -327,14 +327,14 @@ def test_clustering_benchmark_results(z, edgeList, true_labels, args):
     except:
         pass
 
-    try:
-        #Spectral Clustering
-        print("SpectralClustering")
-        clustering = SpectralClustering(n_clusters=args.n_clusters, assign_labels="discretize", random_state=0).fit(z)
-        listResult = clustering.labels_.tolist()
-        measure_clustering_benchmark_results(z,listResult, true_labels)
-    except:
-        pass
+    # try:
+    #     #Spectral Clustering
+    #     print("SpectralClustering")
+    #     clustering = SpectralClustering(n_clusters=args.n_clusters, assign_labels="discretize", random_state=0).fit(z)
+    #     listResult = clustering.labels_.tolist()
+    #     measure_clustering_benchmark_results(z,listResult, true_labels)
+    # except:
+    #     pass
 
     try:
         #AffinityPropagation
@@ -413,14 +413,14 @@ def test_clustering_results(z, edgeList, args):
     except:
         pass
 
-    try:
-        #Spectral Clustering
-        print("SpectralClustering")
-        clustering = SpectralClustering(n_clusters=args.n_clusters, assign_labels="discretize", random_state=0).fit(z)
-        listResult = clustering.labels_.tolist()
-        measure_clustering_results(z,listResult)
-    except:
-        pass
+    # try:
+    #     #Spectral Clustering
+    #     print("SpectralClustering")
+    #     clustering = SpectralClustering(n_clusters=args.n_clusters, assign_labels="discretize", random_state=0).fit(z)
+    #     listResult = clustering.labels_.tolist()
+    #     measure_clustering_results(z,listResult)
+    # except:
+    #     pass
 
     try:
         #AffinityPropagation
