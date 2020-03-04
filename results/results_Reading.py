@@ -482,12 +482,12 @@ if not args.runMode:
     templateStr = "#! /bin/bash\n"\
     "######################### Batch Headers #########################\n"\
     "#SBATCH -A xulab\n"\
-    "#SBATCH -p BioCompute               # use the BioCompute partition\n"\
+    "#SBATCH -p Lewis,BioCompute               # use the BioCompute partition\n"\
     "#SBATCH -J R" + imputeStr + '_' + str(args.methodName) + splitStr +              " \n"\
     "#SBATCH -o results-%j.out           # give the job output a custom name\n"\
     "#SBATCH -t 2-00:00                  # two days time limit\n"\
     "#SBATCH -N 1                        # number of nodes\n"\
-    "#SBATCH -n 8                        # number of cores (AKA tasks)\n"\
+    "#SBATCH -n 1                        # number of cores (AKA tasks)\n"\
     "#SBATCH --mem=128G\n"\
     "#################################################################\n"\
     "module load miniconda3\n"\
