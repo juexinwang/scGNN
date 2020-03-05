@@ -93,28 +93,52 @@ templateStr2 = "\n#SBATCH -o results-%j.out           # give the job output a cu
 #     ('run_experiment_2_n_f_SpectralClustering E2nfS','--regulized-type noregu --EMtype celltypeEM --clustering-method SpectralClustering --npyDir','npyN2F_SpectralClustering/')
 # ]
 
-#Refined Matrix
+#Refined Matrix with --regularizePara 0.001
+# methodsList = [
+#     ('run_experiment_1_g_b E1gb','--regulized-type LTMG --EMtype EM --useBothembedding --npyDir','npyG1B/'),
+#     ('run_experiment_1_g_e E1ge','--regulized-type LTMG --EMtype EM --useGAEembedding --npyDir','npyG1E/'),
+#     ('run_experiment_1_r_b E1rb','--regulized-type LTMG01 --EMtype EM --useBothembedding --npyDir','npyR1B/'),
+#     ('run_experiment_1_r_e E1re','--regulized-type LTMG01 --EMtype EM --useGAEembedding --npyDir','npyR1E/'),
+#     ('run_experiment_2_g_b E2gb','--regulized-type LTMG --EMtype celltypeEM --useBothembedding  --npyDir','npyG2B/'),
+#     ('run_experiment_2_g_e E2ge','--regulized-type LTMG --EMtype celltypeEM --useGAEembedding  --npyDir','npyG2E/'),
+#     ('run_experiment_2_r_b E2rb','--regulized-type LTMG01 --EMtype celltypeEM --useBothembedding  --npyDir','npyR2B/'),
+#     ('run_experiment_2_r_e E2re','--regulized-type LTMG01 --EMtype celltypeEM --useGAEembedding  --npyDir','npyR2E/'),
+#     ('run_experiment_2_g_b_Birch E2gbB','--regulized-type LTMG --EMtype celltypeEM --clustering-method Birch --useBothembedding --npyDir','npyG2B_Birch/'),
+#     ('run_experiment_2_g_b_BirchN E2gbN','--regulized-type LTMG --EMtype celltypeEM --clustering-method BirchN --useBothembedding --npyDir','npyG2B_BirchN/'),
+#     ('run_experiment_2_g_b_KMeans E2gbK','--regulized-type LTMG --EMtype celltypeEM --clustering-method KMeans --useBothembedding --npyDir','npyG2B_KMeans/'),
+#     ('run_experiment_2_g_e_Birch E2geB','--regulized-type LTMG --EMtype celltypeEM --clustering-method Birch --useGAEembedding --npyDir','npyG2E_Birch/'),
+#     ('run_experiment_2_g_e_BirchN E2geN','--regulized-type LTMG --EMtype celltypeEM --clustering-method BirchN --useGAEembedding --npyDir','npyG2E_BirchN/'),
+#     ('run_experiment_2_g_e_KMeans E2geK','--regulized-type LTMG --EMtype celltypeEM --clustering-method KMeans --useGAEembedding --npyDir','npyG2E_KMeans/'),
+#     ('run_experiment_2_r_b_Birch E2rbB','--regulized-type LTMG01 --EMtype celltypeEM --clustering-method Birch --useBothembedding --npyDir','npyR2B_Birch/'),
+#     ('run_experiment_2_r_b_BirchN E2rbN','--regulized-type LTMG01 --EMtype celltypeEM --clustering-method BirchN --useBothembedding --npyDir','npyR2B_BirchN/'),
+#     ('run_experiment_2_r_b_KMeans E2rbK','--regulized-type LTMG01 --EMtype celltypeEM --clustering-method KMeans --useBothembedding --npyDir','npyR2B_KMeans/'),
+#     ('run_experiment_2_r_e_Birch E2reB','--regulized-type LTMG01 --EMtype celltypeEM --clustering-method Birch --useGAEembedding --npyDir','npyR2E_Birch/'),
+#     ('run_experiment_2_r_e_BirchN E2reN','--regulized-type LTMG01 --EMtype celltypeEM --clustering-method BirchN --useGAEembedding --npyDir','npyR2E_BirchN/'),
+#     ('run_experiment_2_r_e_KMeans E2reK','--regulized-type LTMG01 --EMtype celltypeEM --clustering-method KMeans --useGAEembedding --npyDir','npyR2E_KMeans/')
+# ]
+
+#Refined Matrix with --regularizePara 0.5
 methodsList = [
-    ('run_experiment_1_g_b E1gb','--regulized-type LTMG --EMtype EM --useBothembedding --npyDir','npyG1B/'),
-    ('run_experiment_1_g_e E1ge','--regulized-type LTMG --EMtype EM --useGAEembedding --npyDir','npyG1E/'),
-    ('run_experiment_1_r_b E1rb','--regulized-type LTMG01 --EMtype EM --useBothembedding --npyDir','npyR1B/'),
-    ('run_experiment_1_r_e E1re','--regulized-type LTMG01 --EMtype EM --useGAEembedding --npyDir','npyR1E/'),
-    ('run_experiment_2_g_b E2gb','--regulized-type LTMG --EMtype celltypeEM --useBothembedding  --npyDir','npyG2B/'),
-    ('run_experiment_2_g_e E2ge','--regulized-type LTMG --EMtype celltypeEM --useGAEembedding  --npyDir','npyG2E/'),
-    ('run_experiment_2_r_b E2rb','--regulized-type LTMG01 --EMtype celltypeEM --useBothembedding  --npyDir','npyR2B/'),
-    ('run_experiment_2_r_e E2re','--regulized-type LTMG01 --EMtype celltypeEM --useGAEembedding  --npyDir','npyR2E/'),
-    ('run_experiment_2_g_b_Birch E2gbB','--regulized-type LTMG --EMtype celltypeEM --clustering-method Birch --useBothembedding --npyDir','npyG2B_Birch/'),
-    ('run_experiment_2_g_b_BirchN E2gbN','--regulized-type LTMG --EMtype celltypeEM --clustering-method BirchN --useBothembedding --npyDir','npyG2B_BirchN/'),
-    ('run_experiment_2_g_b_KMeans E2gbK','--regulized-type LTMG --EMtype celltypeEM --clustering-method KMeans --useBothembedding --npyDir','npyG2B_KMeans/'),
-    ('run_experiment_2_g_e_Birch E2geB','--regulized-type LTMG --EMtype celltypeEM --clustering-method Birch --useGAEembedding --npyDir','npyG2E_Birch/'),
-    ('run_experiment_2_g_e_BirchN E2geN','--regulized-type LTMG --EMtype celltypeEM --clustering-method BirchN --useGAEembedding --npyDir','npyG2E_BirchN/'),
-    ('run_experiment_2_g_e_KMeans E2geK','--regulized-type LTMG --EMtype celltypeEM --clustering-method KMeans --useGAEembedding --npyDir','npyG2E_KMeans/'),
-    ('run_experiment_2_r_b_Birch E2rbB','--regulized-type LTMG01 --EMtype celltypeEM --clustering-method Birch --useBothembedding --npyDir','npyR2B_Birch/'),
-    ('run_experiment_2_r_b_BirchN E2rbN','--regulized-type LTMG01 --EMtype celltypeEM --clustering-method BirchN --useBothembedding --npyDir','npyR2B_BirchN/'),
-    ('run_experiment_2_r_b_KMeans E2rbK','--regulized-type LTMG01 --EMtype celltypeEM --clustering-method KMeans --useBothembedding --npyDir','npyR2B_KMeans/'),
-    ('run_experiment_2_r_e_Birch E2reB','--regulized-type LTMG01 --EMtype celltypeEM --clustering-method Birch --useGAEembedding --npyDir','npyR2E_Birch/'),
-    ('run_experiment_2_r_e_BirchN E2reN','--regulized-type LTMG01 --EMtype celltypeEM --clustering-method BirchN --useGAEembedding --npyDir','npyR2E_BirchN/'),
-    ('run_experiment_2_r_e_KMeans E2reK','--regulized-type LTMG01 --EMtype celltypeEM --clustering-method KMeans --useGAEembedding --npyDir','npyR2E_KMeans/')
+    ('run_experiment_1_g_b E1gb','--regularizePara 0.5 --regulized-type LTMG --EMtype EM --useBothembedding --npyDir','npyG1B/'),
+    ('run_experiment_1_g_e E1ge','--regularizePara 0.5 --regulized-type LTMG --EMtype EM --useGAEembedding --npyDir','npyG1E/'),
+    ('run_experiment_1_r_b E1rb','--regularizePara 0.5 --regulized-type LTMG01 --EMtype EM --useBothembedding --npyDir','npyR1B/'),
+    ('run_experiment_1_r_e E1re','--regularizePara 0.5 --regulized-type LTMG01 --EMtype EM --useGAEembedding --npyDir','npyR1E/'),
+    ('run_experiment_2_g_b E2gb','--regularizePara 0.5 --regulized-type LTMG --EMtype celltypeEM --useBothembedding  --npyDir','npyG2B/'),
+    ('run_experiment_2_g_e E2ge','--regularizePara 0.5 --regulized-type LTMG --EMtype celltypeEM --useGAEembedding  --npyDir','npyG2E/'),
+    ('run_experiment_2_r_b E2rb','--regularizePara 0.5 --regulized-type LTMG01 --EMtype celltypeEM --useBothembedding  --npyDir','npyR2B/'),
+    ('run_experiment_2_r_e E2re','--regularizePara 0.5 --regulized-type LTMG01 --EMtype celltypeEM --useGAEembedding  --npyDir','npyR2E/'),
+    ('run_experiment_2_g_b_Birch E2gbB','--regularizePara 0.5 --regulized-type LTMG --EMtype celltypeEM --clustering-method Birch --useBothembedding --npyDir','npyG2B_Birch/'),
+    # ('run_experiment_2_g_b_BirchN E2gbN','--regularizePara 0.5 --regulized-type LTMG --EMtype celltypeEM --clustering-method BirchN --useBothembedding --npyDir','npyG2B_BirchN/'),
+    ('run_experiment_2_g_b_KMeans E2gbK','--regularizePara 0.5 --regulized-type LTMG --EMtype celltypeEM --clustering-method KMeans --useBothembedding --npyDir','npyG2B_KMeans/'),
+    ('run_experiment_2_g_e_Birch E2geB','--regularizePara 0.5 --regulized-type LTMG --EMtype celltypeEM --clustering-method Birch --useGAEembedding --npyDir','npyG2E_Birch/'),
+    # ('run_experiment_2_g_e_BirchN E2geN','--regularizePara 0.5 --regulized-type LTMG --EMtype celltypeEM --clustering-method BirchN --useGAEembedding --npyDir','npyG2E_BirchN/'),
+    ('run_experiment_2_g_e_KMeans E2geK','--regularizePara 0.5 --regulized-type LTMG --EMtype celltypeEM --clustering-method KMeans --useGAEembedding --npyDir','npyG2E_KMeans/'),
+    ('run_experiment_2_r_b_Birch E2rbB','--regularizePara 0.5 --regulized-type LTMG01 --EMtype celltypeEM --clustering-method Birch --useBothembedding --npyDir','npyR2B_Birch/'),
+    # ('run_experiment_2_r_b_BirchN E2rbN','--regularizePara 0.5 --regulized-type LTMG01 --EMtype celltypeEM --clustering-method BirchN --useBothembedding --npyDir','npyR2B_BirchN/'),
+    ('run_experiment_2_r_b_KMeans E2rbK','--regularizePara 0.5 --regulized-type LTMG01 --EMtype celltypeEM --clustering-method KMeans --useBothembedding --npyDir','npyR2B_KMeans/'),
+    ('run_experiment_2_r_e_Birch E2reB','--regularizePara 0.5 --regulized-type LTMG01 --EMtype celltypeEM --clustering-method Birch --useGAEembedding --npyDir','npyR2E_Birch/'),
+    # ('run_experiment_2_r_e_BirchN E2reN','--regularizePara 0.5 --regulized-type LTMG01 --EMtype celltypeEM --clustering-method BirchN --useGAEembedding --npyDir','npyR2E_BirchN/'),
+    ('run_experiment_2_r_e_KMeans E2reK','--regularizePara 0.5 --regulized-type LTMG01 --EMtype celltypeEM --clustering-method KMeans --useGAEembedding --npyDir','npyR2E_KMeans/')
 ]
 
 # All

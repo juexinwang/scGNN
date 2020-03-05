@@ -32,7 +32,8 @@
 
 ## selected
 #split mode
-for i in {0..19}
+# for i in {0..19}
+for i in {0..15}
 do
 for j in {0..12}
 do
@@ -41,7 +42,8 @@ done
 done
 
 # submit
-for i in {0..19}
+# for i in {0..19}
+for i in {0..15}
 do
 for j in {0..12}
 do
