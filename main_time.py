@@ -42,7 +42,7 @@ parser.add_argument('--converge-celltyperatio', type=float, default=0.99,
                     help='ratio of cell type change in EM iteration (default: 0.99), 0-1')
 parser.add_argument('--celltype-epochs', type=int, default=200, metavar='N',
                     help='number of epochs in celltype training (default: 200)')
-parser.add_argument('--no-cuda', action='store_true', default=True,
+parser.add_argument('--no-cuda', action='store_true', default=False,
                     help='enables CUDA training')
 parser.add_argument('--seed', type=int, default=1, metavar='S',
                     help='random seed (default: 1)')
