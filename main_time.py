@@ -104,8 +104,8 @@ parser.add_argument('--dropoutRatio', type=float, default=0.1,
 
 args = parser.parse_args()
 args.cuda = not args.no_cuda and torch.cuda.is_available()
-print(torch.cuda.is_available())
-print(args.cuda)
+# print(torch.cuda.is_available())
+# print(args.cuda)
 
 #TODO
 #As we have lots of parameters, should check args
@@ -113,6 +113,7 @@ checkargs(args)
 
 torch.manual_seed(args.seed)
 device = torch.device("cuda" if args.cuda else "cpu")
+print(device)
 
 kwargs = {'num_workers': 1, 'pin_memory': True} if args.cuda else {}
 print(args)
