@@ -161,6 +161,8 @@ def train(epoch, train_loader=train_loader, EMFlag=False):
             data = data.type(torch.FloatTensor)
         data = data.to(device)
         regulationMatrixBatch = regulationMatrix[dataindex,:]
+        regulationMatrixBatch = regulationMatrixBatch.type(torch.FloatTensor)
+        regulationMatrixBatch = regulationMatrixBatch.to(device)
         optimizer.zero_grad()
         if args.model == 'VAE':
             recon_batch, mu, logvar, z = model(data)
