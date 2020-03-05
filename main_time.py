@@ -113,7 +113,7 @@ checkargs(args)
 
 torch.manual_seed(args.seed)
 device = torch.device("cuda" if args.cuda else "cpu")
-print(device)
+print('Use device: '+str(device))
 
 kwargs = {'num_workers': 1, 'pin_memory': True} if args.cuda else {}
 print(args)
@@ -155,7 +155,10 @@ def train(epoch, train_loader=train_loader, EMFlag=False):
     # for batch_idx, (data, _) in enumerate(train_loader):
     # for batch_idx, data in enumerate(train_loader):
     for batch_idx, (data, dataindex) in enumerate(train_loader):
-        data = data.type(torch.FloatTensor)
+        if device=='cuda':
+            data = data.type(torch.cuda.FloatTensor)
+        else:
+            data = data.type(torch.FloatTensor)
         data = data.to(device)
         regulationMatrixBatch = regulationMatrix[dataindex,:]
         optimizer.zero_grad()
@@ -354,7 +357,10 @@ if __name__ == "__main__":
             
             # Convert to Tensor
             reconNew = torch.from_numpy(reconNew)
-            reconNew = reconNew.type(torch.FloatTensor)
+            if device=='cuda':
+                reconNew = reconNew.type(torch.cuda.FloatTensor)
+            else:
+                reconNew = reconNew.type(torch.FloatTensor)
             reconNew = reconNew.to(device)
 
             for clusterIndex in clusterIndexList:
