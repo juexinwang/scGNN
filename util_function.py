@@ -214,7 +214,7 @@ def loss_function(recon_x, x, mu, logvar):
     return BCE + KLD
 
 # Graph
-def loss_function_graph(recon_x, x, mu, logvar, adjsample=None, adjfeature=None, regulationMatrix=None, regularizer_type='noregu', reguPara=0.001, modelusage='AE'):
+def loss_function_graph(recon_x, x, mu, logvar, adjsample=None, adjfeature=None, gammaPara=1.0, regulationMatrix=None, regularizer_type='noregu', reguPara=0.001, modelusage='AE'):
     '''
     Regularized by the graph information
     Reconstruction + KL divergence losses summed over all elements and batch
@@ -226,7 +226,7 @@ def loss_function_graph(recon_x, x, mu, logvar, adjsample=None, adjfeature=None,
     if regularizer_type == 'Graph' or regularizer_type == 'LTMG' or regularizer_type == 'LTMG01':
         target.requires_grad = True
     # Euclidean
-    BCE = vallina_mse_loss_function(recon_x, target, reduction='sum')
+    BCE = gammaPara * vallina_mse_loss_function(recon_x, target, reduction='sum')
     if regularizer_type == 'noregu':
         loss = BCE
     elif regularizer_type == 'Graph':
