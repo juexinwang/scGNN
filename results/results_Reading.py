@@ -224,6 +224,30 @@ if args.imputeMode:
     #     '../npyImputeN2F_SpectralClustering/', #61
     #     '../npyImputeN2F/'  #62
     #     ]
+
+    # npyList = [
+    #     '../npyImputeG1B/', #0
+    #     '../npyImputeG1E/', #1
+    #     '../npyImputeR1B/', #2
+    #     '../npyImputeR1E/', #3
+    #     '../npyImputeG2B/', #4
+    #     '../npyImputeG2E/', #5
+    #     '../npyImputeR2B/', #6
+    #     '../npyImputeR2E/', #7
+    #     '../npyImputeG2B_Birch/', #8
+    #     '../npyImputeG2B_BirchN/', #9
+    #     '../npyImputeG2B_KMeans/', #10
+    #     '../npyImputeG2E_Birch/', #11
+    #     '../npyImputeG2E_BirchN/', #12
+    #     '../npyImputeG2E_KMeans/', #13
+    #     '../npyImputeR2B_Birch/', #14
+    #     '../npyImputeR2B_BirchN/', #15
+    #     '../npyImputeR2B_KMeans/', #16
+    #     '../npyImputeR2E_Birch/', #17
+    #     '../npyImputeR2E_BirchN/', #18
+    #     '../npyImputeR2E_KMeans/', #19
+    #     ]
+
     npyList = [
         '../npyImputeG1B/', #0
         '../npyImputeG1E/', #1
@@ -234,17 +258,13 @@ if args.imputeMode:
         '../npyImputeR2B/', #6
         '../npyImputeR2E/', #7
         '../npyImputeG2B_Birch/', #8
-        '../npyImputeG2B_BirchN/', #9
-        '../npyImputeG2B_KMeans/', #10
-        '../npyImputeG2E_Birch/', #11
-        '../npyImputeG2E_BirchN/', #12
-        '../npyImputeG2E_KMeans/', #13
-        '../npyImputeR2B_Birch/', #14
-        '../npyImputeR2B_BirchN/', #15
-        '../npyImputeR2B_KMeans/', #16
-        '../npyImputeR2E_Birch/', #17
-        '../npyImputeR2E_BirchN/', #18
-        '../npyImputeR2E_KMeans/', #19
+        '../npyImputeG2B_KMeans/', #9
+        '../npyImputeG2E_Birch/', #10
+        '../npyImputeG2E_KMeans/', #11
+        '../npyImputeR2B_Birch/', #12
+        '../npyImputeR2B_KMeans/', #13
+        '../npyImputeR2E_Birch/', #14
+        '../npyImputeR2E_KMeans/', #15
         ]
 else:
     pyStr = 'results_celltype.py'
@@ -314,6 +334,30 @@ else:
     #     '../npyN2F_SpectralClustering/', #61
     #     '../npyN2F/'  #62
     #     ]
+
+    # npyList = [
+    #     '../npyG1B/', #0
+    #     '../npyG1E/', #1
+    #     '../npyR1B/', #2
+    #     '../npyR1E/', #3
+    #     '../npyG2B/', #4
+    #     '../npyG2E/', #5
+    #     '../npyR2B/', #6
+    #     '../npyR2E/', #7
+    #     '../npyG2B_Birch/', #8
+    #     '../npyG2B_BirchN/', #9
+    #     '../npyG2B_KMeans/', #10
+    #     '../npyG2E_Birch/', #11
+    #     '../npyG2E_BirchN/', #12
+    #     '../npyG2E_KMeans/', #13
+    #     '../npyR2B_Birch/', #14
+    #     '../npyR2B_BirchN/', #15
+    #     '../npyR2B_KMeans/', #16
+    #     '../npyR2E_Birch/', #17
+    #     '../npyR2E_BirchN/', #18
+    #     '../npyR2E_KMeans/', #19
+    #     ]
+    
     npyList = [
         '../npyG1B/', #0
         '../npyG1E/', #1
@@ -324,17 +368,13 @@ else:
         '../npyR2B/', #6
         '../npyR2E/', #7
         '../npyG2B_Birch/', #8
-        '../npyG2B_BirchN/', #9
-        '../npyG2B_KMeans/', #10
-        '../npyG2E_Birch/', #11
-        '../npyG2E_BirchN/', #12
-        '../npyG2E_KMeans/', #13
-        '../npyR2B_Birch/', #14
-        '../npyR2B_BirchN/', #15
-        '../npyR2B_KMeans/', #16
-        '../npyR2E_Birch/', #17
-        '../npyR2E_BirchN/', #18
-        '../npyR2E_KMeans/', #19
+        '../npyG2B_KMeans/', #9
+        '../npyG2E_Birch/', #10
+        '../npyG2E_KMeans/', #11
+        '../npyR2B_Birch/', #12
+        '../npyR2B_KMeans/', #13
+        '../npyR2E_Birch/', #14
+        '../npyR2E_KMeans/', #15
         ]
 
 reguDict={}
@@ -353,6 +393,19 @@ reguDict={}
 #     reguDict[i]='noregu'
 
 #select:
+# for i in range(0,2):
+#     reguDict[i]='LTMG'
+# for i in range(2,4):
+#     reguDict[i]='LTMG01'
+# for i in range(4,6):
+#     reguDict[i]='LTMG'
+# for i in range(6,8):
+#     reguDict[i]='LTMG01'
+# for i in range(8,14):
+#     reguDict[i]='LTMG'
+# for i in range(14,20):
+#     reguDict[i]='LTMG01'
+
 for i in range(0,2):
     reguDict[i]='LTMG'
 for i in range(2,4):
@@ -361,9 +414,9 @@ for i in range(4,6):
     reguDict[i]='LTMG'
 for i in range(6,8):
     reguDict[i]='LTMG01'
-for i in range(8,14):
+for i in range(8,12):
     reguDict[i]='LTMG'
-for i in range(14,20):
+for i in range(12,16):
     reguDict[i]='LTMG01'
 reguStr=''
 if args.methodName in reguDict:
