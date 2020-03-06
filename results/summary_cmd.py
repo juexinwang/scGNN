@@ -18,8 +18,8 @@ with open(filename) as f:
         reDict[words[2]] = words[0]
     f.close()
 
-# complex: 63, select: 20
-for i in range(20):
+# complex: 63, select: 20, strong: 16
+for i in range(16):
     for j in range(13):
         # 'python summary.py --fileName results-19687313.out --outFileName RC_0_0.txt'        
         if args.imputeMode:
@@ -38,8 +38,8 @@ nameDict={'Z0':'','Z1':'','Z2':'','Z3':'','Z4':'','Z5':'','Z6':'','Z7':'','Z8':'
 for i in range(13):
     allstr = []
     selstr = []
-    # complex: 63, select: 20 
-    for j in range(20):
+    # complex: 63, select: 20, strong: 16 
+    for j in range(16):
         tag = True
         if args.imputeMode:
             lastline = ''
