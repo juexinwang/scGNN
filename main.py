@@ -79,6 +79,10 @@ parser.add_argument('--inferLTMGTag', action='store_true', default=False,
                     help='Whether infer LTMG')                   
 parser.add_argument('--LTMGDir', type=str, default='/home/jwang/data/scData/',
                     help='directory of LTMGDir, default:(/home/wangjue/biodata/scData/allBench/)')
+parser.add_argument('--expressionFile', type=str, default='Biase_expression.csv',
+                    help='expression File in csv')
+parser.add_argument('--ltmgFile', type=str, default='ltmg.csv',
+                    help='expression File in csv')
 
 #Clustering related
 parser.add_argument('--useGAEembedding', action='store_true', default=False, 
@@ -136,9 +140,12 @@ train_loader = DataLoader(scData, batch_size=args.batch_size, shuffle=False, **k
 
 if args.inferLTMGTag:
     #run LTMG in R
-    runLTMG(args.LTMGDir,csvfile,ltmgfile)
+    runLTMG(args.LTMGDir,args.expressionfile,args.ltmgfile)
+    ltmgfile = args.ltmgfile
+else:
+    ltmgfile = args.datasetName+'/T2000_UsingOriginalMatrix/T2000_LTMG.txt'
 
-regulationMatrix = readLTMG(args.LTMGDir, args.datasetName)
+regulationMatrix = readLTMG(args.LTMGDir, ltmgfile)
 regulationMatrix = torch.from_numpy(regulationMatrix)
 
 # Original
