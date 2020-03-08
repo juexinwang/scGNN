@@ -140,7 +140,7 @@ train_loader = DataLoader(scData, batch_size=args.batch_size, shuffle=False, **k
 
 if args.inferLTMGTag:
     #run LTMG in R
-    runLTMG(args.LTMGDir+'test/',args.expressionFile,args.ltmgFile)
+    runLTMG(args.LTMGDir+'test/'+args.expressionFile,args.LTMGDir+'test/'+args.ltmgFile)
     ltmgFile = args.ltmgFile
 else:
     ltmgFile = args.datasetName+'/T2000_UsingOriginalMatrix/T2000_LTMG.txt'
