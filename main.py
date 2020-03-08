@@ -140,12 +140,12 @@ train_loader = DataLoader(scData, batch_size=args.batch_size, shuffle=False, **k
 
 if args.inferLTMGTag:
     #run LTMG in R
-    runLTMG(args.LTMGDir+'test/',args.expressionfile,args.ltmgfile)
-    ltmgfile = args.ltmgfile
+    runLTMG(args.LTMGDir+'test/',args.expressionFile,args.ltmgFile)
+    ltmgFile = args.ltmgFile
 else:
-    ltmgfile = args.datasetName+'/T2000_UsingOriginalMatrix/T2000_LTMG.txt'
+    ltmgFile = args.datasetName+'/T2000_UsingOriginalMatrix/T2000_LTMG.txt'
 
-regulationMatrix = readLTMG(args.LTMGDir, ltmgfile)
+regulationMatrix = readLTMG(args.LTMGDir, ltmgFile)
 regulationMatrix = torch.from_numpy(regulationMatrix)
 
 # Original
