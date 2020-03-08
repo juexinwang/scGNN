@@ -17,6 +17,7 @@ from util_function import *
 from graph_function import *
 from benchmark_util import *
 from gae_embedding import GAEembedding,measure_clustering_results,test_clustering_benchmark_results
+from LTMG_R import *
 
 parser = argparse.ArgumentParser(description='Graph EM AutoEncoder for scRNA')
 parser.add_argument('--datasetName', type=str, default='1.Biase',
@@ -73,7 +74,9 @@ parser.add_argument('--saveFlag', action='store_true', default=True,
 parser.add_argument('--npyDir', type=str, default='npyGraphTest/',
                     help='save npy results in directory')
 parser.add_argument('--log-interval', type=int, default=100, metavar='N',
-                    help='how many batches to wait before logging training status')                   
+                    help='how many batches to wait before logging training status')
+parser.add_argument('--inferLTMGTag', action='store_true', default=False,
+                    help='Whether infer LTMG')                   
 parser.add_argument('--LTMGDir', type=str, default='/home/jwang/data/scData/',
                     help='directory of LTMGDir, default:(/home/wangjue/biodata/scData/allBench/)')
 
@@ -130,6 +133,10 @@ else:
     #     scData = scDatasetDropout(args.datasetName, args.discreteTag, args.dropoutRatio, transform=logtransform)
     scData = scDatasetDropout(args.datasetName, args.discreteTag, args.dropoutRatio)
 train_loader = DataLoader(scData, batch_size=args.batch_size, shuffle=False, **kwargs)
+
+if args.inferLTMGTag:
+    #run LTMG in R
+    runLTMG(args.LTMGDir,csvfile,ltmgfile)
 
 regulationMatrix = readLTMG(args.LTMGDir, args.datasetName)
 regulationMatrix = torch.from_numpy(regulationMatrix)
