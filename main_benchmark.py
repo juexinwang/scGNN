@@ -19,6 +19,7 @@ from benchmark_util import *
 from gae_embedding import GAEembedding,measure_clustering_results,test_clustering_benchmark_results
 from LTMG_R import *
 
+# Used for benchmark, needs Preprocessing_main.py first, then proceed by this script.
 parser = argparse.ArgumentParser(description='Graph EM AutoEncoder for scRNA')
 parser.add_argument('--datasetName', type=str, default='1.Biase',
                     help='TGFb/sci-CAR/sci-CAR_LTMG/MMPbasal/MMPbasal_all/MMPbasal_allgene/MMPbasal_allcell/MMPepo/MMPbasal_LTMG/MMPbasal_all_LTMG/MMPbasal_2000')
@@ -124,24 +125,28 @@ device = torch.device("cuda" if args.cuda else "cpu")
 kwargs = {'num_workers': 1, 'pin_memory': True} if args.cuda else {}
 print(args)
 
-data = preprocessing(args.datasetName)
-
-scData = scRNADataset(args.datasetName)
-# No imputeMode , no discrete
-# if args.imputeMode:
-#     scData = scDatasetDropout(args.datasetName, args.discreteTag, args.dropoutRatio)
-# else:
-#     scData = scDataset(args.datasetName, args.discreteTag)
+if not args.imputeMode:
+    # if args.discreteTag:
+    #     scData = scDataset(args.datasetName, args.discreteTag)
+    # else:
+    #     scData = scDataset(args.datasetName, args.discreteTag, transform=logtransform)
+    scData = scDataset(args.datasetName, args.discreteTag)
+else:
+    # if args.discreteTag:
+    #     scData = scDatasetDropout(args.datasetName, args.discreteTag, args.dropoutRatio)
+    # else:
+    #     scData = scDatasetDropout(args.datasetName, args.discreteTag, args.dropoutRatio, transform=logtransform)
+    scData = scDatasetDropout(args.datasetName, args.discreteTag, args.dropoutRatio)
 train_loader = DataLoader(scData, batch_size=args.batch_size, shuffle=False, **kwargs)
 
 if args.inferLTMGTag:
     #run LTMG in R
-    runLTMG(args.LTMGDir+args.datasetName+'/'+args.expressionFile,args.LTMGDir+args.datasetName+'/'+args.ltmgFile)
+    runLTMG(args.LTMGDir+'test/'+args.expressionFile,args.LTMGDir+'test/'+args.ltmgFile)
     ltmgFile = args.ltmgFile
 else:
     ltmgFile = args.datasetName+'/T2000_UsingOriginalMatrix/T2000_LTMG.txt'
 
-regulationMatrix = readLTMG(args.LTMGDir+args.datasetName+'/', ltmgFile)
+regulationMatrix = readLTMG(args.LTMGDir+'test/', ltmgFile)
 regulationMatrix = torch.from_numpy(regulationMatrix)
 
 # Original

@@ -196,6 +196,42 @@ class scDatasetDropout(Dataset):
        
         return sample,idx
 
+#TODO
+class scRNADataset(Dataset):
+    def __init__(self, datasetName=None, transform=None):
+        """
+        Args:
+            datasetName (String): TGFb, etc.
+            transform (callable, optional):
+        """
+        self.features = load_data(datasetName,discreteTag)
+        # Now lines are cells, and cols are genes
+        # self.features = self.features.transpose()
+        # save nonzero
+        self.nz_i,self.nz_j = self.features.nonzero()
+        self.transform = transform
+        # check whether log or not
+        self.discreteTag = discreteTag       
+
+    def __len__(self):
+        return self.features.shape[0]
+    
+    def __getitem__(self, idx):
+        if torch.is_tensor(idx):
+            idx = idx.tolist()
+
+        sample = self.features[idx,:]
+        sample = torch.from_numpy(sample.toarray())
+
+        # transform after get the data
+        if self.transform:
+            sample = self.transform(sample)
+
+        if not self.discreteTag:
+            sample = torch.log(sample+1)
+
+        return sample,idx
+
 # Original
 def loss_function(recon_x, x, mu, logvar):
     '''
