@@ -84,7 +84,7 @@ def load_data(datasetName):
 
     return adj, features
 
-class scDataset(Dataset):
+class scBenchDataset(Dataset):
     def __init__(self, datasetName, transform=None):
         """
         Args:
@@ -111,7 +111,7 @@ class scDataset(Dataset):
         sample = torch.from_numpy(sample.toarray())
         return sample
 
-scData = scDataset(args.datasetName)
+scData = scBenchDataset(args.datasetName)
 train_loader = DataLoader(scData, batch_size=args.batch_size, shuffle=True, **kwargs)
 
 class AE(nn.Module):

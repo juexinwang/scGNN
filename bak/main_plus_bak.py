@@ -57,7 +57,7 @@ kwargs = {'num_workers': 1, 'pin_memory': True} if args.cuda else {}
 #     datasets.MNIST('../data', train=False, transform=transforms.ToTensor()),
 #     batch_size=args.batch_size, shuffle=True, **kwargs)
 
-scData = scDataset(args.datasetName, args.discreteTag)
+scData = scBenchDataset(args.datasetName, args.discreteTag)
 train_loader = DataLoader(scData, batch_size=args.batch_size, shuffle=True, **kwargs)
 
 # Original

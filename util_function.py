@@ -126,9 +126,10 @@ class scDatasetInter(Dataset):
 
         return sample
 
-class scDataset(Dataset):
+class scBenchDataset(Dataset):
     def __init__(self, datasetName=None, discreteTag=False, transform=None):
         """
+        For benchmark usage
         Args:
             datasetName (String): TGFb, etc.
             transform (callable, optional):
@@ -196,22 +197,19 @@ class scDatasetDropout(Dataset):
        
         return sample,idx
 
-#TODO
-class scRNADataset(Dataset):
-    def __init__(self, datasetName=None, transform=None):
+class scDataset(Dataset):
+    def __init__(self, data=None, transform=None):
         """
         Args:
-            datasetName (String): TGFb, etc.
+            data : sparse matrix.
             transform (callable, optional):
         """
-        self.features = load_data(datasetName,discreteTag)
+        self.features = data
         # Now lines are cells, and cols are genes
         # self.features = self.features.transpose()
         # save nonzero
         self.nz_i,self.nz_j = self.features.nonzero()
-        self.transform = transform
-        # check whether log or not
-        self.discreteTag = discreteTag       
+        self.transform = transform       
 
     def __len__(self):
         return self.features.shape[0]

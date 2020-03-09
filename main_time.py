@@ -120,10 +120,10 @@ print(args)
 
 if not args.imputeMode:
     # if args.discreteTag:
-    #     scData = scDataset(args.datasetName, args.discreteTag)
+    #     scData = scBenchDataset(args.datasetName, args.discreteTag)
     # else:
-    #     scData = scDataset(args.datasetName, args.discreteTag, transform=logtransform)
-    scData = scDataset(args.datasetName, args.discreteTag)
+    #     scData = scBenchDataset(args.datasetName, args.discreteTag, transform=logtransform)
+    scData = scBenchDataset(args.datasetName, args.discreteTag)
 else:
     # if args.discreteTag:
     #     scData = scDatasetDropout(args.datasetName, args.discreteTag, args.dropoutRatio)

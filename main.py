@@ -18,11 +18,14 @@ from graph_function import *
 from benchmark_util import *
 from gae_embedding import GAEembedding,measure_clustering_results,test_clustering_benchmark_results
 from LTMG_R import *
+from preprocessing_func import *
 
 parser = argparse.ArgumentParser(description='Graph EM AutoEncoder for scRNA')
-parser.add_argument('--datasetName', type=str, default='1.Biase',
+parser.add_argument('--datasetName', type=str, default='481193cb-c021-4e04-b477-0b7cfef4614b.mtx',
                     help='TGFb/sci-CAR/sci-CAR_LTMG/MMPbasal/MMPbasal_all/MMPbasal_allgene/MMPbasal_allcell/MMPepo/MMPbasal_LTMG/MMPbasal_all_LTMG/MMPbasal_2000')
 # Dataset: 1-13 benchmark: 1.Biase/2.Li/3.Treutlein/4.Yan/5.Goolam/6.Guo/7.Deng/8.Pollen/9.Chung/10.Usoskin/11.Kolodziejczyk/12.Klein/13.Zeisel
+parser.add_argument('--datasetDir', type=str, default='/storage/htc/joshilab/wangjue/10x/6/',
+                    help='Directory of data, default(/storage/htc/joshilab/wangjue/10x/6/)')
 parser.add_argument('--batch-size', type=int, default=12800, metavar='N',
                     help='input batch size for training (default: 128)')
 parser.add_argument('--epochs', type=int, default=500, metavar='N',
@@ -124,14 +127,14 @@ device = torch.device("cuda" if args.cuda else "cpu")
 kwargs = {'num_workers': 1, 'pin_memory': True} if args.cuda else {}
 print(args)
 
-data = preprocessing(args.datasetName)
+data = preprocessing(args.datasetDir,args.datasetName)
 
-scData = scRNADataset(args.datasetName)
+scData = scDataset(data)
 # No imputeMode , no discrete
 # if args.imputeMode:
 #     scData = scDatasetDropout(args.datasetName, args.discreteTag, args.dropoutRatio)
 # else:
-#     scData = scDataset(args.datasetName, args.discreteTag)
+#     scData = scBenchDataset(args.datasetName, args.discreteTag)
 train_loader = DataLoader(scData, batch_size=args.batch_size, shuffle=False, **kwargs)
 
 if args.inferLTMGTag:
