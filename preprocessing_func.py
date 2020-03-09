@@ -4,7 +4,7 @@ import os.path
 import scipy.sparse as sp
 import scipy.io
 
-def preprocessing(dir,datasetName,transform='log',cellRatio=0.99,geneRatio=0.95,geneCriteria='variance',geneSelectnum=2000):
+def preprocessing(dir,datasetName,csvFilename,transform='log',cellRatio=0.99,geneRatio=0.95,geneCriteria='variance',geneSelectnum=2000):
     '''
     preprocessing:
     transform='log' or None
@@ -39,24 +39,30 @@ def preprocessing(dir,datasetName,transform='log',cellRatio=0.99,geneRatio=0.95,
     geneNamelist = []
     cellNamelist = []
 
-    genelist = []
-    celllist = []
-    datalist = []
+    expressionDict = {}
+    expressionCellDict = {}
+    for i in range(len(genes)):
+        expressionDict[i]=[]
+        expressionCellDict[i]=[]
+
     # Preprocessing before generating the whole data strcture
     tmpgenelist = []
-    tmpcelllist = []
     tmpdatalist = []
     oldcellindex = -1
     cellNum = 0
+
     for index, row in df.iterrows():
         if not (row[1]-1) == oldcellindex:
             if len(tmpgenelist) >= len(genes)*(1-cellRatio):
-                genelist.extend(tmpgenelist)
-                tmpcelllist = []
                 for i in range(len(tmpgenelist)):
-                    tmpcelllist.append(cellNum)
-                celllist.extend(tmpcelllist)
-                datalist.extend(tmpdatalist)
+                    tmplist = expressionDict[tmpgenelist[0]]
+                    tmplist.append(tmpdatalist[i])
+                    expressionDict[tmpgenelist[0]] = tmplist
+
+                    tmplist = expressionCellDict[tmpgenelist[0]]
+                    tmplist.append(cellNum)
+                    expressionCellDict[tmpgenelist[0]] = tmplist
+
                 cellNamelist.append(index)
                 cellNum += 1
             tmpgenelist = []            
@@ -72,18 +78,70 @@ def preprocessing(dir,datasetName,transform='log',cellRatio=0.99,geneRatio=0.95,
     
     #post processing
     if len(tmpgenelist) >= len(genes)*(1-cellRatio):
-        genelist.extend(tmpgenelist)
-        tmpcelllist = []
         for i in range(len(tmpgenelist)):
-            tmpcelllist.append(cellNum)
-        celllist.extend(tmpcelllist)
-        datalist.extend(tmpdatalist)
+            tmplist = expressionDict[tmpgenelist[0]]
+            tmplist.append(tmpdatalist[i])
+            expressionDict[tmpgenelist[0]] = tmplist
+
+            tmplist = expressionCellDict[tmpgenelist[0]]
+            tmplist.append(cellNum)
+            expressionCellDict[tmpgenelist[0]] = tmplist
+
         cellNamelist.append(index)
         cellNum += 1
-
+    
     print('After preprocessing, {} cells remaining'.format(len(cellNamelist)))
 
     # Now work on genes:
-    
-    data = scipy.sparse.csr_matrix((datalist, (genelist, celllist)), shape=(len(genes),len(cells))).tolil()
+    finalList=[]
+    for i in range(len(genes)):
+        tmplist = expressionDict[i]
+        if len(tmplist) >= len(cells)*(1-geneRatio):
+            geneNamelist.append(i)
+            if geneCriteria=='variance':
+                finalList.append(-np.var(tmplist))
+
+    tmpChooseIndex = np.argsort(finalList)[:geneSelectnum]
+    tmpChooseIndex = tmpChooseIndex.tolist()
+
+    genelist = []
+    celllist = []
+    datalist = []
+
+    # output
+    outList = []
+    header = 'Gene_ID'
+    for i in range(len(cellNamelist)):
+        header = header + ',' + cells[cellNamelist[i]][0]
+    outList.append(header)
+
+    for index in tmpChooseIndex:
+        geneindex = geneNamelist[index]        
+        clist = expressionCellDict[geneindex]
+        elist = expressionDict[geneindex]
+        for i in range(len(elist)):
+            genelist.append(geneindex)
+            celllist.append(clist[i])
+            datalist.append(elist[i]) 
+        tmpline = ''
+        for i in range(len(cellNamelist)):
+            odata = 0.0
+            #TODO can be improved
+            for j in range(len(clist)):
+                if cellNamelist[i] == clist[j]:
+                    odata = elist[j]
+                    break
+                elif cellNamelist[i] < clist[j]:
+                    break
+            tmpline = tmpline + ',' + odata
+        outList.append(tmpline)
+
+    with open(csvFilename,'w') as fw:
+        fw.writelines(outList)
+        fw.close()
+
+    data = scipy.sparse.csr_matrix((datalist, (genelist, celllist)), shape=(geneSelectnum,len(cellNamelist))).tolil()
     return data
+
+def generatingCSV():
+    return

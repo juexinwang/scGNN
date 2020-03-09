@@ -127,7 +127,7 @@ device = torch.device("cuda" if args.cuda else "cpu")
 kwargs = {'num_workers': 1, 'pin_memory': True} if args.cuda else {}
 print(args)
 
-data = preprocessing(args.datasetDir,args.datasetName)
+data = preprocessing(args.datasetDir,args.datasetName,args.LTMGDir+args.datasetName+'/'+args.expressionFile)
 
 scData = scDataset(data)
 # No imputeMode , no discrete
