@@ -114,7 +114,7 @@ def preprocessing(dir,datasetName,csvFilename,transform='log',cellRatio=0.99,gen
     outList = []
     header = 'Gene_ID'
     for i in range(len(cellNamelist)):
-        header = header + ',' + cells[cellNamelist[i]][0]
+        header = header + ',' + cells[0][cellNamelist[i]]
     outList.append(header)
 
     for index in tmpChooseIndex:
