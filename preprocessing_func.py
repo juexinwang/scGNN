@@ -52,9 +52,9 @@ def preprocessing(dir,datasetName,csvFilename,transform='log',cellRatio=0.99,gen
     cellNum = 0
 
     for row in df.itertuples():
-        if row.index % 1000000 == 0:
-            print(row.index)
-        if not (row[1]-1) == oldcellindex:
+        if row.Index % 1000000 == 0:
+            print(row.Index)
+        if not (row[2]-1) == oldcellindex:
             if len(tmpgenelist) >= len(genes)*(1-cellRatio):
                 for i in range(len(tmpgenelist)):
                     tmplist = expressionDict[tmpgenelist[0]]
@@ -65,14 +65,14 @@ def preprocessing(dir,datasetName,csvFilename,transform='log',cellRatio=0.99,gen
                     tmplist.append(cellNum)
                     expressionCellDict[tmpgenelist[0]] = tmplist
 
-                cellNamelist.append(index)
+                cellNamelist.append(cellNum)
                 cellNum += 1
             tmpgenelist = []            
             tmpdatalist = []
-            oldcellindex = row[1]-1
+            oldcellindex = row[2]-1
 
-        tmpgenelist.append(row[0]-1)
-        tmpdata = row[2]
+        tmpgenelist.append(row[1]-1)
+        tmpdata = row[3]
         if transform == 'log':
             tmpdatalist.append(np.log(tmpdata+1))
         elif transform == None:
@@ -89,7 +89,7 @@ def preprocessing(dir,datasetName,csvFilename,transform='log',cellRatio=0.99,gen
             tmplist.append(cellNum)
             expressionCellDict[tmpgenelist[0]] = tmplist
 
-        cellNamelist.append(index)
+        cellNamelist.append(cellNum)
         cellNum += 1
     
     print('After preprocessing, {} cells remaining'.format(len(cellNamelist)))

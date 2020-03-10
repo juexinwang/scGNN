@@ -80,7 +80,7 @@ parser.add_argument('--log-interval', type=int, default=100, metavar='N',
                     help='how many batches to wait before logging training status')
 parser.add_argument('--inferLTMGTag', action='store_true', default=False,
                     help='Whether infer LTMG')                   
-parser.add_argument('--LTMGDir', type=str, default='/home/jwang/biodata/scData/10x/6/',
+parser.add_argument('--LTMGDir', type=str, default='/home/wangjue/biodata/scData/10x/6/',
                     help='directory of LTMGDir, default:(/home/wangjue/biodata/scData/allBench/)')
 parser.add_argument('--expressionFile', type=str, default='Use_expression.csv',
                     help='expression File in csv')
