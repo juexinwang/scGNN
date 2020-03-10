@@ -219,7 +219,10 @@ class scDataset(Dataset):
             idx = idx.tolist()
 
         sample = self.features[idx,:]
-        sample = torch.from_numpy(sample.toarray())
+        if type(sample)==sp.lil_matrix:
+            sample = torch.from_numpy(sample.toarray())
+        else:
+            sample = torch.from_numpy(sample)
 
         # transform after get the data
         if self.transform:
