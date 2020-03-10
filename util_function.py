@@ -204,10 +204,9 @@ class scDataset(Dataset):
             data : sparse matrix.
             transform (callable, optional):
         """
-        self.features = data.transpose()
         # Now lines are cells, and cols are genes
-        # self.features = self.features.transpose()
-        
+        self.features = data.transpose()
+                
         # save nonzero
         # self.nz_i,self.nz_j = self.features.nonzero()
         self.transform = transform       

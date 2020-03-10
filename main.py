@@ -52,9 +52,9 @@ parser.add_argument('--seed', type=int, default=1, metavar='S',
                     help='random seed (default: 1)')
 parser.add_argument('--regulized-type', type=str, default='LTMG',
                     help='regulized type (default: Graph) in EM, otherwise: noregu/LTMG/LTMG01')
-parser.add_argument('--gammaPara', type=float, default=1.0,
+parser.add_argument('--gammaPara', type=float, default=0.0,
                     help='regulized parameter (default: 1.0)')
-parser.add_argument('--regularizePara', type=float, default=0.001,
+parser.add_argument('--regularizePara', type=float, default=0.5,
                     help='regulized parameter (default: 0.001)')
 parser.add_argument('--L1Para', type=float, default=0.0,
                     help='regulized parameter (default: 0.001)')
@@ -78,6 +78,8 @@ parser.add_argument('--npyDir', type=str, default='npyGraphTest/',
                     help='save npy results in directory')
 parser.add_argument('--log-interval', type=int, default=100, metavar='N',
                     help='how many batches to wait before logging training status')
+parser.add_argument('--preprocessTag', action='store_true', default=False,
+                    help='Whether preprocess')
 parser.add_argument('--inferLTMGTag', action='store_true', default=False,
                     help='Whether infer LTMG')                   
 parser.add_argument('--LTMGDir', type=str, default='/home/wangjue/biodata/scData/10x/6/',
@@ -128,7 +130,11 @@ kwargs = {'num_workers': 1, 'pin_memory': True} if args.cuda else {}
 print(args)
 
 #preprocessing
-data = preprocessing(args.datasetDir,args.datasetName,args.LTMGDir+args.datasetName+'/'+args.expressionFile)
+if args.preprocessTag:
+    data = preprocessing(args.datasetDir,args.datasetName,args.LTMGDir+args.datasetName+'/'+args.expressionFile)
+else:
+    data = loadscCSV(args.datasetDir,args.datasetName,args.LTMGDir+args.datasetName+'/'+args.expressionFile)
+
 
 scData = scDataset(data)
 # No imputeMode , no discrete

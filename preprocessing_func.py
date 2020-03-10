@@ -4,7 +4,7 @@ import os.path
 import scipy.sparse as sp
 import scipy.io
 
-def preprocessing(dir,datasetName,csvFilename,transform='log',cellRatio=0.99,geneRatio=0.95,geneCriteria='variance',geneSelectnum=2000):
+def preprocessing(dir,datasetName,csvFilename,transform='log',cellRatio=0.99,geneRatio=0.99,geneCriteria='variance',geneSelectnum=2000):
     '''
     preprocessing:
     transform='log' or None
@@ -39,6 +39,9 @@ def preprocessing(dir,datasetName,csvFilename,transform='log',cellRatio=0.99,gen
     geneNamelist = []
     cellNamelist = []
 
+    geneNameDict = {}
+    cellNameDict = {}
+
     expressionDict = {}
     expressionCellDict = {}
     for i in range(len(genes)):
@@ -55,17 +58,20 @@ def preprocessing(dir,datasetName,csvFilename,transform='log',cellRatio=0.99,gen
         if row.Index % 1000000 == 0:
             print(row.Index)
         if not (row[2]-1) == oldcellindex:
-            if len(tmpgenelist) >= len(genes)*(1-cellRatio):
+            if (row[2]-1)<oldcellindex:
+                print(str(oldcellindex)+'!')
+            if len(tmpgenelist) >= len(genes)*(1-cellRatio) and not oldcellindex==-1:
                 for i in range(len(tmpgenelist)):
-                    tmplist = expressionDict[tmpgenelist[0]]
+                    tmplist = expressionDict[tmpgenelist[i]]
                     tmplist.append(tmpdatalist[i])
                     expressionDict[tmpgenelist[0]] = tmplist
 
-                    tmplist = expressionCellDict[tmpgenelist[0]]
-                    tmplist.append(cellNum)
+                    tmplist = expressionCellDict[tmpgenelist[i]]
+                    tmplist.append(oldcellindex)
                     expressionCellDict[tmpgenelist[0]] = tmplist
 
-                cellNamelist.append(cellNum)
+                cellNamelist.append(oldcellindex)
+                cellNameDict[oldcellindex] = cellNum
                 cellNum += 1
             tmpgenelist = []            
             tmpdatalist = []
@@ -81,15 +87,16 @@ def preprocessing(dir,datasetName,csvFilename,transform='log',cellRatio=0.99,gen
     #post processing
     if len(tmpgenelist) >= len(genes)*(1-cellRatio):
         for i in range(len(tmpgenelist)):
-            tmplist = expressionDict[tmpgenelist[0]]
+            tmplist = expressionDict[tmpgenelist[i]]
             tmplist.append(tmpdatalist[i])
             expressionDict[tmpgenelist[0]] = tmplist
 
-            tmplist = expressionCellDict[tmpgenelist[0]]
-            tmplist.append(cellNum)
+            tmplist = expressionCellDict[tmpgenelist[i]]
+            tmplist.append(oldcellindex)
             expressionCellDict[tmpgenelist[0]] = tmplist
 
-        cellNamelist.append(cellNum)
+        cellNamelist.append(oldcellindex)
+        cellNameDict[oldcellindex] = cellNum
         cellNum += 1
     
     print('After preprocessing, {} cells remaining'.format(len(cellNamelist)))
@@ -102,9 +109,14 @@ def preprocessing(dir,datasetName,csvFilename,transform='log',cellRatio=0.99,gen
             geneNamelist.append(i)
             if geneCriteria=='variance':
                 finalList.append(-np.var(tmplist))
+    
+    print('After preprocessing, {} genes have {} nonzero'.format(len(geneNamelist),geneRatio))
 
     tmpChooseIndex = np.argsort(finalList)[:geneSelectnum]
     tmpChooseIndex = tmpChooseIndex.tolist()
+
+    for i in range(len(tmpChooseIndex)):
+        geneNameDict[geneNamelist[tmpChooseIndex[i]]]=i
 
     genelist = []
     celllist = []
@@ -114,36 +126,54 @@ def preprocessing(dir,datasetName,csvFilename,transform='log',cellRatio=0.99,gen
     outList = []
     header = 'Gene_ID'
     for i in range(len(cellNamelist)):
+        # print('{}\t{}\t{}'.format(cellNamelist[i],cells[cellNamelist[i]],cells[cellNamelist[i]][0]))
         header = header + ',' + cells[0][cellNamelist[i]]
-    outList.append(header)
+    outList.append(header+'\n')
 
     for index in tmpChooseIndex:
+        # if index==4350:
+        #     print(index)
         geneindex = geneNamelist[index]        
         clist = expressionCellDict[geneindex]
         elist = expressionDict[geneindex]
+        # print(str(len(clist))+' '+str(len(elist)))
         for i in range(len(elist)):
-            genelist.append(geneindex)
-            celllist.append(clist[i])
+            # print('{}*{}'.format(geneindex,geneNameDict[geneindex]))
+            genelist.append(geneNameDict[geneindex])
+            celllist.append(cellNameDict[clist[i]])
             datalist.append(elist[i]) 
-        tmpline = ''
-        for i in range(len(cellNamelist)):
-            odata = 0.0
-            #TODO can be improved
-            for j in range(len(clist)):
-                if cellNamelist[i] == clist[j]:
-                    odata = elist[j]
+        
+        # print('*')
+        tmpline = genes[0][index]
+        # print(str(len(cellNamelist))+' '+str(len(clist)))
+        k=0
+        for l in range(len(cellNamelist)):
+            for j in range(k,len(clist)):
+                # print(j)
+                if cellNamelist[l] == clist[j]:
+                    tmpline = tmpline + ',' + str(elist[j])
+                    k=j+1
                     break
-                elif cellNamelist[i] < clist[j]:
+                elif cellNamelist[l] < clist[j]:
+                    tmpline = tmpline + ',' + str(0.0)
+                    k=j
                     break
-            tmpline = tmpline + ',' + str(odata)
-        outList.append(tmpline)
+            if cellNamelist[l]>clist[-1]:
+                tmpline = tmpline + ',' + str(0.0)
+
+        outList.append(tmpline+'\n')
 
     with open(csvFilename,'w') as fw:
         fw.writelines(outList)
         fw.close()
+    print('Write CSV done')
 
-    data = scipy.sparse.csr_matrix((datalist, (genelist, celllist)), shape=(geneSelectnum,len(cellNamelist))).tolil()
+    data = scipy.sparse.csr_matrix((datalist, (genelist, celllist)), shape=(len(tmpChooseIndex),len(cellNamelist))).tolil()
     return data
 
-def generatingCSV():
-    return
+def loadscCSV(dir,datasetName,csvFilename):
+    matrix = pd.read_csv(dir+datasetName+csvFilename,header=None, index_col=None)
+    matrix = matrix.to_numpy()
+    matrix = matrix[1:,1:]
+    matrix = matrix.astype(float)
+    return matrix
