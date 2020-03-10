@@ -204,11 +204,12 @@ class scDataset(Dataset):
             data : sparse matrix.
             transform (callable, optional):
         """
-        self.features = data
+        self.features = data.transpose()
         # Now lines are cells, and cols are genes
         # self.features = self.features.transpose()
+        
         # save nonzero
-        self.nz_i,self.nz_j = self.features.nonzero()
+        # self.nz_i,self.nz_j = self.features.nonzero()
         self.transform = transform       
 
     def __len__(self):
@@ -224,9 +225,6 @@ class scDataset(Dataset):
         # transform after get the data
         if self.transform:
             sample = self.transform(sample)
-
-        if not self.discreteTag:
-            sample = torch.log(sample+1)
 
         return sample,idx
 

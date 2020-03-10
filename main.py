@@ -25,7 +25,7 @@ parser.add_argument('--datasetName', type=str, default='481193cb-c021-4e04-b477-
                     help='TGFb/sci-CAR/sci-CAR_LTMG/MMPbasal/MMPbasal_all/MMPbasal_allgene/MMPbasal_allcell/MMPepo/MMPbasal_LTMG/MMPbasal_all_LTMG/MMPbasal_2000')
 # Dataset: 1-13 benchmark: 1.Biase/2.Li/3.Treutlein/4.Yan/5.Goolam/6.Guo/7.Deng/8.Pollen/9.Chung/10.Usoskin/11.Kolodziejczyk/12.Klein/13.Zeisel
 parser.add_argument('--datasetDir', type=str, default='/storage/htc/joshilab/wangjue/10x/6/',
-                    help='Directory of data, default(/storage/htc/joshilab/wangjue/10x/6/)')
+                    help='Directory of data, default(/home/wangjue/biodata/scData/10x/6/)')
 parser.add_argument('--batch-size', type=int, default=12800, metavar='N',
                     help='input batch size for training (default: 128)')
 parser.add_argument('--epochs', type=int, default=500, metavar='N',
@@ -82,7 +82,7 @@ parser.add_argument('--inferLTMGTag', action='store_true', default=False,
                     help='Whether infer LTMG')                   
 parser.add_argument('--LTMGDir', type=str, default='/home/jwang/data/scData/',
                     help='directory of LTMGDir, default:(/home/wangjue/biodata/scData/allBench/)')
-parser.add_argument('--expressionFile', type=str, default='Biase_expression.csv',
+parser.add_argument('--expressionFile', type=str, default='Use_expression.csv',
                     help='expression File in csv')
 parser.add_argument('--ltmgFile', type=str, default='ltmg.csv',
                     help='expression File in csv')
@@ -127,6 +127,7 @@ device = torch.device("cuda" if args.cuda else "cpu")
 kwargs = {'num_workers': 1, 'pin_memory': True} if args.cuda else {}
 print(args)
 
+#preprocessing
 data = preprocessing(args.datasetDir,args.datasetName,args.LTMGDir+args.datasetName+'/'+args.expressionFile)
 
 scData = scDataset(data)
