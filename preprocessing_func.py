@@ -51,7 +51,9 @@ def preprocessing(dir,datasetName,csvFilename,transform='log',cellRatio=0.99,gen
     oldcellindex = -1
     cellNum = 0
 
-    for index, row in df.iterrows():
+    for row in df.itertuples():
+        if row.index % 1000000 == 0:
+            print(row.index)
         if not (row[1]-1) == oldcellindex:
             if len(tmpgenelist) >= len(genes)*(1-cellRatio):
                 for i in range(len(tmpgenelist)):
