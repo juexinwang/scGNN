@@ -135,7 +135,7 @@ def preprocessing(dir,datasetName,csvFilename,transform='log',cellRatio=0.99,gen
                     break
                 elif cellNamelist[i] < clist[j]:
                     break
-            tmpline = tmpline + ',' + odata
+            tmpline = tmpline + ',' + str(odata)
         outList.append(tmpline)
 
     with open(csvFilename,'w') as fw:
