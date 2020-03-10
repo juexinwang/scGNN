@@ -133,7 +133,7 @@ print(args)
 if args.preprocessTag:
     data = preprocessing(args.datasetDir,args.datasetName,args.LTMGDir+args.datasetName+'/'+args.expressionFile)
 else:
-    data = loadscCSV(args.datasetDir,args.datasetName,args.LTMGDir+args.datasetName+'/'+args.expressionFile)
+    data = loadscCSV(args.LTMGDir+args.datasetName+'/'+args.expressionFile)
 
 
 scData = scDataset(data)
@@ -149,7 +149,7 @@ if args.inferLTMGTag:
     runLTMG(args.LTMGDir+args.datasetName+'/'+args.expressionFile,args.LTMGDir+args.datasetName+'/'+args.ltmgFile)
     ltmgFile = args.ltmgFile
 else:
-    ltmgFile = args.datasetName+'/T2000_UsingOriginalMatrix/T2000_LTMG.txt'
+    ltmgFile = args.LTMGDir+args.datasetName+'/'+args.ltmgFile
 
 regulationMatrix = readLTMG(args.LTMGDir+args.datasetName+'/', ltmgFile)
 regulationMatrix = torch.from_numpy(regulationMatrix)

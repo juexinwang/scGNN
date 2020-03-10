@@ -171,8 +171,8 @@ def preprocessing(dir,datasetName,csvFilename,transform='log',cellRatio=0.99,gen
     data = scipy.sparse.csr_matrix((datalist, (genelist, celllist)), shape=(len(tmpChooseIndex),len(cellNamelist))).tolil()
     return data
 
-def loadscCSV(dir,datasetName,csvFilename):
-    matrix = pd.read_csv(dir+datasetName+csvFilename,header=None, index_col=None)
+def loadscCSV(csvFilename):
+    matrix = pd.read_csv(csvFilename,header=None, index_col=None)
     matrix = matrix.to_numpy()
     matrix = matrix[1:,1:]
     matrix = matrix.astype(float)
