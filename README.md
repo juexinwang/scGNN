@@ -29,6 +29,7 @@ R integration:
     library(devtools)
     install_github("dgrun/FateID")
     install_github("dgrun/RaceID3_StemID2_package")
+    install_github("BMEngineeR/scGNNLTMG")
 
 Notes for Cluster Running:
 ---------
