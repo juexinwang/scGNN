@@ -558,3 +558,10 @@ def readLTMG(LTMGDir, ltmgfile):
     matrix = matrix[1:,1:]
     matrix = matrix.astype(int)
     return matrix
+
+def loadscCSV(csvFilename):
+    matrix = pd.read_csv(csvFilename,header=None, index_col=None)
+    matrix = matrix.to_numpy()
+    matrix = matrix[1:,1:]
+    matrix = matrix.astype(float)
+    return matrix

@@ -17,10 +17,8 @@ from util_function import *
 from graph_function import *
 from benchmark_util import *
 from gae_embedding import GAEembedding,measure_clustering_results,test_clustering_benchmark_results
-from LTMG_R import *
-from preprocessing_func import *
 
-parser = argparse.ArgumentParser(description='Graph EM AutoEncoder for scRNA')
+parser = argparse.ArgumentParser(description='Main Entrance of scGNN')
 parser.add_argument('--datasetName', type=str, default='481193cb-c021-4e04-b477-0b7cfef4614b.mtx',
                     help='TGFb/sci-CAR/sci-CAR_LTMG/MMPbasal/MMPbasal_all/MMPbasal_allgene/MMPbasal_allcell/MMPepo/MMPbasal_LTMG/MMPbasal_all_LTMG/MMPbasal_2000')
 # Dataset: 1-13 benchmark: 1.Biase/2.Li/3.Treutlein/4.Yan/5.Goolam/6.Guo/7.Deng/8.Pollen/9.Chung/10.Usoskin/11.Kolodziejczyk/12.Klein/13.Zeisel
@@ -77,11 +75,7 @@ parser.add_argument('--saveFlag', action='store_true', default=True,
 parser.add_argument('--npyDir', type=str, default='npyGraphTest/',
                     help='save npy results in directory')
 parser.add_argument('--log-interval', type=int, default=100, metavar='N',
-                    help='how many batches to wait before logging training status')
-parser.add_argument('--preprocessTag', action='store_true', default=False,
-                    help='Whether preprocess')
-parser.add_argument('--inferLTMGTag', action='store_true', default=False,
-                    help='Whether infer LTMG')                   
+                    help='how many batches to wait before logging training status')                  
 parser.add_argument('--LTMGDir', type=str, default='/home/wangjue/biodata/scData/10x/6/',
                     help='directory of LTMGDir, default:(/home/wangjue/biodata/scData/allBench/)')
 parser.add_argument('--expressionFile', type=str, default='Use_expression.csv',
@@ -129,12 +123,8 @@ device = torch.device("cuda" if args.cuda else "cpu")
 kwargs = {'num_workers': 1, 'pin_memory': True} if args.cuda else {}
 print(args)
 
-#preprocessing
-if args.preprocessTag:
-    data = preprocessing(args.datasetDir,args.datasetName,args.LTMGDir+args.datasetName+'/'+args.expressionFile)
-else:
-    data = loadscCSV(args.LTMGDir+args.datasetName+'/'+args.expressionFile)
-
+# load scRNA in csv
+data = loadscCSV(args.LTMGDir+args.datasetName+'/'+args.expressionFile)
 
 scData = scDataset(data)
 # No imputeMode , no discrete
@@ -144,12 +134,8 @@ scData = scDataset(data)
 #     scData = scBenchDataset(args.datasetName, args.discreteTag)
 train_loader = DataLoader(scData, batch_size=args.batch_size, shuffle=False, **kwargs)
 
-if args.inferLTMGTag:
-    #run LTMG in R
-    runLTMG(args.LTMGDir+args.datasetName+'/'+args.expressionFile,args.LTMGDir+args.datasetName+'/'+args.ltmgFile)
-ltmgFile = args.ltmgFile
-
-regulationMatrix = readLTMG(args.LTMGDir+args.datasetName+'/', ltmgFile)
+# load LTMG
+regulationMatrix = readLTMG(args.LTMGDir+args.datasetName+'/', args.ltmgFile)
 regulationMatrix = torch.from_numpy(regulationMatrix)
 
 # Original

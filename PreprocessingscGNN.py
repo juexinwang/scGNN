@@ -1,8 +1,38 @@
+import time
+import argparse
 import numpy as np
 import pandas as pd
 import os.path
 import scipy.sparse as sp
 import scipy.io
+from LTMG_R import *
+
+parser = argparse.ArgumentParser(description='Main Entrance of scGNN')
+parser.add_argument('--datasetName', type=str, default='481193cb-c021-4e04-b477-0b7cfef4614b.mtx',
+                    help='TGFb/sci-CAR/sci-CAR_LTMG/MMPbasal/MMPbasal_all/MMPbasal_allgene/MMPbasal_allcell/MMPepo/MMPbasal_LTMG/MMPbasal_all_LTMG/MMPbasal_2000')
+parser.add_argument('--datasetDir', type=str, default='/storage/htc/joshilab/wangjue/10x/6/',
+                    help='Directory of data, default(/home/wangjue/biodata/scData/10x/6/)')
+parser.add_argument('--inferLTMGTag', action='store_true', default=False,
+                    help='Whether infer LTMG')                   
+parser.add_argument('--LTMGDir', type=str, default='/home/wangjue/biodata/scData/10x/6/',
+                    help='directory of LTMGDir, default:(/home/wangjue/biodata/scData/allBench/)')
+parser.add_argument('--expressionFile', type=str, default='Use_expression.csv',
+                    help='expression File in csv')
+parser.add_argument('--ltmgFile', type=str, default='ltmg.csv',
+                    help='expression File in csv')
+#param                    
+parser.add_argument('--transform', type=str, default='log',
+                    help='Whether transform')
+parser.add_argument('--cellRatio', type=float, default=0.99,
+                    help='cell ratio')
+parser.add_argument('--geneRatio', type=float, default=0.99,
+                    help='gene ratio')
+parser.add_argument('--geneCriteria', type=str, default='variance',
+                    help='gene Criteria')
+parser.add_argument('--cellRatio', type=int, default=2000,
+                    help='cell ratio')
+                    
+args = parser.parse_args()
 
 def preprocessing(dir,datasetName,csvFilename,transform='log',cellRatio=0.99,geneRatio=0.99,geneCriteria='variance',geneSelectnum=2000):
     '''
@@ -105,7 +135,7 @@ def preprocessing(dir,datasetName,csvFilename,transform='log',cellRatio=0.99,gen
     finalList=[]
     for i in range(len(genes)):
         tmplist = expressionDict[i]
-        if len(tmplist) >= len(cells)*(1-geneRatio):
+        if len(tmplist) >= len(cellNamelist)*(1-geneRatio):
             geneNamelist.append(i)
             if geneCriteria=='variance':
                 finalList.append(-np.var(tmplist))
@@ -171,9 +201,14 @@ def preprocessing(dir,datasetName,csvFilename,transform='log',cellRatio=0.99,gen
     data = scipy.sparse.csr_matrix((datalist, (genelist, celllist)), shape=(len(tmpChooseIndex),len(cellNamelist))).tolil()
     return data
 
-def loadscCSV(csvFilename):
-    matrix = pd.read_csv(csvFilename,header=None, index_col=None)
-    matrix = matrix.to_numpy()
-    matrix = matrix[1:,1:]
-    matrix = matrix.astype(float)
-    return matrix
+if __name__ == "__main__":
+    start_time = time.time()
+    
+    #preprocessing
+    data = preprocessing(args.datasetDir, args.datasetName, args.LTMGDir+args.datasetName+'/'+args.expressionFile, args.transform, args.cellRatio, args.geneRatio, args.geneCriteria, args.geneSelectnum)
+        
+    if args.inferLTMGTag:
+        #run LTMG in R
+        runLTMG(args.LTMGDir+args.datasetName+'/'+args.expressionFile, args.LTMGDir+args.datasetName+'/'+args.ltmgFile)
+
+    print("---Total Running Time: %s seconds ---" % (time.time() - start_time))
