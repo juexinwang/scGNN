@@ -12,7 +12,7 @@ parser.add_argument('--datasetName', type=str, default='481193cb-c021-4e04-b477-
                     help='TGFb/sci-CAR/sci-CAR_LTMG/MMPbasal/MMPbasal_all/MMPbasal_allgene/MMPbasal_allcell/MMPepo/MMPbasal_LTMG/MMPbasal_all_LTMG/MMPbasal_2000')
 parser.add_argument('--datasetDir', type=str, default='/storage/htc/joshilab/wangjue/10x/6/',
                     help='Directory of data, default(/home/wangjue/biodata/scData/10x/6/)')
-parser.add_argument('--inferLTMGTag', action='store_true', default=False,
+parser.add_argument('--inferLTMGTag', action='store_true', default=True,
                     help='Whether infer LTMG')                   
 parser.add_argument('--LTMGDir', type=str, default='/home/wangjue/biodata/scData/10x/6/',
                     help='directory of LTMGDir, default:(/home/wangjue/biodata/scData/allBench/)')
@@ -29,8 +29,8 @@ parser.add_argument('--geneRatio', type=float, default=0.99,
                     help='gene ratio')
 parser.add_argument('--geneCriteria', type=str, default='variance',
                     help='gene Criteria')
-parser.add_argument('--cellRatio', type=int, default=2000,
-                    help='cell ratio')
+parser.add_argument('--geneSelectnum', type=int, default=2000,
+                    help='select top gene numbers')
                     
 args = parser.parse_args()
 
