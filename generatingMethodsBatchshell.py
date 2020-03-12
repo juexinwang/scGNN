@@ -209,7 +209,7 @@ for item in methodsList:
 
     count = 1
     for datasetName in datasetNameList:
-        commandLine = "python3 -W ignore main.py --datasetName "+datasetName+" "+scGNNparam+" "+outDirStr+imputeStr+"\n"
+        commandLine = "python3 -W ignore main_benchmark.py --datasetName "+datasetName+" "+scGNNparam+" "+outDirStr+imputeStr+"\n"
         outStr = templateStr1 + abbrStr + "_" + str(count) + templateStr2 + commandLine + "\n"
         with open(outputFilename+"_"+str(count)+".sh",'w') as fw:
             fw.write(outStr)
