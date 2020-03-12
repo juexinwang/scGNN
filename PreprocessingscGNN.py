@@ -182,15 +182,22 @@ def preprocessing(dir,datasetName,csvFilename,transform='log',cellRatio=0.99,gen
             for j in range(k,len(clist)):
                 # print(j)
                 if cellNamelist[l] == clist[j]:
-                    tmpline = tmpline + ',' + str(elist[j])
+                    tmpline = tmpline + ',' 
+                    tmpline = tmpline + str(elist[j])
                     k=j+1
                     break
                 elif cellNamelist[l] < clist[j]:
-                    tmpline = tmpline + ',' + str(0.0)
+                    tmpline = tmpline + ',' 
+                    tmpline = tmpline + str(0.0)
                     k=j
                     break
             if cellNamelist[l]>clist[-1]:
-                tmpline = tmpline + ',' + str(0.0)
+                backstr = ''
+                for j in range(len(clist), len(cellNamelist)):
+                    backstr = backstr + ',' 
+                    backstr = backstr + str(0.0)                    
+                tmpline = tmpline + backstr
+                break
 
         outList.append(tmpline+'\n')
 
