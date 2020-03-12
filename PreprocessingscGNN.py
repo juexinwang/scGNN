@@ -161,6 +161,7 @@ def preprocessing(dir,datasetName,csvFilename,transform='log',cellRatio=0.99,gen
     outList.append(header+'\n')
 
     for index in tmpChooseIndex:
+        print(index)
         # if index==4350:
         #     print(index)
         geneindex = geneNamelist[index]        
@@ -207,8 +208,8 @@ if __name__ == "__main__":
     #preprocessing
     data = preprocessing(args.datasetDir, args.datasetName, args.LTMGDir+args.datasetName+'/'+args.expressionFile, args.transform, args.cellRatio, args.geneRatio, args.geneCriteria, args.geneSelectnum)
         
-    if args.inferLTMGTag:
+    # if args.inferLTMGTag:
         #run LTMG in R
-        runLTMG(args.LTMGDir+args.datasetName+'/'+args.expressionFile, args.LTMGDir+args.datasetName+'/'+args.ltmgFile)
+        # runLTMG(args.LTMGDir+args.datasetName+'/'+args.expressionFile, args.LTMGDir+args.datasetName+'/'+args.ltmgFile)
 
     print("---Total Running Time: %s seconds ---" % (time.time() - start_time))
