@@ -97,6 +97,10 @@ parser.add_argument('--maxClusterNumber', type=int, default=30,
 parser.add_argument('--minMemberinCluster', type=int, default=5,
                     help='max cluster for celltypeEM without setting number of clusters (default: 100)')
 
+#Aggrelated
+parser.add_argument('--linkage', type=str, default='ward',
+                    help='linkage should be: ward, average, complete, single')
+
 #GAE related
 parser.add_argument('--GAEmodel', type=str, default='gcn_vae', help="models used")
 parser.add_argument('--GAEepochs', type=int, default=200, help='Number of epochs to train.')
@@ -331,7 +335,7 @@ if __name__ == "__main__":
             clustering = AffinityPropagation().fit(zOut)
             listResult = clustering.predict(zOut)
         elif args.clustering_method=='AgglomerativeClustering':
-            clustering = AgglomerativeClustering().fit(zOut)
+            clustering = AgglomerativeClustering(linkage=args.linkage).fit(zOut)
             listResult = clustering.labels_.tolist()
         elif args.clustering_method=='Birch':
             clustering = Birch(n_clusters=args.n_clusters).fit(zOut)
