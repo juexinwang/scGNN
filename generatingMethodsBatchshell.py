@@ -18,7 +18,7 @@ templateStr1 = "#! /bin/bash\n"\
 templateStr2 = "\n#SBATCH -o results-%j.out           # give the job output a custom name\n"\
 "#SBATCH -t 2-00:00                  # two days time limit\n"\
 "#SBATCH -N 1                        # number of nodes\n"\
-"#SBATCH -n 8                        # number of cores (AKA tasks)\n"\
+"#SBATCH -n 2                        # number of cores (AKA tasks)\n"\
 "#SBATCH --mem=128G\n"\
 "#################################################################\n"\
 "module load miniconda3\n"\
@@ -118,27 +118,70 @@ templateStr2 = "\n#SBATCH -o results-%j.out           # give the job output a cu
 # ]
 
 #Refined Matrix with --regularizePara 0.5
+# methodsList = [
+#     ('run_experiment_1_g_b E1gb','--regularizePara 0.5 --regulized-type LTMG --EMtype EM --useBothembedding --npyDir','npyG1B/'),
+#     ('run_experiment_1_g_e E1ge','--regularizePara 0.5 --regulized-type LTMG --EMtype EM --useGAEembedding --npyDir','npyG1E/'),
+#     ('run_experiment_1_r_b E1rb','--regularizePara 0.5 --regulized-type LTMG01 --EMtype EM --useBothembedding --npyDir','npyR1B/'),
+#     ('run_experiment_1_r_e E1re','--regularizePara 0.5 --regulized-type LTMG01 --EMtype EM --useGAEembedding --npyDir','npyR1E/'),
+#     ('run_experiment_2_g_b E2gb','--regularizePara 0.5 --regulized-type LTMG --EMtype celltypeEM --useBothembedding  --npyDir','npyG2B/'),
+#     ('run_experiment_2_g_e E2ge','--regularizePara 0.5 --regulized-type LTMG --EMtype celltypeEM --useGAEembedding  --npyDir','npyG2E/'),
+#     ('run_experiment_2_r_b E2rb','--regularizePara 0.5 --regulized-type LTMG01 --EMtype celltypeEM --useBothembedding  --npyDir','npyR2B/'),
+#     ('run_experiment_2_r_e E2re','--regularizePara 0.5 --regulized-type LTMG01 --EMtype celltypeEM --useGAEembedding  --npyDir','npyR2E/'),
+#     ('run_experiment_2_g_b_Birch E2gbB','--regularizePara 0.5 --regulized-type LTMG --EMtype celltypeEM --clustering-method Birch --useBothembedding --npyDir','npyG2B_Birch/'),
+#     # ('run_experiment_2_g_b_BirchN E2gbN','--regularizePara 0.5 --regulized-type LTMG --EMtype celltypeEM --clustering-method BirchN --useBothembedding --npyDir','npyG2B_BirchN/'),
+#     ('run_experiment_2_g_b_KMeans E2gbK','--regularizePara 0.5 --regulized-type LTMG --EMtype celltypeEM --clustering-method KMeans --useBothembedding --npyDir','npyG2B_KMeans/'),
+#     ('run_experiment_2_g_e_Birch E2geB','--regularizePara 0.5 --regulized-type LTMG --EMtype celltypeEM --clustering-method Birch --useGAEembedding --npyDir','npyG2E_Birch/'),
+#     # ('run_experiment_2_g_e_BirchN E2geN','--regularizePara 0.5 --regulized-type LTMG --EMtype celltypeEM --clustering-method BirchN --useGAEembedding --npyDir','npyG2E_BirchN/'),
+#     ('run_experiment_2_g_e_KMeans E2geK','--regularizePara 0.5 --regulized-type LTMG --EMtype celltypeEM --clustering-method KMeans --useGAEembedding --npyDir','npyG2E_KMeans/'),
+#     ('run_experiment_2_r_b_Birch E2rbB','--regularizePara 0.5 --regulized-type LTMG01 --EMtype celltypeEM --clustering-method Birch --useBothembedding --npyDir','npyR2B_Birch/'),
+#     # ('run_experiment_2_r_b_BirchN E2rbN','--regularizePara 0.5 --regulized-type LTMG01 --EMtype celltypeEM --clustering-method BirchN --useBothembedding --npyDir','npyR2B_BirchN/'),
+#     ('run_experiment_2_r_b_KMeans E2rbK','--regularizePara 0.5 --regulized-type LTMG01 --EMtype celltypeEM --clustering-method KMeans --useBothembedding --npyDir','npyR2B_KMeans/'),
+#     ('run_experiment_2_r_e_Birch E2reB','--regularizePara 0.5 --regulized-type LTMG01 --EMtype celltypeEM --clustering-method Birch --useGAEembedding --npyDir','npyR2E_Birch/'),
+#     # ('run_experiment_2_r_e_BirchN E2reN','--regularizePara 0.5 --regulized-type LTMG01 --EMtype celltypeEM --clustering-method BirchN --useGAEembedding --npyDir','npyR2E_BirchN/'),
+#     ('run_experiment_2_r_e_KMeans E2reK','--regularizePara 0.5 --regulized-type LTMG01 --EMtype celltypeEM --clustering-method KMeans --useGAEembedding --npyDir','npyR2E_KMeans/')
+# ]
+
 methodsList = [
-    ('run_experiment_1_g_b E1gb','--regularizePara 0.5 --regulized-type LTMG --EMtype EM --useBothembedding --npyDir','npyG1B/'),
-    ('run_experiment_1_g_e E1ge','--regularizePara 0.5 --regulized-type LTMG --EMtype EM --useGAEembedding --npyDir','npyG1E/'),
-    ('run_experiment_1_r_b E1rb','--regularizePara 0.5 --regulized-type LTMG01 --EMtype EM --useBothembedding --npyDir','npyR1B/'),
-    ('run_experiment_1_r_e E1re','--regularizePara 0.5 --regulized-type LTMG01 --EMtype EM --useGAEembedding --npyDir','npyR1E/'),
-    ('run_experiment_2_g_b E2gb','--regularizePara 0.5 --regulized-type LTMG --EMtype celltypeEM --useBothembedding  --npyDir','npyG2B/'),
-    ('run_experiment_2_g_e E2ge','--regularizePara 0.5 --regulized-type LTMG --EMtype celltypeEM --useGAEembedding  --npyDir','npyG2E/'),
-    ('run_experiment_2_r_b E2rb','--regularizePara 0.5 --regulized-type LTMG01 --EMtype celltypeEM --useBothembedding  --npyDir','npyR2B/'),
-    ('run_experiment_2_r_e E2re','--regularizePara 0.5 --regulized-type LTMG01 --EMtype celltypeEM --useGAEembedding  --npyDir','npyR2E/'),
-    ('run_experiment_2_g_b_Birch E2gbB','--regularizePara 0.5 --regulized-type LTMG --EMtype celltypeEM --clustering-method Birch --useBothembedding --npyDir','npyG2B_Birch/'),
-    # ('run_experiment_2_g_b_BirchN E2gbN','--regularizePara 0.5 --regulized-type LTMG --EMtype celltypeEM --clustering-method BirchN --useBothembedding --npyDir','npyG2B_BirchN/'),
-    ('run_experiment_2_g_b_KMeans E2gbK','--regularizePara 0.5 --regulized-type LTMG --EMtype celltypeEM --clustering-method KMeans --useBothembedding --npyDir','npyG2B_KMeans/'),
-    ('run_experiment_2_g_e_Birch E2geB','--regularizePara 0.5 --regulized-type LTMG --EMtype celltypeEM --clustering-method Birch --useGAEembedding --npyDir','npyG2E_Birch/'),
-    # ('run_experiment_2_g_e_BirchN E2geN','--regularizePara 0.5 --regulized-type LTMG --EMtype celltypeEM --clustering-method BirchN --useGAEembedding --npyDir','npyG2E_BirchN/'),
-    ('run_experiment_2_g_e_KMeans E2geK','--regularizePara 0.5 --regulized-type LTMG --EMtype celltypeEM --clustering-method KMeans --useGAEembedding --npyDir','npyG2E_KMeans/'),
-    ('run_experiment_2_r_b_Birch E2rbB','--regularizePara 0.5 --regulized-type LTMG01 --EMtype celltypeEM --clustering-method Birch --useBothembedding --npyDir','npyR2B_Birch/'),
-    # ('run_experiment_2_r_b_BirchN E2rbN','--regularizePara 0.5 --regulized-type LTMG01 --EMtype celltypeEM --clustering-method BirchN --useBothembedding --npyDir','npyR2B_BirchN/'),
-    ('run_experiment_2_r_b_KMeans E2rbK','--regularizePara 0.5 --regulized-type LTMG01 --EMtype celltypeEM --clustering-method KMeans --useBothembedding --npyDir','npyR2B_KMeans/'),
-    ('run_experiment_2_r_e_Birch E2reB','--regularizePara 0.5 --regulized-type LTMG01 --EMtype celltypeEM --clustering-method Birch --useGAEembedding --npyDir','npyR2E_Birch/'),
-    # ('run_experiment_2_r_e_BirchN E2reN','--regularizePara 0.5 --regulized-type LTMG01 --EMtype celltypeEM --clustering-method BirchN --useGAEembedding --npyDir','npyR2E_BirchN/'),
-    ('run_experiment_2_r_e_KMeans E2reK','--regularizePara 0.5 --regulized-type LTMG01 --EMtype celltypeEM --clustering-method KMeans --useGAEembedding --npyDir','npyR2E_KMeans/')
+    ('run_experiment_2_g_b_AgglomerativeClusteringW W2gbG','--regulized-type LTMG --EMtype celltypeEM --clustering-method AgglomerativeClustering --linkage ward --useBothembedding --npyDir','npyG2B_AgglomerativeClusteringW/'),
+    ('run_experiment_2_g_e_AgglomerativeClusteringW W2geG','--regulized-type LTMG --EMtype celltypeEM --clustering-method AgglomerativeClustering --linkage ward --useGAEembedding --npyDir','npyG2E_AgglomerativeClusteringW/'),
+    ('run_experiment_2_g_f_AgglomerativeClusteringW W2gfG','--regulized-type LTMG --EMtype celltypeEM --clustering-method AgglomerativeClustering --linkage ward --npyDir','npyG2F_AgglomerativeClusteringW/'),
+    ('run_experiment_2_r_b_AgglomerativeClusteringW W2rbG','--regulized-type LTMG01 --EMtype celltypeEM --clustering-method AgglomerativeClustering --linkage ward --useBothembedding --npyDir','npyR2B_AgglomerativeClusteringW/'),
+    ('run_experiment_2_r_e_AgglomerativeClusteringW W2reG','--regulized-type LTMG01 --EMtype celltypeEM --clustering-method AgglomerativeClustering --linkage ward --useGAEembedding --npyDir','npyR2E_AgglomerativeClusteringW/'),
+    ('run_experiment_2_r_f_AgglomerativeClusteringW W2rfG','--regulized-type LTMG01 --EMtype celltypeEM --clustering-method AgglomerativeClustering --linkage ward --npyDir','npyR2F_AgglomerativeClusteringW/'),
+    ('run_experiment_2_n_b_AgglomerativeClusteringW W2nbG','--regulized-type noregu --EMtype celltypeEM --clustering-method AgglomerativeClustering --linkage ward --useBothembedding --npyDir','npyN2B_AgglomerativeClusteringW/'),
+    ('run_experiment_2_n_e_AgglomerativeClusteringW W2neG','--regulized-type noregu --EMtype celltypeEM --clustering-method AgglomerativeClustering --linkage ward --useGAEembedding --npyDir','npyN2E_AgglomerativeClusteringW/'),
+    ('run_experiment_2_n_f_AgglomerativeClusteringW W2nfG','--regulized-type noregu --EMtype celltypeEM --clustering-method AgglomerativeClustering --linkage ward --npyDir','npyN2F_AgglomerativeClusteringW/'),
+    
+    ('run_experiment_2_g_b_AgglomerativeClusteringA A2gbG','--regulized-type LTMG --EMtype celltypeEM --clustering-method AgglomerativeClustering --linkage average --useBothembedding --npyDir','npyG2B_AgglomerativeClusteringA/'),
+    ('run_experiment_2_g_e_AgglomerativeClusteringA A2geG','--regulized-type LTMG --EMtype celltypeEM --clustering-method AgglomerativeClustering --linkage average --useGAEembedding --npyDir','npyG2E_AgglomerativeClusteringA/'),
+    ('run_experiment_2_g_f_AgglomerativeClusteringA A2gfG','--regulized-type LTMG --EMtype celltypeEM --clustering-method AgglomerativeClustering --linkage average --npyDir','npyG2F_AgglomerativeClusteringA/'),
+    ('run_experiment_2_r_b_AgglomerativeClusteringA A2rbG','--regulized-type LTMG01 --EMtype celltypeEM --clustering-method AgglomerativeClustering --linkage average --useBothembedding --npyDir','npyR2B_AgglomerativeClusteringA/'),
+    ('run_experiment_2_r_e_AgglomerativeClusteringA A2reG','--regulized-type LTMG01 --EMtype celltypeEM --clustering-method AgglomerativeClustering --linkage average --useGAEembedding --npyDir','npyR2E_AgglomerativeClusteringA/'),
+    ('run_experiment_2_r_f_AgglomerativeClusteringA A2rfG','--regulized-type LTMG01 --EMtype celltypeEM --clustering-method AgglomerativeClustering --linkage average --npyDir','npyR2F_AgglomerativeClusteringA/'),
+    ('run_experiment_2_n_b_AgglomerativeClusteringA A2nbG','--regulized-type noregu --EMtype celltypeEM --clustering-method AgglomerativeClustering ---linkage average -useBothembedding --npyDir','npyN2B_AgglomerativeClusteringA/'),
+    ('run_experiment_2_n_e_AgglomerativeClusteringA A2neG','--regulized-type noregu --EMtype celltypeEM --clustering-method AgglomerativeClustering --linkage average --useGAEembedding --npyDir','npyN2E_AgglomerativeClusteringA/'),
+    ('run_experiment_2_n_f_AgglomerativeClusteringA A2nfG','--regulized-type noregu --EMtype celltypeEM --clustering-method AgglomerativeClustering --linkage average --npyDir','npyN2F_AgglomerativeClusteringA/'),
+
+    ('run_experiment_2_g_b_AgglomerativeClusteringC C2gbG','--regulized-type LTMG --EMtype celltypeEM --clustering-method AgglomerativeClustering --linkage complete --useBothembedding --npyDir','npyG2B_AgglomerativeClusteringC/'),
+    ('run_experiment_2_g_e_AgglomerativeClusteringC C2geG','--regulized-type LTMG --EMtype celltypeEM --clustering-method AgglomerativeClustering --linkage complete --useGAEembedding --npyDir','npyG2E_AgglomerativeClusteringC/'),
+    ('run_experiment_2_g_f_AgglomerativeClusteringC C2gfG','--regulized-type LTMG --EMtype celltypeEM --clustering-method AgglomerativeClustering --linkage complete --npyDir','npyG2F_AgglomerativeClusteringC/'),
+    ('run_experiment_2_r_b_AgglomerativeClusteringC C2rbG','--regulized-type LTMG01 --EMtype celltypeEM --clustering-method AgglomerativeClustering --linkage complete --useBothembedding --npyDir','npyR2B_AgglomerativeClusteringC/'),
+    ('run_experiment_2_r_e_AgglomerativeClusteringC C2reG','--regulized-type LTMG01 --EMtype celltypeEM --clustering-method AgglomerativeClustering --linkage complete --useGAEembedding --npyDir','npyR2E_AgglomerativeClusteringC/'),
+    ('run_experiment_2_r_f_AgglomerativeClusteringC C2rfG','--regulized-type LTMG01 --EMtype celltypeEM --clustering-method AgglomerativeClustering --linkage complete --npyDir','npyR2F_AgglomerativeClusteringC/'),
+    ('run_experiment_2_n_b_AgglomerativeClusteringC C2nbG','--regulized-type noregu --EMtype celltypeEM --clustering-method AgglomerativeClustering --linkage complete --useBothembedding --npyDir','npyN2B_AgglomerativeClusteringC/'),
+    ('run_experiment_2_n_e_AgglomerativeClusteringC C2neG','--regulized-type noregu --EMtype celltypeEM --clustering-method AgglomerativeClustering --linkage complete --useGAEembedding --npyDir','npyN2E_AgglomerativeClusteringC/'),
+    ('run_experiment_2_n_f_AgglomerativeClusteringC C2nfG','--regulized-type noregu --EMtype celltypeEM --clustering-method AgglomerativeClustering --linkage complete --npyDir','npyN2F_AgglomerativeClusteringC/'),
+
+    ('run_experiment_2_g_b_AgglomerativeClusteringS S2gbG','--regulized-type LTMG --EMtype celltypeEM --clustering-method AgglomerativeClustering --linkage complete --useBothembedding --npyDir','npyG2B_AgglomerativeClusteringS/'),
+    ('run_experiment_2_g_e_AgglomerativeClusteringS S2geG','--regulized-type LTMG --EMtype celltypeEM --clustering-method AgglomerativeClustering --linkage complete --useGAEembedding --npyDir','npyG2E_AgglomerativeClusteringS/'),
+    ('run_experiment_2_g_f_AgglomerativeClusteringS S2gfG','--regulized-type LTMG --EMtype celltypeEM --clustering-method AgglomerativeClustering --linkage complete --npyDir','npyG2F_AgglomerativeClusteringS/'),
+    ('run_experiment_2_r_b_AgglomerativeClusteringS S2rbG','--regulized-type LTMG01 --EMtype celltypeEM --clustering-method AgglomerativeClustering --linkage complete --useBothembedding --npyDir','npyR2B_AgglomerativeClusteringS/'),
+    ('run_experiment_2_r_e_AgglomerativeClusteringS S2reG','--regulized-type LTMG01 --EMtype celltypeEM --clustering-method AgglomerativeClustering --linkage complete --useGAEembedding --npyDir','npyR2E_AgglomerativeClusteringS/'),
+    ('run_experiment_2_r_f_AgglomerativeClusteringS S2rfG','--regulized-type LTMG01 --EMtype celltypeEM --clustering-method AgglomerativeClustering --linkage complete --npyDir','npyR2F_AgglomerativeClusteringS/'),
+    ('run_experiment_2_n_b_AgglomerativeClusteringS S2nbG','--regulized-type noregu --EMtype celltypeEM --clustering-method AgglomerativeClustering --linkage complete --useBothembedding --npyDir','npyN2B_AgglomerativeClusteringS/'),
+    ('run_experiment_2_n_e_AgglomerativeClusteringS S2neG','--regulized-type noregu --EMtype celltypeEM --clustering-method AgglomerativeClustering --linkage complete --useGAEembedding --npyDir','npyN2E_AgglomerativeClusteringS/'),
+    ('run_experiment_2_n_f_AgglomerativeClusteringS S2nfG','--regulized-type noregu --EMtype celltypeEM --clustering-method AgglomerativeClustering --linkage complete --npyDir','npyN2F_AgglomerativeClusteringS/'),
+
 ]
 
 # All
