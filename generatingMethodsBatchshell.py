@@ -245,7 +245,7 @@ for item in methodsList:
     if args.imputeMode:
         tmpstr1 = tmpstr1.replace('run_experiment','run_experimentImpute')
         # tmpstr2 = "I"+tmpstr2[1:]
-        tmpstr2 = "I"+tmpstr2[0:]
+        tmpstr2 = "I"+tmpstr2[2:]
         imputeStr = ' --imputeMode  '
         outDirStr = "npyImpute"+outDirStr[3:]
     outputFilename = args.outputDir + tmpstr1
