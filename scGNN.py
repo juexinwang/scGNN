@@ -11,7 +11,7 @@ from torch import nn, optim
 from torch.nn import functional as F
 from sklearn.decomposition import PCA
 from sklearn.metrics import silhouette_samples, silhouette_score
-from sklearn.cluster import KMeans,SpectralClustering,AffinityPropagation,AgglomerativeClustering,Birch,DBSCAN,FeatureAgglomeration,MeanShift,OPTICS 
+from sklearn.cluster import KMeans,SpectralClustering,AffinityPropagation,AgglomerativeClustering,Birch,DBSCAN,FeatureAgglomeration,OPTICS,MeanShift
 from model import AE, VAE, VAE2d
 from util_function import *
 from graph_function import *
@@ -323,6 +323,12 @@ if __name__ == "__main__":
             listResult = clustering.predict(zOut)
         elif args.clustering_method=='BirchN':
             clustering = Birch(n_clusters=None).fit(zOut)
+            listResult = clustering.predict(zOut)
+        elif args.clustering_method=='MeanShift':
+            clustering = MeanShift(n_clusters=None).fit(zOut)
+            listResult = clustering.predict(zOut)
+        elif args.clustering_method=='OPTICS':
+            clustering = OPTICS(min_samples=int(args.k/2), min_cluster_size=args.minMemberinCluster).fit(zOut)
             listResult = clustering.predict(zOut)
         else:
             print("Error: Clustering method not appropriate")
