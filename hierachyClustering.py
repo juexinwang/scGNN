@@ -67,7 +67,7 @@ def get_clusters(embedding, binmin=100, max_clusters=1000, verbose=True):
                             through more than a certain number of clusters
     :param verbose: whether or not to print the results of the clustering
     """
-    acts = self.get_layer(load, 'layer_c')
+    acts = embedding
     if isinstance(acts, list) or isinstance(acts, tuple):
         acts = acts[0]
 
@@ -100,3 +100,6 @@ def get_clusters(embedding, binmin=100, max_clusters=1000, verbose=True):
 
 
     return num_clusters, clusters
+
+X = np.array([[1, 2], [2, 5], [3, 6], [8, 7], [8, 8], [7, 3]])
+get_clusters(X)
