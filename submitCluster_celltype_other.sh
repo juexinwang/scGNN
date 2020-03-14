@@ -137,24 +137,24 @@ do
 # sleep 1
 
 
-sbatch run_experiment_2_g_b_MeanShift_$i.sh
-sleep 1
-sbatch run_experiment_2_g_e_MeanShift_$i.sh
-sleep 1
-sbatch run_experiment_2_g_f_MeanShift_$i.sh
-sleep 1
-sbatch run_experiment_2_r_b_MeanShift_$i.sh
-sleep 1
-sbatch run_experiment_2_r_e_MeanShift_$i.sh
-sleep 1
-sbatch run_experiment_2_r_f_MeanShift_$i.sh
-sleep 1
-sbatch run_experiment_2_n_b_MeanShift_$i.sh
-sleep 1
-sbatch run_experiment_2_n_e_MeanShift_$i.sh
-sleep 1
-sbatch run_experiment_2_n_f_MeanShift_$i.sh
-sleep 1
+# sbatch run_experiment_2_g_b_MeanShift_$i.sh
+# sleep 1
+# sbatch run_experiment_2_g_e_MeanShift_$i.sh
+# sleep 1
+# sbatch run_experiment_2_g_f_MeanShift_$i.sh
+# sleep 1
+# sbatch run_experiment_2_r_b_MeanShift_$i.sh
+# sleep 1
+# sbatch run_experiment_2_r_e_MeanShift_$i.sh
+# sleep 1
+# sbatch run_experiment_2_r_f_MeanShift_$i.sh
+# sleep 1
+# sbatch run_experiment_2_n_b_MeanShift_$i.sh
+# sleep 1
+# sbatch run_experiment_2_n_e_MeanShift_$i.sh
+# sleep 1
+# sbatch run_experiment_2_n_f_MeanShift_$i.sh
+# sleep 1
 
 sbatch run_experiment_2_g_b_OPTICS_$i.sh
 sleep 1

@@ -345,10 +345,10 @@ if __name__ == "__main__":
             listResult = clustering.predict(zOut)
         elif args.clustering_method=='MeanShift':
             clustering = MeanShift().fit(zOut)
-            listResult = clustering.predict(zOut)
+            listResult = clustering.labels_.tolist()
         elif args.clustering_method=='OPTICS':
             clustering = OPTICS(min_samples=int(args.k/2), min_cluster_size=args.minMemberinCluster).fit(zOut)
-            listResult = clustering.predict(zOut)
+            listResult = clustering.labels_.tolist()
         else:
             print("Error: Clustering method not appropriate")
         print("---Clustering takes %s seconds ---" % (time.time() - clustering_time))
