@@ -1,6 +1,7 @@
 import numpy as np
 import sklearn
 
+# From SAUCIE https://github.com/KrishnaswamyLab/SAUCIE/blob/master/example.py
 def calculate_mmd(k1, k2, k12):
     """ Calculates MMD given kernels for batch1, batch2, and between batches """
     return k1.sum()/(k1.shape[0]*k1.shape[1]) + k2.sum()/(k2.shape[0]*k2.shape[1]) - 2*k12.sum()/(k12.shape[0]*k12.shape[1])
