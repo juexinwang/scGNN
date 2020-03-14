@@ -182,6 +182,26 @@ methodsList = [
     ('run_experiment_2_n_e_AgglomerativeClusteringS S2neG','--regulized-type noregu --EMtype celltypeEM --clustering-method AgglomerativeClustering --linkage complete --useGAEembedding --npyDir','npyN2E_AgglomerativeClusteringS/'),
     ('run_experiment_2_n_f_AgglomerativeClusteringS S2nfG','--regulized-type noregu --EMtype celltypeEM --clustering-method AgglomerativeClustering --linkage complete --npyDir','npyN2F_AgglomerativeClusteringS/'),
 
+    ('run_experiment_2_g_b_MeanShift E2gbM','--regulized-type LTMG --EMtype celltypeEM --clustering-method MeanShift --useBothembedding --npyDir','npyG2B_MeanShift/'),
+    ('run_experiment_2_g_e_MeanShift E2geM','--regulized-type LTMG --EMtype celltypeEM --clustering-method MeanShift --useGAEembedding --npyDir','npyG2E_MeanShift/'),
+    ('run_experiment_2_g_f_MeanShift E2gfM','--regulized-type LTMG --EMtype celltypeEM --clustering-method MeanShift --npyDir','npyG2F_MeanShift/'),
+    ('run_experiment_2_r_b_MeanShift E2rbM','--regulized-type LTMG01 --EMtype celltypeEM --clustering-method MeanShift --useBothembedding --npyDir','npyR2B_MeanShift/'),
+    ('run_experiment_2_r_e_MeanShift E2reM','--regulized-type LTMG01 --EMtype celltypeEM --clustering-method MeanShift --useGAEembedding --npyDir','npyR2E_MeanShift/'),
+    ('run_experiment_2_r_f_MeanShift E2rfM','--regulized-type LTMG01 --EMtype celltypeEM --clustering-method MeanShift --npyDir','npyR2F_MeanShift/'),
+    ('run_experiment_2_n_b_MeanShift E2nbM','--regulized-type noregu --EMtype celltypeEM --clustering-method MeanShift --useBothembedding --npyDir','npyN2B_MeanShift/'),
+    ('run_experiment_2_n_e_MeanShift E2neM','--regulized-type noregu --EMtype celltypeEM --clustering-method MeanShift --useGAEembedding --npyDir','npyN2E_MeanShift/'),
+    ('run_experiment_2_n_f_MeanShift E2nfM','--regulized-type noregu --EMtype celltypeEM --clustering-method MeanShift --npyDir','npyN2F_MeanShift/'),
+
+    ('run_experiment_2_g_b_OPTICS E2gbO','--regulized-type LTMG --EMtype celltypeEM --clustering-method OPTICS --useBothembedding --npyDir','npyG2B_OPTICS/'),
+    ('run_experiment_2_g_e_OPTICS E2geO','--regulized-type LTMG --EMtype celltypeEM --clustering-method OPTICS --useGAEembedding --npyDir','npyG2E_OPTICS/'),
+    ('run_experiment_2_g_f_OPTICS E2gfO','--regulized-type LTMG --EMtype celltypeEM --clustering-method OPTICS --npyDir','npyG2F_OPTICS/'),
+    ('run_experiment_2_r_b_OPTICS E2rbO','--regulized-type LTMG01 --EMtype celltypeEM --clustering-method OPTICS --useBothembedding --npyDir','npyR2B_OPTICS/'),
+    ('run_experiment_2_r_e_OPTICS E2reO','--regulized-type LTMG01 --EMtype celltypeEM --clustering-method OPTICS --useGAEembedding --npyDir','npyR2E_OPTICS/'),
+    ('run_experiment_2_r_f_OPTICS E2rfO','--regulized-type LTMG01 --EMtype celltypeEM --clustering-method OPTICS --npyDir','npyR2F_OPTICS/'),
+    ('run_experiment_2_n_b_OPTICS E2nbO','--regulized-type noregu --EMtype celltypeEM --clustering-method OPTICS --useBothembedding --npyDir','npyN2B_OPTICS/'),
+    ('run_experiment_2_n_e_OPTICS E2neO','--regulized-type noregu --EMtype celltypeEM --clustering-method OPTICS --useGAEembedding --npyDir','npyN2E_OPTICS/'),
+    ('run_experiment_2_n_f_OPTICS E2nfO','--regulized-type noregu --EMtype celltypeEM --clustering-method OPTICS --npyDir','npyN2F_OPTICS/'),
+
 ]
 
 # All

@@ -5,7 +5,7 @@ def calculate_mmd(k1, k2, k12):
     """ Calculates MMD given kernels for batch1, batch2, and between batches """
     return k1.sum()/(k1.shape[0]*k1.shape[1]) + k2.sum()/(k2.shape[0]*k2.shape[1]) - 2*k12.sum()/(k12.shape[0]*k12.shape[1])
 
-def get_cluster_merging(self, embedding, clusters):
+def get_cluster_merging(embedding, clusters):
         if len(np.unique(clusters))==1: return clusters
 
         clusters = clusters - clusters.min()
@@ -57,7 +57,8 @@ def get_cluster_merging(self, embedding, clusters):
 
         return clusters
 
-def get_clusters(self, load, binmin=100, max_clusters=1000, verbose=True):
+#TODO
+def get_clusters(embedding, binmin=100, max_clusters=1000, verbose=True):
     """
     Get cluster assignments from the ID regularization layer.
     :param load: the loader object to iterate over
@@ -91,8 +92,7 @@ def get_clusters(self, load, binmin=100, max_clusters=1000, verbose=True):
         num_clusters += 1
         rows_clustered += rows_equal_to_this_code.shape[0]
 
-    embedding = self.get_embedding(load)
-    clusters = self.get_cluster_merging(embedding, clusters)
+    clusters = get_cluster_merging(embedding, clusters)
     num_clusters = len(np.unique(clusters))
 
     if verbose:

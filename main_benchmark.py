@@ -91,7 +91,7 @@ parser.add_argument('--useGAEembedding', action='store_true', default=False,
 parser.add_argument('--useBothembedding', action='store_true', default=False, 
                     help='whether use both embedding and Graph embedding for clustering(default: False)')
 parser.add_argument('--clustering-method', type=str, default='Louvain',
-                    help='Clustering method: Louvain/KMeans/SpectralClustering/AffinityPropagation/AgglomerativeClustering/Birch/BirchN')
+                    help='Clustering method: Louvain/KMeans/SpectralClustering/AffinityPropagation/AgglomerativeClustering/Birch/BirchN/MeanShift/OPTICS')
 parser.add_argument('--maxClusterNumber', type=int, default=30,
                     help='max cluster for celltypeEM without setting number of clusters (default: 30)') 
 parser.add_argument('--minMemberinCluster', type=int, default=5,
@@ -342,6 +342,12 @@ if __name__ == "__main__":
             listResult = clustering.predict(zOut)
         elif args.clustering_method=='BirchN':
             clustering = Birch(n_clusters=None).fit(zOut)
+            listResult = clustering.predict(zOut)
+        elif args.clustering_method=='MeanShift':
+            clustering = MeanShift().fit(zOut)
+            listResult = clustering.predict(zOut)
+        elif args.clustering_method=='OPTICS':
+            clustering = OPTICS(min_samples=int(args.k/2), min_cluster_size=args.minMemberinCluster).fit(zOut)
             listResult = clustering.predict(zOut)
         else:
             print("Error: Clustering method not appropriate")
