@@ -1,7 +1,7 @@
 import argparse
 
-# python generatingMethodsBatchshell.py
-# python generatingMethodsBatchshell.py --imputeMode
+# python generatingMethodsBatchshell_louvain.py
+# python generatingMethodsBatchshell_louvain.py --imputeMode
 parser = argparse.ArgumentParser(description='Generating sbatch files for HPC cluster running')
 parser.add_argument('--outputDir', type=str, default='',
                     help='Directory of batch files for cluster running')
