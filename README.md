@@ -134,9 +134,11 @@ https://data.humancellatlas.org/project-assets/project-matrices/4d6f6c96-2a83-43
 30K liver cells (10X)
 
 1. Generating Use_expression.csv (preprocessed file) and ltmg.csv (ltmg)
+
     python3 -W ignore PreprocessingscGNN.py --datasetName e7448a34-b33d-41de-b422-4c09bfeba96b.mtx --datasetDir /storage/htc/joshilab/wangjue/10x/6/ --LTMGDir /storage/htc/joshilab/wangjue/10x/6/
 
 2. Run scGNN
+
     module load miniconda3
     source activate conda_R
     python3 -W ignore scGNN.py --datasetName e7448a34-b33d-41de-b422-4c09bfeba96b.mtx --n-clusters 11 --regulized-type LTMG --EMtype celltypeEM --npyDir npyG2F/
