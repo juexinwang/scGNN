@@ -141,7 +141,7 @@ https://data.humancellatlas.org/project-assets/project-matrices/4d6f6c96-2a83-43
 
     module load miniconda3
     source activate conda_R
-    python3 -W ignore scGNN.py --datasetName e7448a34-b33d-41de-b422-4c09bfeba96b.mtx --n-clusters 11 --regulized-type LTMG --EMtype celltypeEM --npyDir npyG2F/
+    python3 -W ignore scGNN.py --datasetName e7448a34-b33d-41de-b422-4c09bfeba96b.mtx --regulized-type LTMG --EMtype celltypeEM --npyDir npyG2F/
 
 Reference:
 ---------
