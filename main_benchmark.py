@@ -341,7 +341,7 @@ if __name__ == "__main__":
             listResult,size = generateLouvainCluster(edgeList)
             k = len(np.unique(listResult))
             print('Louvain cluster: '+str(k))
-            clustering = Birch(n_clusters=k, random_state=0).fit(zOut)
+            clustering = Birch(n_clusters=k).fit(zOut)
             listResult = clustering.predict(zOut)
         elif args.clustering_method=='KMeans':
             clustering = KMeans(n_clusters=args.n_clusters, random_state=0).fit(zOut)
