@@ -31,7 +31,7 @@ R integration:
     install_github("dgrun/RaceID3_StemID2_package")
     install_github("BMEngineeR/scGNNLTMG")
 
-Notes for Cluster Running:
+Notes for Cluster Running Benchmark: (main_benchmark.py) May be deleted later
 ---------
 module load miniconda3
 conda create -n my_environment python=3.7
@@ -125,6 +125,17 @@ Now We totally have 63 methods in testing:
 
     3.3 (on Localmachine)Parsing results when ready:
         python summary_cmd.py 
+
+***Notes for casestudy: (scGNN.py)
+---------
+1. Generating Use_expression.csv and LTMG
+    python3 -W ignore PreprocessingscGNN.py --datasetName e7448a34-b33d-41de-b422-4c09bfeba96b.mtx --datasetDir /storage/htc/joshilab/wangjue/10x/1/ --LTMGDir /storage/htc/joshilab/wangjue/10x/1/
+
+2. Run scGNN
+    module load miniconda3
+    source activate conda_R
+    python3 -W ignore main_benchmark.py --datasetName e7448a34-b33d-41de-b422-4c09bfeba96b.mtx --n-clusters 11 --regulized-type LTMG --EMtype celltypeEM --npyDir npyG2F/
+
 
 
 Reference:
