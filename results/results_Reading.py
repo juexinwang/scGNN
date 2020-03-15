@@ -9,7 +9,7 @@ parser.add_argument('--runMode',action='store_true', default=False, help="Run or
 parser.add_argument('--splitMode', default=False, action='store_true',
                     help='whether split, used for long queue')
 parser.add_argument('--batchStr', type=int, default=0, 
-                    help="method used: 0-13")
+                    help="method used: 0-12")
 args = parser.parse_args()
 
 # Note:
@@ -112,16 +112,16 @@ if args.splitMode:
         '13.Zeisel',
         # '13.Zeisel --discreteTag'
         ]
-    elif args.batchStr == 13:
-        datasetList = [
-        '20.10X_2700_seurat',
-        # '20.10X_2700_seurat --discreteTag'
-        ]
-    elif args.batchStr == 14:
-        datasetList = [
-        '30.Schafer',
-        # '30.Schafer --discreteTag'
-        ]
+    # elif args.batchStr == 13:
+    #     datasetList = [
+    #     '20.10X_2700_seurat',
+    #     # '20.10X_2700_seurat --discreteTag'
+    #     ]
+    # elif args.batchStr == 14:
+    #     datasetList = [
+    #     '30.Schafer',
+    #     # '30.Schafer --discreteTag'
+    #     ]
 else:
     datasetList = [
         '1.Biase',
@@ -248,24 +248,84 @@ if args.imputeMode:
     #     '../npyImputeR2E_KMeans/', #19
     #     ]
 
+    # npyList = [
+    #     '../npyImputeG1B/', #0
+    #     '../npyImputeG1E/', #1
+    #     '../npyImputeR1B/', #2
+    #     '../npyImputeR1E/', #3
+    #     '../npyImputeG2B/', #4
+    #     '../npyImputeG2E/', #5
+    #     '../npyImputeR2B/', #6
+    #     '../npyImputeR2E/', #7
+    #     '../npyImputeG2B_Birch/', #8
+    #     '../npyImputeG2B_KMeans/', #9
+    #     '../npyImputeG2E_Birch/', #10
+    #     '../npyImputeG2E_KMeans/', #11
+    #     '../npyImputeR2B_Birch/', #12
+    #     '../npyImputeR2B_KMeans/', #13
+    #     '../npyImputeR2E_Birch/', #14
+    #     '../npyImputeR2E_KMeans/', #15
+    #     ]
+
     npyList = [
         '../npyImputeG1B/', #0
         '../npyImputeG1E/', #1
-        '../npyImputeR1B/', #2
-        '../npyImputeR1E/', #3
-        '../npyImputeG2B/', #4
-        '../npyImputeG2E/', #5
-        '../npyImputeR2B/', #6
-        '../npyImputeR2E/', #7
-        '../npyImputeG2B_Birch/', #8
-        '../npyImputeG2B_KMeans/', #9
-        '../npyImputeG2E_Birch/', #10
-        '../npyImputeG2E_KMeans/', #11
-        '../npyImputeR2B_Birch/', #12
-        '../npyImputeR2B_KMeans/', #13
-        '../npyImputeR2E_Birch/', #14
-        '../npyImputeR2E_KMeans/', #15
+        '../npyImputeG1F/', #2
+        '../npyImputeR1B/', #3
+        '../npyImputeR1E/', #4
+        '../npyImputeR1F/', #5
+        '../npyImputeN1B/', #6
+        '../npyImputeN1E/', #7
+        '../npyImputeN1F/', #8
+        '../npyImputeG2B/', #9
+        '../npyImputeG2E/', #10
+        '../npyImputeG2F/', #11
+        '../npyImputeR2B/', #12
+        '../npyImputeR2E/', #13
+        '../npyImputeR2F/', #14
+        '../npyImputeN2B/', #15
+        '../npyImputeN2E/', #16
+        '../npyImputeN2F/', #17
+
+        '../npyImputeG1B_LK/', #18
+        '../npyImputeG1E_LK/', #19
+        '../npyImputeG1F_LK/', #20
+        '../npyImputeR1B_LK/', #21
+        '../npyImputeR1E_LK/', #22
+        '../npyImputeR1F_LK/', #23
+        '../npyImputeN1B_LK/', #24
+        '../npyImputeN1E_LK/', #25
+        '../npyImputeN1F_LK/', #26
+        '../npyImputeG2B_LK/', #27
+        '../npyImputeG2E_LK/', #28
+        '../npyImputeG2F_LK/', #29
+        '../npyImputeR2B_LK/', #30
+        '../npyImputeR2E_LK/', #31
+        '../npyImputeR2F_LK/', #32
+        '../npyImputeN2B_LK/', #33
+        '../npyImputeN2E_LK/', #34
+        '../npyImputeN2F_LK/', #35
+
+        '../npyImputeG1B_LB/', #36
+        '../npyImputeG1E_LB/', #37
+        '../npyImputeG1F_LB/', #38
+        '../npyImputeR1B_LB/', #39
+        '../npyImputeR1E_LB/', #40
+        '../npyImputeR1F_LB/', #41
+        '../npyImputeN1B_LB/', #42
+        '../npyImputeN1E_LB/', #43
+        '../npyImputeN1F_LB/', #44
+        '../npyImputeG2B_LB/', #45
+        '../npyImputeG2E_LB/', #46
+        '../npyImputeG2F_LB/', #47
+        '../npyImputeR2B_LB/', #48
+        '../npyImputeR2E_LB/', #49
+        '../npyImputeR2F_LB/', #50
+        '../npyImputeN2B_LB/', #51
+        '../npyImputeN2E_LB/', #52
+        '../npyImputeN2F_LB/', #53
         ]
+
 else:
     pyStr = 'results_celltype.py'
     # complex
@@ -358,23 +418,82 @@ else:
     #     '../npyR2E_KMeans/', #19
     #     ]
     
+    # npyList = [
+    #     '../npyG1B/', #0
+    #     '../npyG1E/', #1
+    #     '../npyR1B/', #2
+    #     '../npyR1E/', #3
+    #     '../npyG2B/', #4
+    #     '../npyG2E/', #5
+    #     '../npyR2B/', #6
+    #     '../npyR2E/', #7
+    #     '../npyG2B_Birch/', #8
+    #     '../npyG2B_KMeans/', #9
+    #     '../npyG2E_Birch/', #10
+    #     '../npyG2E_KMeans/', #11
+    #     '../npyR2B_Birch/', #12
+    #     '../npyR2B_KMeans/', #13
+    #     '../npyR2E_Birch/', #14
+    #     '../npyR2E_KMeans/', #15
+    #     ]
+
     npyList = [
         '../npyG1B/', #0
         '../npyG1E/', #1
-        '../npyR1B/', #2
-        '../npyR1E/', #3
-        '../npyG2B/', #4
-        '../npyG2E/', #5
-        '../npyR2B/', #6
-        '../npyR2E/', #7
-        '../npyG2B_Birch/', #8
-        '../npyG2B_KMeans/', #9
-        '../npyG2E_Birch/', #10
-        '../npyG2E_KMeans/', #11
-        '../npyR2B_Birch/', #12
-        '../npyR2B_KMeans/', #13
-        '../npyR2E_Birch/', #14
-        '../npyR2E_KMeans/', #15
+        '../npyG1F/', #2
+        '../npyR1B/', #3
+        '../npyR1E/', #4
+        '../npyR1F/', #5
+        '../npyN1B/', #6
+        '../npyN1E/', #7
+        '../npyN1F/', #8
+        '../npyG2B/', #9
+        '../npyG2E/', #10
+        '../npyG2F/', #11
+        '../npyR2B/', #12
+        '../npyR2E/', #13
+        '../npyR2F/', #14
+        '../npyN2B/', #15
+        '../npyN2E/', #16
+        '../npyN2F/', #17
+
+        '../npyG1B_LK/', #18
+        '../npyG1E_LK/', #19
+        '../npyG1F_LK/', #20
+        '../npyR1B_LK/', #21
+        '../npyR1E_LK/', #22
+        '../npyR1F_LK/', #23
+        '../npyN1B_LK/', #24
+        '../npyN1E_LK/', #25
+        '../npyN1F_LK/', #26
+        '../npyG2B_LK/', #27
+        '../npyG2E_LK/', #28
+        '../npyG2F_LK/', #29
+        '../npyR2B_LK/', #30
+        '../npyR2E_LK/', #31
+        '../npyR2F_LK/', #32
+        '../npyN2B_LK/', #33
+        '../npyN2E_LK/', #34
+        '../npyN2F_LK/', #35
+
+        '../npyG1B_LB/', #36
+        '../npyG1E_LB/', #37
+        '../npyG1F_LB/', #38
+        '../npyR1B_LB/', #39
+        '../npyR1E_LB/', #40
+        '../npyR1F_LB/', #41
+        '../npyN1B_LB/', #42
+        '../npyN1E_LB/', #43
+        '../npyN1F_LB/', #44
+        '../npyG2B_LB/', #45
+        '../npyG2E_LB/', #46
+        '../npyG2F_LB/', #47
+        '../npyR2B_LB/', #48
+        '../npyR2E_LB/', #49
+        '../npyR2F_LB/', #50
+        '../npyN2B_LB/', #51
+        '../npyN2E_LB/', #52
+        '../npyN2F_LB/', #53
         ]
 
 reguDict={}
@@ -406,18 +525,59 @@ reguDict={}
 # for i in range(14,20):
 #     reguDict[i]='LTMG01'
 
-for i in range(0,2):
+#strong
+# for i in range(0,2):
+#     reguDict[i]='LTMG'
+# for i in range(2,4):
+#     reguDict[i]='LTMG01'
+# for i in range(4,6):
+#     reguDict[i]='LTMG'
+# for i in range(6,8):
+#     reguDict[i]='LTMG01'
+# for i in range(8,12):
+#     reguDict[i]='LTMG'
+# for i in range(12,16):
+#     reguDict[i]='LTMG01'
+
+for i in range(0,3):
     reguDict[i]='LTMG'
-for i in range(2,4):
+for i in range(3,6):
     reguDict[i]='LTMG01'
-for i in range(4,6):
+for i in range(6,9):
+    reguDict[i]='noregu'
+for i in range(10,12):
     reguDict[i]='LTMG'
-for i in range(6,8):
+for i in range(12,15):
     reguDict[i]='LTMG01'
-for i in range(8,12):
+for i in range(15,18):
+    reguDict[i]='noregu'
+
+for i in range(18,21):
     reguDict[i]='LTMG'
-for i in range(12,16):
+for i in range(21,24):
     reguDict[i]='LTMG01'
+for i in range(24,27):
+    reguDict[i]='noregu'
+for i in range(27,30):
+    reguDict[i]='LTMG'
+for i in range(30,33):
+    reguDict[i]='LTMG01'
+for i in range(33,36):
+    reguDict[i]='noregu'
+
+for i in range(36,39):
+    reguDict[i]='LTMG'
+for i in range(39,42):
+    reguDict[i]='LTMG01'
+for i in range(42,45):
+    reguDict[i]='noregu'
+for i in range(45,48):
+    reguDict[i]='LTMG'
+for i in range(48,51):
+    reguDict[i]='LTMG01'
+for i in range(51,54):
+    reguDict[i]='noregu'
+
 reguStr=''
 if args.methodName in reguDict:
     reguStr=' --regulized-type ' + reguDict[args.methodName] + ' '

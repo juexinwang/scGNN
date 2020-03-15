@@ -7,9 +7,11 @@ args = parser.parse_args()
 
 reDict = {}
 if args.imputeMode:
-    filename = 'jobinfo_imp_sel.txt'
+    # filename = 'jobinfo_imp_sel.txt'
+    filename = 'jobinfo_imp_louvain.txt'
 else:
-    filename = 'jobinfo_usage_sel.txt'
+    # filename = 'jobinfo_usage_sel.txt'
+    filename = 'jobinfo_louvain.txt'
 with open(filename) as f:
     lines = f.readlines()
     for line in lines:
@@ -38,8 +40,8 @@ nameDict={'Z0':'','Z1':'','Z2':'','Z3':'','Z4':'','Z5':'','Z6':'','Z7':'','Z8':'
 for i in range(13):
     allstr = []
     selstr = []
-    # complex: 63, select: 20, strong: 16 
-    for j in range(16):
+    # complex: 63, select: 20, strong: 16, louvain: 54 
+    for j in range(54):
         tag = True
         if args.imputeMode:
             lastline = ''
