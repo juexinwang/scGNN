@@ -128,6 +128,11 @@ Now We totally have 63 methods in testing:
 
 ***Notes for casestudy: (scGNN.py)
 ---------
+Example data:
+After filtering: 9760 cells 13052 genes
+https://data.humancellatlas.org/project-assets/project-matrices/4d6f6c96-2a83-43d8-8fe1-0f53bffd4674.homo_sapiens.mtx.zip
+30K liver cells (10X)
+
 1. Generating Use_expression.csv and LTMG
     python3 -W ignore PreprocessingscGNN.py --datasetName e7448a34-b33d-41de-b422-4c09bfeba96b.mtx --datasetDir /storage/htc/joshilab/wangjue/10x/1/ --LTMGDir /storage/htc/joshilab/wangjue/10x/1/
 
