@@ -191,13 +191,11 @@ def preprocessing(dir,datasetName,csvFilename,transform='log',cellRatio=0.99,gen
                     tmpline = tmpline + str(0.0)
                     k=j
                     break
-            if cellNamelist[l]>clist[-1]:
-                backstr = ''
-                for j in range(len(clist), len(cellNamelist)):
-                    backstr = backstr + ',' 
-                    backstr = backstr + str(0.0)                    
-                tmpline = tmpline + backstr
-                break
+                
+        size=tmpline.split(',')
+        for i in range(len(size),len(cellNamelist)+1):
+            tmpline = tmpline + ',' 
+            tmpline = tmpline + str(0.0)
 
         outList.append(tmpline+'\n')
 
