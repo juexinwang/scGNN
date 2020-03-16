@@ -191,13 +191,16 @@ def preprocessing(dir,datasetName,csvFilename,transform='log',cellRatio=0.99,gen
                     tmpline = tmpline + str(0.0)
                     k=j
                     break
-                
+
         size=tmpline.split(',')
         for i in range(len(size),len(cellNamelist)+1):
             tmpline = tmpline + ',' 
             tmpline = tmpline + str(0.0)
 
         outList.append(tmpline+'\n')
+        size=tmpline.split(',')
+        # For debug usage
+        print(str(index)+'*'+str(len(size)))
 
     with open(csvFilename,'w') as fw:
         fw.writelines(outList)
