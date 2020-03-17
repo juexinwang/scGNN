@@ -50,10 +50,14 @@ https://data.humancellatlas.org/project-assets/project-matrices/4d6f6c96-2a83-43
 
 3. Check Results
     
-    In outputdir now, we have four output files: Need to change to csv files later
+    In outputdir now, we have four output files: Need to change to csv files later：
+    
     *_recon.npy:        imputed matrix
+
     *_z.npy:            learned embedding for clustering
+
     *_final_edgeList.npy:learned graph edges of the cell graph
+
     *_results.txt:      groups of cells identified 
 
 
