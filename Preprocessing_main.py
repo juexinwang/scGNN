@@ -17,6 +17,8 @@ parser = argparse.ArgumentParser()
 parser.add_argument('--expression-name', type=str, default='10.Usoskin',
                     help='TGFb from MAGIC/test also from MAGIC/sci-CAR/sci-CAR_LTMG/MMPbasal/MMPbasal_all/MMPbasal_allcell/MMPbasal_allgene/MMPepo/MMPepo_all/MMPepo_allcell/MMPepo_allgene/MMPbasal_LTMG/MMPbasal_all_LTMG/MMPbasal_2000/MMPbasal_2000_LTMG')
 # Dataset: 1-13 benchmark: 1.Biase/2.Li/3.Treutlein/4.Yan/5.Goolam/6.Guo/7.Deng/8.Pollen/9.Chung/10.Usoskin/11.Kolodziejczyk/12.Klein/13.Zeisel/20.10X_2700_seurat/30.Schafer
+parser.add_argument('--featureDir', type=str, default='/home/wangjue/biodata/scData/',
+                    help='Feature File Directory')
 parser.add_argument('--data-type', type=str, default='float',
                     help='int/float')
 parser.add_argument('--geneNzThreshold', type=float, default=0.0,
@@ -28,7 +30,8 @@ parser.add_argument('--countThreshold', action='store_true', default=False,
 parser.add_argument('--cell-threshold', type=int, default=-1,
                     help='1000 for varID, -1 for all')
 parser.add_argument('--gene-threshold', type=int, default=-1,
-                    help='1000 for varID, -1 for all')
+                    help='1000 for varID, -1 for all')                  
+                    
 args = parser.parse_args()
 
 if args.data_type == 'int':
@@ -361,7 +364,7 @@ out_folder = "data/sc/"+args.expression_name+"/"
 if not os.path.exists(out_folder):
     os.makedirs(out_folder)
 
-feature_filename = "/home/wangjue/biodata/scData/"+expressionname
+feature_filename = args.featureDir + expressionname
 
 if args.countThreshold:
     #Set counts threshold as VarID
