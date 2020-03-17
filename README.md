@@ -31,6 +31,32 @@ R integration:
     install_github("dgrun/RaceID3_StemID2_package")
     install_github("BMEngineeR/scGNNLTMG")
 
+*** Notes for casestudy: (scGNN.py) Temporary
+---------
+Example data:
+After filtering: 9760 cells 13052 genes, finally select 2000 genes
+https://data.humancellatlas.org/project-assets/project-matrices/4d6f6c96-2a83-43d8-8fe1-0f53bffd4674.homo_sapiens.mtx.zip
+30K liver cells (10X)
+
+1. Generating Use_expression.csv (preprocessed file) and ltmg.csv (ltmg)
+
+    python3 -W ignore PreprocessingscGNN.py --datasetName e7448a34-b33d-41de-b422-4c09bfeba96b.mtx --datasetDir /storage/htc/joshilab/wangjue/10x/6/ --LTMGDir /storage/htc/joshilab/wangjue/10x/6/
+
+2. Run scGNN
+
+    module load miniconda3
+    source activate conda_R
+    python3 -W ignore scGNN.py --datasetName e7448a34-b33d-41de-b422-4c09bfeba96b.mtx --regulized-type LTMG --EMtype celltypeEM --clustering-method LouvainK --npyDir outputdir/
+
+3. Check Results
+    
+    In outputdir now, we have four output files: Need to change to csv files later
+    *_recon.npy:        imputed matrix
+    *_z.npy:            learned embedding for clustering
+    *_final_edgeList.npy:learned graph edges of the cell graph
+    *_results.txt:      groups of cells identified 
+
+
 Notes for Cluster Running Benchmark: (main_benchmark.py) May be deleted later
 ---------
 module load miniconda3
@@ -125,23 +151,6 @@ Now We totally have 63 methods in testing:
 
     3.3 (on Localmachine)Parsing results when ready:
         python summary_cmd.py 
-
-***Notes for casestudy: (scGNN.py)
----------
-Example data:
-After filtering: 9760 cells 13052 genes, finally select 2000 genes
-https://data.humancellatlas.org/project-assets/project-matrices/4d6f6c96-2a83-43d8-8fe1-0f53bffd4674.homo_sapiens.mtx.zip
-30K liver cells (10X)
-
-1. Generating Use_expression.csv (preprocessed file) and ltmg.csv (ltmg)
-
-    python3 -W ignore PreprocessingscGNN.py --datasetName e7448a34-b33d-41de-b422-4c09bfeba96b.mtx --datasetDir /storage/htc/joshilab/wangjue/10x/6/ --LTMGDir /storage/htc/joshilab/wangjue/10x/6/
-
-2. Run scGNN
-
-    module load miniconda3
-    source activate conda_R
-    python3 -W ignore scGNN.py --datasetName e7448a34-b33d-41de-b422-4c09bfeba96b.mtx --regulized-type LTMG --EMtype celltypeEM --npyDir npyG2F/
 
 Reference:
 ---------

@@ -89,7 +89,7 @@ parser.add_argument('--useGAEembedding', action='store_true', default=False,
 parser.add_argument('--useBothembedding', action='store_true', default=False, 
                     help='whether use both embedding and Graph embedding for clustering(default: False)')
 parser.add_argument('--clustering-method', type=str, default='Louvain',
-                    help='Clustering method: Louvain/KMeans/SpectralClustering/AffinityPropagation/AgglomerativeClustering/Birch/BirchN/MeanShift/OPTICS')
+                    help='Clustering method: Louvain/KMeans/SpectralClustering/AffinityPropagation/AgglomerativeClustering/Birch/BirchN/MeanShift/OPTICS/LouvainK/LouvainB')
 parser.add_argument('--maxClusterNumber', type=int, default=30,
                     help='max cluster for celltypeEM without setting number of clusters (default: 30)') 
 parser.add_argument('--minMemberinCluster', type=int, default=5,
@@ -260,12 +260,13 @@ if __name__ == "__main__":
         elif args.useBothembedding:
             zEmbedding=GAEembedding(zDiscret, adj, args)
             zOut=np.concatenate((zOut,zEmbedding),axis=1)
-        prune_time = time.time()
-        # Here para = 'euclidean:10'
-        adj, edgeList = generateAdj(zOut, graphType='KNNgraphML', para = args.knn_distance+':'+str(args.k)) 
-        adjdense = sp.csr_matrix.todense(adj)
-        adjsample = torch.from_numpy(adjdense)
-        print("---Pruning takes %s seconds ---" % (time.time() - prune_time))
+        # Debug
+        # prune_time = time.time()
+        # # Here para = 'euclidean:10'
+        # adj, edgeList = generateAdj(zOut, graphType='KNNgraphML', para = args.knn_distance+':'+str(args.k)) 
+        # adjdense = sp.csr_matrix.todense(adj)
+        # adjsample = torch.from_numpy(adjdense)
+        # print("---Pruning takes %s seconds ---" % (time.time() - prune_time))
         # if args.saveFlag:
         #     if args.imputeMode:
         #         np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_'+str(args.dropoutRatio)+'_zGAE.npy',zOut)
@@ -306,6 +307,22 @@ if __name__ == "__main__":
             # Seperate here for platforms without R support
             from R_util import generateLouvainCluster
             listResult,size = generateLouvainCluster(edgeList)
+            k = len(np.unique(listResult))
+            print('Louvain cluster: '+str(k))
+        elif args.clustering_method=='LouvainK':
+            from R_util import generateLouvainCluster
+            listResult,size = generateLouvainCluster(edgeList)
+            k = len(np.unique(listResult))
+            print('Louvain cluster: '+str(k))
+            clustering = KMeans(n_clusters=k, random_state=0).fit(zOut)
+            listResult = clustering.predict(zOut)
+        elif args.clustering_method=='LouvainB':
+            from R_util import generateLouvainCluster
+            listResult,size = generateLouvainCluster(edgeList)
+            k = len(np.unique(listResult))
+            print('Louvain cluster: '+str(k))
+            clustering = Birch(n_clusters=k).fit(zOut)
+            listResult = clustering.predict(zOut)
         elif args.clustering_method=='KMeans':
             clustering = KMeans(n_clusters=args.n_clusters, random_state=0).fit(zOut)
             listResult = clustering.predict(zOut)
@@ -400,12 +417,13 @@ if __name__ == "__main__":
             elif args.useBothembedding:
                 zEmbedding=GAEembedding(zDiscret, adj, args)
                 zOut=np.concatenate((zOut,zEmbedding),axis=1)
-            prune_time = time.time()
-            # Here para = 'euclidean:10'
-            adj, edgeList = generateAdj(zOut, graphType='KNNgraphML', para = args.knn_distance+':'+str(args.k)) 
-            adjdense = sp.csr_matrix.todense(adj)
-            adjsample = torch.from_numpy(adjdense)
-            print("---Pruning takes %s seconds ---" % (time.time() - prune_time))
+            # Debug
+            # prune_time = time.time()
+            # # Here para = 'euclidean:10'
+            # adj, edgeList = generateAdj(zOut, graphType='KNNgraphML', para = args.knn_distance+':'+str(args.k)) 
+            # adjdense = sp.csr_matrix.todense(adj)
+            # adjsample = torch.from_numpy(adjdense)
+            # print("---Pruning takes %s seconds ---" % (time.time() - prune_time))
 
         # Original save step by step
         # if args.saveFlag:
@@ -467,4 +485,5 @@ if __name__ == "__main__":
         np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_recon.npy',reconOut)
         np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_z.npy',zOut)
         np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_final_edgeList.npy',edgeList)
+        np.savetxt(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_results.npy',listResult,fmt='%d')
     print("---Total Running Time: %s seconds ---" % (time.time() - start_time))
