@@ -63,6 +63,16 @@ module load miniconda3
 conda create -n my_environment python=3.7
 source activate my_environment
 
+Preprocess benchmarks:
+
+# 1. generating usage csv
+
+python Preprocessing_scFile.py --inputfile /home/wangjue/biodata/scData/allBench/10.Usoskin/T2000_UsingOriginalMatrix/T2000_expression.txt --outputfile /home/wangjue/biodata/scData/10.Usoskin.csv --cellcount 622 --genecount 2000 --split space --cellheadflag False
+
+# 2. generating sparse coding under data/
+python Preprocessing_main.py --expression-name 10.Usoskin
+
+
 Now We totally have 63 methods in testing:
 * for using R support: geneLouvianCluster.py, otherwise we do not use rpy2
 
