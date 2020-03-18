@@ -50,7 +50,7 @@ parser.add_argument('--seed', type=int, default=1, metavar='S',
                     help='random seed (default: 1)')
 parser.add_argument('--regulized-type', type=str, default='LTMG',
                     help='regulized type (default: Graph) in EM, otherwise: noregu/LTMG/LTMG01')
-parser.add_argument('--gammaPara', type=float, default=0.5,
+parser.add_argument('--gammaPara', type=float, default=0.0,
                     help='regulized parameter (default: 1.0)')
 parser.add_argument('--regularizePara', type=float, default=0.5,
                     help='regulized parameter (default: 0.001)')
