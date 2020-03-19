@@ -245,10 +245,10 @@ if __name__ == "__main__":
     if args.filetype == '10X':
         expressionFilename = args.LTMGDir+args.datasetName+'/'+args.expressionFile
         # data = preprocessing10X(args.datasetDir, args.datasetName, args.LTMGDir+args.datasetName+'/'+args.expressionFile, args.transform, args.cellRatio, args.geneRatio, args.geneCriteria, args.geneSelectnum)
-        preprocessing10X(args.datasetDir, args.datasetName, expressionFilename, args.delim, args.transform, args.cellRatio, args.geneRatio, args.geneCriteria, args.geneSelectnum)    
+        preprocessing10X(args.datasetDir, args.datasetName, expressionFilename, args.transform, args.cellRatio, args.geneRatio, args.geneCriteria, args.geneSelectnum)    
     elif args.filetype == 'CSV':
         expressionFilename = args.LTMGDir+args.expressionFile
-        preprocessingCSV(args.datasetDir, args.datasetName, expressionFilename, args.transform, args.cellRatio, args.geneRatio, args.geneCriteria, args.geneSelectnum)
+        preprocessingCSV(args.datasetDir, args.datasetName, expressionFilename, args.delim, args.transform, args.cellRatio, args.geneRatio, args.geneCriteria, args.geneSelectnum)
 
     if args.inferLTMGTag:
         if args.filetype == '10X':
