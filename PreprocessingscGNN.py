@@ -220,7 +220,8 @@ def preprocessingCSV(dir,datasetName,csvFilename,transform='log',cellRatio=0.99,
     if not os.path.exists(expressionFilename):
         print('Dataset '+ expressionFilename + ' not exists!')
     
-    df  = pd.read_csv(expressionFilename, index_col=0, delim_whitespace=True)
+    # df  = pd.read_csv(expressionFilename, index_col=0, delim_whitespace=True)
+    df  = pd.read_csv(expressionFilename, index_col=0)
     df1 = df[df.astype('bool').mean(axis=1)>=(1-geneRatio)]
     print('After preprocessing, {} cells remaining'.format(df1.shape[0]))
     criteriaGene = df1.astype('bool').mean(axis=0)>=(1-geneRatio)
