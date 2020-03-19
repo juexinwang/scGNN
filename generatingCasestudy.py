@@ -31,7 +31,7 @@ methodsList = [
 
 # select
 datasetNameList = [
-    '--datasetName AD_GSE138852_2x8CT',
+    'AD_GSE138852_2x8CT',
 ]
 
 reguParaList = [
