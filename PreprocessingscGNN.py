@@ -222,6 +222,7 @@ def preprocessingCSV(dir,datasetName,csvFilename,delim='comma',transform='log',c
     if not os.path.exists(expressionFilename):
         print('Dataset '+ expressionFilename + ' not exists!')
     
+    df = pd.DataFrame()
     if delim == 'space':
         df  = pd.read_csv(expressionFilename, index_col=0, delim_whitespace=True)
     elif delim == 'comma':
