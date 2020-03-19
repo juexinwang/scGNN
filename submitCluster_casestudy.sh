@@ -1,7 +1,7 @@
-mkdir npyG2E_LK
-mkdir npyR2E_LK
-mkdir npyG2E_LB
-mkdir npyR2E_LB
+mkdir casenpyG2E_LK
+mkdir casenpyR2E_LK
+mkdir casenpyG2E_LB
+mkdir casenpyR2E_LB
 
 for i in {1..1}
 do
