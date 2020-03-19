@@ -64,7 +64,9 @@ for item in methodsList:
             for lP in l12ParaList:
                 commandLine = "python3 -W ignore scGNN.py --datasetName "+datasetName+" "+rP+" "+lP+" "+scGNNparam+" "+outDirStr+"\n"
                 outStr = templateStr1 + abbrStr + "_" + str(count) + "_" + str(rcount) + "_" + str(lcount)+ templateStr2 + commandLine + "\n"
-                with open(outputFilename+"_"+str(count)+".sh",'w') as fw:
+                with open(outputFilename+"_"+str(count)+ "_" + str(rcount) + "_" + str(lcount)+".sh",'w') as fw:
                     fw.write(outStr)
                     fw.close()
-                count += 1; rcount +=1; lcount += 1
+                lcount += 1
+            rcount +=1 
+        count +=1 
