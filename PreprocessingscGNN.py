@@ -222,7 +222,7 @@ def preprocessingCSV(dir,datasetName,csvFilename,transform='log',cellRatio=0.99,
     
     df  = pd.read_csv(expressionFilename, index_col=0, delim_whitespace=True)
     df1 = df[df.astype('bool').mean(axis=1)>=(1-geneRatio)]
-    print('After preprocessing, {} cells remaining'.format(df1.shape[0])
+    print('After preprocessing, {} cells remaining'.format(df1.shape[0]))
     criteriaGene = df1.astype('bool').mean(axis=0)>=(1-geneRatio)
     df2 = df1[df1.columns[criteriaGene]]
     print('After preprocessing, {} genes have {} nonzero'.format(df2.shape[1],geneRatio))
