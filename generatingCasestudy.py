@@ -22,28 +22,22 @@ templateStr2 = "\n#SBATCH -o results-%j.out           # give the job output a cu
 "module load miniconda3\n"\
 "source activate conda_R\n"
 
-#Refined Matrix with --regularizePara 0.5
 methodsList = [
-    ('run_experiment_2_g_e E2ge','--regularizePara 0.5 --regulized-type LTMG --EMtype celltypeEM --useGAEembedding  --npyDir','npyG2E/'),
-    ('run_experiment_2_g_e_Birch E2geB','--regularizePara 0.5 --regulized-type LTMG --EMtype celltypeEM --clustering-method Birch --useGAEembedding --npyDir','npyG2E_Birch/'),
-    ('run_experiment_2_g_e_KMeans E2geK','--regularizePara 0.5 --regulized-type LTMG --EMtype celltypeEM --clustering-method KMeans --useGAEembedding --npyDir','npyG2E_KMeans/'),
-    ('run_experiment_2_g_e_BirchN E2geN','--regularizePara 0.5 --regulized-type LTMG --EMtype celltypeEM --clustering-method BirchN --useGAEembedding --npyDir','npyG2E_BirchN/'),
-    ('run_experiment_2_r_e E2re','--regularizePara 0.5 --regulized-type LTMG01 --EMtype celltypeEM --useGAEembedding  --npyDir','npyR2E/'),
-    ('run_experiment_2_r_e_Birch E2reB','--regularizePara 0.5 --regulized-type LTMG01 --EMtype celltypeEM --clustering-method Birch --useGAEembedding --npyDir','npyR2E_Birch/'),
-    ('run_experiment_2_r_e_KMeans E2reK','--regularizePara 0.5 --regulized-type LTMG01 --EMtype celltypeEM --clustering-method KMeans --useGAEembedding --npyDir','npyR2E_KMeans/'),
-    ('run_experiment_2_r_e_BirchN E2reN','--regularizePara 0.5 --regulized-type LTMG01 --EMtype celltypeEM --clustering-method BirchN --useGAEembedding --npyDir','npyR2E_BirchN/'),
+    ('run_case_2geLK E1','--regulized-type LTMG --EMtype celltypeEM --clustering-method LouvainK --useGAEembedding  --npyDir','casenpyG2E_LK/'),
+    ('run_case_2reLK E2','--regulized-type LTMG01 --EMtype celltypeEM --clustering-method LouvainK --useGAEembedding  --npyDir','casenpyR2E_LK/'),
+    ('run_case_2geLB E3','--regulized-type LTMG --EMtype celltypeEM --clustering-method LouvainB --useGAEembedding  --npyDir','casenpyG2E_LB/'),
+    ('run_case_2reLB E4','--regulized-type LTMG01 --EMtype celltypeEM --clustering-method LouvainB --useGAEembedding  --npyDir','casenpyR2E_LB/'),    
 ]
 
 # select
 datasetNameList = [
-    '--datasetName 481193cb-c021-4e04-b477-0b7cfef4614b.mtx --n-clusters 4',
+    '--datasetName AD_GSE138852_2x8CT',
 ]
 
 reguParaList = [
-    '--gammaPara 1.0 --regularizePara 0.1',
+    '--gammaPara 0.9 --regularizePara 0.1',
     '--gammaPara 0.5 --regularizePara 0.5',
-    '--gammaPara 0.1 --regularizePara 1.0',
-    '--gammaPara 0.0 --regularizePara 1.0',
+    '--gammaPara 0.1 --regularizePara 0.9',
     ]
 
 l12ParaList = [
@@ -53,24 +47,24 @@ l12ParaList = [
     '--L1Para 0.001 --L2Para 0.001',
     ]
 
-
-
-
 # generate sbatch files:
 for item in methodsList:
     batchInfo,scGNNparam,outDirStr = item
     tmp = batchInfo.split()
     tmpstr1=tmp[0]
     tmpstr2=tmp[1]
-    imputeStr = ''
     outputFilename = args.outputDir + tmpstr1
     abbrStr = tmpstr2   
 
     count = 1
     for datasetName in datasetNameList:
-        commandLine = "python3 -W ignore main_benchmark.py --datasetName "+datasetName+" "+scGNNparam+" "+outDirStr+imputeStr+"\n"
-        outStr = templateStr1 + abbrStr + "_" + str(count) + templateStr2 + commandLine + "\n"
-        with open(outputFilename+"_"+str(count)+".sh",'w') as fw:
-            fw.write(outStr)
-            fw.close()
-        count += 1
+        rcount = 1
+        for rP in reguParaList:
+            lcount = 1
+            for lP in l12ParaList:
+                commandLine = "python3 -W ignore scGNN.py --datasetName "+datasetName+" "+rP+" "+lP+" "+scGNNparam+" "+outDirStr+"\n"
+                outStr = templateStr1 + abbrStr + "_" + str(count) + "_" + str(rcount) + "_" + str(lcount)+ templateStr2 + commandLine + "\n"
+                with open(outputFilename+"_"+str(count)+".sh",'w') as fw:
+                    fw.write(outStr)
+                    fw.close()
+                count += 1; rcount +=1; lcount += 1

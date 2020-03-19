@@ -20,10 +20,10 @@ from gae_embedding import GAEembedding,measure_clustering_results,test_clusterin
 
 parser = argparse.ArgumentParser(description='Main Entrance of scGNN')
 parser.add_argument('--datasetName', type=str, default='481193cb-c021-4e04-b477-0b7cfef4614b.mtx',
-                    help='TGFb/sci-CAR/sci-CAR_LTMG/MMPbasal/MMPbasal_all/MMPbasal_allgene/MMPbasal_allcell/MMPepo/MMPbasal_LTMG/MMPbasal_all_LTMG/MMPbasal_2000')
+                    help='TGFb/sci-CAR/MMPbasal/MMPepo/MMPbasal/')
 # Dataset: 1-13 benchmark: 1.Biase/2.Li/3.Treutlein/4.Yan/5.Goolam/6.Guo/7.Deng/8.Pollen/9.Chung/10.Usoskin/11.Kolodziejczyk/12.Klein/13.Zeisel
-parser.add_argument('--datasetDir', type=str, default='/storage/htc/joshilab/wangjue/10x/6/',
-                    help='Directory of data, default(/home/wangjue/biodata/scData/10x/6/)')
+parser.add_argument('--datasetDir', type=str, default='/storage/htc/joshilab/wangjue/casestudy/',
+                    help='Directory of data, /storage/htc/joshilab/wangjue/10x/6/, default(/home/wangjue/biodata/scData/10x/6/)')
 parser.add_argument('--batch-size', type=int, default=12800, metavar='N',
                     help='input batch size for training (default: 128)')
 parser.add_argument('--epochs', type=int, default=500, metavar='N',
@@ -50,16 +50,14 @@ parser.add_argument('--seed', type=int, default=1, metavar='S',
                     help='random seed (default: 1)')
 parser.add_argument('--regulized-type', type=str, default='LTMG',
                     help='regulized type (default: Graph) in EM, otherwise: noregu/LTMG/LTMG01')
-parser.add_argument('--gammaPara', type=float, default=0.0,
+parser.add_argument('--gammaPara', type=float, default=0.1,
                     help='regulized parameter (default: 1.0)')
-parser.add_argument('--regularizePara', type=float, default=0.5,
+parser.add_argument('--regularizePara', type=float, default=0.9,
                     help='regulized parameter (default: 0.001)')
 parser.add_argument('--L1Para', type=float, default=0.0,
                     help='regulized parameter (default: 0.001)')
 parser.add_argument('--L2Para', type=float, default=0.0,
                     help='regulized parameter (default: 0.001)')
-parser.add_argument('--discreteTag', action='store_true', default=False, 
-                    help='whether input is raw or 0/1 (default: False)')
 parser.add_argument('--k', type=int, default=10,
                     help='parameter k in KNN graph (default: 10)')
 parser.add_argument('--knn-distance', type=str, default='euclidean',
@@ -76,7 +74,7 @@ parser.add_argument('--npyDir', type=str, default='npyGraphTest/',
                     help='save npy results in directory')
 parser.add_argument('--log-interval', type=int, default=100, metavar='N',
                     help='how many batches to wait before logging training status')                  
-parser.add_argument('--LTMGDir', type=str, default='/home/wangjue/biodata/scData/10x/6/',
+parser.add_argument('--LTMGDir', type=str, default='/storage/htc/joshilab/wangjue/casestudy/',
                     help='directory of LTMGDir, default:(/home/wangjue/biodata/scData/allBench/)')
 parser.add_argument('--expressionFile', type=str, default='Use_expression.csv',
                     help='expression File in csv')
@@ -127,11 +125,6 @@ print(args)
 data = loadscCSV(args.LTMGDir+args.datasetName+'/'+args.expressionFile)
 
 scData = scDataset(data)
-# No imputeMode , no discrete
-# if args.imputeMode:
-#     scData = scDatasetDropout(args.datasetName, args.discreteTag, args.dropoutRatio)
-# else:
-#     scData = scBenchDataset(args.datasetName, args.discreteTag)
 train_loader = DataLoader(scData, batch_size=args.batch_size, shuffle=False, **kwargs)
 
 # load LTMG
@@ -216,10 +209,7 @@ def train(epoch, train_loader=train_loader, EMFlag=False):
     return recon_batch_all, data_all, z_all
 
 if __name__ == "__main__":
-    start_time = time.time()
-    discreteStr = ''
-    if args.discreteTag:
-        discreteStr = 'D'       
+    start_time = time.time()       
     # adjsample refer to cell-cell regulization, now we only have adjsample
     adjsample = None
     # adjfeature refer to gene-gene regulization
@@ -227,9 +217,9 @@ if __name__ == "__main__":
 
     # Save results only when impute
     # if args.imputeMode:
-    #     np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_'+str(args.dropoutRatio)+'_dropi.npy',scData.i)
-    #     np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_'+str(args.dropoutRatio)+'_dropj.npy',scData.j)
-    #     np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_'+str(args.dropoutRatio)+'_dropix.npy',scData.ix)
+    #     np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+'_'+str(args.dropoutRatio)+'_dropi.npy',scData.i)
+    #     np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+'_'+str(args.dropoutRatio)+'_dropj.npy',scData.j)
+    #     np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+'_'+str(args.dropoutRatio)+'_dropix.npy',scData.ix)
 
     for epoch in range(1, args.epochs + 1):
         recon, original, z = train(epoch, EMFlag=False)
@@ -245,11 +235,11 @@ if __name__ == "__main__":
     # if args.saveFlag:
     #     reconOut = recon.detach().cpu().numpy()
     #     if args.imputeMode:
-    #         np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_'+str(args.dropoutRatio)+'_recon.npy',reconOut)
-    #         np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_'+str(args.dropoutRatio)+'_z.npy',zOut)
+    #         np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+'_'+str(args.dropoutRatio)+'_recon.npy',reconOut)
+    #         np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+'_'+str(args.dropoutRatio)+'_z.npy',zOut)
     #     else:  
-    #         np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_recon.npy',reconOut)
-    #         np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_z.npy',zOut)
+    #         np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+'_recon.npy',reconOut)
+    #         np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+'_z.npy',zOut)
     
     # Whether use GAE embedding
     if args.useGAEembedding or args.useBothembedding:
@@ -269,10 +259,10 @@ if __name__ == "__main__":
         # print("---Pruning takes %s seconds ---" % (time.time() - prune_time))
         # if args.saveFlag:
         #     if args.imputeMode:
-        #         np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_'+str(args.dropoutRatio)+'_zGAE.npy',zOut)
+        #         np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+'_'+str(args.dropoutRatio)+'_zGAE.npy',zOut)
         #     else:
-        #         np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_zGAE.npy',zOut)
-        # np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_init_edgeList.npy',edgeList)
+        #         np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+'_zGAE.npy',zOut)
+        # np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+'_init_edgeList.npy',edgeList)
     
     # For iteration studies
     G0 = nx.Graph()
@@ -429,11 +419,11 @@ if __name__ == "__main__":
         # if args.saveFlag:
         #     reconOut = recon.detach().cpu().numpy()
         #     if args.imputeMode:
-        #         np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_'+str(args.dropoutRatio)+'_recon'+str(bigepoch)+'.npy',reconOut)
-        #         np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_'+str(args.dropoutRatio)+'_z'+str(bigepoch)+'.npy',zOut)
+        #         np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+'_'+str(args.dropoutRatio)+'_recon'+str(bigepoch)+'.npy',reconOut)
+        #         np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+'_'+str(args.dropoutRatio)+'_z'+str(bigepoch)+'.npy',zOut)
         #     else:
-        #         np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_recon'+str(bigepoch)+'.npy',reconOut)
-        #         np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_z'+str(bigepoch)+'.npy',zOut)
+        #         np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+'_recon'+str(bigepoch)+'.npy',reconOut)
+        #         np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+'_z'+str(bigepoch)+'.npy',zOut)
         
         print("---One iteration in EM process, proceeded %s seconds ---" % (time.time() - iteration_time))
 
@@ -482,8 +472,8 @@ if __name__ == "__main__":
     
     if args.saveFlag:
         reconOut = recon.detach().cpu().numpy()
-        np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_recon.npy',reconOut)
-        np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_z.npy',zOut)
-        np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_final_edgeList.npy',edgeList)
-        np.savetxt(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_results.npy',listResult,fmt='%d')
+        np.save(   args.npyDir+args.datasetName+'_'+args.regulized_type+'_'+args.regularizePara+'_'+args.L1Para+'_'+args.L2Para+'_recon.npy',reconOut)
+        np.save(   args.npyDir+args.datasetName+'_'+args.regulized_type+'_'+args.regularizePara+'_'+args.L1Para+'_'+args.L2Para+'_z.npy',zOut)
+        np.save(   args.npyDir+args.datasetName+'_'+args.regulized_type+'_'+args.regularizePara+'_'+args.L1Para+'_'+args.L2Para+'_final_edgeList.npy',edgeList)
+        np.savetxt(args.npyDir+args.datasetName+'_'+args.regulized_type+'_'+args.regularizePara+'_'+args.L1Para+'_'+args.L2Para+'_results.npy',listResult,fmt='%d')
     print("---Total Running Time: %s seconds ---" % (time.time() - start_time))
