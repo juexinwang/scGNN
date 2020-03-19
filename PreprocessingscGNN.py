@@ -20,6 +20,8 @@ parser.add_argument('--expressionFile', type=str, default='Use_expression.csv',
                     help='expression File in csv')
 parser.add_argument('--ltmgFile', type=str, default='ltmg.csv',
                     help='expression File in csv')
+parser.add_argument('--filetype', type=str, default='10X',
+                    help='select input filetype, 10X or CSV: default(10X)')
 #param                    
 parser.add_argument('--transform', type=str, default='log',
                     help='Whether transform')
@@ -34,9 +36,9 @@ parser.add_argument('--geneSelectnum', type=int, default=2000,
                     
 args = parser.parse_args()
 
-def preprocessing(dir,datasetName,csvFilename,transform='log',cellRatio=0.99,geneRatio=0.99,geneCriteria='variance',geneSelectnum=2000):
+def preprocessing10X(dir,datasetName,csvFilename,transform='log',cellRatio=0.99,geneRatio=0.99,geneCriteria='variance',geneSelectnum=2000):
     '''
-    preprocessing:
+    preprocessing 10X data
     transform='log' or None
     '''
     filefolder = dir + datasetName + '/'
@@ -161,18 +163,16 @@ def preprocessing(dir,datasetName,csvFilename,transform='log',cellRatio=0.99,gen
     outList.append(header+'\n')
 
     for index in tmpChooseIndex:
-        print(index)
-        # if index==4350:
-        #     print(index)
-        geneindex = geneNamelist[index]        
+        # print(index)                
         clist = expressionCellDict[geneindex]
         elist = expressionDict[geneindex]
-        # print(str(len(clist))+' '+str(len(elist)))
-        for i in range(len(elist)):
-            # print('{}*{}'.format(geneindex,geneNameDict[geneindex]))
-            genelist.append(geneNameDict[geneindex])
-            celllist.append(cellNameDict[clist[i]])
-            datalist.append(elist[i]) 
+        geneindex = geneNamelist[index]
+        # For output sparse purpose
+        # for i in range(len(elist)):
+        #     # print('{}*{}'.format(geneindex,geneNameDict[geneindex]))
+        #     genelist.append(geneNameDict[geneindex])
+        #     celllist.append(cellNameDict[clist[i]])
+        #     datalist.append(elist[i]) 
         
         # print('*')
         tmpline = genes[0][index]
@@ -207,17 +207,49 @@ def preprocessing(dir,datasetName,csvFilename,transform='log',cellRatio=0.99,gen
         fw.close()
     print('Write CSV done')
 
-    data = scipy.sparse.csr_matrix((datalist, (genelist, celllist)), shape=(len(tmpChooseIndex),len(cellNamelist))).tolil()
-    return data
+    # For output sparse purpose
+    # data = scipy.sparse.csr_matrix((datalist, (genelist, celllist)), shape=(len(tmpChooseIndex),len(cellNamelist))).tolil()
+    # return data
+
+def preprocessingCSV(dir,datasetName,csvFilename,transform='log',cellRatio=0.99,geneRatio=0.99,geneCriteria='variance',geneSelectnum=2000):
+    '''
+    preprocessing CSV files:
+    transform='log' or None
+    '''
+    expressionFilename = dir + datasetName
+    if not os.path.exists(filename):
+        print('Dataset '+ expressionFilename + ' not exists!')
+    
+    df  = pd.read_csv(expressionFilename, index_col=0, delim_whitespace=True)
+    df1 = df[df.astype('bool').mean(axis=1)>=(1-geneRatio)]
+    print('After preprocessing, {} cells remaining'.format(df1.shape[0])
+    criteriaGene = df1.astype('bool').mean(axis=0)>=(1-geneRatio)
+    df2 = df1[df1.columns[criteriaGene]]
+    print('After preprocessing, {} genes have {} nonzero'.format(df2.shape[1],geneRatio))
+    criteriaSelectGene=df2.var(axis=1).sort_values()[-geneSelectnum:]
+    df3 = df2.loc[criteriaSelectGene.index]
+    if transform == 'log':
+        df3 = df3.transform(lambda x: np.log(x + 1))
+    df3.to_csv(csvFilename)
 
 if __name__ == "__main__":
     start_time = time.time()
     
     #preprocessing
-    data = preprocessing(args.datasetDir, args.datasetName, args.LTMGDir+args.datasetName+'/'+args.expressionFile, args.transform, args.cellRatio, args.geneRatio, args.geneCriteria, args.geneSelectnum)
-        
+    if args.filetype == '10X':
+        expressionFilename = args.LTMGDir+args.datasetName+'/'+args.expressionFile
+        # data = preprocessing10X(args.datasetDir, args.datasetName, args.LTMGDir+args.datasetName+'/'+args.expressionFile, args.transform, args.cellRatio, args.geneRatio, args.geneCriteria, args.geneSelectnum)
+        preprocessing10X(args.datasetDir, args.datasetName, expressionFilename, args.transform, args.cellRatio, args.geneRatio, args.geneCriteria, args.geneSelectnum)    
+    elif args.filetype == 'CSV':
+        expressionFilename = args.LTMGDir+args.expressionFile
+        preprocessingCSV(args.datasetDir, args.datasetName, expressionFilename, args.transform, args.cellRatio, args.geneRatio, args.geneCriteria, args.geneSelectnum)
+
     if args.inferLTMGTag:
+        if args.filetype == '10X':
+            ltmgdir = args.LTMGDir+args.datasetName+'/'
+        elif args.filetype == 'CSV':
+            ltmgdir = args.LTMGDir
         #run LTMG in R
-        runLTMG(args.LTMGDir+args.datasetName+'/'+args.expressionFile, args.LTMGDir+args.datasetName+'/'+args.ltmgFile)
+        runLTMG(ltmgdir+args.expressionFile, ltmgdir+args.ltmgFile)
 
     print("---Total Running Time: %s seconds ---" % (time.time() - start_time))
