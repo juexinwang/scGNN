@@ -22,6 +22,8 @@ parser.add_argument('--ltmgFile', type=str, default='ltmg.csv',
                     help='expression File in csv')
 parser.add_argument('--filetype', type=str, default='10X',
                     help='select input filetype, 10X or CSV: default(10X)')
+parser.add_argument('--delim', type=str, default='comma',
+                    help='File delim type, comma or space: default(comma)')
 #param                    
 parser.add_argument('--transform', type=str, default='log',
                     help='Whether transform')
@@ -211,7 +213,7 @@ def preprocessing10X(dir,datasetName,csvFilename,transform='log',cellRatio=0.99,
     # data = scipy.sparse.csr_matrix((datalist, (genelist, celllist)), shape=(len(tmpChooseIndex),len(cellNamelist))).tolil()
     # return data
 
-def preprocessingCSV(dir,datasetName,csvFilename,transform='log',cellRatio=0.99,geneRatio=0.99,geneCriteria='variance',geneSelectnum=2000):
+def preprocessingCSV(dir,datasetName,csvFilename,delim='comma',transform='log',cellRatio=0.99,geneRatio=0.99,geneCriteria='variance',geneSelectnum=2000):
     '''
     preprocessing CSV files:
     transform='log' or None
@@ -220,8 +222,10 @@ def preprocessingCSV(dir,datasetName,csvFilename,transform='log',cellRatio=0.99,
     if not os.path.exists(expressionFilename):
         print('Dataset '+ expressionFilename + ' not exists!')
     
-    # df  = pd.read_csv(expressionFilename, index_col=0, delim_whitespace=True)
-    df  = pd.read_csv(expressionFilename, index_col=0)
+    if delim == 'space':
+        df  = pd.read_csv(expressionFilename, index_col=0, delim_whitespace=True)
+    elif delim == 'comma':
+        df  = pd.read_csv(expressionFilename, index_col=0)
     df1 = df[df.astype('bool').mean(axis=1)>=(1-geneRatio)]
     print('After preprocessing, {} cells remaining'.format(df1.shape[0]))
     criteriaGene = df1.astype('bool').mean(axis=0)>=(1-geneRatio)
@@ -240,7 +244,7 @@ if __name__ == "__main__":
     if args.filetype == '10X':
         expressionFilename = args.LTMGDir+args.datasetName+'/'+args.expressionFile
         # data = preprocessing10X(args.datasetDir, args.datasetName, args.LTMGDir+args.datasetName+'/'+args.expressionFile, args.transform, args.cellRatio, args.geneRatio, args.geneCriteria, args.geneSelectnum)
-        preprocessing10X(args.datasetDir, args.datasetName, expressionFilename, args.transform, args.cellRatio, args.geneRatio, args.geneCriteria, args.geneSelectnum)    
+        preprocessing10X(args.datasetDir, args.datasetName, expressionFilename, args.delim, args.transform, args.cellRatio, args.geneRatio, args.geneCriteria, args.geneSelectnum)    
     elif args.filetype == 'CSV':
         expressionFilename = args.LTMGDir+args.expressionFile
         preprocessingCSV(args.datasetDir, args.datasetName, expressionFilename, args.transform, args.cellRatio, args.geneRatio, args.geneCriteria, args.geneSelectnum)
