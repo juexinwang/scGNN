@@ -217,7 +217,7 @@ def preprocessingCSV(dir,datasetName,csvFilename,transform='log',cellRatio=0.99,
     transform='log' or None
     '''
     expressionFilename = dir + datasetName
-    if not os.path.exists(filename):
+    if not os.path.exists(expressionFilename):
         print('Dataset '+ expressionFilename + ' not exists!')
     
     df  = pd.read_csv(expressionFilename, index_col=0, delim_whitespace=True)
