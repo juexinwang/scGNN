@@ -165,10 +165,10 @@ def preprocessing10X(dir,datasetName,csvFilename,transform='log',cellRatio=0.99,
     outList.append(header+'\n')
 
     for index in tmpChooseIndex:
-        # print(index)                
+        # print(index)
+        geneindex = geneNamelist[index]                
         clist = expressionCellDict[geneindex]
-        elist = expressionDict[geneindex]
-        geneindex = geneNamelist[index]
+        elist = expressionDict[geneindex]        
         # For output sparse purpose
         # for i in range(len(elist)):
         #     # print('{}*{}'.format(geneindex,geneNameDict[geneindex]))
