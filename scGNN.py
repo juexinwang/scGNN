@@ -122,6 +122,7 @@ kwargs = {'num_workers': 1, 'pin_memory': True} if args.cuda else {}
 print(args)
 
 # load scRNA in csv
+print ('scRNA starts loading.')
 data = loadscCSV(args.LTMGDir+args.datasetName+'/'+args.expressionFile)
 print ('scRNA has been successfully loaded.')
 
