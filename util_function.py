@@ -559,8 +559,24 @@ def readLTMG(LTMGDir, ltmgfile):
     matrix = matrix.astype(int)
     return matrix
 
-def loadscCSV(csvFilename):
-    matrix = pd.read_csv(csvFilename,header=None, index_col=None)
+def loadscCSV(csvFilename, largeMode=False):
+    '''
+    Load CSV: rows are genes, cols are cells, first col is the gene name 
+    '''
+    if largeMode:
+        # Ref: https://towardsdatascience.com/why-and-how-to-use-pandas-with-large-data-9594dda2ea4c
+        df_chunk = pd.read_csv(csvFilename,header=None, index_col=None, chunksize=1000000)
+        chunk_list = []  # append each chunk df here 
+        # Each chunk is in df format
+        for chunk in df_chunk:
+            # Once the data filtering is done, append the chunk to list
+            chunk_list.append(chunk)
+            
+        # concat the list into dataframe 
+        df_concat = pd.concat(chunk_list)
+        
+    else:
+        matrix = pd.read_csv(csvFilename,header=None, index_col=None)
     matrix = matrix.to_numpy()
     matrix = matrix[1:,1:]
     matrix = matrix.astype(float)

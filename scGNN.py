@@ -80,6 +80,8 @@ parser.add_argument('--expressionFile', type=str, default='Use_expression.csv',
                     help='expression File in csv')
 parser.add_argument('--ltmgFile', type=str, default='ltmg.csv',
                     help='expression File in csv')
+parser.add_argument('--largeMode', action='store_true', default=False, 
+                    help='whether running in large mode')                    
 
 #Clustering related
 parser.add_argument('--useGAEembedding', action='store_true', default=False, 
@@ -123,7 +125,7 @@ print(args)
 
 # load scRNA in csv
 print ('scRNA starts loading.')
-data = loadscCSV(args.LTMGDir+args.datasetName+'/'+args.expressionFile)
+data = loadscCSV(args.LTMGDir+args.datasetName+'/'+args.expressionFile, largeMode=args.largeMode)
 print ('scRNA has been successfully loaded.')
 
 scData = scDataset(data)
