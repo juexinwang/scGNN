@@ -11,7 +11,7 @@ from torch import nn, optim
 from torch.nn import functional as F
 from torch.utils.data import Dataset, DataLoader
 from benchmark_util import *
-import dask.dataframe as dd
+# import dask.dataframe as dd
 dir_path = os.path.dirname(os.path.realpath(__file__))
 
 def checkargs(args):
@@ -568,8 +568,8 @@ def loadscCSV(csvFilename, largeMode=False):
         print('Load CSV in largeMode')
         # Ref: https://towardsdatascience.com/why-and-how-to-use-pandas-with-large-data-9594dda2ea4c
         # Ref: https://stackoverflow.com/questions/33642951/python-using-pandas-structures-with-large-csviterate-and-chunksize
-        # tp = pd.read_csv(csvFilename,header=None, index_col=None, iterator=True, chunksize=1000000)
-        # matrix = pd.concat(tp, ignore_index=True)
+        tp = pd.read_csv(csvFilename,header=None, index_col=None, iterator=True, chunksize=1000000)
+        matrix = pd.concat(tp, ignore_index=True)
 
         # chunk_list = []  # append each chunk df here 
         # # Each chunk is in df format
@@ -580,7 +580,8 @@ def loadscCSV(csvFilename, largeMode=False):
         # # concat the list into dataframe 
         # matix = pd.concat(chunk_list)
 
-        matrix = dd.read_csv(csvFilename,header=None, index_col=None)
+        # dask? TODO
+        # matrix = dd.read_csv(csvFilename)
         
     else:
         matrix = pd.read_csv(csvFilename,header=None, index_col=None)

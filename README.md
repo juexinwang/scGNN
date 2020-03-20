@@ -21,6 +21,7 @@ Tested on Ubuntu 16.04 and CentOS 7 with Python 3.6.8
     pip install rpy2
     pip install node2vec
     pip install munkres
+    pip install dask[dataframe]
 
 R integration:
 
