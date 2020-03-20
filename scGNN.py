@@ -123,6 +123,7 @@ print(args)
 
 # load scRNA in csv
 data = loadscCSV(args.LTMGDir+args.datasetName+'/'+args.expressionFile)
+print ('scRNA has been successfully loaded.')
 
 scData = scDataset(data)
 train_loader = DataLoader(scData, batch_size=args.batch_size, shuffle=False, **kwargs)
