@@ -202,7 +202,7 @@ def preprocessing10X(dir,datasetName,csvFilename,transform='log',cellRatio=0.99,
         outList.append(tmpline+'\n')
         size=tmpline.split(',')
         # For debug usage
-        print(str(index)+'*'+str(len(size)))
+        # print(str(index)+'*'+str(len(size)))
 
     with open(csvFilename,'w') as fw:
         fw.writelines(outList)
