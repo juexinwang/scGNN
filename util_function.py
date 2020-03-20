@@ -11,6 +11,7 @@ from torch import nn, optim
 from torch.nn import functional as F
 from torch.utils.data import Dataset, DataLoader
 from benchmark_util import *
+import dask.dataframe as dd
 dir_path = os.path.dirname(os.path.realpath(__file__))
 
 def checkargs(args):
@@ -564,16 +565,22 @@ def loadscCSV(csvFilename, largeMode=False):
     Load CSV: rows are genes, cols are cells, first col is the gene name 
     '''
     if largeMode:
+        print('Load CSV in largeMode')
         # Ref: https://towardsdatascience.com/why-and-how-to-use-pandas-with-large-data-9594dda2ea4c
-        df_chunk = pd.read_csv(csvFilename,header=None, index_col=None, chunksize=1000000)
-        chunk_list = []  # append each chunk df here 
-        # Each chunk is in df format
-        for chunk in df_chunk:
-            # Once the data filtering is done, append the chunk to list
-            chunk_list.append(chunk)
+        # Ref: https://stackoverflow.com/questions/33642951/python-using-pandas-structures-with-large-csviterate-and-chunksize
+        # tp = pd.read_csv(csvFilename,header=None, index_col=None, iterator=True, chunksize=1000000)
+        # matrix = pd.concat(tp, ignore_index=True)
+
+        # chunk_list = []  # append each chunk df here 
+        # # Each chunk is in df format
+        # for chunk in df_chunk:
+        #     # Once the data filtering is done, append the chunk to list
+        #     chunk_list.append(chunk)
             
-        # concat the list into dataframe 
-        df_concat = pd.concat(chunk_list)
+        # # concat the list into dataframe 
+        # matix = pd.concat(chunk_list)
+
+        matrix = dd.read_csv(csvFilename,header=None, index_col=None)
         
     else:
         matrix = pd.read_csv(csvFilename,header=None, index_col=None)
