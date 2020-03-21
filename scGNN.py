@@ -420,14 +420,11 @@ if __name__ == "__main__":
             # print("---Pruning takes %s seconds ---" % (time.time() - prune_time))
 
         # Original save step by step
-        # if args.saveFlag:
-        #     reconOut = recon.detach().cpu().numpy()
-        #     if args.imputeMode:
-        #         np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+'_'+str(args.dropoutRatio)+'_recon'+str(bigepoch)+'.npy',reconOut)
-        #         np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+'_'+str(args.dropoutRatio)+'_z'+str(bigepoch)+'.npy',zOut)
-        #     else:
-        #         np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+'_recon'+str(bigepoch)+'.npy',reconOut)
-        #         np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+'_z'+str(bigepoch)+'.npy',zOut)
+        if args.saveFlag:
+            reconOut = recon.detach().cpu().numpy()
+            np.save   (args.npyDir+args.datasetName+'_'+args.regulized_type+'_'+str(args.regularizePara)+'_'+str(args.L1Para)+'_'+str(args.L2Para)+'_recon'+str(bigepoch)+'.npy',reconOut)
+            np.save   (args.npyDir+args.datasetName+'_'+args.regulized_type+'_'+str(args.regularizePara)+'_'+str(args.L1Para)+'_'+str(args.L2Para)+'_z'+str(bigepoch)+'.npy',zOut)
+            np.savetxt(args.npyDir+args.datasetName+'_'+args.regulized_type+'_'+str(args.regularizePara)+'_'+str(args.L1Para)+'_'+str(args.L2Para)+'_results'+str(bigepoch)+'.npy',listResult,fmt='%d')
         
         print("---One iteration in EM process, proceeded %s seconds ---" % (time.time() - iteration_time))
 
@@ -474,10 +471,11 @@ if __name__ == "__main__":
         adjOld = adjNew
         listResultOld = listResult
     
-    if args.saveFlag:
-        reconOut = recon.detach().cpu().numpy()
-        np.save(   args.npyDir+args.datasetName+'_'+args.regulized_type+'_'+str(args.regularizePara)+'_'+str(args.L1Para)+'_'+str(args.L2Para)+'_recon.npy',reconOut)
-        np.save(   args.npyDir+args.datasetName+'_'+args.regulized_type+'_'+str(args.regularizePara)+'_'+str(args.L1Para)+'_'+str(args.L2Para)+'_z.npy',zOut)
-        np.save(   args.npyDir+args.datasetName+'_'+args.regulized_type+'_'+str(args.regularizePara)+'_'+str(args.L1Para)+'_'+str(args.L2Para)+'_final_edgeList.npy',edgeList)
-        np.savetxt(args.npyDir+args.datasetName+'_'+args.regulized_type+'_'+str(args.regularizePara)+'_'+str(args.L1Para)+'_'+str(args.L2Para)+'_results.npy',listResult,fmt='%d')
+    # Output final results
+    # if args.saveFlag:
+    reconOut = recon.detach().cpu().numpy()
+    np.save(   args.npyDir+args.datasetName+'_'+args.regulized_type+'_'+str(args.regularizePara)+'_'+str(args.L1Para)+'_'+str(args.L2Para)+'_recon.npy',reconOut)
+    np.save(   args.npyDir+args.datasetName+'_'+args.regulized_type+'_'+str(args.regularizePara)+'_'+str(args.L1Para)+'_'+str(args.L2Para)+'_z.npy',zOut)
+    np.save(   args.npyDir+args.datasetName+'_'+args.regulized_type+'_'+str(args.regularizePara)+'_'+str(args.L1Para)+'_'+str(args.L2Para)+'_final_edgeList.npy',edgeList)
+    np.savetxt(args.npyDir+args.datasetName+'_'+args.regulized_type+'_'+str(args.regularizePara)+'_'+str(args.L1Para)+'_'+str(args.L2Para)+'_results.npy',listResult,fmt='%d')
     print("---Total Running Time: %s seconds ---" % (time.time() - start_time))
