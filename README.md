@@ -53,13 +53,13 @@ https://data.humancellatlas.org/project-assets/project-matrices/4d6f6c96-2a83-43
     
     In outputdir now, we have four output files: Need to change to csv files later：
     
-    *_recon.npy:        imputed matrix
+    *_recon.csv:        imputed matrix. Row as cell, col as gene 
 
-    *_z.npy:            learned embedding for clustering
+    *_embedding.csv:    learned embedding (features) for clustering. Row as cell, col as embeddings
 
-    *_final_edgeList.npy:learned graph edges of the cell graph
+    *_graph.csv:        learned graph edges of the cell graph: node1,node2,weights
 
-    *_results.txt:      groups of cells identified 
+    *_results.txt:      groups of cells identified. 
 
 
 Notes for Cluster Running Benchmark: (main_benchmark.py) May be deleted later
