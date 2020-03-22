@@ -424,6 +424,7 @@ if __name__ == "__main__":
             reconOut = recon.detach().cpu().numpy()
             np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+'_'+str(args.regularizePara)+'_'+str(args.L1Para)+'_'+str(args.L2Para)+'_recon'+str(bigepoch)+'.npy',reconOut)
             np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+'_'+str(args.regularizePara)+'_'+str(args.L1Para)+'_'+str(args.L2Para)+'_z'+str(bigepoch)+'.npy',zOut)
+            np.savetxt(args.npyDir+args.datasetName+'_'+args.regulized_type+'_'+str(args.regularizePara)+'_'+str(args.L1Para)+'_'+str(args.L2Para)+'_graph'+str(bigepoch)+'.csv',edgeList,fmt='%d,%d,%2.1f')
             np.savetxt(args.npyDir+args.datasetName+'_'+args.regulized_type+'_'+str(args.regularizePara)+'_'+str(args.L1Para)+'_'+str(args.L2Para)+'_results'+str(bigepoch)+'.txt',listResult,fmt='%d')
         
         print("---One iteration in EM process, proceeded %s seconds ---" % (time.time() - iteration_time))
