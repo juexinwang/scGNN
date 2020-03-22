@@ -27,7 +27,7 @@ parser.add_argument('--datasetDir', type=str, default='/storage/htc/joshilab/wan
 parser.add_argument('--batch-size', type=int, default=12800, metavar='N',
                     help='input batch size for training (default: 128)')
 parser.add_argument('--epochs', type=int, default=500, metavar='N',
-                    help='number of epochs to train (default: 500)')
+                    help='number of epochs to train in first Autoencoder (default: 500)')
 parser.add_argument('--EM-epochs', type=int, default=200, metavar='N',
                     help='number of epochs to train in iteration EM (default: 200)')
 parser.add_argument('--EM-iteration', type=int, default=10, metavar='N',
@@ -69,7 +69,7 @@ parser.add_argument('--zerofillFlag', action='store_true', default=False,
 
 #Debug related
 parser.add_argument('--saveFlag', action='store_true', default=True, 
-                    help='whether save npy results or not')
+                    help='whether save internal npy results or not')
 parser.add_argument('--npyDir', type=str, default='npyGraphTest/',
                     help='save npy results in directory')
 parser.add_argument('--log-interval', type=int, default=100, metavar='N',
@@ -104,11 +104,6 @@ parser.add_argument('--GAElr', type=float, default=0.01, help='Initial learning 
 parser.add_argument('--GAEdropout', type=float, default=0., help='Dropout rate (1 - keep probability).')
 parser.add_argument('--GAElr_dw', type=float, default=0.001, help='Initial learning rate for regularization.')
 parser.add_argument('--n-clusters', default=20, type=int, help='number of clusters, 7 for cora, 6 for citeseer, 11 for 5.Pollen, 20 for MMP')
-#Start Impute or not, only used for evaluating Impute
-parser.add_argument('--imputeMode', default=False, action='store_true',
-                    help='impute or not (default: False). Caution: usually change npuDir if set imputeMode as true')
-parser.add_argument('--dropoutRatio', type=float, default=0.1,
-                    help='dropout ratio for impute (default: 0.1)')
 
 args = parser.parse_args()
 args.cuda = not args.no_cuda and torch.cuda.is_available()
@@ -219,12 +214,6 @@ if __name__ == "__main__":
     # adjfeature refer to gene-gene regulization
     adjfeature = None
 
-    # Save results only when impute
-    # if args.imputeMode:
-    #     np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+'_'+str(args.dropoutRatio)+'_dropi.npy',scData.i)
-    #     np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+'_'+str(args.dropoutRatio)+'_dropj.npy',scData.j)
-    #     np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+'_'+str(args.dropoutRatio)+'_dropix.npy',scData.ix)
-
     for epoch in range(1, args.epochs + 1):
         recon, original, z = train(epoch, EMFlag=False)
         
@@ -236,14 +225,6 @@ if __name__ == "__main__":
     adjdense = sp.csr_matrix.todense(adj)
     adjsample = torch.from_numpy(adjdense)
     print("---Pruning takes %s seconds ---" % (time.time() - prune_time))
-    # if args.saveFlag:
-    #     reconOut = recon.detach().cpu().numpy()
-    #     if args.imputeMode:
-    #         np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+'_'+str(args.dropoutRatio)+'_recon.npy',reconOut)
-    #         np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+'_'+str(args.dropoutRatio)+'_z.npy',zOut)
-    #     else:  
-    #         np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+'_recon.npy',reconOut)
-    #         np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+'_z.npy',zOut)
     
     # Whether use GAE embedding
     if args.useGAEembedding or args.useBothembedding:
@@ -254,19 +235,13 @@ if __name__ == "__main__":
         elif args.useBothembedding:
             zEmbedding=GAEembedding(zDiscret, adj, args)
             zOut=np.concatenate((zOut,zEmbedding),axis=1)
-        # Debug
+        # Debug for another layer of Louvain
         # prune_time = time.time()
         # # Here para = 'euclidean:10'
         # adj, edgeList = generateAdj(zOut, graphType='KNNgraphML', para = args.knn_distance+':'+str(args.k)) 
         # adjdense = sp.csr_matrix.todense(adj)
         # adjsample = torch.from_numpy(adjdense)
         # print("---Pruning takes %s seconds ---" % (time.time() - prune_time))
-        # if args.saveFlag:
-        #     if args.imputeMode:
-        #         np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+'_'+str(args.dropoutRatio)+'_zGAE.npy',zOut)
-        #     else:
-        #         np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+'_zGAE.npy',zOut)
-        # np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+'_init_edgeList.npy',edgeList)
     
     # For iteration studies
     G0 = nx.Graph()
@@ -481,14 +456,23 @@ if __name__ == "__main__":
     # np.savetxt(args.npyDir+args.datasetName+'_'+args.regulized_type+'_'+str(args.regularizePara)+'_'+str(args.L1Para)+'_'+str(args.L2Para)+'_results.txt',listResult,fmt='%d')
     
     # save txt
-    recon_df = pd.DataFrame(reconOut,columns=genelist,index=celllist)
-    recon_df.to_csv(args.npyDir+args.datasetName+'_'+args.regulized_type+'_'+str(args.regularizePara)+'_'+str(args.L1Para)+'_'+str(args.L2Para)+'_recon.csv')
-    embedding_df = pd.DataFrame(zOut,index=celllist)
-    embedding_df.to_csv(args.npyDir+args.datasetName+'_'+args.regulized_type+'_'+str(args.regularizePara)+'_'+str(args.L1Para)+'_'+str(args.L2Para)+'_embedding.csv')    
     # np.savetxt(args.npyDir+args.datasetName+'_'+args.regulized_type+'_'+str(args.regularizePara)+'_'+str(args.L1Para)+'_'+str(args.L2Para)+'_recon.csv',reconOut,delimiter=",",fmt='%10.4f')
     # np.savetxt(args.npyDir+args.datasetName+'_'+args.regulized_type+'_'+str(args.regularizePara)+'_'+str(args.L1Para)+'_'+str(args.L2Para)+'_embedding.csv',zOut, delimiter=",",fmt='%10.4f')
-    np.savetxt(args.npyDir+args.datasetName+'_'+args.regulized_type+'_'+str(args.regularizePara)+'_'+str(args.L1Para)+'_'+str(args.L2Para)+'_graph.csv',edgeList,fmt='%d,%d,%2.1f')
-    np.savetxt(args.npyDir+args.datasetName+'_'+args.regulized_type+'_'+str(args.regularizePara)+'_'+str(args.L1Para)+'_'+str(args.L2Para)+'_results.txt',listResult,fmt='%d') 
-
+    # np.savetxt(args.npyDir+args.datasetName+'_'+args.regulized_type+'_'+str(args.regularizePara)+'_'+str(args.L1Para)+'_'+str(args.L2Para)+'_graph.csv',edgeList,fmt='%d,%d,%2.1f')
+    # np.savetxt(args.npyDir+args.datasetName+'_'+args.regulized_type+'_'+str(args.regularizePara)+'_'+str(args.L1Para)+'_'+str(args.L2Para)+'_results.txt',listResult,fmt='%d') 
+    
+    # Output
+    recon_df = pd.DataFrame(np.transpose(reconOut),index=genelist,columns=celllist)
+    recon_df.to_csv(args.npyDir+args.datasetName+'_'+args.regulized_type+'_'+str(args.regularizePara)+'_'+str(args.L1Para)+'_'+str(args.L2Para)+'_recon.csv')
+    emblist=[]
+    for i in range(zOut.shape[1]):
+        emblist.append('embedding'+str(i))
+    embedding_df = pd.DataFrame(zOut,index=celllist,columns=emblist)
+    embedding_df.to_csv(args.npyDir+args.datasetName+'_'+args.regulized_type+'_'+str(args.regularizePara)+'_'+str(args.L1Para)+'_'+str(args.L2Para)+'_embedding.csv')
+    graph_df = pd.DataFrame(edgeList,columns=["NodeA","NodeB","Weights"]) 
+    graph_df.to_csv(args.npyDir+args.datasetName+'_'+args.regulized_type+'_'+str(args.regularizePara)+'_'+str(args.L1Para)+'_'+str(args.L2Para)+'_graph.csv',index=False)
+    results_df = pd.DataFrame(listResult,index=celllist,columns=["Cell","Celltype"])
+    results_df.to_csv(args.npyDir+args.datasetName+'_'+args.regulized_type+'_'+str(args.regularizePara)+'_'+str(args.L1Para)+'_'+str(args.L2Para)+'_results.txt')   
+    
     
     print("---Total Running Time: %s seconds ---" % (time.time() - start_time))

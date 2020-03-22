@@ -53,13 +53,13 @@ https://data.humancellatlas.org/project-assets/project-matrices/4d6f6c96-2a83-43
     
     In outputdir now, we have four output files. May update later?
     
-    *_recon.csv:        imputed matrix. Row as cell, col as gene. First row as gene name, First col as the cell name. 
+    *_recon.csv:        Imputed gene expression matrix. Row as gene, col as cell. First row as gene name, First col as the cell name. 
 
-    *_embedding.csv:    learned embedding (features) for clustering. Row as cell, col as embeddings. First row as the embedding names (no means). First col as the cell name
+    *_embedding.csv:    Learned embedding (features) for clustering. Row as cell, col as embeddings. First row as the embedding names (no means). First col as the cell name
 
-    *_graph.csv:        learned graph edges of the cell graph: node1,node2,weights
+    *_graph.csv:        Learned graph edges of the cell graph in tuples: nodeA,nodeB,weights. First row as the name.
 
-    *_results.txt:      groups of cells identified. 
+    *_results.txt:      Identified cell types. First row as the name. 
 
 
 Notes for Cluster Running Benchmark: (main_benchmark.py) May be deleted later
