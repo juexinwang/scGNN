@@ -68,7 +68,7 @@ parser.add_argument('--zerofillFlag', action='store_true', default=False,
                     help='fill zero or not before EM process (default: False)')
 
 #Debug related
-parser.add_argument('--saveFlag', action='store_true', default=True, 
+parser.add_argument('--saveFlag', action='store_true', default=False, 
                     help='whether save internal npy results or not')
 parser.add_argument('--npyDir', type=str, default='npyGraphTest/',
                     help='save npy results in directory')
@@ -471,8 +471,7 @@ if __name__ == "__main__":
     embedding_df.to_csv(args.npyDir+args.datasetName+'_'+args.regulized_type+'_'+str(args.regularizePara)+'_'+str(args.L1Para)+'_'+str(args.L2Para)+'_embedding.csv')
     graph_df = pd.DataFrame(edgeList,columns=["NodeA","NodeB","Weights"]) 
     graph_df.to_csv(args.npyDir+args.datasetName+'_'+args.regulized_type+'_'+str(args.regularizePara)+'_'+str(args.L1Para)+'_'+str(args.L2Para)+'_graph.csv',index=False)
-    results_df = pd.DataFrame(listResult,index=celllist,columns=["Cell","Celltype"])
+    results_df = pd.DataFrame(listResult,index=celllist,columns=["Celltype"])
     results_df.to_csv(args.npyDir+args.datasetName+'_'+args.regulized_type+'_'+str(args.regularizePara)+'_'+str(args.L1Para)+'_'+str(args.L2Para)+'_results.txt')   
-    
-    
+      
     print("---Total Running Time: %s seconds ---" % (time.time() - start_time))
