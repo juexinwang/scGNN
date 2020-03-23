@@ -81,7 +81,12 @@ parser.add_argument('--expressionFile', type=str, default='Use_expression.csv',
 parser.add_argument('--ltmgFile', type=str, default='ltmg.csv',
                     help='expression File in csv')
 parser.add_argument('--largeMode', action='store_true', default=False, 
-                    help='whether running in large mode')                    
+                    help='whether running in large mode')
+# dealing with zeros in imputation results
+parser.add_argument('--noPostprocessingTag', action='store_false', default=True, 
+                    help='whether postprocess imputated results, default: (True)') 
+parser.add_argument('--postThreshold', type=float, default=0.01, 
+                    help='Threshold to force expression as 0, default:(0.01)')                                        
 
 #Clustering related
 parser.add_argument('--useGAEembedding', action='store_true', default=False, 
@@ -450,6 +455,9 @@ if __name__ == "__main__":
     # Output final results
     # if args.saveFlag:
     reconOut = recon.detach().cpu().numpy()
+    if not args.noPostprocessingTag:
+        threshold_indices = reconOut < args.postThreshold
+        reconOut[threshold_indices] = 0.0
     # np.save(   args.npyDir+args.datasetName+'_'+args.regulized_type+'_'+str(args.regularizePara)+'_'+str(args.L1Para)+'_'+str(args.L2Para)+'_recon.npy',reconOut)
     # np.save(   args.npyDir+args.datasetName+'_'+args.regulized_type+'_'+str(args.regularizePara)+'_'+str(args.L1Para)+'_'+str(args.L2Para)+'_z.npy',zOut)
     # np.save(   args.npyDir+args.datasetName+'_'+args.regulized_type+'_'+str(args.regularizePara)+'_'+str(args.L1Para)+'_'+str(args.L2Para)+'_final_edgeList.npy',edgeList)
