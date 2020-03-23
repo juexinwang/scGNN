@@ -23,10 +23,10 @@ templateStr2 = "\n#SBATCH -o results-%j.out           # give the job output a cu
 "source activate conda_R\n"
 
 methodsList = [
-    ('run_case_2geLK E1','--regulized-type LTMG --EMtype celltypeEM --clustering-method LouvainK --useGAEembedding  --npyDir','casenpyG2E_LK/'),
-    ('run_case_2reLK E2','--regulized-type LTMG01 --EMtype celltypeEM --clustering-method LouvainK --useGAEembedding  --npyDir','casenpyR2E_LK/'),
-    ('run_case_2geLB E3','--regulized-type LTMG --EMtype celltypeEM --clustering-method LouvainB --useGAEembedding  --npyDir','casenpyG2E_LB/'),
-    ('run_case_2reLB E4','--regulized-type LTMG01 --EMtype celltypeEM --clustering-method LouvainB --useGAEembedding  --npyDir','casenpyR2E_LB/'),    
+    ('run_case_2geLK E1','--regulized-type LTMG --EMtype celltypeEM --clustering-method LouvainK --useGAEembedding  --npyDir','casenpyG2E_LK_/'),
+    ('run_case_2reLK E2','--regulized-type LTMG01 --EMtype celltypeEM --clustering-method LouvainK --useGAEembedding  --npyDir','casenpyR2E_LK_/'),
+    ('run_case_2geLB E3','--regulized-type LTMG --EMtype celltypeEM --clustering-method LouvainB --useGAEembedding  --npyDir','casenpyG2E_LB_/'),
+    ('run_case_2reLB E4','--regulized-type LTMG01 --EMtype celltypeEM --clustering-method LouvainB --useGAEembedding  --npyDir','casenpyR2E_LB_/'),    
 ]
 
 # select
