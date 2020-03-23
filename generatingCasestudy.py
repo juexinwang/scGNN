@@ -37,6 +37,7 @@ datasetNameList = [
     'liver_cancer_GSE98638_11CT',
     'liver_cancer_10X_20CT',
     'liver_cancer_smart_22CT',
+    'GSM2388072',
 ]
 
 reguParaList = [

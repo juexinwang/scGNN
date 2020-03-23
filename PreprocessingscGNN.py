@@ -37,6 +37,10 @@ parser.add_argument('--geneCriteria', type=str, default='variance',
                     help='gene Criteria')
 parser.add_argument('--geneSelectnum', type=int, default=2000,
                     help='select top gene numbers')
+parser.add_argument('--transpose', action='store_true', default=False,
+                    help='whether transpose or not')
+parser.add_argument('--tabuCol', type=str, default='',
+                    help='Not use some columns bu setting their names split by ,')
                     
 args = parser.parse_args()
 
@@ -215,7 +219,7 @@ def preprocessing10X(dir,datasetName,csvFilename,transform='log',cellRatio=0.99,
     # data = scipy.sparse.csr_matrix((datalist, (genelist, celllist)), shape=(len(tmpChooseIndex),len(cellNamelist))).tolil()
     # return data
 
-def preprocessingCSV(dir,datasetName,csvFilename,delim='comma',transform='log',cellRatio=0.99,geneRatio=0.99,geneCriteria='variance',geneSelectnum=2000):
+def preprocessingCSV(dir,datasetName,csvFilename,delim='comma',transform='log',cellRatio=0.99,geneRatio=0.99,geneCriteria='variance',geneSelectnum=2000,transpose=False,tabuCol=''):
     '''
     preprocessing CSV files:
     transform='log' or None
@@ -224,11 +228,24 @@ def preprocessingCSV(dir,datasetName,csvFilename,delim='comma',transform='log',c
     if not os.path.exists(expressionFilename):
         print('Dataset '+ expressionFilename + ' not exists!')
     
+    tabuColList=[]
+    tmplist=tabuCol.split(",")
+    for item in tmplist:
+        tabuColList.append(item)
+
     df = pd.DataFrame()
     if delim == 'space':
-        df  = pd.read_csv(expressionFilename, index_col=0, delim_whitespace=True)
+        if len(tabuColList) == 0:
+            df  = pd.read_csv(expressionFilename, index_col=0, delim_whitespace=True)
+        else:           
+            df  = pd.read_csv(expressionFilename, index_col=0, delim_whitespace=True, usecols= lambda column: column not in tabuColList)
     elif delim == 'comma':
-        df  = pd.read_csv(expressionFilename, index_col=0)
+        if len(tabuColList) == 0: 
+            df  = pd.read_csv(expressionFilename, index_col=0)
+        else:
+            df  = pd.read_csv(expressionFilename, index_col=0, usecols= lambda column: column not in tabuColList)
+    if transpose == True:
+        df = df.T
     df1 = df[df.astype('bool').mean(axis=1)>=(1-geneRatio)]
     print('After preprocessing, {} cells remaining'.format(df1.shape[0]))
     criteriaGene = df1.astype('bool').mean(axis=0)>=(1-geneRatio)
@@ -252,7 +269,7 @@ if __name__ == "__main__":
             preprocessing10X(args.datasetDir, args.datasetName, expressionFilename, args.transform, args.cellRatio, args.geneRatio, args.geneCriteria, args.geneSelectnum)    
         elif args.filetype == 'CSV':
             expressionFilename = args.LTMGDir+args.expressionFile
-            preprocessingCSV(args.datasetDir, args.datasetName, expressionFilename, args.delim, args.transform, args.cellRatio, args.geneRatio, args.geneCriteria, args.geneSelectnum)
+            preprocessingCSV(args.datasetDir, args.datasetName, expressionFilename, args.delim, args.transform, args.cellRatio, args.geneRatio, args.geneCriteria, args.geneSelectnum, args.transpose, args.tabuCol)
 
     if args.inferLTMGTag:
         print('Start infer LTMG from CSV')
