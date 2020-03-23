@@ -68,7 +68,7 @@ parser.add_argument('--zerofillFlag', action='store_true', default=False,
                     help='fill zero or not before EM process (default: False)')
 
 #Debug related
-parser.add_argument('--saveFlag', action='store_true', default=False, 
+parser.add_argument('--saveFlag', action='store_true', default=True, 
                     help='whether save internal npy results or not')
 parser.add_argument('--npyDir', type=str, default='npyGraphTest/',
                     help='save npy results in directory')
@@ -402,11 +402,24 @@ if __name__ == "__main__":
         # Original save step by step
         if args.saveFlag:
             reconOut = recon.detach().cpu().numpy()
-            np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+'_'+str(args.regularizePara)+'_'+str(args.L1Para)+'_'+str(args.L2Para)+'_recon'+str(bigepoch)+'.npy',reconOut)
-            np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+'_'+str(args.regularizePara)+'_'+str(args.L1Para)+'_'+str(args.L2Para)+'_z'+str(bigepoch)+'.npy',zOut)
-            np.savetxt(args.npyDir+args.datasetName+'_'+args.regulized_type+'_'+str(args.regularizePara)+'_'+str(args.L1Para)+'_'+str(args.L2Para)+'_graph'+str(bigepoch)+'.csv',edgeList,fmt='%d,%d,%2.1f')
-            np.savetxt(args.npyDir+args.datasetName+'_'+args.regulized_type+'_'+str(args.regularizePara)+'_'+str(args.L1Para)+'_'+str(args.L2Para)+'_results'+str(bigepoch)+'.txt',listResult,fmt='%d')
+            # np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+'_'+str(args.regularizePara)+'_'+str(args.L1Para)+'_'+str(args.L2Para)+'_recon'+str(bigepoch)+'.npy',reconOut)
+            # np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+'_'+str(args.regularizePara)+'_'+str(args.L1Para)+'_'+str(args.L2Para)+'_z'+str(bigepoch)+'.npy',zOut)
+            # np.savetxt(args.npyDir+args.datasetName+'_'+args.regulized_type+'_'+str(args.regularizePara)+'_'+str(args.L1Para)+'_'+str(args.L2Para)+'_graph'+str(bigepoch)+'.csv',edgeList,fmt='%d,%d,%2.1f')
+            # np.savetxt(args.npyDir+args.datasetName+'_'+args.regulized_type+'_'+str(args.regularizePara)+'_'+str(args.L1Para)+'_'+str(args.L2Para)+'_results'+str(bigepoch)+'.txt',listResult,fmt='%d')
         
+            # Output
+            recon_df = pd.DataFrame(np.transpose(reconOut),index=genelist,columns=celllist)
+            recon_df.to_csv(args.npyDir+args.datasetName+'_'+args.regulized_type+'_'+str(args.regularizePara)+'_'+str(args.L1Para)+'_'+str(args.L2Para)+'_recon_'+str(bigepoch)+'.csv')
+            emblist=[]
+            for i in range(zOut.shape[1]):
+                emblist.append('embedding'+str(i))
+            embedding_df = pd.DataFrame(zOut,index=celllist,columns=emblist)
+            embedding_df.to_csv(args.npyDir+args.datasetName+'_'+args.regulized_type+'_'+str(args.regularizePara)+'_'+str(args.L1Para)+'_'+str(args.L2Para)+'_embedding_'+str(bigepoch)+'.csv')
+            graph_df = pd.DataFrame(edgeList,columns=["NodeA","NodeB","Weights"]) 
+            graph_df.to_csv(args.npyDir+args.datasetName+'_'+args.regulized_type+'_'+str(args.regularizePara)+'_'+str(args.L1Para)+'_'+str(args.L2Para)+'_graph_'+str(bigepoch)+'.csv',index=False)
+            results_df = pd.DataFrame(listResult,index=celllist,columns=["Celltype"])
+            results_df.to_csv(args.npyDir+args.datasetName+'_'+args.regulized_type+'_'+str(args.regularizePara)+'_'+str(args.L1Para)+'_'+str(args.L2Para)+'_results_'+str(bigepoch)+'.txt')   
+
         print("---One iteration in EM process, proceeded %s seconds ---" % (time.time() - iteration_time))
 
         #Iteration usage
