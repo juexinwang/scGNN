@@ -31,13 +31,17 @@ methodsList = [
 
 # select
 datasetNameList = [
-    'AD_GSE138852_2x8CT',
-    'AD_GSE103334_NORMED_8CT',
-    'E-GEOD-139324',
-    'liver_cancer_GSE98638_11CT',
-    'liver_cancer_10X_20CT',
-    'liver_cancer_smart_22CT',
-    'GSM2388072',
+    'AD_GSE138852_2x8CT',  #1
+    'AD_GSE103334_NORMED_8CT', #2
+    'E-GEOD-139324', #3
+    'liver_cancer_GSE98638_11CT', #4
+    'liver_cancer_10X_20CT',  #5
+    'liver_cancer_smart_22CT', #6
+    'GSM2388072', #7
+    'BR', #8
+    'Par', #9
+    '7f5e7a85-a45c-4535-90bf-0ef930a0040b.mtx', #10
+    '481193cb-c021-4e04-b477-0b7cfef4614b.mtx', #11
 ]
 
 reguParaList = [
