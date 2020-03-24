@@ -19,13 +19,13 @@ args = parser.parse_args()
 clusters = pd.read_csv(args.celltypeFilename)
 clusterDict = {}
 celltypecount = 0
-for row in df.itertuples():
-    if row[1] in clusterDict:
-        tlist = clusterDict[row[1]]
+for row in clusters.itertuples():
+    if row[2] in clusterDict:
+        tlist = clusterDict[row[2]]
         tlist.append(row[0])
-        clusterDict[row[1]]=tlist
+        clusterDict[row[2]]=tlist
     else:
-        clusterDict[row[1]]=list(row[0])
+        clusterDict[row[2]]=[row[0]]
         celltypecount +=1
 
 matrix = pd.read_csv(args.csvFilename, index_col=0)
@@ -35,10 +35,9 @@ matrix = matrix.to_numpy()
 
 zmatrix = stats.zscore(matrix,axis=1)
 
-outmatrix = np.zeros((len(genelist),len(celllist)))
+outmatrix = np.zeros((len(genelist),celltypecount))
 
 for gene in range(len(genelist)):
-
     for celltype in range(celltypecount):
         tlist = clusterDict[celltype]
         count = 0
@@ -46,10 +45,12 @@ for gene in range(len(genelist)):
             if zmatrix[gene,tlist[cell]] > args.zthreshold:
                 count += 1
         if count > len(tlist)*args.threshold:
-            outmatrix[gene,celltype] =1
-        
-out_df = pd.DataFrame(outmatrix,index=genelist,columns=celllist)
+            outmatrix[gene,celltype] = 1
+outmatrix=outmatrix.astype(int)        
+out_df = pd.DataFrame(outmatrix,index=genelist)
 out_df.to_csv(outputFilename)
+
+a,b=np.where(outmatrix>0)
 
 
 
