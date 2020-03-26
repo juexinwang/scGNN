@@ -565,11 +565,31 @@ def loadscCSV(csvFilename, largeMode=False):
     Load CSV: rows are genes, cols are cells, first col is the gene name, first row is the cell name
     '''
     if largeMode:
-        print('Load CSV in largeMode')
-        # Ref: https://towardsdatascience.com/why-and-how-to-use-pandas-with-large-data-9594dda2ea4c
-        # Ref: https://stackoverflow.com/questions/33642951/python-using-pandas-structures-with-large-csviterate-and-chunksize
-        tp = pd.read_csv(csvFilename, index_col=0, iterator=True, chunksize=1000000)
-        matrix = pd.concat(tp)
+        print('Load sparse information in largeMode')
+        objects=[]
+        genelist =[]
+        celllist =[]
+        with open(csvFilename.split('.csv','_sparse.npy'), 'rb') as f:
+            objects.append(pkl.load(f, encoding='latin1'))
+        matrix = objects.tolist()
+
+        with open(csvFilename.replace('.csv','_gene.txt')) as f:
+            lines = f.readlines()
+            for line in lines:
+                line = line.strip()
+                genelist.append(line)
+
+        with open(csvFilename.replace('.csv','_cell.txt')) as f:
+            lines = f.readlines()
+            for line in lines:
+                line = line.strip()
+                celllist.append(line)
+
+        # print('Load CSV in largeMode')
+        # # Ref: https://towardsdatascience.com/why-and-how-to-use-pandas-with-large-data-9594dda2ea4c
+        # # Ref: https://stackoverflow.com/questions/33642951/python-using-pandas-structures-with-large-csviterate-and-chunksize
+        # tp = pd.read_csv(csvFilename, index_col=0, iterator=True, chunksize=1000000)
+        # matrix = pd.concat(tp)
 
         # chunk_list = []  # append each chunk df here 
         # # Each chunk is in df format
@@ -585,8 +605,8 @@ def loadscCSV(csvFilename, largeMode=False):
         
     else:
         matrix = pd.read_csv(csvFilename, index_col=0)
-    genelist = matrix.index.tolist()
-    celllist = matrix.columns.values.tolist()
-    matrix = matrix.to_numpy()
-    matrix = matrix.astype(float)
+        genelist = matrix.index.tolist()
+        celllist = matrix.columns.values.tolist()
+        matrix = matrix.to_numpy()
+        matrix = matrix.astype(float)
     return matrix, genelist, celllist

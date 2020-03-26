@@ -44,7 +44,7 @@ parser.add_argument('--tabuCol', type=str, default='',
                     
 args = parser.parse_args()
 
-def preprocessing10X(dir,datasetName,csvFilename,transform='log',cellRatio=0.99,geneRatio=0.99,geneCriteria='variance',geneSelectnum=2000):
+def preprocessing10X(dir,datasetName,csvFilename,transform='log',cellRatio=0.99,geneRatio=0.99,geneCriteria='variance',geneSelectnum=2000,sparseOut=False):
     '''
     preprocessing 10X data
     transform='log' or None
@@ -175,12 +175,14 @@ def preprocessing10X(dir,datasetName,csvFilename,transform='log',cellRatio=0.99,
         geneindex = geneNamelist[index]                
         clist = expressionCellDict[geneindex]
         elist = expressionDict[geneindex]        
+        
         # For output sparse purpose
-        # for i in range(len(elist)):
-        #     # print('{}*{}'.format(geneindex,geneNameDict[geneindex]))
-        #     genelist.append(geneNameDict[geneindex])
-        #     celllist.append(cellNameDict[clist[i]])
-        #     datalist.append(elist[i]) 
+        if sparseOut:
+            for i in range(len(elist)):
+                # print('{}*{}'.format(geneindex,geneNameDict[geneindex]))
+                genelist.append(geneNameDict[geneindex])
+                celllist.append(cellNameDict[clist[i]])
+                datalist.append(elist[i]) 
         
         # print('*')
         tmpline = genes[0][index]
@@ -216,8 +218,18 @@ def preprocessing10X(dir,datasetName,csvFilename,transform='log',cellRatio=0.99,
     print('Write CSV done')
 
     # For output sparse purpose
-    # data = scipy.sparse.csr_matrix((datalist, (genelist, celllist)), shape=(len(tmpChooseIndex),len(cellNamelist))).tolil()
-    # return data
+    if sparseOut:
+        data = scipy.sparse.csr_matrix((datalist, (genelist, celllist)), shape=(len(tmpChooseIndex),len(cellNamelist))).tolil()
+        pickle.dump(data, open( csvFilename.replace('.csv','_sparse.npy'), "wb" ) )
+        print('Write sparse output done')
+
+        with open(csvFilename.replace('.csv','_gene.txt'),'w') as f:
+            f.writelines("%s\n"%gene for gene in geneNamelist)
+            f.close()
+        
+        with open(csvFilename.replace('.csv','_cell.txt'),'w') as f:
+            f.writelines("%s\n"%cell for cell in cellNamelist)
+            f.close()
 
 def preprocessingCSV(dir,datasetName,csvFilename,delim='comma',transform='log',cellRatio=0.99,geneRatio=0.99,geneCriteria='variance',geneSelectnum=2000,transpose=False,tabuCol=''):
     '''
