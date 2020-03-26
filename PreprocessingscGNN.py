@@ -226,12 +226,16 @@ def preprocessing10X(dir,datasetName,csvFilename,transform='log',cellRatio=0.99,
         pickle.dump(data, open( csvFilename.replace('.csv','_sparse.npy'), "wb" ) )
         print('Write sparse output done')
 
+        genestmp = pd.read_csv(featuresFilename, delimiter='\t')
+        cellstmp = pd.read_csv(barcodesFilename, delimiter='\t')
+        genes = genestmp.index.tolist()
+        cells = cellstmp.index.tolist()
         with open(csvFilename.replace('.csv','_gene.txt'),'w') as f:
-            f.writelines("%s\n"%gene for gene in geneNamelist)
+            f.writelines("%s\n"%gene for gene in genes)
             f.close()
         
         with open(csvFilename.replace('.csv','_cell.txt'),'w') as f:
-            f.writelines("%s\n"%cell for cell in cellNamelist)
+            f.writelines("%s\n"%cell for cell in cells)
             f.close()
 
 def preprocessingCSV(dir,datasetName,csvFilename,delim='comma',transform='log',cellRatio=0.99,geneRatio=0.99,geneCriteria='variance',geneSelectnum=2000,transpose=False,tabuCol=''):
