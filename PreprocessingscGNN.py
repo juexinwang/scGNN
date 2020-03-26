@@ -15,7 +15,9 @@ parser.add_argument('--datasetDir', type=str, default='/storage/htc/joshilab/wan
 parser.add_argument('--filterCSVTag', action='store_true', default=False,
                     help='Whether filter and generating CSV')
 parser.add_argument('--inferLTMGTag', action='store_true', default=False,
-                    help='Whether infer LTMG')                   
+                    help='Whether infer LTMG')  
+parser.add_argument('--sparseOutTag', action='store_true', default=False,
+                    help='Whether use sparse')                 
 parser.add_argument('--LTMGDir', type=str, default='/home/wangjue/biodata/scData/10x/6/',
                     help='directory of LTMGDir, default:(/home/wangjue/biodata/scData/allBench/)')
 parser.add_argument('--expressionFile', type=str, default='Use_expression.csv',
@@ -278,7 +280,7 @@ if __name__ == "__main__":
         if args.filetype == '10X':
             expressionFilename = args.LTMGDir+args.datasetName+'/'+args.expressionFile
             # data = preprocessing10X(args.datasetDir, args.datasetName, args.LTMGDir+args.datasetName+'/'+args.expressionFile, args.transform, args.cellRatio, args.geneRatio, args.geneCriteria, args.geneSelectnum)
-            preprocessing10X(args.datasetDir, args.datasetName, expressionFilename, args.transform, args.cellRatio, args.geneRatio, args.geneCriteria, args.geneSelectnum)    
+            preprocessing10X(args.datasetDir, args.datasetName, expressionFilename, args.transform, args.cellRatio, args.geneRatio, args.geneCriteria, args.geneSelectnum, args.sparseOutTag)    
         elif args.filetype == 'CSV':
             expressionFilename = args.LTMGDir+args.expressionFile
             preprocessingCSV(args.datasetDir, args.datasetName, expressionFilename, args.delim, args.transform, args.cellRatio, args.geneRatio, args.geneCriteria, args.geneSelectnum, args.transpose, args.tabuCol)
