@@ -11,7 +11,6 @@ templateStr1 = "#! /bin/bash\n"\
 "######################### Batch Headers #########################\n"\
 "#SBATCH -A xulab\n"\
 "#SBATCH -p BioCompute               # use the BioCompute partition\n"\
-# For long jobs
 "#SBATCH --qos=biolong\n"\
 "#SBATCH -J "
 
