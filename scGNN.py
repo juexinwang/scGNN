@@ -144,6 +144,7 @@ if args.model == 'VAE':
 elif args.model == 'AE':
     model = AE(dim=scData.features.shape[1]).to(device)
 optimizer = optim.Adam(model.parameters(), lr=1e-3)
+print ('Pytorch model ready.')
 
 #TODO: have to improve save npy
 def train(epoch, train_loader=train_loader, EMFlag=False):
@@ -221,6 +222,7 @@ if __name__ == "__main__":
     # adjfeature refer to gene-gene regulization
     adjfeature = None
 
+    print('Start training...')
     for epoch in range(1, args.epochs + 1):
         recon, original, z = train(epoch, EMFlag=False)
         
