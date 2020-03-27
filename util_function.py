@@ -566,11 +566,10 @@ def loadscCSV(csvFilename, largeMode=False):
     '''
     if largeMode:
         print('Load sparse information in largeMode')
-        objects=[]
         genelist =[]
         celllist =[]
         with open(csvFilename.replace('.csv','_sparse.npy'), 'rb') as f:        
-            objects.append(pkl.load(f, encoding='latin1'))
+            objects = pkl.load(f, encoding='latin1')
         matrix = objects.tolil()
 
         with open(csvFilename.replace('.csv','_gene.txt')) as f:
