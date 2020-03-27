@@ -569,7 +569,7 @@ def loadscCSV(csvFilename, largeMode=False):
         objects=[]
         genelist =[]
         celllist =[]
-        with open(csvFilename.split('.csv','_sparse.npy'), 'rb') as f:
+        with open(csvFilename.replace('.csv','_sparse.npy'), 'rb') as f:        
             objects.append(pkl.load(f, encoding='latin1'))
         matrix = objects.tolist()
 
