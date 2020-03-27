@@ -571,7 +571,7 @@ def loadscCSV(csvFilename, largeMode=False):
         celllist =[]
         with open(csvFilename.replace('.csv','_sparse.npy'), 'rb') as f:        
             objects.append(pkl.load(f, encoding='latin1'))
-        matrix = objects.tolist()
+        matrix = objects..tolil()
 
         with open(csvFilename.replace('.csv','_gene.txt')) as f:
             lines = f.readlines()
