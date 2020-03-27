@@ -130,10 +130,12 @@ print ('scRNA has been successfully loaded.')
 
 scData = scDataset(data)
 train_loader = DataLoader(scData, batch_size=args.batch_size, shuffle=False, **kwargs)
+print ('TrainLoader has been successfully prepared.')
 
 # load LTMG
 regulationMatrix = readLTMG(args.LTMGDir+args.datasetName+'/', args.ltmgFile)
 regulationMatrix = torch.from_numpy(regulationMatrix)
+print ('LTMG has been successfully prepared.')
 
 # Original
 if args.model == 'VAE':
