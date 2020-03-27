@@ -42,6 +42,8 @@ datasetNameList = [
     'Par', #9
     '7f5e7a85-a45c-4535-90bf-0ef930a0040b.mtx', #10
     '481193cb-c021-4e04-b477-0b7cfef4614b.mtx', #11
+    'e7448a34-b33d-41de-b422-4c09bfeba96b.mtx', #12: data1
+    'c0b92850-ce85-41bb-b928-5fac1a113fef.mtx', #13: data2
 ]
 
 reguParaList = [
