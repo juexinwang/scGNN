@@ -553,7 +553,7 @@ def readLTMG(LTMGDir, ltmgfile):
     '''
     Read LTMG matrix as the regularizor
     '''
-    matrix = pd.read_csv(LTMGDir+ltmgfile,header=None, index_col=None, delim_whitespace=True)
+    matrix = pd.read_csv(LTMGDir+ltmgfile,header=None, index_col=None, delimiter='\t', engine='c')
     matrix = matrix.to_numpy()
     matrix = matrix.transpose()
     matrix = matrix[1:,1:]
