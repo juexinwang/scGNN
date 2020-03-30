@@ -297,6 +297,6 @@ if __name__ == "__main__":
         elif args.filetype == 'CSV':
             ltmgdir = args.LTMGDir
         #run LTMG in R
-        runLTMG(ltmgdir+args.expressionFile, ltmgdir+args.ltmgFile)
+        runLTMG(ltmgdir+args.expressionFile, ltmgdir)
 
     print("---Total Running Time: %s seconds ---" % (time.time() - start_time))

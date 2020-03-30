@@ -78,8 +78,8 @@ parser.add_argument('--LTMGDir', type=str, default='/storage/htc/joshilab/wangju
                     help='directory of LTMGDir, default:(/home/wangjue/biodata/scData/allBench/)')
 parser.add_argument('--expressionFile', type=str, default='Use_expression.csv',
                     help='expression File in csv')
-parser.add_argument('--ltmgFile', type=str, default='ltmg.csv',
-                    help='expression File in csv')
+parser.add_argument('--ltmgFile', type=str, default='LTMG_sparse.mtx',
+                    help='expression File in csv. (default: ltmg.csv) ')
 parser.add_argument('--largeMode', action='store_true', default=False, 
                     help='whether running in large mode')
 # dealing with zeros in imputation results
@@ -133,7 +133,7 @@ train_loader = DataLoader(scData, batch_size=args.batch_size, shuffle=False, **k
 print ('TrainLoader has been successfully prepared.')
 
 # load LTMG
-regulationMatrix = readLTMG(args.LTMGDir+args.datasetName+'/', args.ltmgFile)
+regulationMatrix = readLTMG(args.LTMGDir+args.datasetName+'/', args.ltmgFile, largeMode=args.largeMode)
 regulationMatrix = torch.from_numpy(regulationMatrix)
 print ('LTMG has been successfully prepared.')
 

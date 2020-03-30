@@ -549,15 +549,26 @@ def trimClustering(listResult,minMemberinCluster=5,maxClusterNumber=30):
 
     return listResult
 
-def readLTMG(LTMGDir, ltmgfile):
+def readLTMG(LTMGDir, ltmgfile, largeMode=False):
     '''
     Read LTMG matrix as the regularizor
     '''
-    matrix = pd.read_csv(LTMGDir+ltmgfile,header=None, index_col=None, delimiter='\t', engine='c')
-    matrix = matrix.to_numpy()
-    matrix = matrix.transpose()
-    matrix = matrix[1:,1:]
-    matrix = matrix.astype(int)
+    # sparse
+    if largeMode:
+        df    = pd.read_csv(LTMGDir+ltmgfile, header=None, skiprows=1, delim_whitespace=True)
+        for row in df.itertuples():
+            if row.index == 0:
+                matrix = np.zeros((row[0],row[1]))
+            else:
+                matrix[row[0]-1][row[1]-1]=row[2]
+
+    # nonsparse
+    else:
+        matrix = pd.read_csv(LTMGDir+ltmgfile,header=None, index_col=None, delimiter='\t', engine='c')
+        matrix = matrix.to_numpy()
+        matrix = matrix.transpose()
+        matrix = matrix[1:,1:]
+        matrix = matrix.astype(int)
     return matrix
 
 def loadscCSV(csvFilename, largeMode=False):
