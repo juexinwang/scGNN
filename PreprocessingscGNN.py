@@ -17,8 +17,8 @@ parser.add_argument('--filterCSVTag', action='store_true', default=False,
                     help='Whether filter and generating CSV')
 parser.add_argument('--inferLTMGTag', action='store_true', default=False,
                     help='Whether infer LTMG')  
-parser.add_argument('--sparseOutTag', action='store_true', default=False,
-                    help='Whether use sparse')                 
+parser.add_argument('--nonsparseOutTag', action='store_true', default=False,
+                    help='Whether use sparse coding')                 
 parser.add_argument('--LTMGDir', type=str, default='/home/wangjue/biodata/scData/10x/6/',
                     help='directory of LTMGDir, default:(/home/wangjue/biodata/scData/allBench/)')
 parser.add_argument('--expressionFile', type=str, default='Use_expression.csv',
@@ -46,8 +46,9 @@ parser.add_argument('--tabuCol', type=str, default='',
                     help='Not use some columns bu setting their names split by ,')
                     
 args = parser.parse_args()
+args.sparseOutTag = not args.nonsparseOutTag
 
-def preprocessing10X(dir,datasetName,csvFilename,transform='log',cellRatio=0.99,geneRatio=0.99,geneCriteria='variance',geneSelectnum=2000,sparseOut=False):
+def preprocessing10X(dir,datasetName,csvFilename,transform='log',cellRatio=0.99,geneRatio=0.99,geneCriteria='variance',geneSelectnum=2000,sparseOut=True):
     '''
     preprocessing 10X data
     transform='log' or None

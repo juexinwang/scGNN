@@ -78,10 +78,10 @@ parser.add_argument('--LTMGDir', type=str, default='/storage/htc/joshilab/wangju
                     help='directory of LTMGDir, default:(/home/wangjue/biodata/scData/allBench/)')
 parser.add_argument('--expressionFile', type=str, default='Use_expression.csv',
                     help='expression File in csv')
-parser.add_argument('--ltmgFile', type=str, default='ltmg.csv',
-                    help='expression File in csv. (default: ltmg.csv/LTMG_sparse.mtx) ')
-parser.add_argument('--largeMode', action='store_true', default=False, 
-                    help='whether running in large mode')
+parser.add_argument('--ltmgFile', type=str, default='LTMG_sparse.mtx',
+                    help='expression File in csv. (default:LTMG_sparse.mtx for sparse mode/ ltmg.csv for nonsparse mode) ')
+parser.add_argument('--nonsparseMode', action='store_true', default=False, 
+                    help='SparseMode for running for huge dataset')
 # dealing with zeros in imputation results
 parser.add_argument('--noPostprocessingTag', action='store_false', default=True, 
                     help='whether postprocess imputated results, default: (True)') 
@@ -112,6 +112,7 @@ parser.add_argument('--n-clusters', default=20, type=int, help='number of cluste
 
 args = parser.parse_args()
 args.cuda = not args.no_cuda and torch.cuda.is_available()
+args.sparseMode = not args.nonsparseMode
 
 #TODO
 #As we have lots of parameters, should check args
@@ -125,15 +126,16 @@ print(args)
 
 # load scRNA in csv
 print ('scRNA starts loading.')
-data, genelist, celllist = loadscCSV(args.LTMGDir+args.datasetName+'/'+args.expressionFile, largeMode=args.largeMode)
+data, genelist, celllist = loadscCSV(args.LTMGDir+args.datasetName+'/'+args.expressionFile, sparseMode=args.sparseMode)
 print ('scRNA has been successfully loaded.')
 
 scData = scDataset(data)
 train_loader = DataLoader(scData, batch_size=args.batch_size, shuffle=False, **kwargs)
 print ('TrainLoader has been successfully prepared.')
 
-# load LTMG
-regulationMatrix = readLTMG(args.LTMGDir+args.datasetName+'/', args.ltmgFile, largeMode=args.largeMode)
+# load LTMG in sparse version
+print ('Start loading LTMG in sparse coding.')
+regulationMatrix = readLTMG(args.LTMGDir+args.datasetName+'/', args.ltmgFile, sparseMode=args.sparseMode)
 regulationMatrix = torch.from_numpy(regulationMatrix)
 print ('LTMG has been successfully prepared.')
 

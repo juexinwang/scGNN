@@ -549,23 +549,20 @@ def trimClustering(listResult,minMemberinCluster=5,maxClusterNumber=30):
 
     return listResult
 
-def readLTMG(LTMGDir, ltmgfile, largeMode=False):
+def readLTMG(LTMGDir, ltmgfile, sparseMode=True):
     '''
-    Read LTMG matrix as the regularizor
+    Read LTMG matrix as the regularizor. sparseMode for huge datasets sparse coding
     '''
-    # sparse
-    if largeMode:
+    # sparse mode
+    if sparseMode:
         df    = pd.read_csv(LTMGDir+ltmgfile, header=None, skiprows=1, delim_whitespace=True)
         for row in df.itertuples():
-            # print(str(row[0])+'*'+str(row[1])+'*'+str(row[2])+'*'+str(row[3]))
-            # If it is the first column contains the number of genes and cells
+            # For the first row, it contains the number of genes and cells. Init the whole matrix
             if row[0] == 0:
-                matrix = np.zeros((row[2],row[1]))
-                # print(matrix.shape) 
+                matrix = np.zeros((row[2],row[1])) 
             else:
                 matrix[row[2]-1][row[1]-1]=row[3]
-
-    # nonsparse
+    # nonsparse mode: read in csv format, very very slow when the input file is huge
     else:
         matrix = pd.read_csv(LTMGDir+ltmgfile,header=None, index_col=None, delimiter='\t', engine='c')
         matrix = matrix.to_numpy()
@@ -574,12 +571,13 @@ def readLTMG(LTMGDir, ltmgfile, largeMode=False):
         matrix = matrix.astype(int)
     return matrix
 
-def loadscCSV(csvFilename, largeMode=False):
+def loadscCSV(csvFilename, sparseMode=True):
     '''
-    Load CSV: rows are genes, cols are cells, first col is the gene name, first row is the cell name
+    Load CSV: rows are genes, cols are cells, first col is the gene name, first row is the cell name.
+    sparseMode for loading huge datasets in sparse coding
     '''
-    if largeMode:
-        print('Load sparse information in largeMode')
+    if sparseMode:
+        print('Load expression matrix in sparseMode')
         genelist =[]
         celllist =[]
         with open(csvFilename.replace('.csv','_sparse.npy'), 'rb') as f:        
@@ -597,29 +595,13 @@ def loadscCSV(csvFilename, largeMode=False):
             for line in lines:
                 line = line.strip()
                 celllist.append(line)
-
-        # print('Load CSV in largeMode')
-        # # Ref: https://towardsdatascience.com/why-and-how-to-use-pandas-with-large-data-9594dda2ea4c
-        # # Ref: https://stackoverflow.com/questions/33642951/python-using-pandas-structures-with-large-csviterate-and-chunksize
-        # tp = pd.read_csv(csvFilename, index_col=0, iterator=True, chunksize=1000000)
-        # matrix = pd.concat(tp)
-
-        # chunk_list = []  # append each chunk df here 
-        # # Each chunk is in df format
-        # for chunk in df_chunk:
-        #     # Once the data filtering is done, append the chunk to list
-        #     chunk_list.append(chunk)
-            
-        # # concat the list into dataframe 
-        # matix = pd.concat(chunk_list)
-
-        # dask? TODO
-        # matrix = dd.read_csv(csvFilename)
         
     else:
+        print('Load expression in csv format')
         matrix = pd.read_csv(csvFilename, index_col=0)
         genelist = matrix.index.tolist()
         celllist = matrix.columns.values.tolist()
         matrix = matrix.to_numpy()
         matrix = matrix.astype(float)
+
     return matrix, genelist, celllist
