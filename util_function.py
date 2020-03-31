@@ -571,9 +571,9 @@ def readLTMG(LTMGDir, ltmgfile, sparseMode=True):
         matrix = matrix.astype(int)
     return matrix
 
-def loadscCSV(csvFilename, sparseMode=True):
+def loadscExpression(csvFilename, sparseMode=True):
     '''
-    Load CSV: rows are genes, cols are cells, first col is the gene name, first row is the cell name.
+    Load sc Expression: rows are genes, cols are cells, first col is the gene name, first row is the cell name.
     sparseMode for loading huge datasets in sparse coding
     '''
     if sparseMode:

@@ -33,5 +33,5 @@ def runLTMG(expressionFile,ltmgFolder):
         x <- read.csv(expressionFile,header = T,row.names = 1,check.names = F)
         object <- CreateLTMGObject(x)
         object <-RunLTMG(object,Gene_use = 'all')
-        WriteSparse(object,path=ltmgFolder)           
+        WriteSparse(object,path=ltmgFolder,gene.name=FALSE, cell.name=FALSE)           
     ''')

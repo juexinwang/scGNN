@@ -126,7 +126,7 @@ print(args)
 
 # load scRNA in csv
 print ('scRNA starts loading.')
-data, genelist, celllist = loadscCSV(args.LTMGDir+args.datasetName+'/'+args.expressionFile, sparseMode=args.sparseMode)
+data, genelist, celllist = loadscExpression(args.LTMGDir+args.datasetName+'/'+args.expressionFile, sparseMode=args.sparseMode)
 print ('scRNA has been successfully loaded.')
 
 scData = scDataset(data)
