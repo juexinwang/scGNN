@@ -559,6 +559,7 @@ def readLTMG(LTMGDir, ltmgfile, largeMode=False):
         #init
         matrix = []
         for row in df.itertuples():
+            print(str(row.index)+'*'+str(row[0])+'*'+str(row[1])+'*'+str(row[2]))
             if row.index == 0:
                 matrix = np.zeros((row[0],row[1]))
             else:
