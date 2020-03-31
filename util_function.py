@@ -560,10 +560,10 @@ def readLTMG(LTMGDir, ltmgfile, largeMode=False):
             # print(str(row[0])+'*'+str(row[1])+'*'+str(row[2])+'*'+str(row[3]))
             # If it is the first column contains the number of genes and cells
             if row[0] == 0:
-                matrix = np.zeros((row[1],row[2]))
-                print(matrix.shape) 
+                matrix = np.zeros((row[2],row[1]))
+                # print(matrix.shape) 
             else:
-                matrix[row[1]-1][row[2]-1]=row[3]
+                matrix[row[2]-1][row[1]-1]=row[3]
 
     # nonsparse
     else:
