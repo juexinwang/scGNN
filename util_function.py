@@ -556,6 +556,8 @@ def readLTMG(LTMGDir, ltmgfile, largeMode=False):
     # sparse
     if largeMode:
         df    = pd.read_csv(LTMGDir+ltmgfile, header=None, skiprows=1, delim_whitespace=True)
+        #init
+        matrix = []
         for row in df.itertuples():
             if row.index == 0:
                 matrix = np.zeros((row[0],row[1]))
