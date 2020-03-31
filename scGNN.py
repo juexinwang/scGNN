@@ -78,8 +78,8 @@ parser.add_argument('--LTMGDir', type=str, default='/storage/htc/joshilab/wangju
                     help='directory of LTMGDir, default:(/home/wangjue/biodata/scData/allBench/)')
 parser.add_argument('--expressionFile', type=str, default='Use_expression.csv',
                     help='expression File in csv')
-parser.add_argument('--ltmgFile', type=str, default='LTMG_sparse.mtx',
-                    help='expression File in csv. (default: ltmg.csv) ')
+parser.add_argument('--ltmgFile', type=str, default='ltmg.csv',
+                    help='expression File in csv. (default: ltmg.csv/LTMG_sparse.mtx) ')
 parser.add_argument('--largeMode', action='store_true', default=False, 
                     help='whether running in large mode')
 # dealing with zeros in imputation results
