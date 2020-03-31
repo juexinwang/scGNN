@@ -15,7 +15,7 @@ templateStr1 = "#! /bin/bash\n"\
 "#SBATCH -J "
 
 templateStr2 = "\n#SBATCH -o results-%j.out           # give the job output a custom name\n"\
-"#SBATCH -t 28-00:00                  # 28 days time limit\n"\
+"#SBATCH -t 7-00:00                  # 7 days time limit\n"\
 "#SBATCH -N 1                        # number of nodes\n"\
 "#SBATCH -n 2                        # number of cores (AKA tasks)\n"\
 "#SBATCH --mem=128G\n"\
