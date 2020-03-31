@@ -557,13 +557,14 @@ def readLTMG(LTMGDir, ltmgfile, largeMode=False):
     if largeMode:
         df    = pd.read_csv(LTMGDir+ltmgfile, header=None, skiprows=1, delim_whitespace=True)
         #init
-        matrix = []
+        # matrix = []
         for row in df.itertuples():
-            print(str(row.index)+'*'+str(row[0])+'*'+str(row[1])+'*'+str(row[2]))
-            if row.index == 0:
-                matrix = np.zeros((row[0],row[1]))
+            # print(str(row[0])+'*'+str(row[1])+'*'+str(row[2])+'*'+str(row[3]))
+            # If it is the first column contains the number of genes and cells
+            if row[0] == 0:
+                matrix = np.zeros((row[1],row[2]))
             else:
-                matrix[row[0]-1][row[1]-1]=row[2]
+                matrix[row[1]-1][row[2]-1]=row[3]
 
     # nonsparse
     else:
