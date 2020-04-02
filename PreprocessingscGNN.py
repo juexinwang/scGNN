@@ -47,8 +47,7 @@ parser.add_argument('--tabuCol', type=str, default='',
                     
 args = parser.parse_args()
 args.sparseOutTag = not args.nonsparseOutTag
-
-print(args)
+# print(args)
 
 def preprocessing10X(dir,datasetName,csvFilename,transform='log',cellRatio=0.99,geneRatio=0.99,geneCriteria='variance',geneSelectnum=2000,sparseOut=True):
     '''
@@ -309,4 +308,4 @@ if __name__ == "__main__":
         #run LTMG in R
         runLTMG(ltmgdir+args.expressionFile, ltmgdir)
 
-    print("---Total Running Time: %s seconds ---" % (time.time() - start_time))
+    print("Preprocessing Done. Total Running Time: %s seconds" % (time.time() - start_time))
