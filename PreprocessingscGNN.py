@@ -48,6 +48,8 @@ parser.add_argument('--tabuCol', type=str, default='',
 args = parser.parse_args()
 args.sparseOutTag = not args.nonsparseOutTag
 
+print(args)
+
 def preprocessing10X(dir,datasetName,csvFilename,transform='log',cellRatio=0.99,geneRatio=0.99,geneCriteria='variance',geneSelectnum=2000,sparseOut=True):
     '''
     preprocessing 10X data
