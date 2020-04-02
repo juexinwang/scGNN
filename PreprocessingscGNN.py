@@ -104,10 +104,10 @@ def preprocessing10X(dir,datasetName,csvFilename,transform='log',cellRatio=0.99,
 
     for row in df.itertuples():
         if row.Index % 1000000 == 0:
-            print(row.Index)
+            print(str(row.Index)+' items in expression has been proceed.')
         if not (row[2]-1) == oldcellindex:
             if (row[2]-1)<oldcellindex:
-                print(str(oldcellindex)+'!')
+                print('Potential error in 10X data: '+str(oldcellindex)+'!')
             if len(tmpgenelist) >= len(genes)*(1-cellRatio) and not oldcellindex==-1:
                 for i in range(len(tmpgenelist)):
                     tmplist = expressionDict[tmpgenelist[i]]
