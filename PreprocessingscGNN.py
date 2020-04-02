@@ -76,9 +76,13 @@ def preprocessing10X(dir,datasetName,csvFilename,transform='log',cellRatio=0.99,
     elif not os.path.exists(expressionFilename):
         print('matrix.mtx or matrix.mtx.gz not exists!')
 
+    print('Input scRNA data in 10X is validated, start reading...')
+
     genes = pd.read_csv(featuresFilename, header=None, delim_whitespace=True)
     cells = pd.read_csv(barcodesFilename, header=None, delim_whitespace=True)
     df    = pd.read_csv(expressionFilename, header=None, skiprows=2, delim_whitespace=True)
+
+    print('Data loaded, start filtering...')
 
     geneNamelist = []
     cellNamelist = []
@@ -248,6 +252,8 @@ def preprocessingCSV(dir,datasetName,csvFilename,delim='comma',transform='log',c
     if not os.path.exists(expressionFilename):
         print('Dataset '+ expressionFilename + ' not exists!')
     
+    print('Input scRNA data in CSV format is validated, start reading...')
+    
     tabuColList=[]
     tmplist=tabuCol.split(",")
     for item in tmplist:
@@ -264,6 +270,7 @@ def preprocessingCSV(dir,datasetName,csvFilename,delim='comma',transform='log',c
             df  = pd.read_csv(expressionFilename, index_col=0)
         else:
             df  = pd.read_csv(expressionFilename, index_col=0, usecols= lambda column: column not in tabuColList)
+    print('Data loaded, start filtering...')
     if transpose == True:
         df = df.T
     df1 = df[df.astype('bool').mean(axis=1)>=(1-geneRatio)]
