@@ -13,12 +13,12 @@ parser.add_argument('--datasetName', type=str, default='481193cb-c021-4e04-b477-
                     help='TGFb/sci-CAR/sci-CAR_LTMG/MMPbasal/MMPbasal_all/MMPbasal_allgene/MMPbasal_allcell/MMPepo/MMPbasal_LTMG/MMPbasal_all_LTMG/MMPbasal_2000')
 parser.add_argument('--datasetDir', type=str, default='/storage/htc/joshilab/wangjue/10x/6/',
                     help='Directory of data, default(/home/wangjue/biodata/scData/10x/6/)')
-parser.add_argument('--filterCSVTag', action='store_true', default=False,
-                    help='Whether filter and generating CSV')
-parser.add_argument('--inferLTMGTag', action='store_true', default=False,
-                    help='Whether infer LTMG')  
+parser.add_argument('--nonfilterCSVTag', action='store_true', default=False,
+                    help='Not filter and generating CSV')
+parser.add_argument('--noninferLTMGTag', action='store_true', default=False,
+                    help='Not infer LTMG')  
 parser.add_argument('--nonsparseOutTag', action='store_true', default=False,
-                    help='Whether use sparse coding')                 
+                    help='Not use sparse coding')                 
 parser.add_argument('--LTMGDir', type=str, default='/home/wangjue/biodata/scData/10x/6/',
                     help='directory of LTMGDir, default:(/home/wangjue/biodata/scData/allBench/)')
 parser.add_argument('--expressionFile', type=str, default='Use_expression.csv',
@@ -47,6 +47,8 @@ parser.add_argument('--tabuCol', type=str, default='',
                     
 args = parser.parse_args()
 args.sparseOutTag = not args.nonsparseOutTag
+args.filterCSVTag = not args.nonfilterCSVTag
+args.inferLTMGTag = not args.noninferLTMGTag
 # print(args)
 
 def preprocessing10X(dir,datasetName,csvFilename,transform='log',cellRatio=0.99,geneRatio=0.99,geneCriteria='variance',geneSelectnum=2000,sparseOut=True):
@@ -290,7 +292,7 @@ if __name__ == "__main__":
     
     #preprocessing
     if args.filterCSVTag:
-        print('Start filter and generating CSV')
+        print('Step1: Start filter and generating CSV')
         if args.filetype == '10X':
             expressionFilename = args.LTMGDir+args.datasetName+'/'+args.expressionFile
             # data = preprocessing10X(args.datasetDir, args.datasetName, args.LTMGDir+args.datasetName+'/'+args.expressionFile, args.transform, args.cellRatio, args.geneRatio, args.geneCriteria, args.geneSelectnum)
@@ -300,7 +302,7 @@ if __name__ == "__main__":
             preprocessingCSV(args.datasetDir, args.datasetName, expressionFilename, args.delim, args.transform, args.cellRatio, args.geneRatio, args.geneCriteria, args.geneSelectnum, args.transpose, args.tabuCol)
 
     if args.inferLTMGTag:
-        print('Start infer LTMG from CSV')
+        print('Step2: Start infer LTMG from CSV')
         if args.filetype == '10X':
             ltmgdir = args.LTMGDir+args.datasetName+'/'
         elif args.filetype == 'CSV':
