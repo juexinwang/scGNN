@@ -8,7 +8,7 @@ args = parser.parse_args()
 reDict = {}
 if args.imputeMode:
     # filename = 'jobinfo_imp_sel.txt'
-    filename = 'jobinfo_imp_louvain.txt'
+    filename = 'jobinfo_imp_louvain_3.txt'
 else:
     # filename = 'jobinfo_usage_sel.txt'
     filename = 'jobinfo_louvain.txt'

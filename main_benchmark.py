@@ -18,6 +18,8 @@ from graph_function import *
 from benchmark_util import *
 from gae_embedding import GAEembedding,measure_clustering_results,test_clustering_benchmark_results
 from LTMG_R import *
+import torch.multiprocessing as mp
+mp.set_start_method('spawn')
 
 # Used for benchmark, needs Preprocessing_main.py first, then proceed by this script.
 parser = argparse.ArgumentParser(description='Graph EM AutoEncoder for scRNA')
