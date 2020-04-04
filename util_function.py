@@ -172,7 +172,8 @@ class scDatasetDropout(Dataset):
         """
         self.featuresOriginal = load_data(datasetName,discreteTag)
         self.ratio = ratio
-        numpy.random.uniform(-1, 1) 
+        # Random seed
+        np.random.uniform(-1, 1) 
         self.features, self.i, self.j, self.ix = impute_dropout(self.featuresOriginal, rate=self.ratio) 
         # Now lines are cells, and cols are genes
         # self.features = self.features.transpose()
