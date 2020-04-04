@@ -479,7 +479,7 @@ def test_clustering_results(z, edgeList, args):
 # Revised freom Original version in scVI
 # Ref:
 # https://github.com/romain-lopez/scVI-reproducibility/blob/master/demo_code/benchmarking.py
-def impute_dropout(X, rate=0.1):
+def impute_dropout(X, seed=1, rate=0.1):
     """
     X: original testing set
     ========
@@ -499,6 +499,7 @@ def impute_dropout(X, rate=0.1):
         # select non-zero subset
         i,j = X_zero.nonzero()
     
+    np.random.seed(seed)
     # choice number 1 : select 10 percent of the non zero values (so that distributions overlap enough)
     ix = np.random.choice(range(len(i)), int(np.floor(0.1 * len(i))), replace=False)
     X_zero[i[ix], j[ix]] *= np.random.binomial(1, rate)

@@ -164,7 +164,7 @@ class scBenchDataset(Dataset):
         return sample,idx
 
 class scDatasetDropout(Dataset):
-    def __init__(self, datasetName=None, discreteTag=False, ratio=0.1, transform=None):
+    def __init__(self, datasetName=None, discreteTag=False, ratio=0.1, seed=1, transform=None):
         """
         Args:
             datasetName (String): TGFb, etc.
@@ -174,7 +174,7 @@ class scDatasetDropout(Dataset):
         self.ratio = ratio
         # Random seed
         # np.random.uniform(1, 2) 
-        self.features, self.i, self.j, self.ix = impute_dropout(self.featuresOriginal, rate=self.ratio) 
+        self.features, self.i, self.j, self.ix = impute_dropout(self.featuresOriginal, seed=seed, rate=self.ratio) 
         # Now lines are cells, and cols are genes
         # self.features = self.features.transpose()
         self.transform = transform  
