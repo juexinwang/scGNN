@@ -150,7 +150,7 @@ if args.inferLTMGTag:
 else:
     ltmgFile = args.datasetName+'/T2000_UsingOriginalMatrix/T2000_LTMG.txt'
 
-regulationMatrix = readLTMG(args.LTMGDir, ltmgFile)
+regulationMatrix = readLTMG(args.LTMGDir, ltmgFile, sparseMode=False)
 regulationMatrix = torch.from_numpy(regulationMatrix)
 
 # Original
