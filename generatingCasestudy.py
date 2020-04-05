@@ -18,7 +18,7 @@ templateStr2 = "\n#SBATCH -o results-%j.out           # give the job output a cu
 "#SBATCH -t 7-00:00                  # 7 days time limit\n"\
 "#SBATCH -N 1                        # number of nodes\n"\
 "#SBATCH -n 2                        # number of cores (AKA tasks)\n"\
-"#SBATCH --mem=128G\n"\
+"#SBATCH --mem=400G\n"\
 "#################################################################\n"\
 "module load miniconda3\n"\
 "source activate conda_R\n"

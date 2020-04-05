@@ -3,7 +3,7 @@ mkdir casenpyR2E_LK_
 mkdir casenpyG2E_LB_
 mkdir casenpyR2E_LB_
 
-for i in {1..7}
+for i in {3..3}
 do
 for j in {1..3}
 do
