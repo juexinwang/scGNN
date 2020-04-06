@@ -123,21 +123,25 @@ device = torch.device("cuda" if args.cuda else "cpu")
 
 kwargs = {'num_workers': 1, 'pin_memory': True} if args.cuda else {}
 print(args)
+start_time = time.time()
 
 # load scRNA in csv
 print ('scRNA starts loading.')
 data, genelist, celllist = loadscExpression(args.LTMGDir+args.datasetName+'/'+args.expressionFile, sparseMode=args.sparseMode)
 print ('scRNA has been successfully loaded.')
+print ('Loading cost '+ str(time.time()-start_time))
 
 scData = scDataset(data)
 train_loader = DataLoader(scData, batch_size=args.batch_size, shuffle=False, **kwargs)
 print ('TrainLoader has been successfully prepared.')
+print ('TrainLoader ready at '+ str(time.time()-start_time))
 
 # load LTMG in sparse version
 print ('Start loading LTMG in sparse coding.')
 regulationMatrix = readLTMG(args.LTMGDir+args.datasetName+'/', args.ltmgFile, sparseMode=args.sparseMode)
 regulationMatrix = torch.from_numpy(regulationMatrix)
 print ('LTMG has been successfully prepared.')
+print ('LTMG ready at '+ str(time.time()-start_time))
 
 # Original
 if args.model == 'VAE':
@@ -147,6 +151,7 @@ elif args.model == 'AE':
     model = AE(dim=scData.features.shape[1]).to(device)
 optimizer = optim.Adam(model.parameters(), lr=1e-3)
 print ('Pytorch model ready.')
+print ('Pytorch ready at '+ str(time.time()-start_time))
 
 #TODO: have to improve save npy
 def train(epoch, train_loader=train_loader, EMFlag=False):
@@ -218,7 +223,8 @@ def train(epoch, train_loader=train_loader, EMFlag=False):
     return recon_batch_all, data_all, z_all
 
 if __name__ == "__main__":
-    start_time = time.time()       
+    # May need reconstruct
+    # start_time = time.time()       
     # adjsample refer to cell-cell regulization, now we only have adjsample
     adjsample = None
     # adjfeature refer to gene-gene regulization
@@ -228,7 +234,8 @@ if __name__ == "__main__":
     for epoch in range(1, args.epochs + 1):
         recon, original, z = train(epoch, EMFlag=False)
         
-    zOut = z.detach().cpu().numpy() 
+    zOut = z.detach().cpu().numpy()
+    print ('zOut ready at '+ str(time.time()-start_time)) 
 
     prune_time = time.time()        
     # Here para = 'euclidean:10'
@@ -407,6 +414,7 @@ if __name__ == "__main__":
 
         # Original save step by step
         if args.saveFlag:
+            print ('Start save at '+ str(time.time()-start_time))
             reconOut = recon.detach().cpu().numpy()
             # np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+'_'+str(args.regularizePara)+'_'+str(args.L1Para)+'_'+str(args.L2Para)+'_recon'+str(bigepoch)+'.npy',reconOut)
             # np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+'_'+str(args.regularizePara)+'_'+str(args.L1Para)+'_'+str(args.L2Para)+'_z'+str(bigepoch)+'.npy',zOut)
@@ -414,7 +422,8 @@ if __name__ == "__main__":
             # np.savetxt(args.npyDir+args.datasetName+'_'+args.regulized_type+'_'+str(args.regularizePara)+'_'+str(args.L1Para)+'_'+str(args.L2Para)+'_results'+str(bigepoch)+'.txt',listResult,fmt='%d')
         
             # Output
-            print('Save results with reconstructed shape:'+str(reconOUt.shape)+' Size of gene:'+str(len(genelist)+' Size of cell:'+str(len(celllist))))
+            print ('Prepare save at '+ str(time.time()-start_time))
+            print('Save results with reconstructed shape:'+str(reconOut.shape)+' Size of gene:'+str(len(genelist)+' Size of cell:'+str(len(celllist))))
             recon_df = pd.DataFrame(np.transpose(reconOut),index=genelist,columns=celllist)
             recon_df.to_csv(args.npyDir+args.datasetName+'_'+args.regulized_type+'_'+str(args.regularizePara)+'_'+str(args.L1Para)+'_'+str(args.L2Para)+'_recon_'+str(bigepoch)+'.csv')
             emblist=[]
@@ -426,6 +435,8 @@ if __name__ == "__main__":
             graph_df.to_csv(args.npyDir+args.datasetName+'_'+args.regulized_type+'_'+str(args.regularizePara)+'_'+str(args.L1Para)+'_'+str(args.L2Para)+'_graph_'+str(bigepoch)+'.csv',index=False)
             results_df = pd.DataFrame(listResult,index=celllist,columns=["Celltype"])
             results_df.to_csv(args.npyDir+args.datasetName+'_'+args.regulized_type+'_'+str(args.regularizePara)+'_'+str(args.L1Para)+'_'+str(args.L2Para)+'_results_'+str(bigepoch)+'.txt')   
+
+            print ('Save complete at '+ str(time.time()-start_time))
 
         print("---One iteration in EM process, proceeded %s seconds ---" % (time.time() - iteration_time))
 
