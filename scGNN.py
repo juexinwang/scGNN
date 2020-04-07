@@ -423,7 +423,7 @@ if __name__ == "__main__":
         
             # Output
             print ('Prepare save at '+ str(time.time()-start_time))
-            print('Save results with reconstructed shape:'+str(reconOut.shape)+' Size of gene:'+str(len(genelist)+' Size of cell:'+str(len(celllist))))
+            print('Save results with reconstructed shape:'+str(reconOut.shape)+' Size of gene:'+str(len(genelist)）+' Size of cell:'+str(len(celllist)))
             recon_df = pd.DataFrame(np.transpose(reconOut),index=genelist,columns=celllist)
             recon_df.to_csv(args.npyDir+args.datasetName+'_'+args.regulized_type+'_'+str(args.regularizePara)+'_'+str(args.L1Para)+'_'+str(args.L2Para)+'_recon_'+str(bigepoch)+'.csv')
             emblist=[]
