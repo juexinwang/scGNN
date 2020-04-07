@@ -173,12 +173,16 @@ def preprocessing10X(dir,datasetName,csvFilename,transform='log',cellRatio=0.99,
     celllist = []
     datalist = []
 
+    outgenelist=[]
+    outcelllist=[]
+
     # output
     outList = []
     header = 'Gene_ID'
     for i in range(len(cellNamelist)):
         # print('{}\t{}\t{}'.format(cellNamelist[i],cells[cellNamelist[i]],cells[cellNamelist[i]][0]))
         header = header + ',' + cells[0][cellNamelist[i]]
+        outcelllist.append(cells[0][cellNamelist[i]])
     outList.append(header+'\n')
 
     for index in tmpChooseIndex:
@@ -197,6 +201,7 @@ def preprocessing10X(dir,datasetName,csvFilename,transform='log',cellRatio=0.99,
         
         # print('*')
         tmpline = genes[0][index]
+        outgenelist.append(tmpline)
         # print(str(len(cellNamelist))+' '+str(len(clist)))
         k=0
         for l in range(len(cellNamelist)):
@@ -234,16 +239,12 @@ def preprocessing10X(dir,datasetName,csvFilename,transform='log',cellRatio=0.99,
         pickle.dump(data, open( csvFilename.replace('.csv','_sparse.npy'), "wb" ) )
         print('Write sparse output done')
 
-        genestmp = pd.read_csv(featuresFilename, delimiter='\t',index_col=0)
-        cellstmp = pd.read_csv(barcodesFilename, delimiter='\t',index_col=0)
-        genes = genestmp.index.tolist()
-        cells = cellstmp.index.tolist()
         with open(csvFilename.replace('.csv','_gene.txt'),'w') as f:
-            f.writelines("%s\n"%gene for gene in genes)
+            f.writelines("%s\n"%gene for gene in outgenelist)
             f.close()
         
         with open(csvFilename.replace('.csv','_cell.txt'),'w') as f:
-            f.writelines("%s\n"%cell for cell in cells)
+            f.writelines("%s\n"%cell for cell in outcelllist)
             f.close()
 
 def preprocessingCSV(dir,datasetName,csvFilename,delim='comma',transform='log',cellRatio=0.99,geneRatio=0.99,geneCriteria='variance',geneSelectnum=2000,transpose=False,tabuCol=''):
