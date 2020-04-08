@@ -535,7 +535,7 @@ if __name__ == "__main__":
         resultarray=[]
         silhouette, chs, dbs = measureClusteringNoLabel(zOut, listResult)
         ari, ami, nmi, cs, fms, vms, hs = measureClusteringTrueLabel(bench_celltype, listResult)
-        resultstr = str(silhouette)+' '+str(chs)+' '+str(dbs)+' '+str(ari)+' '+str(ami)+' '+str(nmi)+' '+str(cs)+' '+str(fms)+' '+str(vms)+' '+str(hs))
+        resultstr = str(silhouette)+' '+str(chs)+' '+str(dbs)+' '+str(ari)+' '+str(ami)+' '+str(nmi)+' '+str(cs)+' '+str(fms)+' '+str(vms)+' '+str(hs)
         resultarray.append(resultstr)
         np.savetxt(args.npyDir+args.datasetName+'_'+args.regulized_type+'_'+str(args.regularizePara)+'_'+str(args.L1Para)+'_'+str(args.L2Para)+'_benchmark.txt',resultarray,fmt='%s')
  
