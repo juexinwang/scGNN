@@ -346,8 +346,8 @@ if __name__ == "__main__":
             k = len(np.unique(listResult))
             print('Louvain cluster: '+str(k))
             # resolution of louvain cluster:
-            # clustering = KMeans(n_clusters=k, random_state=0).fit(zOut)
-            clustering = KMeans(n_clusters=int(k*args.resolution), random_state=0).fit(zOut)
+            k = int(k*args.resolution) if k>3 else 2
+            clustering = KMeans(n_clusters=k, random_state=0).fit(zOut)
             listResult = clustering.predict(zOut)
         elif args.clustering_method=='LouvainB':
             from R_util import generateLouvainCluster
@@ -355,8 +355,8 @@ if __name__ == "__main__":
             k = len(np.unique(listResult))
             print('Louvain cluster: '+str(k))
             # resolution of louvain cluster:
-            # clustering = Birch(n_clusters=k).fit(zOut)
-            clustering = Birch(n_clusters=int(k*args.resolution)).fit(zOut)
+            k = int(k*args.resolution) if k>3 else 2
+            clustering = Birch(n_clusters=k).fit(zOut)
             listResult = clustering.predict(zOut)
         elif args.clustering_method=='KMeans':
             clustering = KMeans(n_clusters=args.n_clusters, random_state=0).fit(zOut)
