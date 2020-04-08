@@ -18,7 +18,7 @@ from graph_function import *
 from benchmark_util import *
 from gae_embedding import GAEembedding,measure_clustering_results,test_clustering_benchmark_results
 from LTMG_R import *
-from pandas as pd
+import pandas as pd
 
 # Used for benchmark, needs Preprocessing_main.py first, then proceed by this script.
 parser = argparse.ArgumentParser(description='Graph EM AutoEncoder for scRNA')
@@ -484,12 +484,14 @@ if __name__ == "__main__":
         graphChangeThreshold = args.converge_graphratio * np.mean(abs(nlG0))
         print('adjNew:{} adjOld:{} G0:{}'.format(adjNew, adjOld, nlG0))
         print('mean:{} threshold:{}'.format(graphChange, graphChangeThreshold))
+        silhouette, chs, dbs = measureClusteringNoLabel(zOut, listResult)
         ari, ami, nmi, cs, fms, vms, hs = measureClusteringTrueLabel(listResultOld, listResult)
         print(listResultOld)
         print(listResult)
         print('celltype similarity:'+str(ari))
         ari, ami, nmi, cs, fms, vms, hs = measureClusteringTrueLabel(bench_celltype, listResult)
-        print('All Results: '+str(ari)+' '+str(ami)+' '+str(nmi)+' '+str(cs)+' '+str(fms)+' '+str(vms)+' '+str(hs))
+        print('All Results: ')
+        print(str(silhouette)+' '+str(chs)+' '+str(dbs)+' '+str(ari)+' '+str(ami)+' '+str(nmi)+' '+str(cs)+' '+str(fms)+' '+str(vms)+' '+str(hs))
         
         # graph criteria
         if args.converge_type == 'graph':       
@@ -531,8 +533,9 @@ if __name__ == "__main__":
         np.savetxt(args.npyDir+args.datasetName+'_'+args.regulized_type+'_'+str(args.regularizePara)+'_'+str(args.L1Para)+'_'+str(args.L2Para)+'_results.txt',listResult,fmt='%d')
 
         resultarray=[]
+        silhouette, chs, dbs = measureClusteringNoLabel(zOut, listResult)
         ari, ami, nmi, cs, fms, vms, hs = measureClusteringTrueLabel(bench_celltype, listResult)
-        resultstr = str(ari)+' '+str(ami)+' '+str(nmi)+' '+str(cs)+' '+str(fms)+' '+str(vms)+' '+str(hs))
+        resultstr = str(silhouette)+' '+str(chs)+' '+str(dbs)+' '+str(ari)+' '+str(ami)+' '+str(nmi)+' '+str(cs)+' '+str(fms)+' '+str(vms)+' '+str(hs))
         resultarray.append(resultstr)
         np.savetxt(args.npyDir+args.datasetName+'_'+args.regulized_type+'_'+str(args.regularizePara)+'_'+str(args.L1Para)+'_'+str(args.L2Para)+'_benchmark.txt',resultarray,fmt='%s')
  
