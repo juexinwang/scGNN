@@ -573,6 +573,18 @@ def readLTMG(LTMGDir, ltmgfile):
     #     matrix = matrix.astype(int)
     return matrix
 
+def readLTMGnonsparse(LTMGDir, ltmgfile):
+    '''
+    Read LTMG matrix as the regularizor. nonsparseMode
+    '''
+    # nonsparse mode: read in csv format, very very slow when the input file is huge, not using
+    matrix = pd.read_csv(LTMGDir+ltmgfile,header=None, index_col=None, delimiter='\t', engine='c')
+    matrix = matrix.to_numpy()
+    matrix = matrix.transpose()
+    matrix = matrix[1:,1:]
+    matrix = matrix.astype(int)
+    return matrix
+
 def loadscExpression(csvFilename, sparseMode=True):
     '''
     Load sc Expression: rows are genes, cols are cells, first col is the gene name, first row is the cell name.
