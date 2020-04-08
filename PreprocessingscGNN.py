@@ -278,10 +278,10 @@ def preprocessingCSV(dir,datasetName,csvFilename,delim='comma',transform='log',c
     if transpose == True:
         df = df.T
     df1 = df[df.astype('bool').mean(axis=1)>=(1-geneRatio)]
-    print('After preprocessing, {} cells remaining'.format(df1.shape[0]))
-    criteriaGene = df1.astype('bool').mean(axis=0)>=(1-geneRatio)
+    print('After preprocessing, {} genes remaining'.format(df1.shape[0]))
+    criteriaGene = df1.astype('bool').mean(axis=0)>=(1-cellRatio)
     df2 = df1[df1.columns[criteriaGene]]
-    print('After preprocessing, {} genes have {} nonzero'.format(df2.shape[1],geneRatio))
+    print('After preprocessing, {} cells have {} nonzero'.format(df2.shape[1],geneRatio))
     criteriaSelectGene=df2.var(axis=1).sort_values()[-geneSelectnum:]
     df3 = df2.loc[criteriaSelectGene.index]
     if transform == 'log':
