@@ -185,7 +185,8 @@ def calculateKNNgraphDistanceMatrixML(featureMatrix, distanceType='euclidean', k
     distMat = distance.cdist(featureMatrix,featureMatrix, distanceType)
     edgeList=[]
 
-    clf = IsolationForest( behaviour = 'new', contamination= 'auto')
+    # parallel: n_jobs=-1 for using all processors
+    clf = IsolationForest( behaviour = 'new', contamination= 'auto', n_jobs=-1)
 
     for i in np.arange(distMat.shape[0]):
         res = distMat[i,:].argsort()[:k+1]
