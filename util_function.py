@@ -551,26 +551,26 @@ def trimClustering(listResult,minMemberinCluster=5,maxClusterNumber=30):
 
     return listResult
 
-def readLTMG(LTMGDir, ltmgfile, sparseMode=True):
+def readLTMG(LTMGDir, ltmgfile):
     '''
-    Read LTMG matrix as the regularizor. sparseMode for huge datasets sparse coding
+    Read LTMG matrix as the regularizor. sparseMode for huge datasets sparse coding, now only use sparseMode
     '''
     # sparse mode
-    if sparseMode:
-        df    = pd.read_csv(LTMGDir+ltmgfile, header=None, skiprows=1, delim_whitespace=True)
-        for row in df.itertuples():
-            # For the first row, it contains the number of genes and cells. Init the whole matrix
-            if row[0] == 0:
-                matrix = np.zeros((row[2],row[1])) 
-            else:
-                matrix[row[2]-1][row[1]-1]=row[3]
-    # nonsparse mode: read in csv format, very very slow when the input file is huge
-    else:
-        matrix = pd.read_csv(LTMGDir+ltmgfile,header=None, index_col=None, delimiter='\t', engine='c')
-        matrix = matrix.to_numpy()
-        matrix = matrix.transpose()
-        matrix = matrix[1:,1:]
-        matrix = matrix.astype(int)
+    # if sparseMode:
+    df    = pd.read_csv(LTMGDir+ltmgfile, header=None, skiprows=1, delim_whitespace=True)
+    for row in df.itertuples():
+        # For the first row, it contains the number of genes and cells. Init the whole matrix
+        if row[0] == 0:
+            matrix = np.zeros((row[2],row[1])) 
+        else:
+            matrix[row[2]-1][row[1]-1]=row[3]
+    # nonsparse mode: read in csv format, very very slow when the input file is huge, not using
+    # else:
+    #     matrix = pd.read_csv(LTMGDir+ltmgfile,header=None, index_col=None, delimiter='\t', engine='c')
+    #     matrix = matrix.to_numpy()
+    #     matrix = matrix.transpose()
+    #     matrix = matrix[1:,1:]
+    #     matrix = matrix.astype(int)
     return matrix
 
 def loadscExpression(csvFilename, sparseMode=True):

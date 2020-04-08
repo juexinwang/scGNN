@@ -138,7 +138,7 @@ print ('TrainLoader ready at '+ str(time.time()-start_time))
 
 # load LTMG in sparse version
 print ('Start loading LTMG in sparse coding.')
-regulationMatrix = readLTMG(args.LTMGDir+args.datasetName+'/', args.ltmgFile, sparseMode=args.sparseMode)
+regulationMatrix = readLTMG(args.LTMGDir+args.datasetName+'/', args.ltmgFile)
 regulationMatrix = torch.from_numpy(regulationMatrix)
 print ('LTMG has been successfully prepared.')
 print ('LTMG ready at '+ str(time.time()-start_time))
