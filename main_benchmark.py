@@ -99,6 +99,9 @@ parser.add_argument('--minMemberinCluster', type=int, default=5,
                     help='max cluster for celltypeEM without setting number of clusters (default: 100)')
 parser.add_argument('--resolution', type=float, default=0.5,
                     help='the number of resolution on Louvain (default: 0.5)')
+parser.add_argument('--resolutionLastTag', action='store_true', default=False,
+                    help='whether use it for resolution at last')
+
 #Benchmark related
 parser.add_argument('--benchmark', type=str, default='/home/jwang/data/scData/13.Zeisel/Zeisel_cell_label.csv',
                     help='the benchmark file of celltype (default: /home/jwang/data/scData/13.Zeisel/Zeisel_cell_label.csv)')
@@ -346,7 +349,8 @@ if __name__ == "__main__":
             k = len(np.unique(listResult))
             print('Louvain cluster: '+str(k))
             # resolution of louvain cluster:
-            k = int(k*args.resolution) if k>3 else 2
+            if not args.resolutionLastTag:
+                k = int(k*args.resolution) if k>3 else 2
             clustering = KMeans(n_clusters=k, random_state=0).fit(zOut)
             listResult = clustering.predict(zOut)
         elif args.clustering_method=='LouvainB':
@@ -355,7 +359,8 @@ if __name__ == "__main__":
             k = len(np.unique(listResult))
             print('Louvain cluster: '+str(k))
             # resolution of louvain cluster:
-            k = int(k*args.resolution) if k>3 else 2
+            if not args.resolutionLastTag:
+                k = int(k*args.resolution) if k>3 else 2
             clustering = Birch(n_clusters=k).fit(zOut)
             listResult = clustering.predict(zOut)
         elif args.clustering_method=='KMeans':
@@ -523,6 +528,27 @@ if __name__ == "__main__":
             np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_'+str(args.dropoutRatio)+'_final_edgeList.npy',edgeList)
         else:
             np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_final_edgeList.npy',edgeList)
+        
+        if args.resolutionLastTag:
+            if args.clustering_method=='LouvainK':
+                from R_util import generateLouvainCluster
+                listResult,size = generateLouvainCluster(edgeList)
+                k = len(np.unique(listResult))
+                print('Louvain cluster: '+str(k))
+                # resolution of louvain cluster:
+                k = int(k*args.resolution) if k>3 else 2
+                clustering = KMeans(n_clusters=k, random_state=0).fit(zOut)
+                listResult = clustering.predict(zOut)
+            elif args.clustering_method=='LouvainB':
+                from R_util import generateLouvainCluster
+                listResult,size = generateLouvainCluster(edgeList)
+                k = len(np.unique(listResult))
+                print('Louvain cluster: '+str(k))
+                # resolution of louvain cluster:
+                k = int(k*args.resolution) if k>3 else 2
+                clustering = Birch(n_clusters=k).fit(zOut)
+                listResult = clustering.predict(zOut)
+        
         # recon_df = pd.DataFrame(reconOut,columns=genelist,index=celllist)
         # recon_df.to_csv(args.npyDir+args.datasetName+'_'+args.regulized_type+'_'+str(args.regularizePara)+'_'+str(args.L1Para)+'_'+str(args.L2Para)+'_recon.csv')
         # embedding_df = pd.DataFrame(zOut,index=celllist)
