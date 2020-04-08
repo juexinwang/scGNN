@@ -18,7 +18,7 @@ templateStr1 = "#! /bin/bash\n"\
 templateStr2 = "\n#SBATCH -o results-%j.out           # give the job output a custom name\n"\
 "#SBATCH -t 2-00:00                  # two days time limit\n"\
 "#SBATCH -N 1                        # number of nodes\n"\
-"#SBATCH -n 2                        # number of cores (AKA tasks)\n"\
+"#SBATCH -n 8                        # number of cores (AKA tasks)\n"\
 "#SBATCH --mem=128G\n"\
 "#################################################################\n"\
 "module load miniconda3\n"\
@@ -57,10 +57,10 @@ methodsList = [
     ('run_experiment_1_n_e_LK E1neK','--regulized-type noregu --EMtype EM --clustering-method LouvainK --useGAEembedding --npyDir','npyN1E_LK/'),
     ('run_experiment_1_n_f_LK E1nfK','--regulized-type noregu --EMtype EM --clustering-method LouvainK --npyDir','npyN1F_LK/'),
     ('run_experiment_2_g_b_LK E2gbK','--regulized-type LTMG --EMtype celltypeEM --clustering-method LouvainK --useBothembedding  --npyDir','npyG2B_LK/'),
-    ('run_experiment_2_g_e_LK E2geK','--regulized-type LTMG --EMtype celltypeEM --clustering-method LouvainK --useGAEembedding  --npyDir','npyG2E_LK_2/ --seed 2'),
+    ('run_experiment_2_g_e_LK E2geK','--regulized-type LTMG --EMtype celltypeEM --clustering-method LouvainK --useGAEembedding  --npyDir','npyG2E_LK/'),
     ('run_experiment_2_g_f_LK E2gfK','--regulized-type LTMG --EMtype celltypeEM --clustering-method LouvainK --npyDir','npyG2F_LK/'),
     ('run_experiment_2_r_b_LK E2rbK','--regulized-type LTMG01 --EMtype celltypeEM --clustering-method LouvainK --useBothembedding  --npyDir','npyR2B_LK/'),
-    ('run_experiment_2_r_e_LK E2reK','--regulized-type LTMG01 --EMtype celltypeEM --clustering-method LouvainK --useGAEembedding  --npyDir','npyR2E_LK_2/ --seed 2'),
+    ('run_experiment_2_r_e_LK E2reK','--regulized-type LTMG01 --EMtype celltypeEM --clustering-method LouvainK --useGAEembedding  --npyDir','npyR2E_LK/'),
     ('run_experiment_2_r_f_LK E2rfK','--regulized-type LTMG01 --EMtype celltypeEM --clustering-method LouvainK --npyDir','npyR2F_LK/'),
     ('run_experiment_2_n_b_LK E2nbK','--regulized-type noregu --EMtype celltypeEM --clustering-method LouvainK --useBothembedding --npyDir','npyN2B_LK/'),
     ('run_experiment_2_n_e_LK E2neK','--regulized-type noregu --EMtype celltypeEM --clustering-method LouvainK --useGAEembedding --npyDir','npyN2E_LK/'),
@@ -76,10 +76,10 @@ methodsList = [
     ('run_experiment_1_n_e_LB E1neB','--regulized-type noregu --EMtype EM --clustering-method LouvainB --useGAEembedding --npyDir','npyN1E_LB/'),
     ('run_experiment_1_n_f_LB E1nfB','--regulized-type noregu --EMtype EM --clustering-method LouvainB --npyDir','npyN1F_LB/'),
     ('run_experiment_2_g_b_LB E2gbB','--regulized-type LTMG --EMtype celltypeEM --clustering-method LouvainB --useBothembedding  --npyDir','npyG2B_LB/'),
-    ('run_experiment_2_g_e_LB E2geB','--regulized-type LTMG --EMtype celltypeEM --clustering-method LouvainB --useGAEembedding  --npyDir','npyG2E_LB_2/ --seed 2'),
+    ('run_experiment_2_g_e_LB E2geB','--regulized-type LTMG --EMtype celltypeEM --clustering-method LouvainB --useGAEembedding  --npyDir','npyG2E_LB/'),
     ('run_experiment_2_g_f_LB E2gfB','--regulized-type LTMG --EMtype celltypeEM --clustering-method LouvainB --npyDir','npyG2F_LB/'),
     ('run_experiment_2_r_b_LB E2rbB','--regulized-type LTMG01 --EMtype celltypeEM --clustering-method LouvainB --useBothembedding  --npyDir','npyR2B_LB/'),
-    ('run_experiment_2_r_e_LB E2reB','--regulized-type LTMG01 --EMtype celltypeEM --clustering-method LouvainB --useGAEembedding  --npyDir','npyR2E_LB_2/ --seed 2'),
+    ('run_experiment_2_r_e_LB E2reB','--regulized-type LTMG01 --EMtype celltypeEM --clustering-method LouvainB --useGAEembedding  --npyDir','npyR2E_LB/'),
     ('run_experiment_2_r_f_LB E2rfB','--regulized-type LTMG01 --EMtype celltypeEM --clustering-method LouvainB --npyDir','npyR2F_LB/'),
     ('run_experiment_2_n_b_LB E2nbB','--regulized-type noregu --EMtype celltypeEM --clustering-method LouvainB --useBothembedding --npyDir','npyN2B_LB/'),
     ('run_experiment_2_n_e_LB E2neB','--regulized-type noregu --EMtype celltypeEM --clustering-method LouvainB --useGAEembedding --npyDir','npyN2E_LB/'),
@@ -124,19 +124,19 @@ methodsList = [
 
 # select
 datasetNameList = [
-    '1.Biase --n-clusters 3',
-    '2.Li --n-clusters 9',
-    '3.Treutlein --n-clusters 5',
-    '4.Yan --n-clusters 7',
-    '5.Goolam --n-clusters 5',
-    '6.Guo --n-clusters 9',
-    '7.Deng --n-clusters 10',
-    '8.Pollen --n-clusters 11',
-    '9.Chung --n-clusters 4',
-    '10.Usoskin --n-clusters 11',
-    '11.Kolodziejczyk --n-clusters 3',
-    '12.Klein --n-clusters 4',
-    '13.Zeisel --n-clusters 7'
+    '1.Biase --n-clusters 3 --benchmark /home/jwang/data/scData/1.Biase/Biase_cell_label.csv',
+    '2.Li --n-clusters 9 --benchmark /home/jwang/data/scData/2.Li/Li_cell_label.csv',
+    '3.Treutlein --n-clusters 5 --benchmark /home/jwang/data/scData/3.Treutlein/Treutlein_cell_label.csv',
+    '4.Yan --n-clusters 7 --benchmark /home/jwang/data/scData/4.Yan/Yan_cell_label.csv',
+    '5.Goolam --n-clusters 5 --benchmark /home/jwang/data/scData/5.Goolam/Goolam_cell_label.csv',
+    '6.Guo --n-clusters 9 --benchmark /home/jwang/data/scData/6.Guo/Guo_cell_label.csv',
+    '7.Deng --n-clusters 10 --benchmark /home/jwang/data/scData/7.Deng/Deng_cell_label.csv',
+    '8.Pollen --n-clusters 11 --benchmark /home/jwang/data/scData/8.Pollen/Pollen_cell_label.csv',
+    '9.Chung --n-clusters 4 --benchmark /home/jwang/data/scData/9.Chung/Chung_cell_label.csv',
+    '10.Usoskin --n-clusters 11 --benchmark /home/jwang/data/scData/10.Usoskin/Usoskin_cell_label.csv',
+    '11.Kolodziejczyk --n-clusters 3 --benchmark /home/jwang/data/scData/11.Kolodziejczyk/Kolodziejczyk_cell_label.csv',
+    '12.Klein --n-clusters 4 --benchmark /home/jwang/data/scData/12.Klein/Klein_cell_label.csv',
+    '13.Zeisel --n-clusters 7 --benchmark /home/jwang/data/scData/13.Zeisel/Zeisel_cell_label.csv'
 ]
 
 # generate sbatch files:

@@ -18,6 +18,7 @@ from graph_function import *
 from benchmark_util import *
 from gae_embedding import GAEembedding,measure_clustering_results,test_clustering_benchmark_results
 from LTMG_R import *
+from pandas as pd
 
 # Used for benchmark, needs Preprocessing_main.py first, then proceed by this script.
 parser = argparse.ArgumentParser(description='Graph EM AutoEncoder for scRNA')
@@ -96,6 +97,11 @@ parser.add_argument('--maxClusterNumber', type=int, default=30,
                     help='max cluster for celltypeEM without setting number of clusters (default: 30)') 
 parser.add_argument('--minMemberinCluster', type=int, default=5,
                     help='max cluster for celltypeEM without setting number of clusters (default: 100)')
+parser.add_argument('--resolution', type=float, default=0.5,
+                    help='the number of resolution on Louvain (default: 0.5)')
+#Benchmark related
+parser.add_argument('--benchmark', type=str, default='/home/jwang/data/scData/13.Zeisel/Zeisel_cell_label.csv',
+                    help='the benchmark file of celltype (default: /home/jwang/data/scData/13.Zeisel/Zeisel_cell_label.csv)')
 
 #Aggrelated
 parser.add_argument('--linkage', type=str, default='ward',
@@ -160,6 +166,11 @@ if args.model == 'VAE':
 elif args.model == 'AE':
     model = AE(dim=scData.features.shape[1]).to(device)
 optimizer = optim.Adam(model.parameters(), lr=1e-3)
+
+#Benchmark
+bench_pd=pd.read_csv(args.benchmark,index_col=0)
+#t1=pd.read_csv('/home/jwang/data/scData/13.Zeisel/Zeisel_cell_label.csv',index_col=0)
+bench_celltype=bench_pd.iloc[:,0].to_numpy()
 
 #TODO: have to improve save npy
 def train(epoch, train_loader=train_loader, EMFlag=False):
@@ -334,14 +345,18 @@ if __name__ == "__main__":
             listResult,size = generateLouvainCluster(edgeList)
             k = len(np.unique(listResult))
             print('Louvain cluster: '+str(k))
-            clustering = KMeans(n_clusters=k, random_state=0).fit(zOut)
+            # resolution of louvain cluster:
+            # clustering = KMeans(n_clusters=k, random_state=0).fit(zOut)
+            clustering = KMeans(n_clusters=int(k*args.resolution), random_state=0).fit(zOut)
             listResult = clustering.predict(zOut)
         elif args.clustering_method=='LouvainB':
             from R_util import generateLouvainCluster
             listResult,size = generateLouvainCluster(edgeList)
             k = len(np.unique(listResult))
             print('Louvain cluster: '+str(k))
-            clustering = Birch(n_clusters=k).fit(zOut)
+            # resolution of louvain cluster:
+            # clustering = Birch(n_clusters=k).fit(zOut)
+            clustering = Birch(n_clusters=int(k*args.resolution)).fit(zOut)
             listResult = clustering.predict(zOut)
         elif args.clustering_method=='KMeans':
             clustering = KMeans(n_clusters=args.n_clusters, random_state=0).fit(zOut)
@@ -473,6 +488,8 @@ if __name__ == "__main__":
         print(listResultOld)
         print(listResult)
         print('celltype similarity:'+str(ari))
+        ari, ami, nmi, cs, fms, vms, hs = measureClusteringTrueLabel(bench_celltype, listResult)
+        print('All Results: '+str(ari)+' '+str(ami)+' '+str(nmi)+' '+str(cs)+' '+str(fms)+' '+str(vms)+' '+str(hs))
         
         # graph criteria
         if args.converge_type == 'graph':       
@@ -511,7 +528,14 @@ if __name__ == "__main__":
         np.savetxt(args.npyDir+args.datasetName+'_'+args.regulized_type+'_'+str(args.regularizePara)+'_'+str(args.L1Para)+'_'+str(args.L2Para)+'_recon.csv',reconOut,delimiter=",",fmt='%10.4f')
         np.savetxt(args.npyDir+args.datasetName+'_'+args.regulized_type+'_'+str(args.regularizePara)+'_'+str(args.L1Para)+'_'+str(args.L2Para)+'_embedding.csv',zOut, delimiter=",",fmt='%10.4f')
         np.savetxt(args.npyDir+args.datasetName+'_'+args.regulized_type+'_'+str(args.regularizePara)+'_'+str(args.L1Para)+'_'+str(args.L2Para)+'_graph.csv',edgeList,fmt='%d,%d,%2.1f')
-        np.savetxt(args.npyDir+args.datasetName+'_'+args.regulized_type+'_'+str(args.regularizePara)+'_'+str(args.L1Para)+'_'+str(args.L2Para)+'_results.txt',listResult,fmt='%d') 
+        np.savetxt(args.npyDir+args.datasetName+'_'+args.regulized_type+'_'+str(args.regularizePara)+'_'+str(args.L1Para)+'_'+str(args.L2Para)+'_results.txt',listResult,fmt='%d')
+
+        resultarray=[]
+        ari, ami, nmi, cs, fms, vms, hs = measureClusteringTrueLabel(bench_celltype, listResult)
+        resultstr = str(ari)+' '+str(ami)+' '+str(nmi)+' '+str(cs)+' '+str(fms)+' '+str(vms)+' '+str(hs))
+        resultarray.append(resultstr)
+        np.savetxt(args.npyDir+args.datasetName+'_'+args.regulized_type+'_'+str(args.regularizePara)+'_'+str(args.L1Para)+'_'+str(args.L2Para)+'_benchmark.txt',resultarray,fmt='%s')
+ 
 
 
     print("---Total Running Time: %s seconds ---" % (time.time() - start_time))
