@@ -99,6 +99,8 @@ parser.add_argument('--maxClusterNumber', type=int, default=30,
                     help='max cluster for celltypeEM without setting number of clusters (default: 30)') 
 parser.add_argument('--minMemberinCluster', type=int, default=5,
                     help='max cluster for celltypeEM without setting number of clusters (default: 100)')
+parser.add_argument('--resolution', type=float, default=0.5,
+                    help='the number of resolution on Louvain (default: 0.5)')
 
 #GAE related
 parser.add_argument('--GAEmodel', type=str, default='gcn_vae', help="models used")
@@ -301,6 +303,7 @@ if __name__ == "__main__":
             listResult,size = generateLouvainCluster(edgeList)
             k = len(np.unique(listResult))
             print('Louvain cluster: '+str(k))
+            k = int(k*args.resolution) if k>3 else 2
             clustering = KMeans(n_clusters=k, random_state=0).fit(zOut)
             listResult = clustering.predict(zOut)
         elif args.clustering_method=='LouvainB':
@@ -308,6 +311,7 @@ if __name__ == "__main__":
             listResult,size = generateLouvainCluster(edgeList)
             k = len(np.unique(listResult))
             print('Louvain cluster: '+str(k))
+            k = int(k*args.resolution) if k>3 else 2
             clustering = Birch(n_clusters=k).fit(zOut)
             listResult = clustering.predict(zOut)
         elif args.clustering_method=='KMeans':
