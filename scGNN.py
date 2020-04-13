@@ -449,12 +449,16 @@ if __name__ == "__main__":
         
         zOut = z.detach().cpu().numpy()
 
+        mem=resource.getrusage(resource.RUSAGE_SELF).ru_maxrss
+        print('Mem consumption: '+str(mem))
         prune_time = time.time()
         # Here para = 'euclidean:10'
         adj, edgeList = generateAdj(zOut, graphType='KNNgraphML', para = args.knn_distance+':'+str(args.k)) 
         adjdense = sp.csr_matrix.todense(adj)
         adjsample = torch.from_numpy(adjdense)
         print("---Pruning takes %s seconds ---" % (time.time() - prune_time))
+        mem=resource.getrusage(resource.RUSAGE_SELF).ru_maxrss
+        print('Mem consumption: '+str(mem))
 
         # Whether use GAE embedding
         if args.useGAEembedding or args.useBothembedding:
