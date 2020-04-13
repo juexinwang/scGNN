@@ -5,6 +5,7 @@ import numpy as np
 import pickle as pkl
 import networkx as nx
 import scipy.sparse as sp
+import resource
 import torch
 from torch.utils.data import Dataset, DataLoader
 from torch import nn, optim
@@ -111,6 +112,9 @@ parser.add_argument('--GAElr', type=float, default=0.01, help='Initial learning 
 parser.add_argument('--GAEdropout', type=float, default=0., help='Dropout rate (1 - keep probability).')
 parser.add_argument('--GAElr_dw', type=float, default=0.001, help='Initial learning rate for regularization.')
 parser.add_argument('--n-clusters', default=20, type=int, help='number of clusters, 7 for cora, 6 for citeseer, 11 for 5.Pollen, 20 for MMP')
+
+parser.add_argument('--debugMode', type=str, default='savePrune',
+                    help='savePrune or loadPrune for debug reason (default: savePrune)')
 
 args = parser.parse_args()
 args.cuda = not args.no_cuda and torch.cuda.is_available()
@@ -232,26 +236,77 @@ if __name__ == "__main__":
     # adjfeature refer to gene-gene regulization
     adjfeature = None
 
-    print('Start training...')
-    for epoch in range(1, args.epochs + 1):
-        recon, original, z = train(epoch, EMFlag=False)
-        
-    zOut = z.detach().cpu().numpy()
-    print ('zOut ready at '+ str(time.time()-start_time)) 
+    # Debug
+    if args.debugMode == 'savePrune':
+        print('Start training...')
+        for epoch in range(1, args.epochs + 1):
+            recon, original, z = train(epoch, EMFlag=False)
+            
+        zOut = z.detach().cpu().numpy()
+        print ('zOut ready at '+ str(time.time()-start_time)) 
+    
+        prune_time = time.time()        
+        # Here para = 'euclidean:10'
+        adj, edgeList = generateAdj(zOut, graphType='KNNgraphML', para = args.knn_distance+':'+str(args.k)) 
+        adjdense = sp.csr_matrix.todense(adj)
+        adjsample = torch.from_numpy(adjdense)
+        print("---Pruning takes %s seconds ---" % (time.time() - prune_time))
+        mem=resource.getrusage(resource.RUSAGE_SELF).ru_maxrss
+        print('Mem consumption: '+str(mem))
 
-    prune_time = time.time()        
-    # Here para = 'euclidean:10'
-    adj, edgeList = generateAdj(zOut, graphType='KNNgraphML', para = args.knn_distance+':'+str(args.k)) 
-    adjdense = sp.csr_matrix.todense(adj)
-    adjsample = torch.from_numpy(adjdense)
-    print("---Pruning takes %s seconds ---" % (time.time() - prune_time))
+        with open('adjsampleFile','wb') as adjsampleFile:
+            pkl.dump(adjsample,adjsampleFile)
+
+        with open('edgeListFile','wb') as edgeListFile:
+            pkl.dump(edgeList,edgeListFile)
+
+        with open('adjFile','wb') as adjFile:
+            pkl.dump(adjList,adjFile)
+
+        with open('zOutFile','wb') as zOutFile:
+            pkl.dump(zOut,zOutFile)
+
+        with open('reconFile','wb') as reconFile:
+            pkl.dump(recon,reconFile)
+
+        with open('originalFile','wb') as originalFile:
+            pkl.dump(original,originalFile)
+
+        sys.exit(0)
+
+    if args.debugMode == 'loadPrune':
+        with open('adjsampleFile','rb') as adjsampleFile:
+            adjsample = pkl.load(adjsampleFile)
+
+        with open('edgeListFile','rb') as edgeListFile:
+            edgeList = pkl.load(edgeListFile)
+
+        with open('adjFile','rb') as adjFile:
+            adjList = pkl.load(adjFile)
+
+        with open('zOutFile','rb') as zOutFile:
+            zOut = pkl.load(zOutFile)
+
+        with open('reconFile','rb') as reconFile:
+            recon = pkl.load(reconFile)
+
+        with open('originalFile','rb') as originalFile:
+            original = pkl.load(originalFile)
+
+        mem=resource.getrusage(resource.RUSAGE_SELF).ru_maxrss
+        print('Mem consumption: '+str(mem))
     
     # Whether use GAE embedding
     if args.useGAEembedding or args.useBothembedding:
         zDiscret = zOut>np.mean(zOut,axis=0)
         zDiscret = 1.0*zDiscret
         if args.useGAEembedding:
+            mem=resource.getrusage(resource.RUSAGE_SELF).ru_maxrss
+            print('Mem consumption: '+str(mem))
             zOut=GAEembedding(zDiscret, adj, args)
+            mem=resource.getrusage(resource.RUSAGE_SELF).ru_maxrss
+            print('Mem consumption: '+str(mem))
+
         elif args.useBothembedding:
             zEmbedding=GAEembedding(zDiscret, adj, args)
             zOut=np.concatenate((zOut,zEmbedding),axis=1)
