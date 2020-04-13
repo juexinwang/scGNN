@@ -113,8 +113,8 @@ parser.add_argument('--GAEdropout', type=float, default=0., help='Dropout rate (
 parser.add_argument('--GAElr_dw', type=float, default=0.001, help='Initial learning rate for regularization.')
 parser.add_argument('--n-clusters', default=20, type=int, help='number of clusters, 7 for cora, 6 for citeseer, 11 for 5.Pollen, 20 for MMP')
 
-parser.add_argument('--debugMode', type=str, default='savePrune',
-                    help='savePrune or loadPrune for debug reason (default: savePrune)')
+parser.add_argument('--debugMode', type=str, default='noDebug',
+                    help='savePrune/loadPrune for debug reason (default: noDebug)')
 
 args = parser.parse_args()
 args.cuda = not args.no_cuda and torch.cuda.is_available()
@@ -237,7 +237,7 @@ if __name__ == "__main__":
     adjfeature = None
 
     # Debug
-    if args.debugMode == 'savePrune':
+    if args.debugMode == 'savePrune' or args.debugMode == 'noDebug':
         print('Start training...')
         for epoch in range(1, args.epochs + 1):
             recon, original, z = train(epoch, EMFlag=False)
@@ -254,25 +254,26 @@ if __name__ == "__main__":
         mem=resource.getrusage(resource.RUSAGE_SELF).ru_maxrss
         print('Mem consumption: '+str(mem))
 
-        with open('adjsampleFile','wb') as adjsampleFile:
-            pkl.dump(adjsample,adjsampleFile)
+        if args.debugMode == 'savePrune':
+            with open('adjsampleFile','wb') as adjsampleFile:
+                pkl.dump(adjsample,adjsampleFile)
 
-        with open('edgeListFile','wb') as edgeListFile:
-            pkl.dump(edgeList,edgeListFile)
+            with open('edgeListFile','wb') as edgeListFile:
+                pkl.dump(edgeList,edgeListFile)
 
-        with open('adjFile','wb') as adjFile:
-            pkl.dump(adj,adjFile)
+            with open('adjFile','wb') as adjFile:
+                pkl.dump(adj,adjFile)
 
-        with open('zOutFile','wb') as zOutFile:
-            pkl.dump(zOut,zOutFile)
+            with open('zOutFile','wb') as zOutFile:
+                pkl.dump(zOut,zOutFile)
 
-        with open('reconFile','wb') as reconFile:
-            pkl.dump(recon,reconFile)
+            with open('reconFile','wb') as reconFile:
+                pkl.dump(recon,reconFile)
 
-        with open('originalFile','wb') as originalFile:
-            pkl.dump(original,originalFile)
+            with open('originalFile','wb') as originalFile:
+                pkl.dump(original,originalFile)
 
-        sys.exit(0)
+            sys.exit(0)
 
     if args.debugMode == 'loadPrune':
         with open('adjsampleFile','rb') as adjsampleFile:
