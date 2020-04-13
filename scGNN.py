@@ -261,7 +261,7 @@ if __name__ == "__main__":
             pkl.dump(edgeList,edgeListFile)
 
         with open('adjFile','wb') as adjFile:
-            pkl.dump(adjList,adjFile)
+            pkl.dump(adj,adjFile)
 
         with open('zOutFile','wb') as zOutFile:
             pkl.dump(zOut,zOutFile)
