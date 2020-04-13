@@ -12,7 +12,7 @@ args = parser.parse_args()
 templateStr1 = "#! /bin/bash\n"\
 "######################### Batch Headers #########################\n"\
 "#SBATCH -A xulab\n"\
-"#SBATCH -p BioCompute               # use the BioCompute partition\n"\
+"#SBATCH -p Lewis,BioCompute               # use the BioCompute partition\n"\
 "#SBATCH -J "
 
 templateStr2 = "\n#SBATCH -o results-%j.out           # give the job output a custom name\n"\
