@@ -282,7 +282,7 @@ if __name__ == "__main__":
             edgeList = pkl.load(edgeListFile)
 
         with open('adjFile','rb') as adjFile:
-            adjList = pkl.load(adjFile)
+            adj = pkl.load(adjFile)
 
         with open('zOutFile','rb') as zOutFile:
             zOut = pkl.load(zOutFile)
@@ -300,10 +300,12 @@ if __name__ == "__main__":
     if args.useGAEembedding or args.useBothembedding:
         zDiscret = zOut>np.mean(zOut,axis=0)
         zDiscret = 1.0*zDiscret
-        if args.useGAEembedding:
+        if args.useGAEembedding:            
             mem=resource.getrusage(resource.RUSAGE_SELF).ru_maxrss
             print('Mem consumption: '+str(mem))
+            gae_time = time.time()
             zOut=GAEembedding(zDiscret, adj, args)
+            print("GAE embedding takes %s s" % (time.time() - gae_time))
             mem=resource.getrusage(resource.RUSAGE_SELF).ru_maxrss
             print('Mem consumption: '+str(mem))
 
