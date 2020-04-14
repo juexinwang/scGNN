@@ -102,6 +102,8 @@ parser.add_argument('--minMemberinCluster', type=int, default=5,
                     help='max cluster for celltypeEM without setting number of clusters (default: 100)')
 parser.add_argument('--resolution', type=float, default=0.5,
                     help='the number of resolution on Louvain (default: 0.5)')
+parser.add_argument('--prunetype', type=str, default='KNNgraphStats',
+                    help='prune type, KNNgraph/KNNgraphStats/KNNgraphML/KNNgraphMLOri (default: KNNgraphStats)')
 
 #GAE related
 parser.add_argument('--GAEmodel', type=str, default='gcn_vae', help="models used")
@@ -247,7 +249,9 @@ if __name__ == "__main__":
     
         prune_time = time.time()        
         # Here para = 'euclidean:10'
-        adj, edgeList = generateAdj(zOut, graphType='KNNgraphML', para = args.knn_distance+':'+str(args.k)) 
+        # adj, edgeList = generateAdj(zOut, graphType='KNNgraphML', para = args.knn_distance+':'+str(args.k)) 
+        adj, edgeList = generateAdj(zOut, graphType=args.prunetype, para = args.knn_distance+':'+str(args.k)) 
+
         adjdense = sp.csr_matrix.todense(adj)
         adjsample = torch.from_numpy(adjdense)
         print("---Pruning takes %s seconds ---" % (time.time() - prune_time))
@@ -454,7 +458,8 @@ if __name__ == "__main__":
         print('Mem consumption: '+str(mem))
         prune_time = time.time()
         # Here para = 'euclidean:10'
-        adj, edgeList = generateAdj(zOut, graphType='KNNgraphML', para = args.knn_distance+':'+str(args.k)) 
+        # adj, edgeList = generateAdj(zOut, graphType='KNNgraphML', para = args.knn_distance+':'+str(args.k)) 
+        adj, edgeList = generateAdj(zOut, graphType=args.prunetype, para = args.knn_distance+':'+str(args.k)) 
         adjdense = sp.csr_matrix.todense(adj)
         adjsample = torch.from_numpy(adjdense)
         print("---Pruning takes %s seconds ---" % (time.time() - prune_time))

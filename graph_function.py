@@ -47,6 +47,14 @@ def generateAdj(featureMatrix, graphType='KNNgraph', para = None):
             distanceType = parawords[0]
             k = int(parawords[1])
         edgeList = calculateKNNgraphDistanceMatrixML(featureMatrix, distanceType=distanceType, k=k)
+    elif graphType == 'KNNgraphStats':
+        # with weights!
+        # with stats, one std is contained
+        if para != None:
+            parawords = para.split(':')
+            distanceType = parawords[0]
+            k = int(parawords[1])
+        edgeList = calculateKNNgraphDistanceMatrixStats(featureMatrix, distanceType=distanceType, k=k)
     else:
         print('Should give graphtype')
     
@@ -202,6 +210,75 @@ def calculateKNNgraphDistanceMatrixML(featureMatrix, distanceType='euclidean', k
     
     return edgeList
 
+#para: measuareName:k:threshold
+def calculateKNNgraphDistanceMatrixStats(featureMatrix, distanceType='euclidean', k=10, param=None):
+    r"""
+    Thresholdgraph: KNN Graph with stats one-std based methods
+    """       
+
+    edgeList=[]
+    # Version 1: cost memory, precalculate all dist
+
+    ## distMat = distance.cdist(featureMatrix,featureMatrix, distanceType)
+    ## parallel
+    # distMat = pairwise_distances(featureMatrix,featureMatrix, distanceType, n_jobs=-1)
+    
+    # for i in np.arange(distMat.shape[0]):
+    #     res = distMat[:,i].argsort()[:k+1]
+    #     tmpdist = distMat[res[1:k+1],i]
+    #     mean = np.mean(tmpdist)
+    #     std = np.std(tmpdist)
+    #     for j in np.arange(1,k+1):
+    #         if (distMat[i,res[j]]<=mean+std) and (distMat[i,res[j]]>=mean-std):
+    #             weight = 1.0
+    #         else:
+    #             weight = 0.0
+    #         edgeList.append((i,res[j],weight))
+
+    ## Version 2: for each of the cell, calculate dist, save memory 
+    p_time = time.time()
+    for i in np.arange(featureMatrix.shape[0]):
+        if i%10000==0:
+            print('Start pruning '+str(i)+'th cell, cost '+str(time.time()-p_time)+'s')
+        tmp=featureMatrix[i,:].reshape(1,-1)
+        distMat = distance.cdist(tmp,featureMatrix, distanceType)
+        res = distMat.argsort()[:k+1]
+        tmpdist = distMat[0,res[0][1:k+1]]
+        boundary = np.mean(tmpdist)+np.std(tmpdist)
+        for j in np.arange(1,k+1):
+            # TODO: check, only exclude large outliners
+            # if (distMat[0,res[0][j]]<=mean+std) and (distMat[0,res[0][j]]>=mean-std):
+            if distMat[0,res[0][j]]<=boundary:
+                weight = 1.0
+            else:
+                weight = 0.0
+            edgeList.append((i,res[0][j],weight))
+
+    # Version 3: for each of the cell, calculate dist, use heapq to accelerate
+    # However, it cannot defeat sort
+    # Get same results as this article
+    # https://stackoverflow.com/questions/12787650/finding-the-index-of-n-biggest-elements-in-python-array-list-efficiently
+    #
+    # p_time = time.time()
+    # for i in np.arange(featureMatrix.shape[0]):
+    #     if i%10000==0:
+    #         print('Start pruning '+str(i)+'th cell, cost '+str(time.time()-p_time)+'s')
+    #     tmp=featureMatrix[i,:].reshape(1,-1)
+    #     distMat = distance.cdist(tmp,featureMatrix, distanceType)[0]
+    #     # res = distMat.argsort()[:k+1]
+    #     res = heapq.nsmallest(k+1, range(len(distMat)), distMat.take)[1:k+1]
+    #     tmpdist = distMat[res]
+    #     boundary = np.mean(tmpdist)+np.std(tmpdist)
+    #     for j in np.arange(k):
+    #         # TODO: check, only exclude large outliners
+    #         # if (distMat[0,res[0][j]]<=mean+std) and (distMat[0,res[0][j]]>=mean-std):
+    #         if distMat[res[j]]<=boundary:
+    #             weight = 1.0
+    #         else:
+    #             weight = 0.0
+    #         edgeList.append((i,res[j],weight))
+    
+    return edgeList
 
 
 # edgeList to edgeDict

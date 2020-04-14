@@ -101,6 +101,8 @@ parser.add_argument('--resolution', type=float, default=0.5,
                     help='the number of resolution on Louvain (default: 0.5)')
 parser.add_argument('--resolutionLastTag', action='store_true', default=False,
                     help='whether use it for resolution at last')
+parser.add_argument('--prunetype', type=str, default='KNNgraphML',
+                    help='prune type, KNNgraph/KNNgraphStats/KNNgraphML/KNNgraphMLOri (default: KNNgraphStats)')
 
 #Benchmark related
 parser.add_argument('--benchmark', type=str, default='/home/jwang/data/scData/13.Zeisel/Zeisel_cell_label.csv',
@@ -275,7 +277,8 @@ if __name__ == "__main__":
 
     prune_time = time.time()        
     # Here para = 'euclidean:10'
-    adj, edgeList = generateAdj(zOut, graphType='KNNgraphML', para = args.knn_distance+':'+str(args.k)) 
+    # adj, edgeList = generateAdj(zOut, graphType='KNNgraphML', para = args.knn_distance+':'+str(args.k)) 
+    adj, edgeList = generateAdj(zOut, graphType=args.prunetype, para = args.knn_distance+':'+str(args.k)) 
     adjdense = sp.csr_matrix.todense(adj)
     adjsample = torch.from_numpy(adjdense)
     print("---Pruning takes %s seconds ---" % (time.time() - prune_time))
@@ -447,7 +450,8 @@ if __name__ == "__main__":
 
         prune_time = time.time()
         # Here para = 'euclidean:10'
-        adj, edgeList = generateAdj(zOut, graphType='KNNgraphML', para = args.knn_distance+':'+str(args.k)) 
+        # adj, edgeList = generateAdj(zOut, graphType='KNNgraphML', para = args.knn_distance+':'+str(args.k))
+        adj, edgeList = generateAdj(zOut, graphType=args.prunetype, para = args.knn_distance+':'+str(args.k)) 
         adjdense = sp.csr_matrix.todense(adj)
         adjsample = torch.from_numpy(adjdense)
         print("---Pruning takes %s seconds ---" % (time.time() - prune_time))
