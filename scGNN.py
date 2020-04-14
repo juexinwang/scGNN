@@ -259,23 +259,24 @@ if __name__ == "__main__":
         print('Mem consumption: '+str(mem))
 
         if args.debugMode == 'savePrune':
+            #Add protocol=4 for serizalize object larger than 4GiB
             with open('adjsampleFile','wb') as adjsampleFile:
-                pkl.dump(adjsample,adjsampleFile)
+                pkl.dump(adjsample,adjsampleFile,protocol=4)
 
             with open('edgeListFile','wb') as edgeListFile:
-                pkl.dump(edgeList,edgeListFile)
+                pkl.dump(edgeList,edgeListFile,protocol=4)
 
             with open('adjFile','wb') as adjFile:
-                pkl.dump(adj,adjFile)
+                pkl.dump(adj,adjFile,protocol=4)
 
             with open('zOutFile','wb') as zOutFile:
-                pkl.dump(zOut,zOutFile)
+                pkl.dump(zOut,zOutFile,protocol=4)
 
             with open('reconFile','wb') as reconFile:
-                pkl.dump(recon,reconFile)
+                pkl.dump(recon,reconFile,protocol=4)
 
             with open('originalFile','wb') as originalFile:
-                pkl.dump(original,originalFile)
+                pkl.dump(original,originalFile,protocol=4)
 
             sys.exit(0)
 
