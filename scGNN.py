@@ -103,7 +103,7 @@ parser.add_argument('--minMemberinCluster', type=int, default=5,
 parser.add_argument('--resolution', type=float, default=0.5,
                     help='the number of resolution on Louvain (default: 0.5)')
 parser.add_argument('--prunetype', type=str, default='KNNgraphStats',
-                    help='prune type, KNNgraph/KNNgraphStats/KNNgraphML/KNNgraphMLOri (default: KNNgraphStats)')
+                    help='prune type, KNNgraph/KNNgraphStats/KNNgraphML (default: KNNgraphStats)')
 
 #GAE related
 parser.add_argument('--GAEmodel', type=str, default='gcn_vae', help="models used")
