@@ -6,6 +6,7 @@ import csv
 import networkx as nx
 import numpy as np
 from sklearn.ensemble import IsolationForest
+import time
 
 #Graph related functions
 #graph Edge
