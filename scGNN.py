@@ -182,9 +182,9 @@ def train(epoch, train_loader=train_loader, EMFlag=False):
             # Original
             # loss = loss_function(recon_batch, data, mu, logvar)
             if EMFlag:
-                loss = loss_function_graph(recon_batch, data.view(-1, recon_batch.shape[1]), mu, logvar, adjsample, adjfeature, gammaPara=args.gammaPara, regulationMatrix=regulationMatrixBatch, regularizer_type=args.regulized_type, reguPara=args.regularizePara, modelusage=args.model)
+                loss = loss_function_graph(recon_batch, data.view(-1, recon_batch.shape[1]), mu, logvar, gammaPara=args.gammaPara, regulationMatrix=regulationMatrixBatch, regularizer_type=args.regulized_type, reguPara=args.regularizePara, modelusage=args.model)
             else:
-                loss = loss_function_graph(recon_batch, data.view(-1, recon_batch.shape[1]), mu, logvar, adjsample, adjfeature, gammaPara=args.gammaPara, regulationMatrix=regulationMatrixBatch, regularizer_type=args.regulized_type, reguPara=args.regularizePara, modelusage=args.model)
+                loss = loss_function_graph(recon_batch, data.view(-1, recon_batch.shape[1]), mu, logvar, gammaPara=args.gammaPara, regulationMatrix=regulationMatrixBatch, regularizer_type=args.regulized_type, reguPara=args.regularizePara, modelusage=args.model)
             
         elif args.model == 'AE':
             recon_batch, z = model(data)
@@ -193,9 +193,9 @@ def train(epoch, train_loader=train_loader, EMFlag=False):
             # Original
             # loss = loss_function(recon_batch, data, mu, logvar)
             if EMFlag:
-                loss = loss_function_graph(recon_batch, data.view(-1, recon_batch.shape[1]), mu_dummy, logvar_dummy, adjsample, adjfeature, gammaPara=args.gammaPara, regulationMatrix=regulationMatrixBatch, regularizer_type=args.regulized_type, reguPara=args.regularizePara, modelusage=args.model)
+                loss = loss_function_graph(recon_batch, data.view(-1, recon_batch.shape[1]), mu_dummy, logvar_dummy, gammaPara=args.gammaPara, regulationMatrix=regulationMatrixBatch, regularizer_type=args.regulized_type, reguPara=args.regularizePara, modelusage=args.model)
             else:
-                loss = loss_function_graph(recon_batch, data.view(-1, recon_batch.shape[1]), mu_dummy, logvar_dummy, adjsample, adjfeature, gammaPara=args.gammaPara, regulationMatrix=regulationMatrixBatch, regularizer_type=args.regulized_type, reguPara=args.regularizePara, modelusage=args.model)
+                loss = loss_function_graph(recon_batch, data.view(-1, recon_batch.shape[1]), mu_dummy, logvar_dummy, gammaPara=args.gammaPara, regulationMatrix=regulationMatrixBatch, regularizer_type=args.regulized_type, reguPara=args.regularizePara, modelusage=args.model)
                
         # L1 and L2 regularization
         # 0.0 for no regularization 
@@ -232,11 +232,7 @@ def train(epoch, train_loader=train_loader, EMFlag=False):
 
 if __name__ == "__main__":
     # May need reconstruct
-    # start_time = time.time()       
-    # adjsample refer to cell-cell regulization, now we only have adjsample
-    adjsample = None
-    # adjfeature refer to gene-gene regulization
-    adjfeature = None
+    # start_time = time.time()
 
     # Debug
     if args.debugMode == 'savePrune' or args.debugMode == 'noDebug':
@@ -251,18 +247,12 @@ if __name__ == "__main__":
         # Here para = 'euclidean:10'
         # adj, edgeList = generateAdj(zOut, graphType='KNNgraphML', para = args.knn_distance+':'+str(args.k)) 
         adj, edgeList = generateAdj(zOut, graphType=args.prunetype, para = args.knn_distance+':'+str(args.k)) 
-
-        adjdense = sp.csr_matrix.todense(adj)
-        adjsample = torch.from_numpy(adjdense)
         print("---Pruning takes %s seconds ---" % (time.time() - prune_time))
         mem=resource.getrusage(resource.RUSAGE_SELF).ru_maxrss
         print('Mem consumption: '+str(mem))
 
         if args.debugMode == 'savePrune':
             #Add protocol=4 for serizalize object larger than 4GiB
-            with open('adjsampleFile','wb') as adjsampleFile:
-                pkl.dump(adjsample,adjsampleFile,protocol=4)
-
             with open('edgeListFile','wb') as edgeListFile:
                 pkl.dump(edgeList,edgeListFile,protocol=4)
 
@@ -281,8 +271,6 @@ if __name__ == "__main__":
             sys.exit(0)
 
     if args.debugMode == 'loadPrune':
-        with open('adjsampleFile','rb') as adjsampleFile:
-            adjsample = pkl.load(adjsampleFile)
 
         with open('edgeListFile','rb') as edgeListFile:
             edgeList = pkl.load(edgeListFile)
@@ -318,13 +306,6 @@ if __name__ == "__main__":
         elif args.useBothembedding:
             zEmbedding=GAEembedding(zDiscret, adj, args)
             zOut=np.concatenate((zOut,zEmbedding),axis=1)
-        # Debug for another layer of Louvain
-        # prune_time = time.time()
-        # # Here para = 'euclidean:10'
-        # adj, edgeList = generateAdj(zOut, graphType='KNNgraphML', para = args.knn_distance+':'+str(args.k)) 
-        # adjdense = sp.csr_matrix.todense(adj)
-        # adjsample = torch.from_numpy(adjdense)
-        # print("---Pruning takes %s seconds ---" % (time.time() - prune_time))
     
     # For iteration studies
     G0 = nx.Graph()
@@ -461,8 +442,6 @@ if __name__ == "__main__":
         # Here para = 'euclidean:10'
         # adj, edgeList = generateAdj(zOut, graphType='KNNgraphML', para = args.knn_distance+':'+str(args.k)) 
         adj, edgeList = generateAdj(zOut, graphType=args.prunetype, para = args.knn_distance+':'+str(args.k)) 
-        adjdense = sp.csr_matrix.todense(adj)
-        adjsample = torch.from_numpy(adjdense)
         print("---Pruning takes %s seconds ---" % (time.time() - prune_time))
         mem=resource.getrusage(resource.RUSAGE_SELF).ru_maxrss
         print('Mem consumption: '+str(mem))
@@ -476,13 +455,6 @@ if __name__ == "__main__":
             elif args.useBothembedding:
                 zEmbedding=GAEembedding(zDiscret, adj, args)
                 zOut=np.concatenate((zOut,zEmbedding),axis=1)
-            # Debug
-            # prune_time = time.time()
-            # # Here para = 'euclidean:10'
-            # adj, edgeList = generateAdj(zOut, graphType='KNNgraphML', para = args.knn_distance+':'+str(args.k)) 
-            # adjdense = sp.csr_matrix.todense(adj)
-            # adjsample = torch.from_numpy(adjdense)
-            # print("---Pruning takes %s seconds ---" % (time.time() - prune_time))
 
         # Original save step by step
         if args.saveFlag:
