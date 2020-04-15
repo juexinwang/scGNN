@@ -101,11 +101,10 @@ parser.add_argument('--resolution', type=float, default=0.5,
                     help='the number of resolution on Louvain (default: 0.5)')
 parser.add_argument('--resolutionLastTag', action='store_true', default=False,
                     help='whether use it for resolution at last')
-parser.add_argument('--prunetype', type=str, default='KNNgraphML',
+parser.add_argument('--prunetype', type=str, default='KNNgraphStats',
                     help='prune type, KNNgraphStats/KNNgraphML (default: KNNgraphStats)')
 parser.add_argument('--noEMreguTag', action='store_true', default=False,
                     help='whether regu in EM process')
-
 
 #Benchmark related
 parser.add_argument('--benchmark', type=str, default='/home/jwang/data/scData/13.Zeisel/Zeisel_cell_label.csv',
