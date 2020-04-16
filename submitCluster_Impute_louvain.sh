@@ -55,7 +55,7 @@ mkdir npyImputeN2B_LB
 mkdir npyImputeN2E_LB
 mkdir npyImputeN2F_LB
 
-for i in {1..13}
+for i in {9..13}
 do
 sbatch run_experimentImpute_1_g_b_$i.sh
 sleep 1

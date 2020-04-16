@@ -97,13 +97,11 @@ parser.add_argument('--maxClusterNumber', type=int, default=30,
                     help='max cluster for celltypeEM without setting number of clusters (default: 30)') 
 parser.add_argument('--minMemberinCluster', type=int, default=5,
                     help='max cluster for celltypeEM without setting number of clusters (default: 100)')
-parser.add_argument('--resolution', type=float, default=0.5,
-                    help='the number of resolution on Louvain (default: 0.5)')
-parser.add_argument('--resolutionLastTag', action='store_true', default=False,
-                    help='whether use it for resolution at last')
+parser.add_argument('--resolution', type=str, default='auto',
+                    help='the number of resolution on Louvain (default: auto/0.5/0.8)')
 parser.add_argument('--prunetype', type=str, default='KNNgraphStats',
                     help='prune type, KNNgraphStats/KNNgraphML (default: KNNgraphStats)')
-parser.add_argument('--noEMreguTag', action='store_true', default=False,
+parser.add_argument('--EMreguTag', action='store_true', default=False,
                     help='whether regu in EM process')
 
 #Benchmark related
@@ -199,18 +197,10 @@ def train(epoch, train_loader=train_loader, EMFlag=False):
             recon_batch, mu, logvar, z = model(data)
             # Original
             # loss = loss_function(recon_batch, data, mu, logvar)
-            if EMFlag and args.noEMreguTag:
+            if EMFlag and (not args.EMreguTag):
                 loss = loss_function_graph(recon_batch, data.view(-1, recon_batch.shape[1]), mu, logvar, gammaPara=args.gammaPara, regulationMatrix=regulationMatrixBatch, regularizer_type='noregu', reguPara=args.regularizePara, modelusage=args.model)
             else: 
-                loss = loss_function_graph(recon_batch, data.view(-1, recon_batch.shape[1]), mu, logvar, gammaPara=args.gammaPara, regulationMatrix=regulationMatrixBatch, regularizer_type=args.regulized_type, reguPara=args.regularizePara, modelusage=args.model)   
-            # if EMFlag:
-            #     loss = loss_function_graph(recon_batch, data.view(-1, recon_batch.shape[1]), mu, logvar, gammaPara=args.gammaPara, regulationMatrix=regulationMatrixBatch, regularizer_type=args.regulized_type, reguPara=args.regularizePara, modelusage=args.model)
-            # else:
-            #     if args.EMreguTag:
-            #         loss = loss_function_graph(recon_batch, data.view(-1, recon_batch.shape[1]), mu, logvar, gammaPara=args.gammaPara, regulationMatrix=regulationMatrixBatch, regularizer_type='noregu', reguPara=args.regularizePara, modelusage=args.model)
-            #     else:
-            #         loss = loss_function_graph(recon_batch, data.view(-1, recon_batch.shape[1]), mu, logvar, gammaPara=args.gammaPara, regulationMatrix=regulationMatrixBatch, regularizer_type=args.regulized_type, reguPara=args.regularizePara, modelusage=args.model)
-            
+                loss = loss_function_graph(recon_batch, data.view(-1, recon_batch.shape[1]), mu, logvar, gammaPara=args.gammaPara, regulationMatrix=regulationMatrixBatch, regularizer_type=args.regulized_type, reguPara=args.regularizePara, modelusage=args.model)    
             
         elif args.model == 'AE':
             recon_batch, z = model(data)
@@ -218,13 +208,11 @@ def train(epoch, train_loader=train_loader, EMFlag=False):
             logvar_dummy = ''
             # Original
             # loss = loss_function(recon_batch, data, mu, logvar)
-            if EMFlag and args.noEMreguTag:
+            if EMFlag and (not args.EMreguTag):
                 loss = loss_function_graph(recon_batch, data.view(-1, recon_batch.shape[1]), mu_dummy, logvar_dummy, gammaPara=args.gammaPara, regulationMatrix=regulationMatrixBatch, regularizer_type='noregu', reguPara=args.regularizePara, modelusage=args.model)    
             else:
                 loss = loss_function_graph(recon_batch, data.view(-1, recon_batch.shape[1]), mu_dummy, logvar_dummy, gammaPara=args.gammaPara, regulationMatrix=regulationMatrixBatch, regularizer_type=args.regulized_type, reguPara=args.regularizePara, modelusage=args.model)
-            
-                
-            
+                        
             # if EMFlag:
             #     loss = loss_function_graph(recon_batch, data.view(-1, recon_batch.shape[1]), mu_dummy, logvar_dummy, gammaPara=args.gammaPara, regulationMatrix=regulationMatrixBatch, regularizer_type=args.regulized_type, reguPara=args.regularizePara, modelusage=args.model)
             # else:
@@ -285,6 +273,16 @@ if __name__ == "__main__":
         recon, original, z = train(epoch, EMFlag=False)
         
     zOut = z.detach().cpu().numpy() 
+
+    #Define resolution
+    #Default: auto, otherwise use user defined resolution
+    if args.resolution == 'auto':
+        if zOut.shape[0]< 2000:
+            resolution = 0.8
+        else:
+            resolution = 0.5
+    else:
+        resolution = float(args.resolution)
 
     prune_time = time.time()        
     # Here para = 'euclidean:10'
@@ -365,8 +363,7 @@ if __name__ == "__main__":
             k = len(np.unique(listResult))
             print('Louvain cluster: '+str(k))
             # resolution of louvain cluster:
-            if not args.resolutionLastTag:
-                k = int(k*args.resolution) if k>3 else 2
+            k = int(k*resolution) if k>3 else 2
             clustering = KMeans(n_clusters=k, random_state=0).fit(zOut)
             listResult = clustering.predict(zOut)
         elif args.clustering_method=='LouvainB':
@@ -375,8 +372,7 @@ if __name__ == "__main__":
             k = len(np.unique(listResult))
             print('Louvain cluster: '+str(k))
             # resolution of louvain cluster:
-            if not args.resolutionLastTag:
-                k = int(k*args.resolution) if k>3 else 2
+            k = int(k*resolution) if k>3 else 2
             clustering = Birch(n_clusters=k).fit(zOut)
             listResult = clustering.predict(zOut)
         elif args.clustering_method=='KMeans':
@@ -544,26 +540,6 @@ if __name__ == "__main__":
             np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_'+str(args.dropoutRatio)+'_final_edgeList.npy',edgeList)
         else:
             np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_final_edgeList.npy',edgeList)
-        
-        if args.resolutionLastTag:
-            if args.clustering_method=='LouvainK':
-                from R_util import generateLouvainCluster
-                listResult,size = generateLouvainCluster(edgeList)
-                k = len(np.unique(listResult))
-                print('Louvain cluster: '+str(k))
-                # resolution of louvain cluster:
-                k = int(k*args.resolution) if k>3 else 2
-                clustering = KMeans(n_clusters=k, random_state=0).fit(zOut)
-                listResult = clustering.predict(zOut)
-            elif args.clustering_method=='LouvainB':
-                from R_util import generateLouvainCluster
-                listResult,size = generateLouvainCluster(edgeList)
-                k = len(np.unique(listResult))
-                print('Louvain cluster: '+str(k))
-                # resolution of louvain cluster:
-                k = int(k*args.resolution) if k>3 else 2
-                clustering = Birch(n_clusters=k).fit(zOut)
-                listResult = clustering.predict(zOut)
         
         # recon_df = pd.DataFrame(reconOut,columns=genelist,index=celllist)
         # recon_df.to_csv(args.npyDir+args.datasetName+'_'+args.regulized_type+'_'+str(args.regularizePara)+'_'+str(args.L1Para)+'_'+str(args.L2Para)+'_recon.csv')

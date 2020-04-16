@@ -55,7 +55,7 @@ mkdir npyN2B_LB
 mkdir npyN2E_LB
 mkdir npyN2F_LB
 
-for i in {1..13}
+for i in {9..13}
 do
 sbatch run_experiment_1_g_b_$i.sh
 sleep 1
