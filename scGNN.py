@@ -100,10 +100,12 @@ parser.add_argument('--maxClusterNumber', type=int, default=30,
                     help='max cluster for celltypeEM without setting number of clusters (default: 30)') 
 parser.add_argument('--minMemberinCluster', type=int, default=5,
                     help='max cluster for celltypeEM without setting number of clusters (default: 100)')
-parser.add_argument('--resolution', type=float, default=0.5,
-                    help='the number of resolution on Louvain (default: 0.5)')
+parser.add_argument('--resolution', type=str, default='auto',
+                    help='the number of resolution on Louvain (default: auto/0.5/0.8)')
 parser.add_argument('--prunetype', type=str, default='KNNgraphStats',
-                    help='prune type, KNNgraph/KNNgraphStats/KNNgraphML (default: KNNgraphStats)')
+                    help='prune type, KNNgraphStats/KNNgraphML (default: KNNgraphStats)')
+parser.add_argument('--EMreguTag', action='store_true', default=False,
+                    help='whether regu in EM process')
 
 #GAE related
 parser.add_argument('--GAEmodel', type=str, default='gcn_vae', help="models used")
@@ -181,10 +183,10 @@ def train(epoch, train_loader=train_loader, EMFlag=False):
             recon_batch, mu, logvar, z = model(data)
             # Original
             # loss = loss_function(recon_batch, data, mu, logvar)
-            if EMFlag:
-                loss = loss_function_graph(recon_batch, data.view(-1, recon_batch.shape[1]), mu, logvar, gammaPara=args.gammaPara, regulationMatrix=regulationMatrixBatch, regularizer_type=args.regulized_type, reguPara=args.regularizePara, modelusage=args.model)
-            else:
-                loss = loss_function_graph(recon_batch, data.view(-1, recon_batch.shape[1]), mu, logvar, gammaPara=args.gammaPara, regulationMatrix=regulationMatrixBatch, regularizer_type=args.regulized_type, reguPara=args.regularizePara, modelusage=args.model)
+            if EMFlag and (not args.EMreguTag):
+                loss = loss_function_graph(recon_batch, data.view(-1, recon_batch.shape[1]), mu, logvar, gammaPara=args.gammaPara, regulationMatrix=regulationMatrixBatch, regularizer_type='noregu', reguPara=args.regularizePara, modelusage=args.model)
+            else: 
+                loss = loss_function_graph(recon_batch, data.view(-1, recon_batch.shape[1]), mu, logvar, gammaPara=args.gammaPara, regulationMatrix=regulationMatrixBatch, regularizer_type=args.regulized_type, reguPara=args.regularizePara, modelusage=args.model)    
             
         elif args.model == 'AE':
             recon_batch, z = model(data)
@@ -192,8 +194,8 @@ def train(epoch, train_loader=train_loader, EMFlag=False):
             logvar_dummy = ''
             # Original
             # loss = loss_function(recon_batch, data, mu, logvar)
-            if EMFlag:
-                loss = loss_function_graph(recon_batch, data.view(-1, recon_batch.shape[1]), mu_dummy, logvar_dummy, gammaPara=args.gammaPara, regulationMatrix=regulationMatrixBatch, regularizer_type=args.regulized_type, reguPara=args.regularizePara, modelusage=args.model)
+            if EMFlag and (not args.EMreguTag):
+                loss = loss_function_graph(recon_batch, data.view(-1, recon_batch.shape[1]), mu_dummy, logvar_dummy, gammaPara=args.gammaPara, regulationMatrix=regulationMatrixBatch, regularizer_type='noregu', reguPara=args.regularizePara, modelusage=args.model)    
             else:
                 loss = loss_function_graph(recon_batch, data.view(-1, recon_batch.shape[1]), mu_dummy, logvar_dummy, gammaPara=args.gammaPara, regulationMatrix=regulationMatrixBatch, regularizer_type=args.regulized_type, reguPara=args.regularizePara, modelusage=args.model)
                
@@ -328,6 +330,17 @@ if __name__ == "__main__":
 
     print("---Before EM process, proceeded %s seconds ---" % (time.time() - start_time))
     print("EM processes started")
+
+    #Define resolution
+    #Default: auto, otherwise use user defined resolution
+    if args.resolution == 'auto':
+        if zOut.shape[0]< 2000:
+            resolution = 0.8
+        else:
+            resolution = 0.5
+    else:
+        resolution = float(args.resolution)
+
     for bigepoch in range(0, args.EM_iteration):
         iteration_time = time.time()
 
@@ -347,7 +360,7 @@ if __name__ == "__main__":
             listResult,size = generateLouvainCluster(edgeList)
             k = len(np.unique(listResult))
             print('Louvain cluster: '+str(k))
-            k = int(k*args.resolution) if k>3 else 2
+            k = int(k*resolution) if k>3 else 2
             clustering = KMeans(n_clusters=k, random_state=0).fit(zOut)
             listResult = clustering.predict(zOut)
         elif args.clustering_method=='LouvainB':
@@ -355,7 +368,7 @@ if __name__ == "__main__":
             listResult,size = generateLouvainCluster(edgeList)
             k = len(np.unique(listResult))
             print('Louvain cluster: '+str(k))
-            k = int(k*args.resolution) if k>3 else 2
+            k = int(k*resolution) if k>3 else 2
             clustering = Birch(n_clusters=k).fit(zOut)
             listResult = clustering.predict(zOut)
         elif args.clustering_method=='KMeans':
