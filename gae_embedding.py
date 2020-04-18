@@ -22,6 +22,7 @@ from deepWalk.skipGram import SkipGram
 from tqdm import tqdm
 from graph_function import *
 from benchmark_util import *
+import resource
 
 # Ref codes from https://github.com/MysteryVaibhav/RWR-GAE
 def main(raw_args=None):
@@ -140,6 +141,8 @@ def GAEembedding(z, adj, args):
     hidden_emb = None
     for epoch in tqdm(range(args.GAEepochs)):
         t = time.time()
+        mem=resource.getrusage(resource.RUSAGE_SELF).ru_maxrss
+        print('Mem consumption before training: '+str(mem))
         model.train()
         optimizer.zero_grad()
         z, mu, logvar = model(features, adj_norm)
