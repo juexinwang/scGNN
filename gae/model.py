@@ -3,7 +3,6 @@ import torch.nn as nn
 import torch.nn.functional as F
 
 from gae.layers import GraphConvolution
-import resource
 
 
 class GCNModelVAE(nn.Module):
@@ -54,15 +53,9 @@ class GCNModelAE(nn.Module):
         self.dc = InnerProductDecoder(dropout, act=lambda x: x)
 
     def encode(self, x, adj):
-        mem=resource.getrusage(resource.RUSAGE_SELF).ru_maxrss
-        print('Mem consumption before gc1: '+str(mem))
         hidden1 = self.gc1(x, adj)
-        mem=resource.getrusage(resource.RUSAGE_SELF).ru_maxrss
-        print('Mem consumption after gc1: '+str(mem))
         return self.gc2(hidden1, adj)
 
     def forward(self, x, adj, encode=False):
         z = self.encode(x, adj)
-        mem=resource.getrusage(resource.RUSAGE_SELF).ru_maxrss
-        print('Mem consumption after encoder: '+str(mem))
         return z, z, None
