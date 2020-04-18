@@ -36,7 +36,7 @@
 # for i in {0..15}
 for i in {0..53}
 do
-for j in {0..12}
+for j in {8..12}
 do
 python results_Reading.py --methodName $i --splitMode --batchStr $j --imputeMode > run_Results_Impute_$i-$j.sh
 done
@@ -47,7 +47,7 @@ done
 # for i in {0..15}
 for i in {0..53}
 do
-for j in {0..12}
+for j in {8..12}
 do
 sbatch run_Results_Impute_$i-$j.sh
 sleep 1
