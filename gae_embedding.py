@@ -141,8 +141,8 @@ def GAEembedding(z, adj, args):
     hidden_emb = None
     for epoch in tqdm(range(args.GAEepochs)):
         t = time.time()
-        mem=resource.getrusage(resource.RUSAGE_SELF).ru_maxrss
-        print('Mem consumption before training: '+str(mem))
+        # mem=resource.getrusage(resource.RUSAGE_SELF).ru_maxrss
+        # print('Mem consumption before training: '+str(mem))
         model.train()
         optimizer.zero_grad()
         z, mu, logvar = model(features, adj_norm)
