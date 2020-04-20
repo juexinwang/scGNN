@@ -319,7 +319,7 @@ class FindKParallel():
         return edgeList_t
     
     def work(self):
-        return Pool().map(self.vecfindK, range(featureMatrix.shape[0]))
+        return Pool().map(self.vecfindK, range(self.featureMatrix.shape[0]))
 
 
 #para: measuareName:k:threshold
