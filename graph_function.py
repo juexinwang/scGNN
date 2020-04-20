@@ -283,31 +283,44 @@ def calculateKNNgraphDistanceMatrixStatsSingleThread(featureMatrix, distanceType
     
     return edgeList
 
-def vecfindK(i):
+class FindKParallel():
     '''
-    Find topK in paral
+    A class to find K parallel
     '''
-    edgeList_t=[]
-    # print('*'+str(i))
-    tmp=featureMatrix[i,:].reshape(1,-1)
-    distMat = distance.cdist(tmp,featureMatrix, distanceType)
-    # print('#'+str(distMat))
-    res = distMat.argsort()[:k+1]
-    # print('!'+str(res))
-    tmpdist = distMat[0,res[0][1:k+1]]
-    # print('@'+str(tmpdist))
-    boundary = np.mean(tmpdist)+np.std(tmpdist)
-    # print('&'+str(boundary))
-    for j in np.arange(1,k+1):
-        # TODO: check, only exclude large outliners
-        # if (distMat[0,res[0][j]]<=mean+std) and (distMat[0,res[0][j]]>=mean-std):
-        if distMat[0,res[0][j]]<=boundary:
-            weight = 1.0
-        else:
-            weight = 0.0
-        edgeList_t.append((i,res[0][j],weight))
-    # print('%'+str(len(edgeList_t)))
-    return edgeList_t
+    def __init__(self,featureMatrix,distanceType,k):
+        self.featureMatrix = featureMatrix
+        self.distanceType = distanceType
+        self.k = k
+
+    def vecfindK(self,i):
+        '''
+        Find topK in paral
+        '''
+        edgeList_t=[]
+        # print('*'+str(i))
+        tmp=self.featureMatrix[i,:].reshape(1,-1)
+        distMat = distance.cdist(tmp,self.featureMatrix, self.distanceType)
+        # print('#'+str(distMat))
+        res = distMat.argsort()[:self.k+1]
+        # print('!'+str(res))
+        tmpdist = distMat[0,res[0][1:self.k+1]]
+        # print('@'+str(tmpdist))
+        boundary = np.mean(tmpdist)+np.std(tmpdist)
+        # print('&'+str(boundary))
+        for j in np.arange(1,self.k+1):
+            # TODO: check, only exclude large outliners
+            # if (distMat[0,res[0][j]]<=mean+std) and (distMat[0,res[0][j]]>=mean-std):
+            if distMat[0,res[0][j]]<=boundary:
+                weight = 1.0
+            else:
+                weight = 0.0
+            edgeList_t.append((i,res[0][j],weight))
+        # print('%'+str(len(edgeList_t)))
+        return edgeList_t
+    
+    def work(self):
+        return p.map(self.vecfindK, range(featureMatrix.shape[0]))
+
 
 #para: measuareName:k:threshold
 def calculateKNNgraphDistanceMatrixStats(featureMatrix, distanceType='euclidean', k=10, param=None):
@@ -322,7 +335,8 @@ def calculateKNNgraphDistanceMatrixStats(featureMatrix, distanceType='euclidean'
     t= time.time()
     #Use all possible cpus for top-K finding
     with Pool() as p:
-        edgeListT = p.map(vecfindK, range(featureMatrix.shape[0]))
+        # edgeListT = p.map(vecfindK, range(featureMatrix.shape[0]))
+        edgeListT = FindKParallel(featureMatrix, distanceType, k).work()
 
     t1=time.time()
     print('Pruning succeed in '+str(t1-t)+' seconds')
