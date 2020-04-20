@@ -7,6 +7,8 @@ import networkx as nx
 import numpy as np
 from sklearn.ensemble import IsolationForest
 import time
+from multiprocessing import Pool
+import multiprocessing 
 
 #Graph related functions
 #graph Edge
@@ -212,9 +214,9 @@ def calculateKNNgraphDistanceMatrixML(featureMatrix, distanceType='euclidean', k
     return edgeList
 
 #para: measuareName:k:threshold
-def calculateKNNgraphDistanceMatrixStats(featureMatrix, distanceType='euclidean', k=10, param=None):
+def calculateKNNgraphDistanceMatrixStatsSingleThread(featureMatrix, distanceType='euclidean', k=10, param=None):
     r"""
-    Thresholdgraph: KNN Graph with stats one-std based methods
+    Thresholdgraph: KNN Graph with stats one-std based methods, SingleThread version
     """       
 
     edgeList=[]
@@ -279,6 +281,59 @@ def calculateKNNgraphDistanceMatrixStats(featureMatrix, distanceType='euclidean'
     #             weight = 0.0
     #         edgeList.append((i,res[j],weight))
     
+    return edgeList
+
+
+
+#para: measuareName:k:threshold
+def calculateKNNgraphDistanceMatrixStats(featureMatrix, distanceType='euclidean', k=10, param=None):
+    r"""
+    Thresholdgraph: KNN Graph with stats one-std based methods
+    """       
+
+    def vecfindK(i):
+    r"""
+    parallel version of finding top K distance, i is index of the cell
+    """
+    edgeList_t=[]
+    # print('*'+str(i))
+    tmp=featureMatrix[i,:].reshape(1,-1)
+    distMat = distance.cdist(tmp,featureMatrix, distanceType)
+    # print('#'+str(distMat))
+    res = distMat.argsort()[:k+1]
+    # print('!'+str(res))
+    tmpdist = distMat[0,res[0][1:k+1]]
+    # print('@'+str(tmpdist))
+    boundary = np.mean(tmpdist)+np.std(tmpdist)
+    # print('&'+str(boundary))
+    for j in np.arange(1,k+1):
+        # TODO: check, only exclude large outliners
+        # if (distMat[0,res[0][j]]<=mean+std) and (distMat[0,res[0][j]]>=mean-std):
+        if distMat[0,res[0][j]]<=boundary:
+            weight = 1.0
+        else:
+            weight = 0.0
+        edgeList_t.append((i,res[0][j],weight))
+    # print('%'+str(len(edgeList_t)))
+    return edgeList_t
+
+    edgeList=[]
+    # Get number of availble cores 
+    NUM_CORES = multiprocessing.cpu_count()
+
+    print('Start Pruning with '+str(NUM_CORES)+' cores')
+    t= time.time()
+    #Use all possible cpus for top-K finding
+    with Pool() as p:
+        edgeListT = p.map(vecfindK, range(featureMatrix.shape[0]))
+
+    t1=time.time()
+    print('Pruning succeed in '+str(t1-t)+' seconds')
+    flatten = lambda l: [item for sublist in l for item in sublist]   
+    t2=time.time()
+    edgeList = flatten(edgeListT)    
+    print('Prune out ready in '+str(t2-t1)+' seconds')
+       
     return edgeList
 
 
