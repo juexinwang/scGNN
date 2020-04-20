@@ -5,10 +5,13 @@ parser.add_argument('--imputeMode', default=False, action='store_true',
                     help='impute or not (default: False). Caution: usually change npuDir if set imputeMode as true')
 args = parser.parse_args()
 
+# Note: Now we only use imputeMode
 reDict = {}
 if args.imputeMode:
     # filename = 'jobinfo_imp_sel.txt'
-    filename = 'jobinfo_imp_louvain_3.txt'
+    filename = 'jobinfo_imp_louvain.txt'
+    # filename = 'jobinfo_imp_louvain_2.txt'
+    # filename = 'jobinfo_imp_louvain_3.txt'
 else:
     # filename = 'jobinfo_usage_sel.txt'
     filename = 'jobinfo_louvain.txt'
@@ -22,7 +25,8 @@ with open(filename) as f:
 
 # complex: 63, select: 20, strong: 16, louvain: 54
 for i in range(54):
-    for j in range(12):
+# for i in range(4):
+    for j in range(8,12):
         # 'python summary.py --fileName results-19687313.out --outFileName RC_0_0.txt'        
         if args.imputeMode:
             name = 'RI_'+str(i)+'_'+str(j)
@@ -37,11 +41,12 @@ numDict={0:'z',1:'z0',2:'z1',3:'z2',4:'z3',5:'z4',6:'z5',7:'z6',8:'z7',9:'z8',10
 nameDict={'Z0':'','Z1':'','Z2':'','Z3':'','Z4':'','Z5':'','Z6':'','Z7':'','Z8':'','Z9':''}
 
 # for all
-for i in range(12):
+for i in range(8,12):
     allstr = []
     selstr = []
     # complex: 63, select: 20, strong: 16, louvain: 54 
     for j in range(54):
+    # for i in range(4):
         tag = True
         if args.imputeMode:
             lastline = ''
