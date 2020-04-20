@@ -292,30 +292,30 @@ def calculateKNNgraphDistanceMatrixStats(featureMatrix, distanceType='euclidean'
     """       
 
     def vecfindK(i):
-    r"""
-    parallel version of finding top K distance, i is index of the cell
-    """
-    edgeList_t=[]
-    # print('*'+str(i))
-    tmp=featureMatrix[i,:].reshape(1,-1)
-    distMat = distance.cdist(tmp,featureMatrix, distanceType)
-    # print('#'+str(distMat))
-    res = distMat.argsort()[:k+1]
-    # print('!'+str(res))
-    tmpdist = distMat[0,res[0][1:k+1]]
-    # print('@'+str(tmpdist))
-    boundary = np.mean(tmpdist)+np.std(tmpdist)
-    # print('&'+str(boundary))
-    for j in np.arange(1,k+1):
-        # TODO: check, only exclude large outliners
-        # if (distMat[0,res[0][j]]<=mean+std) and (distMat[0,res[0][j]]>=mean-std):
-        if distMat[0,res[0][j]]<=boundary:
-            weight = 1.0
-        else:
-            weight = 0.0
-        edgeList_t.append((i,res[0][j],weight))
-    # print('%'+str(len(edgeList_t)))
-    return edgeList_t
+        '''
+        Find topK in paral
+        '''
+        edgeList_t=[]
+        # print('*'+str(i))
+        tmp=featureMatrix[i,:].reshape(1,-1)
+        distMat = distance.cdist(tmp,featureMatrix, distanceType)
+        # print('#'+str(distMat))
+        res = distMat.argsort()[:k+1]
+        # print('!'+str(res))
+        tmpdist = distMat[0,res[0][1:k+1]]
+        # print('@'+str(tmpdist))
+        boundary = np.mean(tmpdist)+np.std(tmpdist)
+        # print('&'+str(boundary))
+        for j in np.arange(1,k+1):
+            # TODO: check, only exclude large outliners
+            # if (distMat[0,res[0][j]]<=mean+std) and (distMat[0,res[0][j]]>=mean-std):
+            if distMat[0,res[0][j]]<=boundary:
+                weight = 1.0
+            else:
+                weight = 0.0
+            edgeList_t.append((i,res[0][j],weight))
+        # print('%'+str(len(edgeList_t)))
+        return edgeList_t
 
     edgeList=[]
     # Get number of availble cores 
