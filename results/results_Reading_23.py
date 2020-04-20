@@ -160,10 +160,10 @@ if args.imputeMode:
     pyStr = 'results_impute.py'
 
     npyList = [
-        '../npyImputeG2E_LK_2/', #1
-        '../npyImputeR2E_LK_2/', #2
-        '../npyImputeG2E_LB_2/', #3
-        '../npyImputeR2E_LB_2/', #4
+        '../npyImputeG2E_LK_3/', #1
+        '../npyImputeR2E_LK_3/', #2
+        '../npyImputeG2E_LB_3/', #3
+        '../npyImputeR2E_LB_3/', #4
         ]
 
 else:
