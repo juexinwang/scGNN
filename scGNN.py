@@ -46,7 +46,7 @@ parser.add_argument('--celltype-epochs', type=int, default=200, metavar='N',
                     help='number of epochs in celltype training (default: 200)')
 parser.add_argument('--EM-iteration', type=int, default=10, metavar='N',
                     help='number of iteration in total EM iteration (default: 10)')
-parser.add_argument('--quickmode', taction='store_true', default=False,
+parser.add_argument('--quickmode', action='store_true', default=False,
                     help='whether use quickmode, (default: no quickmode)')
 
 #Regulation autoencoder
