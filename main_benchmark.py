@@ -20,7 +20,7 @@ from gae_embedding import GAEembedding,measure_clustering_results,test_clusterin
 from LTMG_R import *
 import pandas as pd
 
-# Used for benchmark, needs Preprocessing_main.py first, then proceed by this script.
+# Used only for benchmark, needs Preprocessing_main.py first, then proceed by this script.
 parser = argparse.ArgumentParser(description='Graph EM AutoEncoder for scRNA')
 parser.add_argument('--datasetName', type=str, default='1.Biase',
                     help='TGFb/sci-CAR/sci-CAR_LTMG/MMPbasal/MMPbasal_all/MMPbasal_allgene/MMPbasal_allcell/MMPepo/MMPbasal_LTMG/MMPbasal_all_LTMG/MMPbasal_2000')

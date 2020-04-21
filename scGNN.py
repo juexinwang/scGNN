@@ -21,93 +21,59 @@ from gae_embedding import GAEembedding,measure_clustering_results,test_clusterin
 
 parser = argparse.ArgumentParser(description='Main Entrance of scGNN')
 parser.add_argument('--datasetName', type=str, default='481193cb-c021-4e04-b477-0b7cfef4614b.mtx',
-                    help='TGFb/sci-CAR/MMPbasal/MMPepo/MMPbasal/')
-# Dataset: 1-13 benchmark: 1.Biase/2.Li/3.Treutlein/4.Yan/5.Goolam/6.Guo/7.Deng/8.Pollen/9.Chung/10.Usoskin/11.Kolodziejczyk/12.Klein/13.Zeisel
+                    help='For 10X: folder name of 10X dataset; For CSV: csv file name')
 parser.add_argument('--datasetDir', type=str, default='/storage/htc/joshilab/wangjue/casestudy/',
-                    help='Directory of data, /storage/htc/joshilab/wangjue/10x/6/, default(/home/wangjue/biodata/scData/10x/6/)')
+                    help='Directory of dataset: default(/home/wangjue/biodata/scData/10x/6/)')                  
+parser.add_argument('--LTMGDir', type=str, default='/storage/htc/joshilab/wangjue/casestudy/',
+                    help='directory of LTMGDir, default:(/home/wangjue/biodata/scData/allBench/)')
+parser.add_argument('--ltmgExpressionFile', type=str, default='Use_expression.csv',
+                    help='expression File after ltmg in csv')
+parser.add_argument('--ltmgFile', type=str, default='LTMG_sparse.mtx',
+                    help='expression File in csv. (default:LTMG_sparse.mtx for sparse mode/ ltmg.csv for nonsparse mode) ')
+parser.add_argument('--outputDir', type=str, default='npyGraphTest/',
+                    help='save npy results in directory')
+parser.add_argument('--nonsparseMode', action='store_true', default=False, 
+                    help='SparseMode for running for huge dataset')
+
+#Speed related
 parser.add_argument('--batch-size', type=int, default=12800, metavar='N',
                     help='input batch size for training (default: 128)')
-parser.add_argument('--epochs', type=int, default=500, metavar='N',
-                    help='number of epochs to train in first Autoencoder (default: 500)')
+parser.add_argument('--Regu-epochs', type=int, default=500, metavar='N',
+                    help='number of epochs to train in Regulatory Autoencoder (default: 500)')
 parser.add_argument('--EM-epochs', type=int, default=200, metavar='N',
-                    help='number of epochs to train in iteration EM (default: 200)')
-parser.add_argument('--EM-iteration', type=int, default=10, metavar='N',
-                    help='number of epochs in EM iteration (default: 3)')
-parser.add_argument('--EMtype', type=str, default='celltypeEM',
-                    help='EM process type (default: celltypeEM) or EM')
-parser.add_argument('--alpha', type=float, default=0.5,
-                    help='iteration alpha (default: 0.5) to control the converge rate, should be a number between 0~1')
-parser.add_argument('--converge-type', type=str, default='either',
-                    help='type of converge: celltype/graph/both/either (default: celltype) ')
-parser.add_argument('--converge-graphratio', type=float, default=0.01,
-                    help='ratio of cell type change in EM iteration (default: 0.01), 0-1')
-parser.add_argument('--converge-celltyperatio', type=float, default=0.99,
-                    help='ratio of cell type change in EM iteration (default: 0.99), 0-1')
+                    help='number of epochs to train in process of iteration EM (default: 200)')
 parser.add_argument('--celltype-epochs', type=int, default=200, metavar='N',
                     help='number of epochs in celltype training (default: 200)')
-parser.add_argument('--no-cuda', action='store_true', default=True,
-                    help='enables CUDA training')
-parser.add_argument('--seed', type=int, default=1, metavar='S',
-                    help='random seed (default: 1)')
+parser.add_argument('--EM-iteration', type=int, default=10, metavar='N',
+                    help='number of iteration in total EM iteration (default: 10)')
+parser.add_argument('--quickmode', taction='store_true', default=False,
+                    help='whether use quickmode, (default: no quickmode)')
+
+#Regulation autoencoder
 parser.add_argument('--regulized-type', type=str, default='LTMG',
-                    help='regulized type (default: Graph) in EM, otherwise: noregu/LTMG/LTMG01')
+                    help='regulized type (default: LTMG) in EM, otherwise: noregu/LTMG/LTMG01')
+parser.add_argument('--model', type=str, default='AE',
+                    help='VAE/AE (default: AE)')
 parser.add_argument('--gammaPara', type=float, default=0.1,
-                    help='regulized parameter (default: 1.0)')
+                    help='regulized parameter (default: 0.1)')
 parser.add_argument('--regularizePara', type=float, default=0.9,
-                    help='regulized parameter (default: 0.001)')
+                    help='regulized parameter (default: 0.9)')
 parser.add_argument('--L1Para', type=float, default=0.0,
-                    help='regulized parameter (default: 0.001)')
+                    help='L1 regulized parameter (default: 0.001)')
 parser.add_argument('--L2Para', type=float, default=0.0,
-                    help='regulized parameter (default: 0.001)')
+                    help='L2 regulized parameter (default: 0.001)')
+
+#Build cell graph
 parser.add_argument('--k', type=int, default=10,
                     help='parameter k in KNN graph (default: 10)')
 parser.add_argument('--knn-distance', type=str, default='euclidean',
-                    help='KNN graph distance type (default: euclidean)')                    
-parser.add_argument('--model', type=str, default='AE',
-                    help='VAE/AE (default: AE)')
-parser.add_argument('--zerofillFlag', action='store_true', default=False, 
-                    help='fill zero or not before EM process (default: False)')
+                    help='KNN graph distance type (default: euclidean)')
 
-#Debug related
-parser.add_argument('--saveFlag', action='store_true', default=True, 
-                    help='whether save internal npy results or not')
-parser.add_argument('--npyDir', type=str, default='npyGraphTest/',
-                    help='save npy results in directory')
-parser.add_argument('--log-interval', type=int, default=100, metavar='N',
-                    help='how many batches to wait before logging training status')                  
-parser.add_argument('--LTMGDir', type=str, default='/storage/htc/joshilab/wangjue/casestudy/',
-                    help='directory of LTMGDir, default:(/home/wangjue/biodata/scData/allBench/)')
-parser.add_argument('--expressionFile', type=str, default='Use_expression.csv',
-                    help='expression File in csv')
-parser.add_argument('--ltmgFile', type=str, default='LTMG_sparse.mtx',
-                    help='expression File in csv. (default:LTMG_sparse.mtx for sparse mode/ ltmg.csv for nonsparse mode) ')
-parser.add_argument('--nonsparseMode', action='store_true', default=False, 
-                    help='SparseMode for running for huge dataset')
-# dealing with zeros in imputation results
-parser.add_argument('--noPostprocessingTag', action='store_false', default=True, 
-                    help='whether postprocess imputated results, default: (True)') 
-parser.add_argument('--postThreshold', type=float, default=0.01, 
-                    help='Threshold to force expression as 0, default:(0.01)')                                        
-
-#Clustering related
+#Graph Autoencoder
 parser.add_argument('--useGAEembedding', action='store_true', default=False, 
                     help='whether use GAE embedding for clustering(default: False)')
 parser.add_argument('--useBothembedding', action='store_true', default=False, 
                     help='whether use both embedding and Graph embedding for clustering(default: False)')
-parser.add_argument('--clustering-method', type=str, default='Louvain',
-                    help='Clustering method: Louvain/KMeans/SpectralClustering/AffinityPropagation/AgglomerativeClustering/Birch/BirchN/MeanShift/OPTICS/LouvainK/LouvainB')
-parser.add_argument('--maxClusterNumber', type=int, default=30,
-                    help='max cluster for celltypeEM without setting number of clusters (default: 30)') 
-parser.add_argument('--minMemberinCluster', type=int, default=5,
-                    help='max cluster for celltypeEM without setting number of clusters (default: 100)')
-parser.add_argument('--resolution', type=str, default='auto',
-                    help='the number of resolution on Louvain (default: auto/0.5/0.8)')
-parser.add_argument('--prunetype', type=str, default='KNNgraphStats',
-                    help='prune type, KNNgraphStats/KNNgraphML (default: KNNgraphStats)')
-parser.add_argument('--EMreguTag', action='store_true', default=False,
-                    help='whether regu in EM process')
-
-#GAE related
 parser.add_argument('--GAEmodel', type=str, default='gcn_vae', help="models used")
 parser.add_argument('--GAEepochs', type=int, default=200, help='Number of epochs to train.')
 parser.add_argument('--GAEhidden1', type=int, default=32, help='Number of units in hidden layer 1.')
@@ -115,8 +81,49 @@ parser.add_argument('--GAEhidden2', type=int, default=16, help='Number of units 
 parser.add_argument('--GAElr', type=float, default=0.01, help='Initial learning rate.')
 parser.add_argument('--GAEdropout', type=float, default=0., help='Dropout rate (1 - keep probability).')
 parser.add_argument('--GAElr_dw', type=float, default=0.001, help='Initial learning rate for regularization.')
-parser.add_argument('--n-clusters', default=20, type=int, help='number of clusters, 7 for cora, 6 for citeseer, 11 for 5.Pollen, 20 for MMP')
 
+#Clustering related
+parser.add_argument('--n-clusters', default=20, type=int, help='number of clusters if predifined for KMeans/Birch ')
+parser.add_argument('--clustering-method', type=str, default='Louvain',
+                    help='Clustering method: Louvain/KMeans/SpectralClustering/AffinityPropagation/AgglomerativeClustering/Birch/BirchN/MeanShift/OPTICS/LouvainK/LouvainB')
+parser.add_argument('--resolution', type=str, default='auto',
+                    help='the number of resolution on Louvain (default: auto/0.5/0.8)')
+parser.add_argument('--prunetype', type=str, default='KNNgraphStats',
+                    help='prune type, KNNgraphStats/KNNgraphML (default: KNNgraphStats)')
+parser.add_argument('--maxClusterNumber', type=int, default=30,
+                    help='max cluster for celltypeEM without setting number of clusters (default: 30)') 
+parser.add_argument('--minMemberinCluster', type=int, default=5,
+                    help='max cluster for celltypeEM without setting number of clusters (default: 100)')
+
+# Converge related
+parser.add_argument('--alpha', type=float, default=0.5,
+                    help='iteration alpha (default: 0.5) to control the converge rate, should be a number between 0~1')
+parser.add_argument('--converge-type', type=str, default='either',
+                    help='type of converge condition: celltype/graph/both/either (default: either) ')
+parser.add_argument('--converge-graphratio', type=float, default=0.01,
+                    help='converge condition: ratio of graph ratio change in EM iteration (default: 0.01), 0-1')
+parser.add_argument('--converge-celltyperatio', type=float, default=0.99,
+                    help='converge condition: ratio of cell type change in EM iteration (default: 0.99), 0-1')
+
+# dealing with zeros in imputation results
+parser.add_argument('--zerofillFlag', action='store_true', default=False, 
+                    help='fill zero or not before EM process (default: False)')
+parser.add_argument('--noPostprocessingTag', action='store_false', default=True, 
+                    help='whether postprocess imputated results, default: (True)') 
+parser.add_argument('--postThreshold', type=float, default=0.01, 
+                    help='Threshold to force expression as 0, default:(0.01)')  
+
+# Debug
+parser.add_argument('--no-cuda', action='store_true', default=True,
+                    help='enables CUDA training')
+parser.add_argument('--seed', type=int, default=1, metavar='S',
+                    help='random seed (default: 1)')
+parser.add_argument('--saveinternal', action='store_true', default=True, 
+                    help='whether save internal npy results or not')
+parser.add_argument('--log-interval', type=int, default=100, metavar='N',
+                    help='how many batches to wait before logging training status')                    
+parser.add_argument('--EMreguTag', action='store_true', default=False,
+                    help='whether regu in EM process')
 parser.add_argument('--debugMode', type=str, default='noDebug',
                     help='savePrune/loadPrune for debug reason (default: noDebug)')
 
@@ -124,7 +131,7 @@ args = parser.parse_args()
 args.cuda = not args.no_cuda and torch.cuda.is_available()
 args.sparseMode = not args.nonsparseMode
 
-#TODO
+#TODO 
 #As we have lots of parameters, should check args
 checkargs(args)
 
@@ -135,24 +142,6 @@ kwargs = {'num_workers': 1, 'pin_memory': True} if args.cuda else {}
 print(args)
 start_time = time.time()
 
-# load scRNA in csv
-print ('scRNA starts loading.')
-data, genelist, celllist = loadscExpression(args.LTMGDir+args.datasetName+'/'+args.expressionFile, sparseMode=args.sparseMode)
-print ('scRNA has been successfully loaded.')
-print ('Loading cost '+ str(time.time()-start_time))
-
-scData = scDataset(data)
-train_loader = DataLoader(scData, batch_size=args.batch_size, shuffle=False, **kwargs)
-print ('TrainLoader has been successfully prepared.')
-print ('TrainLoader ready at '+ str(time.time()-start_time))
-
-# load LTMG in sparse version
-print ('Start loading LTMG in sparse coding.')
-regulationMatrix = readLTMG(args.LTMGDir+args.datasetName+'/', args.ltmgFile)
-regulationMatrix = torch.from_numpy(regulationMatrix)
-print ('LTMG has been successfully prepared.')
-print ('LTMG ready at '+ str(time.time()-start_time))
-
 # Original
 if args.model == 'VAE':
     # model = VAE(dim=scData.features.shape[1]).to(device)
@@ -161,7 +150,7 @@ elif args.model == 'AE':
     model = AE(dim=scData.features.shape[1]).to(device)
 optimizer = optim.Adam(model.parameters(), lr=1e-3)
 print ('Pytorch model ready.')
-print ('Pytorch ready at '+ str(time.time()-start_time))
+print ('Pytorch ready in '+ str(time.time()-start_time)+'seconds')
 
 #TODO: have to improve save npy
 def train(epoch, train_loader=train_loader, EMFlag=False):
@@ -235,11 +224,28 @@ def train(epoch, train_loader=train_loader, EMFlag=False):
 if __name__ == "__main__":
     # May need reconstruct
     # start_time = time.time()
+    # load scRNA in csv
+    print ('scRNA starts loading.')
+    data, genelist, celllist = loadscExpression(args.LTMGDir+args.datasetName+'/'+args.ltmgExpressionFile, sparseMode=args.sparseMode)
+    print ('scRNA has been successfully loaded.')
+    print ('Loading cost '+ str(time.time()-start_time))
+
+    scData = scDataset(data)
+    train_loader = DataLoader(scData, batch_size=args.batch_size, shuffle=False, **kwargs)
+    print ('TrainLoader has been successfully prepared.')
+    print ('TrainLoader ready at '+ str(time.time()-start_time))
+
+    # load LTMG in sparse version
+    print ('Start loading LTMG in sparse coding.')
+    regulationMatrix = readLTMG(args.LTMGDir+args.datasetName+'/', args.ltmgFile)
+    regulationMatrix = torch.from_numpy(regulationMatrix)
+    print ('LTMG has been successfully prepared.')
+    print ('LTMG ready at '+ str(time.time()-start_time))
 
     # Debug
     if args.debugMode == 'savePrune' or args.debugMode == 'noDebug':
         print('Start training...')
-        for epoch in range(1, args.epochs + 1):
+        for epoch in range(1, args.Regu_epochs + 1):
             recon, original, z = train(epoch, EMFlag=False)
             
         zOut = z.detach().cpu().numpy()
@@ -413,7 +419,7 @@ if __name__ == "__main__":
         print('Total Cluster Number: '+str(len(set(listResult))))
 
         #Graph regulizated EM AE with celltype AE, do the additional AE
-        if args.EMtype == 'celltypeEM': 
+        if not args.quickmode : 
             # Each cluster has a autoencoder, and organize them back in iteraization
             clusterIndexList = []
             for i in range(len(set(listResult))):
@@ -473,39 +479,39 @@ if __name__ == "__main__":
                 zOut=np.concatenate((zOut,zEmbedding),axis=1)
 
         # Original save step by step
-        if args.saveFlag:
+        if args.saveinternal:
             print ('Start save at '+ str(time.time()-start_time))
             reconOut = recon.detach().cpu().numpy()
-            # np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+'_'+str(args.regularizePara)+'_'+str(args.L1Para)+'_'+str(args.L2Para)+'_recon'+str(bigepoch)+'.npy',reconOut)
-            # np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+'_'+str(args.regularizePara)+'_'+str(args.L1Para)+'_'+str(args.L2Para)+'_z'+str(bigepoch)+'.npy',zOut)
-            # np.savetxt(args.npyDir+args.datasetName+'_'+args.regulized_type+'_'+str(args.regularizePara)+'_'+str(args.L1Para)+'_'+str(args.L2Para)+'_graph'+str(bigepoch)+'.csv',edgeList,fmt='%d,%d,%2.1f')
-            # np.savetxt(args.npyDir+args.datasetName+'_'+args.regulized_type+'_'+str(args.regularizePara)+'_'+str(args.L1Para)+'_'+str(args.L2Para)+'_results'+str(bigepoch)+'.txt',listResult,fmt='%d')
-        
+
             # Output
             print ('Prepare save at '+ str(time.time()-start_time))
             print('Save results with reconstructed shape:'+str(reconOut.shape)+' Size of gene:'+str(len(genelist))+' Size of cell:'+str(len(celllist)))
             recon_df = pd.DataFrame(np.transpose(reconOut),index=genelist,columns=celllist)
-            recon_df.to_csv(args.npyDir+args.datasetName+'_'+args.regulized_type+'_'+str(args.regularizePara)+'_'+str(args.L1Para)+'_'+str(args.L2Para)+'_recon_'+str(bigepoch)+'.csv')
+            recon_df.to_csv(args.outputDir+args.datasetName+'_'+args.regulized_type+'_'+str(args.regularizePara)+'_'+str(args.L1Para)+'_'+str(args.L2Para)+'_recon_'+str(bigepoch)+'.csv')
             emblist=[]
             for i in range(zOut.shape[1]):
                 emblist.append('embedding'+str(i))
             embedding_df = pd.DataFrame(zOut,index=celllist,columns=emblist)
-            embedding_df.to_csv(args.npyDir+args.datasetName+'_'+args.regulized_type+'_'+str(args.regularizePara)+'_'+str(args.L1Para)+'_'+str(args.L2Para)+'_embedding_'+str(bigepoch)+'.csv')
+            embedding_df.to_csv(args.outputDir+args.datasetName+'_'+args.regulized_type+'_'+str(args.regularizePara)+'_'+str(args.L1Para)+'_'+str(args.L2Para)+'_embedding_'+str(bigepoch)+'.csv')
             graph_df = pd.DataFrame(edgeList,columns=["NodeA","NodeB","Weights"]) 
-            graph_df.to_csv(args.npyDir+args.datasetName+'_'+args.regulized_type+'_'+str(args.regularizePara)+'_'+str(args.L1Para)+'_'+str(args.L2Para)+'_graph_'+str(bigepoch)+'.csv',index=False)
+            graph_df.to_csv(args.outputDir+args.datasetName+'_'+args.regulized_type+'_'+str(args.regularizePara)+'_'+str(args.L1Para)+'_'+str(args.L2Para)+'_graph_'+str(bigepoch)+'.csv',index=False)
             results_df = pd.DataFrame(listResult,index=celllist,columns=["Celltype"])
-            results_df.to_csv(args.npyDir+args.datasetName+'_'+args.regulized_type+'_'+str(args.regularizePara)+'_'+str(args.L1Para)+'_'+str(args.L2Para)+'_results_'+str(bigepoch)+'.txt')   
+            results_df.to_csv(args.outputDir+args.datasetName+'_'+args.regulized_type+'_'+str(args.regularizePara)+'_'+str(args.L1Para)+'_'+str(args.L2Para)+'_results_'+str(bigepoch)+'.txt')   
 
             print ('Save complete at '+ str(time.time()-start_time))
 
+        iterfinish_time = time.time()
         mem=resource.getrusage(resource.RUSAGE_SELF).ru_maxrss
         print('Mem consumption: '+str(mem))
-        print("---%sth iteration in EM process, proceeded %s seconds ---" % (bigepoch, time.time() - iteration_time))
+        print("---%sth iteration in EM process, proceeded %s seconds ---" % (bigepoch, iterfinish_time - iteration_time))
 
         #Iteration usage
         Gc = nx.Graph()
         Gc.add_weighted_edges_from(edgeList)
         adjGc = nx.adjacency_matrix(Gc)
+        mem=resource.getrusage(resource.RUSAGE_SELF).ru_maxrss
+        print('Mem consumption: '+str(mem))
+        print('New adj ready in %s seconds' % (time.time() - iterfinish_time))
         
         # Update new adj
         adjNew = args.alpha*nlG0 + (1-args.alpha) * adjGc/np.sum(adjGc,axis=0)
@@ -549,33 +555,33 @@ if __name__ == "__main__":
     
     # Output final results
     print('All iterations finished, start output results.')
-    # if args.saveFlag:
+    # if args.saveinternal:
     reconOut = recon.detach().cpu().numpy()
     if not args.noPostprocessingTag:
         threshold_indices = reconOut < args.postThreshold
         reconOut[threshold_indices] = 0.0
-    # np.save(   args.npyDir+args.datasetName+'_'+args.regulized_type+'_'+str(args.regularizePara)+'_'+str(args.L1Para)+'_'+str(args.L2Para)+'_recon.npy',reconOut)
-    # np.save(   args.npyDir+args.datasetName+'_'+args.regulized_type+'_'+str(args.regularizePara)+'_'+str(args.L1Para)+'_'+str(args.L2Para)+'_z.npy',zOut)
-    # np.save(   args.npyDir+args.datasetName+'_'+args.regulized_type+'_'+str(args.regularizePara)+'_'+str(args.L1Para)+'_'+str(args.L2Para)+'_final_edgeList.npy',edgeList)
-    # np.savetxt(args.npyDir+args.datasetName+'_'+args.regulized_type+'_'+str(args.regularizePara)+'_'+str(args.L1Para)+'_'+str(args.L2Para)+'_results.txt',listResult,fmt='%d')
+    # np.save(   args.outputDir+args.datasetName+'_'+args.regulized_type+'_'+str(args.regularizePara)+'_'+str(args.L1Para)+'_'+str(args.L2Para)+'_recon.npy',reconOut)
+    # np.save(   args.outputDir+args.datasetName+'_'+args.regulized_type+'_'+str(args.regularizePara)+'_'+str(args.L1Para)+'_'+str(args.L2Para)+'_z.npy',zOut)
+    # np.save(   args.outputDir+args.datasetName+'_'+args.regulized_type+'_'+str(args.regularizePara)+'_'+str(args.L1Para)+'_'+str(args.L2Para)+'_final_edgeList.npy',edgeList)
+    # np.savetxt(args.outputDir+args.datasetName+'_'+args.regulized_type+'_'+str(args.regularizePara)+'_'+str(args.L1Para)+'_'+str(args.L2Para)+'_results.txt',listResult,fmt='%d')
     
     # save txt
-    # np.savetxt(args.npyDir+args.datasetName+'_'+args.regulized_type+'_'+str(args.regularizePara)+'_'+str(args.L1Para)+'_'+str(args.L2Para)+'_recon.csv',reconOut,delimiter=",",fmt='%10.4f')
-    # np.savetxt(args.npyDir+args.datasetName+'_'+args.regulized_type+'_'+str(args.regularizePara)+'_'+str(args.L1Para)+'_'+str(args.L2Para)+'_embedding.csv',zOut, delimiter=",",fmt='%10.4f')
-    # np.savetxt(args.npyDir+args.datasetName+'_'+args.regulized_type+'_'+str(args.regularizePara)+'_'+str(args.L1Para)+'_'+str(args.L2Para)+'_graph.csv',edgeList,fmt='%d,%d,%2.1f')
-    # np.savetxt(args.npyDir+args.datasetName+'_'+args.regulized_type+'_'+str(args.regularizePara)+'_'+str(args.L1Para)+'_'+str(args.L2Para)+'_results.txt',listResult,fmt='%d') 
+    # np.savetxt(args.outputDir+args.datasetName+'_'+args.regulized_type+'_'+str(args.regularizePara)+'_'+str(args.L1Para)+'_'+str(args.L2Para)+'_recon.csv',reconOut,delimiter=",",fmt='%10.4f')
+    # np.savetxt(args.outputDir+args.datasetName+'_'+args.regulized_type+'_'+str(args.regularizePara)+'_'+str(args.L1Para)+'_'+str(args.L2Para)+'_embedding.csv',zOut, delimiter=",",fmt='%10.4f')
+    # np.savetxt(args.outputDir+args.datasetName+'_'+args.regulized_type+'_'+str(args.regularizePara)+'_'+str(args.L1Para)+'_'+str(args.L2Para)+'_graph.csv',edgeList,fmt='%d,%d,%2.1f')
+    # np.savetxt(args.outputDir+args.datasetName+'_'+args.regulized_type+'_'+str(args.regularizePara)+'_'+str(args.L1Para)+'_'+str(args.L2Para)+'_results.txt',listResult,fmt='%d') 
     
     # Output
     recon_df = pd.DataFrame(np.transpose(reconOut),index=genelist,columns=celllist)
-    recon_df.to_csv(args.npyDir+args.datasetName+'_'+args.regulized_type+'_'+str(args.regularizePara)+'_'+str(args.L1Para)+'_'+str(args.L2Para)+'_recon.csv')
+    recon_df.to_csv(args.outputDir+args.datasetName+'_'+args.regulized_type+'_'+str(args.regularizePara)+'_'+str(args.L1Para)+'_'+str(args.L2Para)+'_recon.csv')
     emblist=[]
     for i in range(zOut.shape[1]):
         emblist.append('embedding'+str(i))
     embedding_df = pd.DataFrame(zOut,index=celllist,columns=emblist)
-    embedding_df.to_csv(args.npyDir+args.datasetName+'_'+args.regulized_type+'_'+str(args.regularizePara)+'_'+str(args.L1Para)+'_'+str(args.L2Para)+'_embedding.csv')
+    embedding_df.to_csv(args.outputDir+args.datasetName+'_'+args.regulized_type+'_'+str(args.regularizePara)+'_'+str(args.L1Para)+'_'+str(args.L2Para)+'_embedding.csv')
     graph_df = pd.DataFrame(edgeList,columns=["NodeA","NodeB","Weights"]) 
-    graph_df.to_csv(args.npyDir+args.datasetName+'_'+args.regulized_type+'_'+str(args.regularizePara)+'_'+str(args.L1Para)+'_'+str(args.L2Para)+'_graph.csv',index=False)
+    graph_df.to_csv(args.outputDir+args.datasetName+'_'+args.regulized_type+'_'+str(args.regularizePara)+'_'+str(args.L1Para)+'_'+str(args.L2Para)+'_graph.csv',index=False)
     results_df = pd.DataFrame(listResult,index=celllist,columns=["Celltype"])
-    results_df.to_csv(args.npyDir+args.datasetName+'_'+args.regulized_type+'_'+str(args.regularizePara)+'_'+str(args.L1Para)+'_'+str(args.L2Para)+'_results.txt')   
+    results_df.to_csv(args.outputDir+args.datasetName+'_'+args.regulized_type+'_'+str(args.regularizePara)+'_'+str(args.L1Para)+'_'+str(args.L2Para)+'_results.txt')   
       
     print("---Total Running Time: %s seconds ---" % (time.time() - start_time))

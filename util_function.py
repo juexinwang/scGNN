@@ -18,6 +18,7 @@ def checkargs(args):
     '''
     check whether paramters meets requirements
     '''
+    #TODO
     return
 
 def parse_index_file(filename):
