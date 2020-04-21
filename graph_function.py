@@ -58,6 +58,14 @@ def generateAdj(featureMatrix, graphType='KNNgraph', para = None):
             distanceType = parawords[0]
             k = int(parawords[1])
         edgeList = calculateKNNgraphDistanceMatrixStats(featureMatrix, distanceType=distanceType, k=k)
+    elif graphType == 'KNNgraphStatsSingleThread':
+        # with weights!
+        # with stats, one std is contained
+        if para != None:
+            parawords = para.split(':')
+            distanceType = parawords[0]
+            k = int(parawords[1])
+        edgeList = calculateKNNgraphDistanceMatrixStatsSingleThread(featureMatrix, distanceType=distanceType, k=k)
     else:
         print('Should give graphtype')
     

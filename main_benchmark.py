@@ -100,7 +100,7 @@ parser.add_argument('--minMemberinCluster', type=int, default=5,
 parser.add_argument('--resolution', type=str, default='auto',
                     help='the number of resolution on Louvain (default: auto/0.5/0.8)')
 parser.add_argument('--prunetype', type=str, default='KNNgraphStats',
-                    help='prune type, KNNgraphStats/KNNgraphML (default: KNNgraphStats)')
+                    help='prune type, KNNgraphStats/KNNgraphML/KNNgraphStatsSingleThread (default: KNNgraphStats)')
 parser.add_argument('--EMreguTag', action='store_true', default=False,
                     help='whether regu in EM process')
 

@@ -46,7 +46,7 @@ for i in range(8,13):
     selstr = []
     # complex: 63, select: 20, strong: 16, louvain: 54 
     for j in range(54):
-    # for i in range(4):
+    # for j in range(4):
         tag = True
         if args.imputeMode:
             lastline = ''
