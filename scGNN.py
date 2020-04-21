@@ -342,6 +342,7 @@ if __name__ == "__main__":
         resolution = float(args.resolution)
 
     for bigepoch in range(0, args.EM_iteration):
+        print('Start %sth interation.'%(bigepoch))
         iteration_time = time.time()
 
         # Now for both methods, we need do clustering, using clustering results to check converge
@@ -437,6 +438,8 @@ if __name__ == "__main__":
                 for i in clusterIndex:
                     reconNew[i] = reconCluster[count,:]
                     count +=1
+                # empty cuda cache
+                torch.cuda.empty_cache()
             # Update
             recon = reconNew
         
@@ -454,7 +457,7 @@ if __name__ == "__main__":
         prune_time = time.time()
         # Here para = 'euclidean:10'
         # adj, edgeList = generateAdj(zOut, graphType='KNNgraphML', para = args.knn_distance+':'+str(args.k)) 
-        adj, edgeList = generateAdj(zOut, graphType=args.prunetype, para = args.knn_distance+':'+str(args.k)) 
+        adj, edgeList = generateAdj(zOut, graphType=args.prunetype, para = args.knn_distance+':'+str(args.k), outAdjTag = (args.useGAEembedding or args.useBothembedding)) 
         print("---Pruning takes %s seconds ---" % (time.time() - prune_time))
         mem=resource.getrusage(resource.RUSAGE_SELF).ru_maxrss
         print('Mem consumption: '+str(mem))
@@ -495,7 +498,9 @@ if __name__ == "__main__":
 
             print ('Save complete at '+ str(time.time()-start_time))
 
-        print("---One iteration in EM process, proceeded %s seconds ---" % (time.time() - iteration_time))
+        mem=resource.getrusage(resource.RUSAGE_SELF).ru_maxrss
+        print('Mem consumption: '+str(mem))
+        print("---%sth iteration in EM process, proceeded %s seconds ---" % (bigepoch, time.time() - iteration_time))
 
         #Iteration usage
         Gc = nx.Graph()
@@ -539,8 +544,11 @@ if __name__ == "__main__":
         # Update
         adjOld = adjNew
         listResultOld = listResult
+        print("--- Judge whether terminate process from iteration takes %s seconds ---" % (time.time() - iteration_time))
+        print("--- "+str(bigepoch)+"th iteration in EM Finished ---")
     
     # Output final results
+    print('All iterations finished, start output results.')
     # if args.saveFlag:
     reconOut = recon.detach().cpu().numpy()
     if not args.noPostprocessingTag:

@@ -18,8 +18,13 @@ import multiprocessing
 #         self.col=col
 
 # Calculate graph, return adjcency matrix
-def generateAdj(featureMatrix, graphType='KNNgraph', para = None):
+def generateAdj(featureMatrix, graphType='KNNgraph', para = None, outAdjTag = True ):
+    """
+    outAdjTag: saving space for not generating adj for giant network without GAE 
+    """
     edgeList = None
+    adj = None
+
     if graphType == 'KNNgraphPairwise':
         edgeList = calculateKNNgraphDistanceMatrixPairwise(featureMatrix, para)
     elif graphType == 'KNNgraph':
@@ -60,7 +65,7 @@ def generateAdj(featureMatrix, graphType='KNNgraph', para = None):
         edgeList = calculateKNNgraphDistanceMatrixStats(featureMatrix, distanceType=distanceType, k=k)
     elif graphType == 'KNNgraphStatsSingleThread':
         # with weights!
-        # with stats, one std is contained
+        # with stats, one std is contained, but only use single thread
         if para != None:
             parawords = para.split(':')
             distanceType = parawords[0]
@@ -69,8 +74,9 @@ def generateAdj(featureMatrix, graphType='KNNgraph', para = None):
     else:
         print('Should give graphtype')
     
-    graphdict = edgeList2edgeDict(edgeList, featureMatrix.shape[0])
-    adj = nx.adjacency_matrix(nx.from_dict_of_lists(graphdict))
+    if outAdjTag:
+        graphdict = edgeList2edgeDict(edgeList, featureMatrix.shape[0])
+        adj = nx.adjacency_matrix(nx.from_dict_of_lists(graphdict))
     
     return adj, edgeList
 
