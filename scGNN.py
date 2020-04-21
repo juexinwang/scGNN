@@ -84,7 +84,7 @@ parser.add_argument('--GAElr_dw', type=float, default=0.001, help='Initial learn
 
 #Clustering related
 parser.add_argument('--n-clusters', default=20, type=int, help='number of clusters if predifined for KMeans/Birch ')
-parser.add_argument('--clustering-method', type=str, default='Louvain',
+parser.add_argument('--clustering-method', type=str, default='LouvainK',
                     help='Clustering method: Louvain/KMeans/SpectralClustering/AffinityPropagation/AgglomerativeClustering/Birch/BirchN/MeanShift/OPTICS/LouvainK/LouvainB')
 parser.add_argument('--resolution', type=str, default='auto',
                     help='the number of resolution on Louvain (default: auto/0.5/0.8)')
