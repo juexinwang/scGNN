@@ -142,6 +142,24 @@ kwargs = {'num_workers': 1, 'pin_memory': True} if args.cuda else {}
 print(args)
 start_time = time.time()
 
+# load scRNA in csv
+print ('scRNA starts loading.')
+data, genelist, celllist = loadscExpression(args.LTMGDir+args.datasetName+'/'+args.ltmgExpressionFile, sparseMode=args.sparseMode)
+print ('scRNA has been successfully loaded.')
+print ('Loading cost '+ str(time.time()-start_time))
+
+scData = scDataset(data)
+train_loader = DataLoader(scData, batch_size=args.batch_size, shuffle=False, **kwargs)
+print ('TrainLoader has been successfully prepared.')
+print ('TrainLoader ready at '+ str(time.time()-start_time))
+
+# load LTMG in sparse version
+print ('Start loading LTMG in sparse coding.')
+regulationMatrix = readLTMG(args.LTMGDir+args.datasetName+'/', args.ltmgFile)
+regulationMatrix = torch.from_numpy(regulationMatrix)
+print ('LTMG has been successfully prepared.')
+print ('LTMG ready at '+ str(time.time()-start_time))
+
 # Original
 if args.model == 'VAE':
     # model = VAE(dim=scData.features.shape[1]).to(device)
@@ -224,23 +242,6 @@ def train(epoch, train_loader=train_loader, EMFlag=False):
 if __name__ == "__main__":
     # May need reconstruct
     # start_time = time.time()
-    # load scRNA in csv
-    print ('scRNA starts loading.')
-    data, genelist, celllist = loadscExpression(args.LTMGDir+args.datasetName+'/'+args.ltmgExpressionFile, sparseMode=args.sparseMode)
-    print ('scRNA has been successfully loaded.')
-    print ('Loading cost '+ str(time.time()-start_time))
-
-    scData = scDataset(data)
-    train_loader = DataLoader(scData, batch_size=args.batch_size, shuffle=False, **kwargs)
-    print ('TrainLoader has been successfully prepared.')
-    print ('TrainLoader ready at '+ str(time.time()-start_time))
-
-    # load LTMG in sparse version
-    print ('Start loading LTMG in sparse coding.')
-    regulationMatrix = readLTMG(args.LTMGDir+args.datasetName+'/', args.ltmgFile)
-    regulationMatrix = torch.from_numpy(regulationMatrix)
-    print ('LTMG has been successfully prepared.')
-    print ('LTMG ready at '+ str(time.time()-start_time))
 
     # Debug
     if args.debugMode == 'savePrune' or args.debugMode == 'noDebug':
