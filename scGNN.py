@@ -6,6 +6,7 @@ import pickle as pkl
 import networkx as nx
 import scipy.sparse as sp
 import resource
+import datetime
 import torch
 from torch.utils.data import Dataset, DataLoader
 from torch import nn, optim
@@ -145,7 +146,7 @@ start_time = time.time()
 # load scRNA in csv
 print ('--00:00:00--scRNA starts loading.')
 data, genelist, celllist = loadscExpression(args.LTMGDir+args.datasetName+'/'+args.ltmgExpressionFile, sparseMode=args.sparseMode)
-print ('--'+str(time.time()-start_time)+'--scRNA has been successfully loaded')
+print ('--'+str(datetime.timedelta(seconds=int(time.time()-start_time)))+'--scRNA has been successfully loaded')
 
 scData = scDataset(data)
 train_loader = DataLoader(scData, batch_size=args.batch_size, shuffle=False, **kwargs)
