@@ -507,21 +507,28 @@ if __name__ == "__main__":
         print("---%sth iteration in EM process, proceeded %s seconds ---" % (bigepoch, iterfinish_time - iteration_time))
 
         #Iteration usage
-        Gc = nx.Graph()
-        Gc.add_weighted_edges_from(edgeList)
-        adjGc = nx.adjacency_matrix(Gc)
-        mem=resource.getrusage(resource.RUSAGE_SELF).ru_maxrss
-        print('Mem consumption: '+str(mem))
-        print('New adj ready in %s seconds' % (time.time() - iterfinish_time))
-        
-        # Update new adj
-        adjNew = args.alpha*nlG0 + (1-args.alpha) * adjGc/np.sum(adjGc,axis=0)
-        
-        #debug
-        graphChange = np.mean(abs(adjNew-adjOld))
-        graphChangeThreshold = args.converge_graphratio * np.mean(abs(nlG0))
-        print('adjNew:{} adjOld:{} G0:{}'.format(adjNew, adjOld, nlG0))
-        print('mean:{} threshold:{}'.format(graphChange, graphChangeThreshold))
+        # If not only use 'celltype', we have to use graph change
+        # The problem is it will consume huge memory for giant graphs
+        if not args.converge_type == 'celltype':
+            Gc = nx.Graph()
+            Gc.add_weighted_edges_from(edgeList)
+            adjGc = nx.adjacency_matrix(Gc)
+            mem=resource.getrusage(resource.RUSAGE_SELF).ru_maxrss
+            print('Mem consumption: '+str(mem))
+            print('New adj ready in %s seconds' % (time.time() - iterfinish_time))
+            
+            # Update new adj
+            adjNew = args.alpha*nlG0 + (1-args.alpha) * adjGc/np.sum(adjGc,axis=0)
+            
+            #debug
+            graphChange = np.mean(abs(adjNew-adjOld))
+            graphChangeThreshold = args.converge_graphratio * np.mean(abs(nlG0))
+            print('adjNew:{} adjOld:{} G0:{}'.format(adjNew, adjOld, nlG0))
+            print('mean:{} threshold:{}'.format(graphChange, graphChangeThreshold))
+
+            # Update
+            adjOld = adjNew
+
         ari, ami, nmi, cs, fms, vms, hs = measureClusteringTrueLabel(listResultOld, listResult)
         print(listResultOld)
         print(listResult)
@@ -549,7 +556,6 @@ if __name__ == "__main__":
                 break
 
         # Update
-        adjOld = adjNew
         listResultOld = listResult
         print("--- Judge whether terminate process from iteration takes %s seconds ---" % (time.time() - iteration_time))
         print("--- "+str(bigepoch)+"th iteration in EM Finished ---")
