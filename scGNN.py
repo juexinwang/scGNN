@@ -443,7 +443,7 @@ if __name__ == "__main__":
                 # empty cuda cache
                 del originalCluster
                 del zCluster
-                # torch.cuda.empty_cache()
+                torch.cuda.empty_cache()
             
             # Update
             recon = reconNew
