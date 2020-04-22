@@ -4,7 +4,7 @@ single cell Graph Neural Networks
 
 About:
 ----------
-Graph Neural Network for Single Cell Impute and celltype classification 
+Graph Neural Network for Single Cell Impute and celltype identification. 
 
 Reqirements: (May not sufficient)
 ----------
@@ -19,20 +19,17 @@ Tested on Ubuntu 16.04 and CentOS 7 with Python 3.6.8
     pip install umap-learn
     pip install community
     pip install rpy2
-    pip install node2vec
     pip install munkres
-    pip install dask[dataframe]
 
 R integration:
 
     R >=3.6.2
     install.packages("devtools")
+    install.packages("igraph")
     library(devtools)
-    install_github("dgrun/FateID")
-    install_github("dgrun/RaceID3_StemID2_package")
     install_github("BMEngineeR/scGNNLTMG")
 
-*** Notes for casestudy: (scGNN.py) Temporary
+Example:
 ---------
 Example data:
 After filtering: 9760 cells 13052 genes, finally select 2000 genes
@@ -41,13 +38,15 @@ https://data.humancellatlas.org/project-assets/project-matrices/4d6f6c96-2a83-43
 
 1. Generating Use_expression.csv (preprocessed file) and ltmg.csv (ltmg)
 
-    python3 -W ignore PreprocessingscGNN.py --datasetName e7448a34-b33d-41de-b422-4c09bfeba96b.mtx --datasetDir /storage/htc/joshilab/wangjue/10x/6/ --LTMGDir /storage/htc/joshilab/wangjue/10x/6/
+    `python3 -W ignore PreprocessingscGNN.py --datasetName e7448a34-b33d-41de-b422-4c09bfeba96b.mtx --datasetDir /storage/htc/joshilab/wangjue/10x/6/ --LTMGDir /storage/htc/joshilab/wangjue/10x/6/`
 
 2. Run scGNN
 
-    module load miniconda3
-    source activate conda_R
-    python3 -W ignore scGNN.py --datasetName e7448a34-b33d-41de-b422-4c09bfeba96b.mtx --regulized-type LTMG --EMtype celltypeEM --clustering-method LouvainK --npyDir outputdir/
+    `module load miniconda3`
+    
+    `source activate conda_R`
+
+    `python3 -W ignore scGNN.py --datasetName e7448a34-b33d-41de-b422-4c09bfeba96b.mtx --LTMGDir /storage/htc/joshilab/wangjue/10x/6/ --outputDir outputdir/`
 
 3. Check Results
     
@@ -62,7 +61,7 @@ https://data.humancellatlas.org/project-assets/project-matrices/4d6f6c96-2a83-43
     *_results.txt:      Identified cell types. First row as the name. 
 
 
-Notes for Cluster Running Benchmark: (main_benchmark.py) May be deleted later
+Notes for Cluster Running Benchmark: (main_benchmark.py) Here for eproducibility.
 ---------
 module load miniconda3
 conda create -n my_environment python=3.7
@@ -81,69 +80,7 @@ python Preprocessing_main.py --expression-name 10.Usoskin
 Now We totally have 63 methods in testing:
 * for using R support: geneLouvianCluster.py, otherwise we do not use rpy2
 
-    experiment_1_g_b.sh
-    experiment_1_g_e.sh
-    experiment_1_g_f.sh
-    experiment_1_r_b.sh
-    experiment_1_r_e.sh
-    experiment_1_r_f.sh
-    experiment_1_n_b.sh
-    experiment_1_n_e.sh
-    experiment_1_n_f.sh
-    experiment_2_g_b_AffinityPropagation.sh
-    experiment_2_g_b_AgglomerativeClustering.sh
-    experiment_2_g_b_Birch.sh
-    experiment_2_g_b_KMeans.sh
-    experiment_2_g_b_SpectralClustering.sh
-    experiment_2_g_b.sh *
-    experiment_2_g_e_AffinityPropagation.sh
-    experiment_2_g_e_AgglomerativeClustering.sh
-    experiment_2_g_e_Birch.sh
-    experiment_2_g_e_KMeans.sh
-    experiment_2_g_e_SpectralClustering.sh
-    experiment_2_g_e.sh *   
-    experiment_2_g_f_AffinityPropagation.sh
-    experiment_2_g_f_AgglomerativeClustering.sh
-    experiment_2_g_f_Birch.sh
-    experiment_2_g_f_KMeans.sh
-    experiment_2_g_f_SpectralClustering.sh
-    experiment_2_g_f.sh *
-    experiment_2_r_b_AffinityPropagation.sh
-    experiment_2_r_b_AgglomerativeClustering.sh
-    experiment_2_r_b_Birch.sh
-    experiment_2_r_b_KMeans.sh
-    experiment_2_r_b_SpectralClustering.sh
-    experiment_2_r_b.sh *
-    experiment_2_r_e_AffinityPropagation.sh
-    experiment_2_r_e_AgglomerativeClustering.sh
-    experiment_2_r_e_Birch.sh
-    experiment_2_r_e_KMeans.sh
-    experiment_2_r_e_SpectralClustering.sh
-    experiment_2_r_e.sh *   
-    experiment_2_r_f_AffinityPropagation.sh
-    experiment_2_r_f_AgglomerativeClustering.sh
-    experiment_2_r_f_Birch.sh
-    experiment_2_r_f_KMeans.sh
-    experiment_2_r_f_SpectralClustering.sh
-    experiment_2_r_f.sh * 
-    experiment_2_n_b_AffinityPropagation.sh
-    experiment_2_n_b_AgglomerativeClustering.sh
-    experiment_2_n_b_Birch.sh
-    experiment_2_n_b_KMeans.sh
-    experiment_2_n_b_SpectralClustering.sh
-    experiment_2_n_b.sh *   
-    experiment_2_n_e_AffinityPropagation.sh
-    experiment_2_n_e_AgglomerativeClustering.sh
-    experiment_2_n_e_Birch.sh
-    experiment_2_n_e_KMeans.sh
-    experiment_2_n_e_SpectralClustering.sh
-    experiment_2_n_e.sh *    
-    experiment_2_n_f_AffinityPropagation.sh
-    experiment_2_n_f_AgglomerativeClustering.sh
-    experiment_2_n_f_Birch.sh
-    experiment_2_n_f_KMeans.sh
-    experiment_2_n_f_SpectralClustering.sh
-    experiment_2_n_f.sh *   
+    experiment_2_g_e.sh *
 
 1. Generating shells for sbatch: This will generate lots of shell files!
 
