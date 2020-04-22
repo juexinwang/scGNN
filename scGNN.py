@@ -99,7 +99,7 @@ parser.add_argument('--minMemberinCluster', type=int, default=5,
 # Converge related
 parser.add_argument('--alpha', type=float, default=0.5,
                     help='iteration alpha (default: 0.5) to control the converge rate, should be a number between 0~1')
-parser.add_argument('--converge-type', type=str, default='either',
+parser.add_argument('--converge-type', type=str, default='celltype',
                     help='type of converge condition: celltype/graph/both/either (default: either) ')
 parser.add_argument('--converge-graphratio', type=float, default=0.01,
                     help='converge condition: ratio of graph ratio change in EM iteration (default: 0.01), 0-1')
