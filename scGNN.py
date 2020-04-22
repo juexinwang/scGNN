@@ -144,21 +144,19 @@ print(args)
 start_time = time.time()
 
 # load scRNA in csv
-print ('--00:00:00--scRNA starts loading.')
+print ('---0:00:00---scRNA starts loading.')
 data, genelist, celllist = loadscExpression(args.LTMGDir+args.datasetName+'/'+args.ltmgExpressionFile, sparseMode=args.sparseMode)
-print ('--'+str(datetime.timedelta(seconds=int(time.time()-start_time)))+'--scRNA has been successfully loaded')
+print ('---'+str(datetime.timedelta(seconds=int(time.time()-start_time)))+'---scRNA has been successfully loaded')
 
 scData = scDataset(data)
 train_loader = DataLoader(scData, batch_size=args.batch_size, shuffle=False, **kwargs)
-print ('TrainLoader has been successfully prepared.')
-print ('TrainLoader ready at '+ str(time.time()-start_time))
+print ('---'+str(datetime.timedelta(seconds=int(time.time()-start_time)))+'---TrainLoader has been successfully prepared.')
 
 # load LTMG in sparse version
 print ('Start loading LTMG in sparse coding.')
 regulationMatrix = readLTMG(args.LTMGDir+args.datasetName+'/', args.ltmgFile)
 regulationMatrix = torch.from_numpy(regulationMatrix)
-print ('LTMG has been successfully prepared.')
-print ('LTMG ready at '+ str(time.time()-start_time))
+print ('---'+str(datetime.timedelta(seconds=int(time.time()-start_time)))+'---LTMG has been successfully prepared.')
 
 # Original
 if args.model == 'VAE':
@@ -167,8 +165,7 @@ if args.model == 'VAE':
 elif args.model == 'AE':
     model = AE(dim=scData.features.shape[1]).to(device)
 optimizer = optim.Adam(model.parameters(), lr=1e-3)
-print ('Pytorch model ready.')
-print ('Pytorch ready in '+ str(time.time()-start_time)+'seconds')
+print ('---'+str(datetime.timedelta(seconds=int(time.time()-start_time)))+'---Pytorch model ready.')
 
 #TODO: have to improve save npy
 def train(epoch, train_loader=train_loader, EMFlag=False):
@@ -251,12 +248,11 @@ if __name__ == "__main__":
             
         zOut = z.detach().cpu().numpy()
         print ('zOut ready at '+ str(time.time()-start_time)) 
-    
-        prune_time = time.time()        
+            
         # Here para = 'euclidean:10'
         # adj, edgeList = generateAdj(zOut, graphType='KNNgraphML', para = args.knn_distance+':'+str(args.k)) 
         adj, edgeList = generateAdj(zOut, graphType=args.prunetype, para = args.knn_distance+':'+str(args.k)) 
-        print("---Pruning takes %s seconds ---" % (time.time() - prune_time))
+        print('---'+str(datetime.timedelta(seconds=int(time.time()-start_time)))+'---Prune Finished')
         mem=resource.getrusage(resource.RUSAGE_SELF).ru_maxrss
         print('Mem consumption: '+str(mem))
 
@@ -306,9 +302,8 @@ if __name__ == "__main__":
         if args.useGAEembedding:            
             mem=resource.getrusage(resource.RUSAGE_SELF).ru_maxrss
             print('Mem consumption: '+str(mem))
-            gae_time = time.time()
             zOut=GAEembedding(zDiscret, adj, args)
-            print("GAE embedding takes %s s" % (time.time() - gae_time))
+            print('---'+str(datetime.timedelta(seconds=int(time.time()-start_time)))+"---GAE embedding finished")
             mem=resource.getrusage(resource.RUSAGE_SELF).ru_maxrss
             print('Mem consumption: '+str(mem))
 
@@ -334,10 +329,7 @@ if __name__ == "__main__":
             tmp = scData.features[scData.nz_i[nz_index], scData.nz_j[nz_index]]
             reconOut[scData.nz_i[nz_index], scData.nz_j[nz_index]] = tmp
         recon = reconOut
-
-    print("---Before EM process, proceeded %s seconds ---" % (time.time() - start_time))
-    print("EM processes started")
-
+    
     #Define resolution
     #Default: auto, otherwise use user defined resolution
     if args.resolution == 'auto':
@@ -348,14 +340,14 @@ if __name__ == "__main__":
     else:
         resolution = float(args.resolution)
 
+    print('---'+str(datetime.timedelta(seconds=int(time.time()-start_time)))+"---EM process starts")
+
     for bigepoch in range(0, args.EM_iteration):
-        print('Start %sth interation.'%(bigepoch))
-        iteration_time = time.time()
+        print('---'+str(datetime.timedelta(seconds=int(time.time()-start_time)))+'---Start %sth interation.'%(bigepoch))
 
         # Now for both methods, we need do clustering, using clustering results to check converge
         # TODO May reimplement later
         # Clustering: Get cluster
-        clustering_time = time.time()
         if args.clustering_method=='Louvain':
             # Louvain: the only function has R dependent
             # Seperate here for platforms without R support
@@ -405,7 +397,7 @@ if __name__ == "__main__":
             listResult = clustering.predict(zOut)
         else:
             print("Error: Clustering method not appropriate")
-        print("---Clustering takes %s seconds ---" % (time.time() - clustering_time))
+        print('---'+str(datetime.timedelta(seconds=int(time.time()-start_time)))+"---Clustering Ends")
 
         # If clusters more than maxclusters, then have to stop
         if len(set(listResult))>args.maxClusterNumber or len(set(listResult))<=1:
@@ -416,12 +408,15 @@ if __name__ == "__main__":
             listResult = trimClustering(listResult,minMemberinCluster=args.minMemberinCluster,maxClusterNumber=args.maxClusterNumber)
         
         #Calculate silhouette
-        measure_clustering_results(zOut, listResult)
+        # measure_clustering_results(zOut, listResult)
         print('Total Cluster Number: '+str(len(set(listResult))))
+        mem=resource.getrusage(resource.RUSAGE_SELF).ru_maxrss
+        print('Mem consumption: '+str(mem))
 
-        #Graph regulizated EM AE with celltype AE, do the additional AE
+        #Graph regulizated EM AE with celltype AE
         if not args.quickmode : 
             # Each cluster has a autoencoder, and organize them back in iteraization
+            print('---'+str(datetime.timedelta(seconds=int(time.time()-start_time)))+'---Start celltype autoencoder.')
             clusterIndexList = []
             for i in range(len(set(listResult))):
                 clusterIndexList.append([])
@@ -446,10 +441,15 @@ if __name__ == "__main__":
                     reconNew[i] = reconCluster[count,:]
                     count +=1
                 # empty cuda cache
+                del originalCluster
+                del zCluster
                 torch.cuda.empty_cache()
+            
             # Update
             recon = reconNew
         
+        mem=resource.getrusage(resource.RUSAGE_SELF).ru_maxrss
+        print('Mem consumption: '+str(mem))
         # Use new dataloader
         scDataInter = scDatasetInter(recon)
         train_loader = DataLoader(scDataInter, batch_size=args.batch_size, shuffle=False, **kwargs)
@@ -461,11 +461,10 @@ if __name__ == "__main__":
 
         mem=resource.getrusage(resource.RUSAGE_SELF).ru_maxrss
         print('Mem consumption: '+str(mem))
-        prune_time = time.time()
         # Here para = 'euclidean:10'
         # adj, edgeList = generateAdj(zOut, graphType='KNNgraphML', para = args.knn_distance+':'+str(args.k)) 
         adj, edgeList = generateAdj(zOut, graphType=args.prunetype, para = args.knn_distance+':'+str(args.k), outAdjTag = (args.useGAEembedding or args.useBothembedding)) 
-        print("---Pruning takes %s seconds ---" % (time.time() - prune_time))
+        print('---'+str(datetime.timedelta(seconds=int(time.time()-start_time)))+'---Prune Finished')
         mem=resource.getrusage(resource.RUSAGE_SELF).ru_maxrss
         print('Mem consumption: '+str(mem))
 
@@ -481,12 +480,12 @@ if __name__ == "__main__":
 
         # Original save step by step
         if args.saveinternal:
-            print ('Start save at '+ str(time.time()-start_time))
+            print ('---'+str(datetime.timedelta(seconds=int(time.time()-start_time)))+'---Start save internal results')
             reconOut = recon.detach().cpu().numpy()
 
             # Output
-            print ('Prepare save at '+ str(time.time()-start_time))
-            print('Save results with reconstructed shape:'+str(reconOut.shape)+' Size of gene:'+str(len(genelist))+' Size of cell:'+str(len(celllist)))
+            print ('---'+str(datetime.timedelta(seconds=int(time.time()-start_time)))+'---Prepare save')
+            # print('Save results with reconstructed shape:'+str(reconOut.shape)+' Size of gene:'+str(len(genelist))+' Size of cell:'+str(len(celllist)))
             recon_df = pd.DataFrame(np.transpose(reconOut),index=genelist,columns=celllist)
             recon_df.to_csv(args.outputDir+args.datasetName+'_'+args.regulized_type+'_'+str(args.regularizePara)+'_'+str(args.L1Para)+'_'+str(args.L2Para)+'_recon_'+str(bigepoch)+'.csv')
             emblist=[]
@@ -498,13 +497,12 @@ if __name__ == "__main__":
             graph_df.to_csv(args.outputDir+args.datasetName+'_'+args.regulized_type+'_'+str(args.regularizePara)+'_'+str(args.L1Para)+'_'+str(args.L2Para)+'_graph_'+str(bigepoch)+'.csv',index=False)
             results_df = pd.DataFrame(listResult,index=celllist,columns=["Celltype"])
             results_df.to_csv(args.outputDir+args.datasetName+'_'+args.regulized_type+'_'+str(args.regularizePara)+'_'+str(args.L1Para)+'_'+str(args.L2Para)+'_results_'+str(bigepoch)+'.txt')   
+            
+            print ('---'+str(datetime.timedelta(seconds=int(time.time()-start_time)))+'---Save internal completed')
 
-            print ('Save complete at '+ str(time.time()-start_time))
-
-        iterfinish_time = time.time()
         mem=resource.getrusage(resource.RUSAGE_SELF).ru_maxrss
         print('Mem consumption: '+str(mem))
-        print("---%sth iteration in EM process, proceeded %s seconds ---" % (bigepoch, iterfinish_time - iteration_time))
+        print('---'+str(datetime.timedelta(seconds=int(time.time()-start_time)))+'---Start test converge condition')
 
         #Iteration usage
         # If not only use 'celltype', we have to use graph change
@@ -519,7 +517,7 @@ if __name__ == "__main__":
 
             mem=resource.getrusage(resource.RUSAGE_SELF).ru_maxrss
             print('Mem consumption: '+str(mem))
-            print('New adj ready in %s seconds' % (time.time() - iterfinish_time))
+            print('---'+str(datetime.timedelta(seconds=int(time.time()-start_time)))+'---New adj ready')
             
             #debug
             graphChange = np.mean(abs(adjNew-adjOld))
@@ -560,8 +558,7 @@ if __name__ == "__main__":
 
         # Update
         listResultOld = listResult
-        print("--- Judge whether terminate process from iteration takes %s seconds ---" % (time.time() - iteration_time))
-        print("--- "+str(bigepoch)+"th iteration in EM Finished ---")
+        print('---'+str(datetime.timedelta(seconds=int(time.time()-start_time)))+"---"+str(bigepoch)+"th iteration in EM Finished")
     
     # Output final results
     print('All iterations finished, start output results.')
@@ -594,4 +591,4 @@ if __name__ == "__main__":
     results_df = pd.DataFrame(listResult,index=celllist,columns=["Celltype"])
     results_df.to_csv(args.outputDir+args.datasetName+'_'+args.regulized_type+'_'+str(args.regularizePara)+'_'+str(args.L1Para)+'_'+str(args.L2Para)+'_results.txt')   
       
-    print("---Total Running Time: %s seconds ---" % (time.time() - start_time))
+    print('---'+str(datetime.timedelta(seconds=int(time.time()-start_time)))+"---scGNN finished")
