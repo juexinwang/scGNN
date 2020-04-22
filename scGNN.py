@@ -475,7 +475,12 @@ if __name__ == "__main__":
             zDiscret = zOut>np.mean(zOut,axis=0)
             zDiscret = 1.0*zDiscret
             if args.useGAEembedding:
+                mem=resource.getrusage(resource.RUSAGE_SELF).ru_maxrss
+                print('Mem consumption: '+str(mem))
                 zOut=GAEembedding(zDiscret, adj, args)
+                print('---'+str(datetime.timedelta(seconds=int(time.time()-start_time)))+"---GAE embedding finished")
+                mem=resource.getrusage(resource.RUSAGE_SELF).ru_maxrss
+                print('Mem consumption: '+str(mem))
             elif args.useBothembedding:
                 zEmbedding=GAEembedding(zDiscret, adj, args)
                 zOut=np.concatenate((zOut,zEmbedding),axis=1)
