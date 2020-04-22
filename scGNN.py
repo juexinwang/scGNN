@@ -11,7 +11,7 @@ from torch.utils.data import Dataset, DataLoader
 from torch import nn, optim
 from torch.nn import functional as F
 from sklearn.decomposition import PCA
-from sklearn.metrics import silhouette_samples, silhouette_score
+from sklearn.metrics import silhouette_samples, silhouette_score, adjusted_rand_score
 from sklearn.cluster import KMeans,SpectralClustering,AffinityPropagation,AgglomerativeClustering,Birch,DBSCAN,FeatureAgglomeration,OPTICS,MeanShift
 from model import AE, VAE, VAE2d
 from util_function import *
@@ -143,10 +143,9 @@ print(args)
 start_time = time.time()
 
 # load scRNA in csv
-print ('scRNA starts loading.')
+print ('--00:00:00--scRNA starts loading.')
 data, genelist, celllist = loadscExpression(args.LTMGDir+args.datasetName+'/'+args.ltmgExpressionFile, sparseMode=args.sparseMode)
-print ('scRNA has been successfully loaded.')
-print ('Loading cost '+ str(time.time()-start_time))
+print ('--'+str(time.time()-start_time)+'--scRNA has been successfully loaded')
 
 scData = scDataset(data)
 train_loader = DataLoader(scData, batch_size=args.batch_size, shuffle=False, **kwargs)
@@ -513,12 +512,13 @@ if __name__ == "__main__":
             Gc = nx.Graph()
             Gc.add_weighted_edges_from(edgeList)
             adjGc = nx.adjacency_matrix(Gc)
-            mem=resource.getrusage(resource.RUSAGE_SELF).ru_maxrss
-            print('Mem consumption: '+str(mem))
-            print('New adj ready in %s seconds' % (time.time() - iterfinish_time))
             
             # Update new adj
             adjNew = args.alpha*nlG0 + (1-args.alpha) * adjGc/np.sum(adjGc,axis=0)
+
+            mem=resource.getrusage(resource.RUSAGE_SELF).ru_maxrss
+            print('Mem consumption: '+str(mem))
+            print('New adj ready in %s seconds' % (time.time() - iterfinish_time))
             
             #debug
             graphChange = np.mean(abs(adjNew-adjOld))
@@ -529,7 +529,9 @@ if __name__ == "__main__":
             # Update
             adjOld = adjNew
 
-        ari, ami, nmi, cs, fms, vms, hs = measureClusteringTrueLabel(listResultOld, listResult)
+        # Check similarity
+        # ari, ami, nmi, cs, fms, vms, hs = measureClusteringTrueLabel()
+        ari = adjusted_rand_score(listResultOld, listResult)
         print(listResultOld)
         print(listResult)
         print('celltype similarity:'+str(ari))
