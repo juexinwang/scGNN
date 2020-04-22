@@ -31,6 +31,7 @@ R integration:
 
 Example:
 ---------
+Accepting scRNA format: 10X and CSV
 Example data:
 After filtering: 9760 cells 13052 genes, finally select 2000 genes
 https://data.humancellatlas.org/project-assets/project-matrices/4d6f6c96-2a83-43d8-8fe1-0f53bffd4674.homo_sapiens.mtx.zip
