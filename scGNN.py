@@ -346,7 +346,7 @@ if __name__ == "__main__":
     print('---'+str(datetime.timedelta(seconds=int(time.time()-start_time)))+"---EM process starts")
 
     for bigepoch in range(0, args.EM_iteration):
-        print('---'+str(datetime.timedelta(seconds=int(time.time()-start_time)))+'---Start %sth interation.'%(bigepoch))
+        print('---'+str(datetime.timedelta(seconds=int(time.time()-start_time)))+'---Start %sth iteration.'%(bigepoch))
 
         # Now for both methods, we need do clustering, using clustering results to check converge
         # TODO May reimplement later
