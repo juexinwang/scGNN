@@ -90,7 +90,7 @@ parser.add_argument('--clustering-method', type=str, default='LouvainK',
 parser.add_argument('--resolution', type=str, default='auto',
                     help='the number of resolution on Louvain (default: auto/0.5/0.8)')
 parser.add_argument('--prunetype', type=str, default='KNNgraphStats',
-                    help='prune type, KNNgraphStats/KNNgraphML (default: KNNgraphStats)')
+                    help='prune type, KNNgraphStats/KNNgraphML/KNNgraphStatsSingleThread (default: KNNgraphStats)')
 parser.add_argument('--maxClusterNumber', type=int, default=30,
                     help='max cluster for celltypeEM without setting number of clusters (default: 30)') 
 parser.add_argument('--minMemberinCluster', type=int, default=5,
@@ -127,6 +127,8 @@ parser.add_argument('--EMreguTag', action='store_true', default=False,
                     help='whether regu in EM process')
 parser.add_argument('--debugMode', type=str, default='noDebug',
                     help='savePrune/loadPrune for debug reason (default: noDebug)')
+parser.add_argument('--parallelLimit', type=int, default=0,
+                    help='Number of cores usage for parallel pruning, 0 for use all cores (default: 0)')
 
 args = parser.parse_args()
 args.cuda = not args.no_cuda and torch.cuda.is_available()
@@ -252,7 +254,7 @@ if __name__ == "__main__":
         # Here para = 'euclidean:10'
         # adj, edgeList = generateAdj(zOut, graphType='KNNgraphML', para = args.knn_distance+':'+str(args.k)) 
         print('---'+str(datetime.timedelta(seconds=int(time.time()-start_time)))+'---Start Prune')
-        adj, edgeList = generateAdj(zOut, graphType=args.prunetype, para = args.knn_distance+':'+str(args.k)) 
+        adj, edgeList = generateAdj(zOut, graphType=args.prunetype, para = args.knn_distance+':'+str(args.k), parallelLimit=args.parallelLimit) 
         print('---'+str(datetime.timedelta(seconds=int(time.time()-start_time)))+'---Prune Finished')
         mem=resource.getrusage(resource.RUSAGE_SELF).ru_maxrss
         print('Mem consumption: '+str(mem))
@@ -465,7 +467,7 @@ if __name__ == "__main__":
         # Here para = 'euclidean:10'
         # adj, edgeList = generateAdj(zOut, graphType='KNNgraphML', para = args.knn_distance+':'+str(args.k)) 
         print('---'+str(datetime.timedelta(seconds=int(time.time()-start_time)))+'---Start Prune')
-        adj, edgeList = generateAdj(zOut, graphType=args.prunetype, para = args.knn_distance+':'+str(args.k), outAdjTag = (args.useGAEembedding or args.useBothembedding)) 
+        adj, edgeList = generateAdj(zOut, graphType=args.prunetype, para = args.knn_distance+':'+str(args.k), parallelLimit= args.parallelLimit, outAdjTag = (args.useGAEembedding or args.useBothembedding)) 
         print('---'+str(datetime.timedelta(seconds=int(time.time()-start_time)))+'---Prune Finished')
         mem=resource.getrusage(resource.RUSAGE_SELF).ru_maxrss
         print('Mem consumption: '+str(mem))

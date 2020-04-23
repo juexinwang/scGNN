@@ -18,7 +18,7 @@ import multiprocessing
 #         self.col=col
 
 # Calculate graph, return adjcency matrix
-def generateAdj(featureMatrix, graphType='KNNgraph', para = None, outAdjTag = True ):
+def generateAdj(featureMatrix, graphType='KNNgraph', para = None, parallelLimit = 0, outAdjTag = True ):
     """
     outAdjTag: saving space for not generating adj for giant network without GAE 
     """
@@ -62,7 +62,7 @@ def generateAdj(featureMatrix, graphType='KNNgraph', para = None, outAdjTag = Tr
             parawords = para.split(':')
             distanceType = parawords[0]
             k = int(parawords[1])
-        edgeList = calculateKNNgraphDistanceMatrixStats(featureMatrix, distanceType=distanceType, k=k)
+        edgeList = calculateKNNgraphDistanceMatrixStats(featureMatrix, distanceType=distanceType, k=k, parallelLimit=parallelLimit)
     elif graphType == 'KNNgraphStatsSingleThread':
         # with weights!
         # with stats, one std is contained, but only use single thread
@@ -337,18 +337,28 @@ class FindKParallel():
 
 
 #para: measuareName:k:threshold
-def calculateKNNgraphDistanceMatrixStats(featureMatrix, distanceType='euclidean', k=10, param=None):
+def calculateKNNgraphDistanceMatrixStats(featureMatrix, distanceType='euclidean', k=10, param=None, parallelLimit=0):
     r"""
     Thresholdgraph: KNN Graph with stats one-std based methods
     """       
     edgeList=[]
-    # Get number of availble cores 
+    # Get number of availble cores
+    USE_CORES = 0 
     NUM_CORES = multiprocessing.cpu_count()
+    # if no limit, use all cores
+    if parallelLimit == 0:
+        USE_CORES = NUM_CORES
+    # if limit < cores, use limit number
+    elif parallelLimit < NUM_CORES:
+        USE_CORES = parallelLimit
+    # if limit is not valid, use all cores
+    else:
+        USE_CORES = NUM_CORES
+    print('Start Pruning using '+str(USE_CORES)+' of '+str(NUM_CORES)+' available cores') 
 
-    print('Start Pruning with '+str(NUM_CORES)+' cores')
     t= time.time()
-    #Use all possible cpus for top-K finding
-    with Pool() as p:
+    #Use number of cpus for top-K finding
+    with Pool(USE_CORES) as p:
         # edgeListT = p.map(vecfindK, range(featureMatrix.shape[0]))
         edgeListT = FindKParallel(featureMatrix, distanceType, k).work()
 
