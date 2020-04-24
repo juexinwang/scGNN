@@ -2,7 +2,8 @@ mkdir casenpyG2E_LK__
 mkdir casenpyG2F_LK__
 
 
-for i in {3..6}
+# for i in {3..6}
+for i in {4..6}
 do
 for j in {1..1}
 do
