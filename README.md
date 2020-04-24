@@ -2,12 +2,12 @@
 
 single cell Graph Neural Networks
 
-About:
-----------
+## About:
+
 Graph Neural Network for Single Cell Impute and celltype identification. 
 
-Reqirements: (May not sufficient)
-----------
+## Reqirements:
+
 Tested on Ubuntu 16.04 and CentOS 7 with Python 3.6.8
 
     pip install numpy
@@ -29,8 +29,10 @@ R integration:
     library(devtools)
     install_github("BMEngineeR/scGNNLTMG")
 
-Example:
----------
+You can simply run ```pip install -r requirements.txt``` to install all the necessary packages.
+
+## Example:
+
 Accepting scRNA format: 10X and CSV
 Example data:
 After filtering: 9760 cells 13052 genes, finally select 2000 genes
@@ -62,7 +64,7 @@ https://data.humancellatlas.org/project-assets/project-matrices/4d6f6c96-2a83-43
     *_results.txt:      Identified cell types. First row as the name. 
 
 
-Notes for Cluster Running Benchmark: (main_benchmark.py) Here for eproducibility.
+## Notes for Cluster Running Benchmark: (main_benchmark.py) Here for eproducibility.
 ---------
 module load miniconda3
 conda create -n my_environment python=3.7
@@ -70,11 +72,11 @@ source activate my_environment
 
 Preprocess benchmarks:
 
-# 1. generating usage csv
+ 1. generating usage csv
 
 python Preprocessing_scFile.py --inputfile /home/wangjue/biodata/scData/allBench/10.Usoskin/T2000_UsingOriginalMatrix/T2000_expression.txt --outputfile /home/wangjue/biodata/scData/10.Usoskin.csv --cellcount 622 --genecount 2000 --split space --cellheadflag False
 
-# 2. generating sparse coding under data/
+2. generating sparse coding under data/
 python Preprocessing_main.py --expression-name 10.Usoskin
 
 
@@ -105,13 +107,12 @@ Now We totally have 63 methods in testing:
     3.3 (on Localmachine)Parsing results when ready:
         python summary_cmd.py 
 
-Reference:
----------
+## Reference:
 
 1. VAE <https://github.com/pytorch/examples/tree/master/vae>
 2. GAE <https://github.com/tkipf/gae/tree/master/gae>
 3. scVI-reproducibility <https://github.com/romain-lopez/scVI-reproducibility>
 
-Contact:
----------
+## Contact:
+
 Juexin Wang wangjue@missouri.edu
