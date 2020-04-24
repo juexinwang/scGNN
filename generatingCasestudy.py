@@ -24,8 +24,8 @@ templateStr2 = "\n#SBATCH -o results-%j.out           # give the job output a cu
 "source activate conda_R\n"
 
 methodsList = [
-    ('run_case_2geLK E1','--useGAEembedding  --outputDir','casenpyG2E_LK/'),
-    ('run_case_2gnLK E1','--outputDir','casenpyG2N_LK/'),
+    ('run_case_2geLK E1','--useGAEembedding  --outputDir','casenpyG2E_LK__/'),
+    ('run_case_2gfLK E1','--outputDir','casenpyG2F_LK__/'),
 ]
 
 # select
