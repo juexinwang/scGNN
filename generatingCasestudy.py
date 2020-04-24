@@ -17,40 +17,38 @@ templateStr1 = "#! /bin/bash\n"\
 templateStr2 = "\n#SBATCH -o results-%j.out           # give the job output a custom name\n"\
 "#SBATCH -t 7-00:00                  # 7 days time limit\n"\
 "#SBATCH -N 1                        # number of nodes\n"\
-"#SBATCH -n 2                        # number of cores (AKA tasks)\n"\
+"#SBATCH -n 10                        # number of cores (AKA tasks)\n"\
 "#SBATCH --mem=400G\n"\
 "#################################################################\n"\
 "module load miniconda3\n"\
 "source activate conda_R\n"
 
 methodsList = [
-    ('run_case_2geLK E1','--regulized-type LTMG --EMtype celltypeEM --clustering-method LouvainK --useGAEembedding  --npyDir','casenpyG2E_LK_/'),
-    ('run_case_2reLK E2','--regulized-type LTMG01 --EMtype celltypeEM --clustering-method LouvainK --useGAEembedding  --npyDir','casenpyR2E_LK_/'),
-    ('run_case_2geLB E3','--regulized-type LTMG --EMtype celltypeEM --clustering-method LouvainB --useGAEembedding  --npyDir','casenpyG2E_LB_/'),
-    ('run_case_2reLB E4','--regulized-type LTMG01 --EMtype celltypeEM --clustering-method LouvainB --useGAEembedding  --npyDir','casenpyR2E_LB_/'),    
+    ('run_case_2geLK E1','--useGAEembedding  --outputDir','casenpyG2E_LK/'),
+    ('run_case_2gnLK E1','--outputDir','casenpyG2N_LK/'),
 ]
 
 # select
 datasetNameList = [
     'AD_GSE138852_2x8CT',  #1
     'AD_GSE103334_NORMED_8CT', #2
-    'E-GEOD-139324', #3
-    'liver_cancer_GSE98638_11CT', #4
-    'liver_cancer_10X_20CT',  #5
-    'liver_cancer_smart_22CT', #6
+    'E-GEOD-139324', #3 *
+    'liver_cancer_GSE98638_11CT', #4 *
+    'liver_cancer_10X_20CT',  #5 *
+    'liver_cancer_smart_22CT', #6 *
     'GSM2388072', #7
     'BR', #8
     'Par', #9
     '7f5e7a85-a45c-4535-90bf-0ef930a0040b.mtx', #10
     '481193cb-c021-4e04-b477-0b7cfef4614b.mtx', #11
-    'e7448a34-b33d-41de-b422-4c09bfeba96b.mtx', #12: data1
+    'e7448a34-b33d-41de-b422-4c09bfeba96b.mtx', #12: human immune
     'c0b92850-ce85-41bb-b928-5fac1a113fef.mtx', #13: data2
     'huamn_atlas_20tissue', #14: Human cell
 ]
 
 reguParaList = [
-    '--gammaPara 0.9 --regularizePara 0.1',
-    '--gammaPara 0.5 --regularizePara 0.5',
+    # '--gammaPara 0.9 --regularizePara 0.1',
+    # '--gammaPara 0.5 --regularizePara 0.5',
     '--gammaPara 0.1 --regularizePara 0.9',
     ]
 
