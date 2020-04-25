@@ -24,7 +24,7 @@ from R_util import generateLouvainCluster
 
 
 parser = argparse.ArgumentParser(description='Test imputation from other imputation results')
-parser.add_argument('--npyFile', type=str, default='scimpute/13.Zeisel_recon.npy',
+parser.add_argument('--npyFile', type=str, default='/storage/htc/joshilab/wangjue/no_dropout_recon/scimpute/13.Zeisel_recon.npy',
                     help='reconnpy')
 parser.add_argument('--datasetName', type=str, default='481193cb-c021-4e04-b477-0b7cfef4614b.mtx',
                     help='For 10X: folder name of 10X dataset; For CSV: csv file name')
