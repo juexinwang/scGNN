@@ -24,8 +24,6 @@ from R_util import generateLouvainCluster
 
 
 parser = argparse.ArgumentParser(description='Test imputation from other imputation results')
-parser.add_argument('--npyFile', type=str, default='/storage/htc/joshilab/wangjue/no_dropout_recon/scimpute/13.Zeisel_recon.npy',
-                    help='reconnpy')
 parser.add_argument('--datasetName', type=str, default='481193cb-c021-4e04-b477-0b7cfef4614b.mtx',
                     help='For 10X: folder name of 10X dataset; For CSV: csv file name')
 parser.add_argument('--datasetDir', type=str, default='/storage/htc/joshilab/wangjue/casestudy/',
@@ -137,7 +135,10 @@ parser.add_argument('--parallelLimit', type=int, default=0,
 #Benchmark related
 parser.add_argument('--benchmark', type=str, default='/home/jwang/data/scData/13.Zeisel/Zeisel_cell_label.csv',
                     help='the benchmark file of celltype (default: /home/jwang/data/scData/13.Zeisel/Zeisel_cell_label.csv)')
-
+parser.add_argument('--npyFile', type=str, default='/storage/htc/joshilab/wangjue/no_dropout_recon/scimpute/13.Zeisel_recon.npy',
+                    help='reconnpy')
+parser.add_argument('--outFile', type=str, default='t.txt',
+                    help='out file')
 
 args = parser.parse_args()
 
@@ -156,12 +157,16 @@ else:
 
 listResult,size = generateLouvainCluster(edgeList)
 k = len(np.unique(listResult))
-print('Louvain cluster: '+str(k))
+# print('Louvain cluster: '+str(k))
 k = int(k*resolution) if k>3 else 2
 clustering = KMeans(n_clusters=k, random_state=0).fit(zOut)
 listResult = clustering.predict(zOut)
 
 silhouette, chs, dbs = measureClusteringNoLabel(zOut, listResult)
 ari, ami, nmi, cs, fms, vms, hs = measureClusteringTrueLabel(bench_celltype, listResult)
-print(str(silhouette)+' '+str(chs)+' '+str(dbs)+' '+str(ari)+' '+str(ami)+' '+str(nmi)+' '+str(cs)+' '+str(fms)+' '+str(vms)+' '+str(hs))
-        
+# print(str(silhouette)+' '+str(chs)+' '+str(dbs)+' '+str(ari)+' '+str(ami)+' '+str(nmi)+' '+str(cs)+' '+str(fms)+' '+str(vms)+' '+str(hs))
+outstr = str(silhouette)+' '+str(chs)+' '+str(dbs)+' '+str(ari)+' '+str(ami)+' '+str(nmi)+' '+str(cs)+' '+str(fms)+' '+str(vms)+' '+str(hs)
+
+
+with (open(args.outfile,'r+')) as fw:
+    fw.write(outstr+'\n')        
