@@ -174,5 +174,6 @@ with (open(args.outFile,"a+")) as fw:
     fw.close()  
 
 with (open(args.resultFile,"w")) as fw:
-    fw.writelines(listResult)  
+    for item in listResult:
+        fw.write(str(item)+'\n')  
     fw.close()    
