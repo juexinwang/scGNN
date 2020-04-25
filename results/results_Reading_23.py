@@ -386,14 +386,21 @@ reguDict={}
 # for i in range(12,16):
 #     reguDict[i]='LTMG01'
 
-for i in range(0,1):
+# for i in range(0,1):
+#     reguDict[i]='LTMG'
+# for i in range(1,2):
+#     reguDict[i]='LTMG01'
+# for i in range(2,3):
+#     reguDict[i]='LTMG'
+# for i in range(3,4):
+#     reguDict[i]='LTMG01'
+
+for i in range(0,2):
     reguDict[i]='LTMG'
-for i in range(1,2):
-    reguDict[i]='LTMG01'
 for i in range(2,3):
-    reguDict[i]='LTMG'
+    reguDict[i]='noregu'
 for i in range(3,4):
-    reguDict[i]='LTMG01'
+    reguDict[i]='LTMG'
 
 reguStr=''
 if args.methodName in reguDict:
