@@ -168,5 +168,5 @@ ari, ami, nmi, cs, fms, vms, hs = measureClusteringTrueLabel(bench_celltype, lis
 outstr = str(silhouette)+' '+str(chs)+' '+str(dbs)+' '+str(ari)+' '+str(ami)+' '+str(nmi)+' '+str(cs)+' '+str(fms)+' '+str(vms)+' '+str(hs)
 
 
-with (open(args.outfile,'r+')) as fw:
+with (open(args.outFile,'r+')) as fw:
     fw.write(outstr+'\n')        
