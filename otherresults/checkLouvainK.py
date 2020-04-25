@@ -1,7 +1,7 @@
+import sys
 sys.path.append('../')
 import time
 import argparse
-import sys
 import numpy as np
 import pickle as pkl
 import networkx as nx
