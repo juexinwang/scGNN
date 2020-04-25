@@ -139,6 +139,8 @@ parser.add_argument('--npyFile', type=str, default='/storage/htc/joshilab/wangju
                     help='reconnpy')
 parser.add_argument('--outFile', type=str, default='t.txt',
                     help='out file')
+parser.add_argument('--resultFile', type=str, default='t.txt',
+                    help='out file')
 
 args = parser.parse_args()
 
@@ -169,4 +171,8 @@ outstr = str(silhouette)+' '+str(chs)+' '+str(dbs)+' '+str(ari)+' '+str(ami)+' '
 
 with (open(args.outFile,"a+")) as fw:
     fw.write(outstr+'\n')   
-    fw.close()     
+    fw.close()  
+
+with (open(args.resultFile,"w")) as fw:
+    fw.writelines(listResult)  
+    fw.close()    
