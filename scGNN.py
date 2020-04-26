@@ -38,7 +38,7 @@ parser.add_argument('--nonsparseMode', action='store_true', default=False,
 
 #Speed related
 parser.add_argument('--batch-size', type=int, default=12800, metavar='N',
-                    help='input batch size for training (default: 128)')
+                    help='input batch size for training (default: 12800)')
 parser.add_argument('--Regu-epochs', type=int, default=500, metavar='N',
                     help='number of epochs to train in Regulatory Autoencoder (default: 500)')
 parser.add_argument('--EM-epochs', type=int, default=200, metavar='N',
@@ -48,7 +48,7 @@ parser.add_argument('--celltype-epochs', type=int, default=200, metavar='N',
 parser.add_argument('--EM-iteration', type=int, default=10, metavar='N',
                     help='number of iteration in total EM iteration (default: 10)')
 parser.add_argument('--quickmode', action='store_true', default=False,
-                    help='whether use quickmode, (default: no quickmode)')
+                    help='whether use quickmode, skip celltype autoencoder (default: no quickmode)')
 
 #Regulation autoencoder
 parser.add_argument('--regulized-type', type=str, default='LTMG',
@@ -68,7 +68,9 @@ parser.add_argument('--L2Para', type=float, default=0.0,
 parser.add_argument('--k', type=int, default=10,
                     help='parameter k in KNN graph (default: 10)')
 parser.add_argument('--knn-distance', type=str, default='euclidean',
-                    help='KNN graph distance type (default: euclidean)')
+                    help='KNN graph distance type: euclidean/cosine/correlation (default: euclidean)')
+parser.add_argument('--prunetype', type=str, default='KNNgraphStats',
+                    help='prune type, KNNgraphStats/KNNgraphML/KNNgraphStatsSingleThread (default: KNNgraphStats)')
 
 #Graph Autoencoder
 parser.add_argument('--useGAEembedding', action='store_true', default=False, 
@@ -89,8 +91,6 @@ parser.add_argument('--clustering-method', type=str, default='LouvainK',
                     help='Clustering method: Louvain/KMeans/SpectralClustering/AffinityPropagation/AgglomerativeClustering/Birch/BirchN/MeanShift/OPTICS/LouvainK/LouvainB')
 parser.add_argument('--resolution', type=str, default='auto',
                     help='the number of resolution on Louvain (default: auto/0.5/0.8)')
-parser.add_argument('--prunetype', type=str, default='KNNgraphStats',
-                    help='prune type, KNNgraphStats/KNNgraphML/KNNgraphStatsSingleThread (default: KNNgraphStats)')
 parser.add_argument('--maxClusterNumber', type=int, default=30,
                     help='max cluster for celltypeEM without setting number of clusters (default: 30)') 
 parser.add_argument('--minMemberinCluster', type=int, default=5,
@@ -100,7 +100,7 @@ parser.add_argument('--minMemberinCluster', type=int, default=5,
 parser.add_argument('--alpha', type=float, default=0.5,
                     help='iteration alpha (default: 0.5) to control the converge rate, should be a number between 0~1')
 parser.add_argument('--converge-type', type=str, default='celltype',
-                    help='type of converge condition: celltype/graph/both/either (default: either) ')
+                    help='type of converge condition: celltype/graph/both/either (default: celltype) ')
 parser.add_argument('--converge-graphratio', type=float, default=0.01,
                     help='converge condition: ratio of graph ratio change in EM iteration (default: 0.01), 0-1')
 parser.add_argument('--converge-celltyperatio', type=float, default=0.99,

@@ -40,6 +40,12 @@ https://data.humancellatlas.org/project-assets/project-matrices/4d6f6c96-2a83-43
 30K liver cells (10X)
 
 1. Generating Use_expression.csv (preprocessed file) and ltmg.csv (ltmg)
+TODO: ltmgDir
+- CSV
+
+    `python3 -W ignore PreprocessingscGNN.py --datasetName e7448a34-b33d-41de-b422-4c09bfeba96b.mtx --datasetDir /storage/htc/joshilab/wangjue/10x/6/ --LTMGDir /storage/htc/joshilab/wangjue/10x/6/ --filetype CSV`
+
+- 10X
 
     `python3 -W ignore PreprocessingscGNN.py --datasetName e7448a34-b33d-41de-b422-4c09bfeba96b.mtx --datasetDir /storage/htc/joshilab/wangjue/10x/6/ --LTMGDir /storage/htc/joshilab/wangjue/10x/6/`
 

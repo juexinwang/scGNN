@@ -43,7 +43,7 @@ parser.add_argument('--geneSelectnum', type=int, default=2000,
 parser.add_argument('--transpose', action='store_true', default=False,
                     help='whether transpose or not')
 parser.add_argument('--tabuCol', type=str, default='',
-                    help='Not use some columns bu setting their names split by ,')
+                    help='Not use some columns and setting their names split by ,')
                     
 args = parser.parse_args()
 args.sparseOutTag = not args.nonsparseOutTag
