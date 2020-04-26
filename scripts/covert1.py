@@ -10,5 +10,5 @@ parser.add_argument('--output', type=str, default='13.csv',
 args = parser.parse_args()
 
 t=np.load(args.input,allow_pickle=True)
-np.savetxt(args.output,t1, delimiter=',',fmt='%d')
+np.savetxt(args.output,t, delimiter=',',fmt='%d')
 
