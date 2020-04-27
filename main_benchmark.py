@@ -464,8 +464,9 @@ if __name__ == "__main__":
             #         count +=1
             
             # parallel
+            reconOut = recon.detach().cpu().numpy()
             with Pool() as p:
-                reconp = CelltypeAEParallel(recon,clusterIndexList,args).work()
+                reconp = CelltypeAEParallel(reconOut,clusterIndexList,args).work()
 
             for index in range(len(clusterIndexList)):
                 count = 0
