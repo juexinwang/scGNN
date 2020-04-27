@@ -452,28 +452,28 @@ if __name__ == "__main__":
             reconNew = reconNew.to(device)
 
             # No parallel
-            # for clusterIndex in clusterIndexList:
-            #     reconUsage = recon[clusterIndex]
-            #     scDataInter = scDatasetInter(reconUsage)
-            #     train_loader = DataLoader(scDataInter, batch_size=args.batch_size, shuffle=False, **kwargs)
-            #     for epoch in range(1, args.celltype_epochs + 1):
-            #         reconCluster, originalCluster, zCluster = train(epoch, EMFlag=True)                
-            #     count = 0
-            #     for i in clusterIndex:
-            #         reconNew[i] = reconCluster[count,:]
-            #         count +=1
+            for clusterIndex in clusterIndexList:
+                reconUsage = recon[clusterIndex]
+                scDataInter = scDatasetInter(reconUsage)
+                train_loader = DataLoader(scDataInter, batch_size=args.batch_size, shuffle=False, **kwargs)
+                for epoch in range(1, args.celltype_epochs + 1):
+                    reconCluster, originalCluster, zCluster = train(epoch, EMFlag=True)                
+                count = 0
+                for i in clusterIndex:
+                    reconNew[i] = reconCluster[count,:]
+                    count +=1
             
             # parallel
-            reconOut = recon.detach().cpu().numpy()
-            with Pool() as p:
-                reconp = CelltypeAEParallel(reconOut,clusterIndexList,args).work()
+            # reconOut = recon.detach().cpu().numpy()
+            # with Pool() as p:
+            #     reconp = CelltypeAEParallel(reconOut,clusterIndexList,args).work()
 
-            for index in range(len(clusterIndexList)):
-                count = 0
-                clist = clusterIndexList[index]
-                for i in clist:
-                    reconNew[i] = reconp[index][count,:]
-                    count +=1
+            # for index in range(len(clusterIndexList)):
+            #     count = 0
+            #     clist = clusterIndexList[index]
+            #     for i in clist:
+            #         reconNew[i] = reconp[index][count,:]
+            #         count +=1
             
             # Update
             recon = reconNew
