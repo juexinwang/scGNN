@@ -260,11 +260,15 @@ class CelltypeAEParallel():
         '''
         Train each autoencoder in paral
         '''
+        print('~'+str(i))
         clusterIndex = self.clusterIndexList[i]
+        print('!'+str(clusterIndex))
         reconUsage = self.recon[clusterIndex]
+        print('@'+str(reconUsage))
         scDataInter = scDatasetInter(reconUsage)
         train_loader = DataLoader(scDataInter, batch_size=self.batch_size, shuffle=False, **kwargs)
         for epoch in range(1, self.celltype_epochs + 1):
+            print('#'+str(epoch))
             reconCluster, originalCluster, zCluster = train(epoch, EMFlag=True)                
         
         return reconCluster
@@ -464,16 +468,16 @@ if __name__ == "__main__":
                     count +=1
             
             # parallel
-            # reconOut = recon.detach().cpu().numpy()
-            # with Pool() as p:
-            #     reconp = CelltypeAEParallel(reconOut,clusterIndexList,args).work()
+            reconOut = recon.detach().cpu().numpy()
+            with Pool() as p:
+                reconp = CelltypeAEParallel(reconOut,clusterIndexList,args).work()
 
-            # for index in range(len(clusterIndexList)):
-            #     count = 0
-            #     clist = clusterIndexList[index]
-            #     for i in clist:
-            #         reconNew[i] = reconp[index][count,:]
-            #         count +=1
+            for index in range(len(clusterIndexList)):
+                count = 0
+                clist = clusterIndexList[index]
+                for i in clist:
+                    reconNew[i] = reconp[index][count,:]
+                    count +=1
             
             # Update
             recon = reconNew
