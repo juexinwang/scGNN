@@ -195,6 +195,7 @@ def train(epoch, train_loader=train_loader, EMFlag=False):
         data = data.to(device)
         regulationMatrixBatch = regulationMatrix[dataindex,:]
         optimizer.zero_grad()
+        print('**afterzero')
         if args.model == 'VAE':
             recon_batch, mu, logvar, z = model(data)
             # Original
