@@ -1,7 +1,11 @@
 import numpy as np
 from sklearn.metrics import *
 
-filename = '/Users/juexinwang/Downloads/benchmark/human_tissue_quick/huamn_atlas_20tissue_LTMG_0.9_0.0_0.0_results.txt'
+# filename = '/Users/juexinwang/Downloads/benchmark/human_tissue_quick/huamn_atlas_20tissue_LTMG_0.9_0.0_0.0_results.txt'
+filename = '/Users/juexinwang/Downloads/huamn_atlas_20tissue_LTMG_0.9_0.0_0.0_results.txt'
+# filename = '/Users/juexinwang/Downloads/huamn_atlas_20tissue_LTMG_0.9_0.0_0.0_results_largrbatch.txt'
+
+
 
 celltyper = []
 celltyperDict = {}
