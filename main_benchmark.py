@@ -184,7 +184,9 @@ def train(epoch, train_loader=train_loader, EMFlag=False):
         If in EM, use regulized-type parsed from program entrance,
         Otherwise, noregu
     '''
+    print('**premodel')
     model.train()
+    print('((model')
     train_loss = 0 
     # for batch_idx, (data, _) in enumerate(train_loader):
     # for batch_idx, data in enumerate(train_loader):
@@ -221,10 +223,11 @@ def train(epoch, train_loader=train_loader, EMFlag=False):
             l1 = l1 + p.abs().sum()
             l2 = l2 + p.pow(2).sum()
         loss = loss + args.L1Para * l1 + args.L2Para * l2
-        
+        print('**preback')
         loss.backward()
         train_loss += loss.item()
         optimizer.step()
+        print('((afterback')
         if batch_idx % args.log_interval == 0:
             print('Train Epoch: {} [{}/{} ({:.0f}%)]\tLoss: {:.6f}'.format(
                 epoch, batch_idx * len(data), len(train_loader.dataset),
@@ -269,7 +272,8 @@ class CelltypeAEParallel():
         train_loader = DataLoader(scDataInter, batch_size=self.batch_size, shuffle=False, **kwargs)
         for epoch in range(1, self.celltype_epochs + 1):
             print('#'+str(epoch))
-            reconCluster, originalCluster, zCluster = train(epoch, EMFlag=True)                
+            reconCluster, originalCluster, zCluster = train(epoch, EMFlag=True) 
+        print('$'+str(i))               
         
         return reconCluster
     
