@@ -238,6 +238,33 @@ def train(epoch, train_loader=train_loader, EMFlag=False):
 
     return recon_batch_all, data_all, z_all
 
+class CelltypeAEParallel():
+    '''
+    Celltype AutoEncoder training in parallel
+    '''
+    def __init__(self,recon,clusterIndexList,args):
+        self.recon = recon
+        self.clusterIndexList = clusterIndexList   
+        self.batch_size = args.batch_size
+        self.celltype_epochs = args.celltype_epochs
+
+    def trainParallel(self,i):
+        '''
+        Train each autoencoder in paral
+        '''
+        clusterIndex = self.clusterIndexList[i]
+        reconUsage = self.recon[clusterIndex]
+        scDataInter = scDatasetInter(reconUsage)
+        train_loader = DataLoader(scDataInter, batch_size=self.batch_size, shuffle=False, **kwargs)
+        for epoch in range(1, self.celltype_epochs + 1):
+            reconCluster, originalCluster, zCluster = train(epoch, EMFlag=True)                
+        
+        return reconCluster
+    
+    def work(self):
+        return Pool().map(self.trainParallel, range(len(self.clusterIndexList)))
+
+
 if __name__ == "__main__":
     # May need reconstruct
     # start_time = time.time()
@@ -433,20 +460,32 @@ if __name__ == "__main__":
             reconNew = reconNew.type(torch.FloatTensor)
             reconNew = reconNew.to(device)
 
-            for clusterIndex in clusterIndexList:
-                reconUsage = recon[clusterIndex]
-                scDataInter = scDatasetInter(reconUsage)
-                train_loader = DataLoader(scDataInter, batch_size=args.batch_size, shuffle=False, **kwargs)
-                for epoch in range(1, args.celltype_epochs + 1):
-                    reconCluster, originalCluster, zCluster = train(epoch, EMFlag=True)                
+            # Original, no parallel
+            # for clusterIndex in clusterIndexList:
+            #     reconUsage = recon[clusterIndex]
+            #     scDataInter = scDatasetInter(reconUsage)
+            #     train_loader = DataLoader(scDataInter, batch_size=args.batch_size, shuffle=False, **kwargs)
+            #     for epoch in range(1, args.celltype_epochs + 1):
+            #         reconCluster, originalCluster, zCluster = train(epoch, EMFlag=True)                
+            #     count = 0
+            #     for i in clusterIndex:
+            #         reconNew[i] = reconCluster[count,:]
+            #         count +=1
+            #     # empty cuda cache
+            #     del originalCluster
+            #     del zCluster
+            #     torch.cuda.empty_cache()
+
+            # parallel
+            with Pool() as p:
+                reconp = CelltypeAEParallel(recon,clusterIndexList,args).work()
+
+            for index in range(len(clusterIndexList)):
                 count = 0
-                for i in clusterIndex:
-                    reconNew[i] = reconCluster[count,:]
+                clist = clusterIndexList[index]
+                for i in clist:
+                    reconNew[i] = reconp[index][count,:]
                     count +=1
-                # empty cuda cache
-                del originalCluster
-                del zCluster
-                torch.cuda.empty_cache()
             
             # Update
             recon = reconNew

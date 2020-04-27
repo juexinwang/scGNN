@@ -339,7 +339,7 @@ class FindKParallel():
 #para: measuareName:k:threshold
 def calculateKNNgraphDistanceMatrixStats(featureMatrix, distanceType='euclidean', k=10, param=None, parallelLimit=0):
     r"""
-    Thresholdgraph: KNN Graph with stats one-std based methods
+    Thresholdgraph: KNN Graph with stats one-std based methods using parallel cores
     """       
     edgeList=[]
     # Get number of availble cores
