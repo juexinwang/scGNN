@@ -195,6 +195,7 @@ def train(epoch, train_loader=train_loader, EMFlag=False):
         data = data.type(torch.FloatTensor)
         data = data.to(device)
         regulationMatrixBatch = regulationMatrix[dataindex,:]
+        print(')))'+str(data.shape)+'))'+str(regulationMatrixBatch.shape))
         optimizer.zero_grad()
         print('**afterzero')
         if args.model == 'VAE':
@@ -475,7 +476,7 @@ if __name__ == "__main__":
             
             # parallel
             reconOut = recon.detach().cpu().numpy()
-            with Pool() as p:
+            with Pool(2) as p:
                 reconp = CelltypeAEParallel(reconOut,clusterIndexList,args).work()
 
             for index in range(len(clusterIndexList)):
