@@ -193,8 +193,8 @@ def train(epoch, train_loader=train_loader, EMFlag=False):
     # for batch_idx, data in enumerate(train_loader):
     for batch_idx, (data, dataindex) in enumerate(train_loader):
         print('))'+str(batch_idx))
-        # data = data.type(torch.FloatTensor)
-        # data = data.to(device)
+        data = data.type(torch.FloatTensor)
+        data = data.to(device)
         print(')))'+str(data.shape))
         regulationMatrixBatch = regulationMatrix[dataindex,:]
         print('))))'+str(regulationMatrixBatch.shape))
