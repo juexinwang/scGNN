@@ -178,7 +178,7 @@ bench_pd=pd.read_csv(args.benchmark,index_col=0)
 bench_celltype=bench_pd.iloc[:,0].to_numpy()
 
 #TODO: have to improve save npy
-def train(epoch, train_loader=train_loader, EMFlag=False):
+def train(epoch, regulationMatrix=regulationMatrix, train_loader=train_loader, EMFlag=False):
     '''
     EMFlag indicates whether in EM processes. 
         If in EM, use regulized-type parsed from program entrance,
@@ -193,9 +193,10 @@ def train(epoch, train_loader=train_loader, EMFlag=False):
     for batch_idx, (data, dataindex) in enumerate(train_loader):
         print('))'+str(batch_idx))
         data = data.type(torch.FloatTensor)
-        # data = data.to(device)
+        data = data.to(device)
+        print(')))'+str(data.shape))
         regulationMatrixBatch = regulationMatrix[dataindex,:]
-        print(')))'+str(data.shape)+'))'+str(regulationMatrixBatch.shape))
+        print('))))'+str(regulationMatrixBatch.shape))
         optimizer.zero_grad()
         print('**afterzero')
         if args.model == 'VAE':
@@ -256,8 +257,9 @@ class CelltypeAEParallel():
     '''
     Celltype AutoEncoder training in parallel
     '''
-    def __init__(self,recon,clusterIndexList,args):
+    def __init__(self,recon,regulationMatrix,clusterIndexList,args):
         self.recon = recon
+        self.regulationMatrix = regulationMatrix
         self.clusterIndexList = clusterIndexList   
         self.batch_size = args.batch_size
         self.celltype_epochs = args.celltype_epochs
@@ -275,7 +277,7 @@ class CelltypeAEParallel():
         train_loader = DataLoader(scDataInter, batch_size=self.batch_size, shuffle=False, **kwargs)
         for epoch in range(1, self.celltype_epochs + 1):
             print('#'+str(epoch))
-            reconCluster, originalCluster, zCluster = train(epoch, EMFlag=True) 
+            reconCluster, originalCluster, zCluster = train(epoch, regulationMatrix=self.regulationMatrix, EMFlag=True) 
         print('$'+str(i))               
         
         return reconCluster
@@ -477,7 +479,7 @@ if __name__ == "__main__":
             # parallel
             reconOut = recon.detach().cpu().numpy()
             with Pool(2) as p:
-                reconp = CelltypeAEParallel(reconOut,clusterIndexList,args).work()
+                reconp = CelltypeAEParallel(reconOut,regulationMatrix, clusterIndexList,args).work()
 
             for index in range(len(clusterIndexList)):
                 count = 0
