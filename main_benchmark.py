@@ -191,6 +191,7 @@ def train(epoch, train_loader=train_loader, EMFlag=False):
     # for batch_idx, (data, _) in enumerate(train_loader):
     # for batch_idx, data in enumerate(train_loader):
     for batch_idx, (data, dataindex) in enumerate(train_loader):
+        print('))'+str(batch_idx))
         data = data.type(torch.FloatTensor)
         data = data.to(device)
         regulationMatrixBatch = regulationMatrix[dataindex,:]
@@ -279,7 +280,7 @@ class CelltypeAEParallel():
         return reconCluster
     
     def work(self):
-        return Pool().map(self.trainParallel, range(len(self.clusterIndexList)))
+        return Pool(2).map(self.trainParallel, range(len(self.clusterIndexList)))
 
 
 if __name__ == "__main__":
