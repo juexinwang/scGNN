@@ -19,8 +19,7 @@ from util_function import *
 from graph_function import *
 from benchmark_util import *
 from gae_embedding import GAEembedding,measure_clustering_results,test_clustering_benchmark_results
-from multiprocessing import Pool
-import multiprocessing 
+import torch.multiprocessing as mp 
 
 parser = argparse.ArgumentParser(description='Main Entrance of scGNN')
 parser.add_argument('--datasetName', type=str, default='481193cb-c021-4e04-b477-0b7cfef4614b.mtx',

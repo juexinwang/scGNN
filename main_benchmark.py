@@ -19,6 +19,7 @@ from benchmark_util import *
 from gae_embedding import GAEembedding,measure_clustering_results,test_clustering_benchmark_results
 from LTMG_R import *
 import pandas as pd
+import torch.multiprocessing as mp
 
 # Used only for benchmark, needs Preprocessing_main.py first, then proceed by this script.
 parser = argparse.ArgumentParser(description='Graph EM AutoEncoder for scRNA')
@@ -178,7 +179,7 @@ bench_pd=pd.read_csv(args.benchmark,index_col=0)
 bench_celltype=bench_pd.iloc[:,0].to_numpy()
 
 #TODO: have to improve save npy
-def train(epoch, regulationMatrix=regulationMatrix, train_loader=train_loader, EMFlag=False):
+def train(epoch, train_loader=train_loader, EMFlag=False):
     '''
     EMFlag indicates whether in EM processes. 
         If in EM, use regulized-type parsed from program entrance,
@@ -253,38 +254,25 @@ def train(epoch, regulationMatrix=regulationMatrix, train_loader=train_loader, E
 
     return recon_batch_all, data_all, z_all
 
-class CelltypeAEParallel():
-    '''
-    Celltype AutoEncoder training in parallel
-    '''
-    def __init__(self,recon,regulationMatrix,clusterIndexList,args):
-        self.recon = recon
-        self.regulationMatrix = regulationMatrix
-        self.clusterIndexList = clusterIndexList   
-        self.batch_size = args.batch_size
-        self.celltype_epochs = args.celltype_epochs
-
-    def trainParallel(self,i):
+def trainParallel(i,recon,clusterIndexList,args):
         '''
         Train each autoencoder in paral
         '''
         print('~'+str(i))
-        clusterIndex = self.clusterIndexList[i]
+        clusterIndex = clusterIndexList[i]
         print('!'+str(clusterIndex))
-        reconUsage = self.recon[clusterIndex]
+        reconUsage = recon[clusterIndex]
         print('@'+str(reconUsage))
         scDataInter = scDatasetInter(reconUsage)
-        train_loader = DataLoader(scDataInter, batch_size=self.batch_size, shuffle=False, **kwargs)
-        for epoch in range(1, self.celltype_epochs + 1):
+        train_loader = DataLoader(scDataInter, batch_size=args.batch_size, shuffle=False, **kwargs)
+        for epoch in range(1, args.celltype_epochs + 1):
             print('#'+str(epoch))
-            reconCluster, originalCluster, zCluster = train(epoch, regulationMatrix=self.regulationMatrix, EMFlag=True) 
-        print('$'+str(i))               
-        
-        return reconCluster
-    
-    def work(self):
-        return Pool(2).map(self.trainParallel, range(len(self.clusterIndexList)))
-
+            reconCluster, originalCluster, zCluster = train(epoch, EMFlag=True) 
+        print('$'+str(i))
+        count = 0
+        for i in clusterIndex:
+            reconNew[i] = reconCluster[count,:]
+            count +=1
 
 if __name__ == "__main__":
     start_time = time.time()
@@ -477,16 +465,18 @@ if __name__ == "__main__":
             #         count +=1
             
             # parallel
-            reconOut = recon.detach().cpu().numpy()
-            with Pool(2) as p:
-                reconp = CelltypeAEParallel(reconOut,regulationMatrix, clusterIndexList,args).work()
+            reconNew.share_memory_()
+            celltypeNum = len(clusterIndexList)
+            processes=[]
 
-            for index in range(len(clusterIndexList)):
-                count = 0
-                clist = clusterIndexList[index]
-                for i in clist:
-                    reconNew[i] = reconp[index][count,:]
-                    count +=1
+            for i in range(celltypeNum):
+                #call Function: trainParallel(i,recon,clusterIndexList,args)
+                px = mp.Process(target=trainParallel, args=(i,recon,clusterIndexList,args))
+                px.start()
+                processes.append(px)
+            for px in processes:
+                px.join()
+                # foo(i,tl)
             
             # Update
             recon = reconNew
