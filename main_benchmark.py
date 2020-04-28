@@ -193,7 +193,7 @@ def train(epoch, train_loader=train_loader, EMFlag=False):
     for batch_idx, (data, dataindex) in enumerate(train_loader):
         print('))'+str(batch_idx))
         data = data.type(torch.FloatTensor)
-        data = data.to(device)
+        # data = data.to(device)
         regulationMatrixBatch = regulationMatrix[dataindex,:]
         print(')))'+str(data.shape)+'))'+str(regulationMatrixBatch.shape))
         optimizer.zero_grad()
