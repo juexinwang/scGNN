@@ -192,14 +192,14 @@ def train(epoch, train_loader=train_loader, EMFlag=False):
     # for batch_idx, (data, _) in enumerate(train_loader):
     # for batch_idx, data in enumerate(train_loader):
     for batch_idx, (data, dataindex) in enumerate(train_loader):
-        print('))'+str(batch_idx))
+        # print('))'+str(batch_idx))
         data = data.type(torch.FloatTensor)
         data = data.to(device)
-        print(')))'+str(data.shape))
+        # print(')))'+str(data.shape))
         regulationMatrixBatch = regulationMatrix[dataindex,:]
-        print('))))'+str(regulationMatrixBatch.shape))
+        # print('))))'+str(regulationMatrixBatch.shape))
         optimizer.zero_grad()
-        print('**afterzero')
+        # print('**afterzero')
         if args.model == 'VAE':
             recon_batch, mu, logvar, z = model(data)
             # Original
@@ -228,11 +228,11 @@ def train(epoch, train_loader=train_loader, EMFlag=False):
             l1 = l1 + p.abs().sum()
             l2 = l2 + p.pow(2).sum()
         loss = loss + args.L1Para * l1 + args.L2Para * l2
-        print('**preback')
+        # print('**preback')
         loss.backward()
         train_loss += loss.item()
         optimizer.step()
-        print('((afterback')
+        # print('((afterback')
         if batch_idx % args.log_interval == 0:
             print('Train Epoch: {} [{}/{} ({:.0f}%)]\tLoss: {:.6f}'.format(
                 epoch, batch_idx * len(data), len(train_loader.dataset),
