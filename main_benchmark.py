@@ -185,9 +185,7 @@ def train(epoch, train_loader=train_loader, EMFlag=False):
         If in EM, use regulized-type parsed from program entrance,
         Otherwise, noregu
     '''
-    print('**premodel')
     model.train()
-    print('((model')
     train_loss = 0 
     # for batch_idx, (data, _) in enumerate(train_loader):
     # for batch_idx, data in enumerate(train_loader):
