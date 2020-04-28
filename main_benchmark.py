@@ -453,30 +453,31 @@ if __name__ == "__main__":
             reconNew = reconNew.to(device)
 
             # No parallel
-            # for clusterIndex in clusterIndexList:
-            #     reconUsage = recon[clusterIndex]
-            #     scDataInter = scDatasetInter(reconUsage)
-            #     train_loader = DataLoader(scDataInter, batch_size=args.batch_size, shuffle=False, **kwargs)
-            #     for epoch in range(1, args.celltype_epochs + 1):
-            #         reconCluster, originalCluster, zCluster = train(epoch, EMFlag=True)                
-            #     count = 0
-            #     for i in clusterIndex:
-            #         reconNew[i] = reconCluster[count,:]
-            #         count +=1
+            for clusterIndex in clusterIndexList:
+                reconUsage = recon[clusterIndex]
+                scDataInter = scDatasetInter(reconUsage)
+                train_loader = DataLoader(scDataInter, batch_size=args.batch_size, shuffle=False, **kwargs)
+                for epoch in range(1, args.celltype_epochs + 1):
+                    reconCluster, originalCluster, zCluster = train(epoch, EMFlag=True)                
+                count = 0
+                for i in clusterIndex:
+                    reconNew[i] = reconCluster[count,:]
+                    count +=1
             
             # parallel
-            reconNew.share_memory_()
-            celltypeNum = len(clusterIndexList)
-            processes=[]
+            # TODO: looks like pytorch does not support this
+            # reconNew.share_memory_()
+            # celltypeNum = len(clusterIndexList)
+            # processes=[]
 
-            for i in range(celltypeNum):
-                #call Function: trainParallel(i,recon,clusterIndexList,args)
-                px = mp.Process(target=trainParallel, args=(i,recon,clusterIndexList,args))
-                px.start()
-                processes.append(px)
-            for px in processes:
-                px.join()
-                # foo(i,tl)
+            # for i in range(celltypeNum):
+            #     #call Function: trainParallel(i,recon,clusterIndexList,args)
+            #     px = mp.Process(target=trainParallel, args=(i,recon,clusterIndexList,args))
+            #     px.start()
+            #     processes.append(px)
+            # for px in processes:
+            #     px.join()
+            #     # foo(i,tl)
             
             # Update
             recon = reconNew
