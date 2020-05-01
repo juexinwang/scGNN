@@ -6,7 +6,6 @@ filename = '/Users/juexinwang/Downloads/huamn_atlas_20tissue_LTMG_0.9_0.0_0.0_re
 # filename = '/Users/juexinwang/Downloads/huamn_atlas_20tissue_LTMG_0.9_0.0_0.0_results_largrbatch.txt'
 
 
-
 celltyper = []
 celltyperDict = {}
 celltypep = []
