@@ -20,7 +20,7 @@ parser.add_argument('--replica', type=str, default='1',
                     help='replica')
 parser.add_argument('--npyDir', type=str, default='../npyImputeG2E_LK',
                     help='directory of npy')
-parser.add_argument('--labelFilename',type=str,default='/home/wangjue/biodata/scData/allBench/12.Klein/Klein_cell_label.csv',help="label Filename")
+parser.add_argument('--labelFilename',type=str,default='/home/jwang/data/scData/12.Klein/Klein_cell_label.csv',help="label Filename")
 
 args = parser.parse_args()
 
