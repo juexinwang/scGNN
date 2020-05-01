@@ -50,7 +50,9 @@ magic_operator = magic.MAGIC()
 X_magic = magic_operator.fit_transform(x, genes="all_genes")
 recon = X_magic
 
-np.savetxt(npyDir+str(args.datasetName)+'_'+str(args.ratio)+'_'+str(args.replica)+'_recon.csv',recon,delimiter=",",fmt='%10.4f')
+# np.savetxt(npyDir+str(args.datasetName)+'_'+str(args.ratio)+'_'+str(args.replica)+'_recon.csv',recon,delimiter=",",fmt='%10.4f')
+np.savetxt('MAGIC_'+str(args.datasetName)+'_'+str(args.ratio)+'_'+str(args.replica)+'_recon.csv',recon,delimiter=",",fmt='%10.4f')
+
 
 features         = None
 featuresImpute   = recon
