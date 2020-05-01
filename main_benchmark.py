@@ -152,7 +152,7 @@ else:
     #     scData = scDatasetDropout(args.datasetName, args.discreteTag, args.dropoutRatio)
     # else:
     #     scData = scDatasetDropout(args.datasetName, args.discreteTag, args.dropoutRatio, transform=logtransform)
-    scData = scDatasetDropout(args.datasetName, args.discreteTag, args.dropoutRatio, args.seed)
+    scData = scDatasetDropout(datasetName=args.datasetName, discreteTag=args.discreteTag, ratio=args.dropoutRatio, seed=args.seed)
 train_loader = DataLoader(scData, batch_size=args.batch_size, shuffle=False, **kwargs)
 
 if args.inferLTMGTag:
