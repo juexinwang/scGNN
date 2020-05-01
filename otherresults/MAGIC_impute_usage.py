@@ -11,7 +11,7 @@ sys.path.append('../')
 from benchmark_util import impute_dropout
 
 parser = argparse.ArgumentParser(description='')
-parser.add_argument('--datasetName', type=str, default='12.Klein',help='12.Klein)
+parser.add_argument('--datasetName', type=str, default='12.Klein',help='12.Klein')
 parser.add_argument('--ratio', type=str, default='0.1',
                     help='dropoutratio')
 parser.add_argument('--regulized-type', type=str, default='LTMG',
