@@ -5,10 +5,10 @@ import matplotlib.pyplot as plt
 import numpy as np
 import argparse
 import sys
-from util_function import *
-from benchmark_util import *
 sys.path.append('../')
 from benchmark_util import impute_dropout
+from util_function import *
+from benchmark_util import *
 
 parser = argparse.ArgumentParser(description='')
 parser.add_argument('--datasetName', type=str, default='12.Klein',help='12.Klein')
