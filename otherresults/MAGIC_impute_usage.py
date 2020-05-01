@@ -52,6 +52,7 @@ recon = X_magic
 
 # np.savetxt(npyDir+str(args.datasetName)+'_'+str(args.ratio)+'_'+str(args.replica)+'_recon.csv',recon,delimiter=",",fmt='%10.4f')
 np.savetxt('MAGIC_'+str(args.datasetName)+'_'+str(args.ratio)+'_'+str(args.replica)+'_recon.csv',recon,delimiter=",",fmt='%10.4f')
+np.savetxt('MAGIC_'+str(args.datasetName)+'_'+str(args.ratio)+'_'+str(args.replica)+'_ori.csv',x,delimiter=",",fmt='%10.4f')
 
 
 features         = None
