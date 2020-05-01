@@ -148,15 +148,15 @@ if args.imputeMode:
     #     ]
 
     npyList = [
-        '../npyImputeG2E_LK_0.3_1/', #1
-        '../npyImputeG2E_LK_0.3_2/', #2
-        '../npyImputeG2E_LK_0.3_3/', #3
-        '../npyImputeG2E_LK_0.6_1/', #4
-        '../npyImputeG2E_LK_0.6_2/', #5
-        '../npyImputeG2E_LK_0.6_3/', #6
-        '../npyImputeG2E_LK_0.9_1/', #7
-        '../npyImputeG2E_LK_0.9_2/', #8
-        '../npyImputeG2E_LK_0.9_3/', #9
+        '../npyImputeG2E_LK_0.3_1/ --ratio 0.3', #1
+        '../npyImputeG2E_LK_0.3_2/ --ratio 0.3', #2
+        '../npyImputeG2E_LK_0.3_3/ --ratio 0.3', #3
+        '../npyImputeG2E_LK_0.6_1/ --ratio 0.6', #4
+        '../npyImputeG2E_LK_0.6_2/ --ratio 0.6', #5
+        '../npyImputeG2E_LK_0.6_3/ --ratio 0.6', #6
+        '../npyImputeG2E_LK_0.9_1/ --ratio 0.9', #7
+        '../npyImputeG2E_LK_0.9_2/ --ratio 0.9', #8
+        '../npyImputeG2E_LK_0.9_3/ --ratio 0.9', #9
         ]
 
 else:
