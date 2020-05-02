@@ -500,9 +500,11 @@ def impute_dropout(X, seed=1, rate=0.1):
         i,j = X_zero.nonzero()
     
     np.random.seed(seed)
+    # changes here:
     # choice number 1 : select 10 percent of the non zero values (so that distributions overlap enough)
     ix = np.random.choice(range(len(i)), int(np.floor(rate * len(i))), replace=False)
-    X_zero[i[ix], j[ix]] *= np.random.binomial(1, rate)
+    # X_zero[i[ix], j[ix]] *= np.random.binomial(1, rate)
+    X_zero[i[ix], j[ix]] = 0.0
        
     # choice number 2, focus on a few but corrupt binomially
     #ix = np.random.choice(range(len(i)), int(slice_prop * np.floor(len(i))), replace=False)
