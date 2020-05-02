@@ -77,15 +77,15 @@ def imputeResult(inputData):
     # print('{:.4f}'.format(modularity))
     silhouette, chs, dbs = measureClusteringNoLabel(z, listResult)
     print('{:.4f} {:.4f} {:.4f} '.format(silhouette, chs, dbs), end='')
-    if args.benchmark:
-        # Louvain
-        ari, ami, nmi, cs, fms, vms, hs = measureClusteringTrueLabel(true_labels, listResult)
-        print('{:.4f} {:.4f} {:.4f} {:.4f} {:.4f} {:.4f} {:.4f} '.format(ari, ami, nmi, cs, fms, vms, hs), end='')
-        # KMeans
-        clustering = KMeans(n_clusters=args.n_clusters, random_state=0).fit(z)
-        listResult = clustering.predict(z)
-        ari, ami, nmi, cs, fms, vms, hs = measureClusteringTrueLabel(true_labels, listResult)
-        print('{:.4f} {:.4f} {:.4f} {:.4f} {:.4f} {:.4f} {:.4f} '.format(ari, ami, nmi, cs, fms, vms, hs), end='')
+    # if args.benchmark:
+    # Louvain
+    ari, ami, nmi, cs, fms, vms, hs = measureClusteringTrueLabel(true_labels, listResult)
+    print('{:.4f} {:.4f} {:.4f} {:.4f} {:.4f} {:.4f} {:.4f} '.format(ari, ami, nmi, cs, fms, vms, hs), end='')
+    # KMeans
+    clustering = KMeans(n_clusters=args.n_clusters, random_state=0).fit(z)
+    listResult = clustering.predict(z)
+    ari, ami, nmi, cs, fms, vms, hs = measureClusteringTrueLabel(true_labels, listResult)
+    print('{:.4f} {:.4f} {:.4f} {:.4f} {:.4f} {:.4f} {:.4f} '.format(ari, ami, nmi, cs, fms, vms, hs), end='')
 
 imputeResult(featuresImpute)
 imputeResult(featuresOriginal)
