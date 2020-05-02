@@ -67,10 +67,10 @@ def imputeResult(inputData):
     '''
     if type(inputData) is scipy.sparse.lil.lil_matrix:
         inputData = scipy.sparse.lil.lil_matrix.todense(inputData)
-    if inputData.shape[0] > args.pcaNum:
-        z,_ = pcaFunc(inputData, n_components=args.pcaNum)
-    else:
-        z = inputData
+    # if inputData.shape[0] > args.pcaNum:
+    z,_ = pcaFunc(inputData, n_components=15)
+    # else:
+    #     z = inputData
     _, edgeList = generateAdj(z, graphType='KNNgraphML', para = 'euclidean:10')
     listResult,size = generateLouvainCluster(edgeList)
     # modularity = calcuModularity(listResult, edgeList)
