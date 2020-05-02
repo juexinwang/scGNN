@@ -18,6 +18,8 @@ parser.add_argument('--regulized-type', type=str, default='LTMG',
                     help='regulized type (default: LTMG), otherwise: noregu')
 parser.add_argument('--replica', type=str, default='1',
                     help='replica')
+parser.add_argument('--n-clusters', type=int, default=4,
+                    help='replica')
 parser.add_argument('--npyDir', type=str, default='../npyImputeG2E_LK',
                     help='directory of npy')
 parser.add_argument('--labelFilename',type=str,default='/home/jwang/data/scData/12.Klein/Klein_cell_label.csv',help="label Filename")
