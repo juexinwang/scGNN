@@ -1,7 +1,7 @@
 import os
 import argparse
 parser = argparse.ArgumentParser(description='Read Results from results bach scripts')
-parser.add_argument('--imputeMode', default=False, action='store_true',
+parser.add_argument('--imputeMode', default=True, action='store_true',
                     help='impute or not (default: False). Caution: usually change npuDir if set imputeMode as true')
 args = parser.parse_args()
 
@@ -45,13 +45,13 @@ nameDict={'Z0':'','Z1':'','Z2':'','Z3':'','Z4':'','Z5':'','Z6':'','Z7':'','Z8':'
 
 # for all
 # for i in range(8,13):
-for j in range(11,12):
+for i in range(11,12):
     allstr = []
     selstr = []
     # complex: 63, select: 20, strong: 16, louvain: 54 
     # for j in range(54):
     # for j in range(4):
-    for i in range(9):
+    for j in range(9):
         tag = True
         if args.imputeMode:
             lastline = ''
