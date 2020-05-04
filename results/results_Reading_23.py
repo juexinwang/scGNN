@@ -167,10 +167,18 @@ if args.imputeMode:
     #     ]
     
     npyList = [
-        '../npyImputeG2E_LK_2/', #1
-        '../npyImputeG2F_LK_2/', #2
-        '../npyImputeN2E_LK_2/', #3
-        '../npyImputeG1E_LK_2/', #4
+        '../npyImputeG2E_LK/', #1
+        '../npyImputeG2F_LK/', #2
+        '../npyImputeN2E_LK/', #3
+        '../npyImputeG1E_LK/', #4
+        '../npyImputeG2E_LK_2/', #5
+        '../npyImputeG2F_LK_2/', #6
+        '../npyImputeN2E_LK_2/', #7
+        '../npyImputeG1E_LK_2/', #8
+        '../npyImputeG2E_LK_3/', #9
+        '../npyImputeG2F_LK_3/', #10
+        '../npyImputeN2E_LK_3/', #11
+        '../npyImputeG1E_LK_3/', #12
         ]
 
 else:
@@ -400,6 +408,18 @@ for i in range(0,2):
 for i in range(2,3):
     reguDict[i]='noregu'
 for i in range(3,4):
+    reguDict[i]='LTMG'
+for i in range(4,6):
+    reguDict[i]='LTMG'
+for i in range(6,7):
+    reguDict[i]='noregu'
+for i in range(7,8):
+    reguDict[i]='LTMG'
+for i in range(8,10):
+    reguDict[i]='LTMG'
+for i in range(10,11):
+    reguDict[i]='noregu'
+for i in range(11,12):
     reguDict[i]='LTMG'
 
 reguStr=''
