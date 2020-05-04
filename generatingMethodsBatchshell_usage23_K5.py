@@ -28,58 +28,22 @@ templateStr2 = "\n#SBATCH -o results-%j.out           # give the job output a cu
 #batchInfo,scGNNparam,outDir
 #huge matrix
 methodsList = [
-    ('run_experiment_1_g_e_LK E1geK','--regulized-type LTMG --EMtype EM --clustering-method LouvainK --useGAEembedding --npyDir','npyG1E_LK/'),
-    ('run_experiment_2_g_e_LK E2geK','--regulized-type LTMG --EMtype celltypeEM --clustering-method LouvainK --useGAEembedding  --npyDir','npyG2E_LK/'),
-    ('run_experiment_2_g_f_LK E2gfK','--regulized-type LTMG --EMtype celltypeEM --clustering-method LouvainK --npyDir','npyG2F_LK/'),
-    ('run_experiment_2_n_e_LK E2neK','--regulized-type noregu --EMtype celltypeEM --clustering-method LouvainK --useGAEembedding --npyDir','npyN2E_LK/'),
+    ('run_experiment_1_g_e_LK E1geK','--k 5 --regulized-type LTMG --EMtype EM --clustering-method LouvainK --useGAEembedding --npyDir','npyG1E_LK5/'),
+    ('run_experiment_2_g_e_LK E2geK','--k 5 --regulized-type LTMG --EMtype celltypeEM --clustering-method LouvainK --useGAEembedding  --npyDir','npyG2E_LK5/'),
+    ('run_experiment_2_g_f_LK E2gfK','--k 5 --regulized-type LTMG --EMtype celltypeEM --clustering-method LouvainK --npyDir','npyG2F_LK5/'),
+    ('run_experiment_2_n_e_LK E2neK','--k 5 --regulized-type noregu --EMtype celltypeEM --clustering-method LouvainK --useGAEembedding --npyDir','npyN2E_LK5/'),
 
-    ('run_experiment_1_g_e_LK_2 21geK','--regulized-type LTMG --EMtype EM --clustering-method LouvainK --useGAEembedding --npyDir','npyG1E_LK_2/ --seed 2'),
-    ('run_experiment_2_g_e_LK_2 22geK','--regulized-type LTMG --EMtype celltypeEM --clustering-method LouvainK --useGAEembedding  --npyDir','npyG2E_LK_2/ --seed 2'),
-    ('run_experiment_2_g_f_LK_2 22gfK','--regulized-type LTMG --EMtype celltypeEM --clustering-method LouvainK --npyDir','npyG2F_LK_2/ --seed 2'),
-    ('run_experiment_2_n_e_LK_2 22neK','--regulized-type noregu --EMtype celltypeEM --clustering-method LouvainK --useGAEembedding --npyDir','npyN2E_LK_2/ --seed 2'),
+    ('run_experiment_1_g_e_LK_2 21geK','--k 5 --regulized-type LTMG --EMtype EM --clustering-method LouvainK --useGAEembedding --npyDir','npyG1E_LK5_2/ --seed 2'),
+    ('run_experiment_2_g_e_LK_2 22geK','--k 5 --regulized-type LTMG --EMtype celltypeEM --clustering-method LouvainK --useGAEembedding  --npyDir','npyG2E_LK5_2/ --seed 2'),
+    ('run_experiment_2_g_f_LK_2 22gfK','--k 5 --regulized-type LTMG --EMtype celltypeEM --clustering-method LouvainK --npyDir','npyG2F_LK5_2/ --seed 2'),
+    ('run_experiment_2_n_e_LK_2 22neK','--k 5 --regulized-type noregu --EMtype celltypeEM --clustering-method LouvainK --useGAEembedding --npyDir','npyN2E_LK5_2/ --seed 2'),
 
-    ('run_experiment_1_g_e_LK_3 31geK','--regulized-type LTMG --EMtype EM --clustering-method LouvainK --useGAEembedding --npyDir','npyG1E_LK_3/ --seed 3'),
-    ('run_experiment_2_g_e_LK_3 32geK','--regulized-type LTMG --EMtype celltypeEM --clustering-method LouvainK --useGAEembedding  --npyDir','npyG2E_LK_3/ --seed 3'),
-    ('run_experiment_2_g_f_LK_3 32gfK','--regulized-type LTMG --EMtype celltypeEM --clustering-method LouvainK --npyDir','npyG2F_LK_3/  --seed 3'),
-    ('run_experiment_2_n_e_LK_3 32neK','--regulized-type noregu --EMtype celltypeEM --clustering-method LouvainK --useGAEembedding --npyDir','npyN2E_LK_3/  --seed 3'),
+    ('run_experiment_1_g_e_LK_3 31geK','--k 5 --regulized-type LTMG --EMtype EM --clustering-method LouvainK --useGAEembedding --npyDir','npyG1E_LK5_3/ --seed 3'),
+    ('run_experiment_2_g_e_LK_3 32geK','--k 5 --regulized-type LTMG --EMtype celltypeEM --clustering-method LouvainK --useGAEembedding  --npyDir','npyG2E_LK5_3/ --seed 3'),
+    ('run_experiment_2_g_f_LK_3 32gfK','--k 5 --regulized-type LTMG --EMtype celltypeEM --clustering-method LouvainK --npyDir','npyG2F_LK5_3/  --seed 3'),
+    ('run_experiment_2_n_e_LK_3 32neK','--k 5 --regulized-type noregu --EMtype celltypeEM --clustering-method LouvainK --useGAEembedding --npyDir','npyN2E_LK5_3/  --seed 3'),
 
 ]
-
-
-
-# All
-# datasetNameList = [
-#     '1.Biase --n-clusters 3',
-#     '1.Biase --discreteTag --n-clusters 3',
-#     '2.Li --n-clusters 9',
-#     '2.Li --discreteTag --n-clusters 9',
-#     '3.Treutlein --n-clusters 5',
-#     '3.Treutlein --discreteTag --n-clusters 5',
-#     '4.Yan --n-clusters 7',
-#     '4.Yan --discreteTag --n-clusters 7',
-#     '5.Goolam --n-clusters 5',
-#     '5.Goolam --discreteTag --n-clusters 5',
-#     '6.Guo --n-clusters 9',
-#     '6.Guo --discreteTag --n-clusters 9',
-#     '7.Deng --n-clusters 10',
-#     '7.Deng --discreteTag --n-clusters 10',
-#     '8.Pollen --n-clusters 11',
-#     '8.Pollen --discreteTag --n-clusters 11',
-#     '9.Chung --n-clusters 4',
-#     '9.Chung --discreteTag --n-clusters 4',
-#     '10.Usoskin --n-clusters 11',
-#     '10.Usoskin --discreteTag --n-clusters 11',
-#     '11.Kolodziejczyk --n-clusters 3',
-#     '11.Kolodziejczyk --discreteTag --n-clusters 3',
-#     '12.Klein --n-clusters 4',
-#     '12.Klein --discreteTag --n-clusters 4',
-#     '13.Zeisel --n-clusters 7',
-#     '13.Zeisel --discreteTag --n-clusters 7',
-#     '20.10X_2700_seurat',
-#     '20.10X_2700_seurat --discreteTag',
-#     '30.Schafer',
-#     '30.Schafer --discreteTag'
-# ]
 
 # select
 datasetNameList = [
