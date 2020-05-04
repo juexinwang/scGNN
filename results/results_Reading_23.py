@@ -3,7 +3,7 @@ import argparse
 parser = argparse.ArgumentParser(description='Read Results in different methods')
 parser.add_argument('--methodName', type=int, default=0, 
                     help="method used: 0-62")
-parser.add_argument('--imputeMode', default=False, action='store_true',
+parser.add_argument('--imputeMode', default=True, action='store_true',
                     help='impute or not (default: False). Caution: usually change npuDir if set imputeMode as true')
 parser.add_argument('--runMode',action='store_true', default=False, help="Run or prepare cluster script")
 parser.add_argument('--splitMode', default=False, action='store_true',
