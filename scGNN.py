@@ -156,10 +156,13 @@ train_loader = DataLoader(scData, batch_size=args.batch_size, shuffle=False, **k
 print ('---'+str(datetime.timedelta(seconds=int(time.time()-start_time)))+'---TrainLoader has been successfully prepared.')
 
 # load LTMG in sparse version
-print ('Start loading LTMG in sparse coding.')
-regulationMatrix = readLTMG(args.LTMGDir+args.datasetName+'/', args.ltmgFile)
-regulationMatrix = torch.from_numpy(regulationMatrix)
-print ('---'+str(datetime.timedelta(seconds=int(time.time()-start_time)))+'---LTMG has been successfully prepared.')
+if not args.regulized_type=='noregu':
+    print ('Start loading LTMG in sparse coding.')
+    regulationMatrix = readLTMG(args.LTMGDir+args.datasetName+'/', args.ltmgFile)
+    regulationMatrix = torch.from_numpy(regulationMatrix)
+    print ('---'+str(datetime.timedelta(seconds=int(time.time()-start_time)))+'---LTMG has been successfully prepared.')
+else:
+    regulationMatrix = None
 
 # Original
 if args.model == 'VAE':

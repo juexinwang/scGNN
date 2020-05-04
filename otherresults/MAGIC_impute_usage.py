@@ -33,7 +33,9 @@ featuresOriginal = load_data(args.datasetName, False)
 ori = featuresOriginal.todense()
 oriz = ori.copy()
 
-npyDir = args.npyDir+'_'+args.ratio+'_'+args.replica+'/'
+# for 0.3/0.6/0.9
+# npyDir = args.npyDir+'_'+args.ratio+'_'+args.replica+'/'
+npyDir = args.npyDir+'/'
 
 dropi            = np.load(npyDir+args.datasetName+'_'+args.regulized_type+'_'+args.ratio+'_dropi.npy')
 dropj            = np.load(npyDir+args.datasetName+'_'+args.regulized_type+'_'+args.ratio+'_dropj.npy')
