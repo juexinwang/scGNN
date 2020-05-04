@@ -187,7 +187,10 @@ def train(epoch, train_loader=train_loader, EMFlag=False):
     for batch_idx, (data, dataindex) in enumerate(train_loader):
         data = data.type(torch.FloatTensor)
         data = data.to(device)
-        regulationMatrixBatch = regulationMatrix[dataindex,:]
+        if not args.regulized_type == 'noregu':
+            regulationMatrixBatch = regulationMatrix[dataindex,:]
+        else:
+            regulationMatrixBatch = None
         optimizer.zero_grad()
         if args.model == 'VAE':
             recon_batch, mu, logvar, z = model(data)
