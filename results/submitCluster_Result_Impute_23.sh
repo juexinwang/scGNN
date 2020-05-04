@@ -1,4 +1,4 @@
-for i in {0..12}
+for i in {0..11}
 do
 for j in {8..12}
 do
@@ -7,7 +7,7 @@ done
 done
 
 # submit
-for i in {0..12}
+for i in {0..11}
 do
 for j in {8..12}
 do
