@@ -381,8 +381,7 @@ if __name__ == "__main__":
     # adj, edgeList = generateAdj(zOut, graphType='KNNgraphML', para = args.knn_distance+':'+str(args.k)) 
     adj, edgeList = generateAdj(zOut, graphType=args.prunetype, para = args.knn_distance+':'+str(args.k), outAdjTag = (args.useGAEembedding or args.useBothembedding))
     adjdense = sp.csr_matrix.todense(adj)
-    adjsample = torch.from_numpy(adjdense)
-    adjsample = adjsample.type(torch.LongTensor)
+    adjsample = torch.from_numpy(adjdense).type(torch.LongTensor)
     print("---Pruning takes %s seconds ---" % (time.time() - prune_time))
     if args.saveFlag:
         reconOut = recon.detach().cpu().numpy()
@@ -570,8 +569,7 @@ if __name__ == "__main__":
         # adj, edgeList = generateAdj(zOut, graphType='KNNgraphML', para = args.knn_distance+':'+str(args.k))
         adj, edgeList = generateAdj(zOut, graphType=args.prunetype, para = args.knn_distance+':'+str(args.k), outAdjTag = (args.useGAEembedding or args.useBothembedding)) 
         adjdense = sp.csr_matrix.todense(adj)
-        adjsample = torch.from_numpy(adjdense)
-        adjsample = adjsample.type(torch.LongTensor)
+        adjsample = torch.from_numpy(adjdense).type(torch.LongTensor)
         print("---Pruning takes %s seconds ---" % (time.time() - prune_time))
 
         # Whether use GAE embedding
