@@ -272,6 +272,7 @@ if __name__ == "__main__":
         recon, original, z = train(epoch, EMFlag=False)
         
     zOut = z.detach().cpu().numpy() 
+    torch.save(model.state_dict('EMtraining.pt'))
 
     #Define resolution
     #Default: auto, otherwise use user defined resolution
@@ -431,6 +432,7 @@ if __name__ == "__main__":
             reconNew = reconNew.to(device)
 
             for clusterIndex in clusterIndexList:
+                model.load_state_dict(torch.load('EMtraining.pt'))
                 reconUsage = recon[clusterIndex]
                 scDataInter = scDatasetInter(reconUsage)
                 train_loader = DataLoader(scDataInter, batch_size=args.batch_size, shuffle=False, **kwargs)
@@ -447,10 +449,13 @@ if __name__ == "__main__":
         scDataInter = scDatasetInter(recon)
         train_loader = DataLoader(scDataInter, batch_size=args.batch_size, shuffle=False, **kwargs)
 
+
+        model.load_state_dict(torch.load('EMtraining.pt'))
         for epoch in range(1, args.EM_epochs + 1):
             recon, original, z = train(epoch, EMFlag=True)
         
         zOut = z.detach().cpu().numpy()
+        torch.save(model.state_dict('EMtraining.pt'))
 
         prune_time = time.time()
         # Here para = 'euclidean:10'
