@@ -86,8 +86,8 @@ def imputeResult(inputData):
         ari, ami, nmi, cs, fms, vms, hs = measureClusteringTrueLabel(true_labels, listResult)
         print('{:.4f} {:.4f} {:.4f} {:.4f} {:.4f} {:.4f} {:.4f} '.format(ari, ami, nmi, cs, fms, vms, hs), end='')
 
-imputeResult(featuresImpute)
-imputeResult(featuresOriginal)
+# imputeResult(featuresImpute)
+# imputeResult(featuresOriginal)
 # imputeResult(features)
 print('')
 

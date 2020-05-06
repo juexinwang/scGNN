@@ -252,26 +252,6 @@ def train(epoch, train_loader=train_loader, EMFlag=False):
 
     return recon_batch_all, data_all, z_all
 
-def trainParallel(i,recon,clusterIndexList,args):
-        '''
-        Train each autoencoder in paral
-        '''
-        print('~'+str(i))
-        clusterIndex = clusterIndexList[i]
-        print('!'+str(clusterIndex))
-        reconUsage = recon[clusterIndex]
-        print('@'+str(reconUsage))
-        scDataInter = scDatasetInter(reconUsage)
-        train_loader = DataLoader(scDataInter, batch_size=args.batch_size, shuffle=False, **kwargs)
-        for epoch in range(1, args.celltype_epochs + 1):
-            print('#'+str(epoch))
-            reconCluster, originalCluster, zCluster = train(epoch, EMFlag=True) 
-        print('$'+str(i))
-        count = 0
-        for i in clusterIndex:
-            reconNew[i] = reconCluster[count,:]
-            count +=1
-
 if __name__ == "__main__":
     start_time = time.time()
     discreteStr = ''
@@ -450,7 +430,6 @@ if __name__ == "__main__":
             reconNew = reconNew.type(torch.FloatTensor)
             reconNew = reconNew.to(device)
 
-            # No parallel
             for clusterIndex in clusterIndexList:
                 reconUsage = recon[clusterIndex]
                 scDataInter = scDatasetInter(reconUsage)
@@ -461,22 +440,6 @@ if __name__ == "__main__":
                 for i in clusterIndex:
                     reconNew[i] = reconCluster[count,:]
                     count +=1
-            
-            # parallel
-            # TODO: looks like pytorch does not support this
-            # reconNew.share_memory_()
-            # celltypeNum = len(clusterIndexList)
-            # processes=[]
-
-            # for i in range(celltypeNum):
-            #     #call Function: trainParallel(i,recon,clusterIndexList,args)
-            #     px = mp.Process(target=trainParallel, args=(i,recon,clusterIndexList,args))
-            #     px.start()
-            #     processes.append(px)
-            # for px in processes:
-            #     px.join()
-            #     # foo(i,tl)
-            
             # Update
             recon = reconNew
         
