@@ -11,4 +11,6 @@
 #################################################################
 module load miniconda3
 source activate conda_R
+ulimit -n 10000
+ulimit -a
 python3 -W ignore main_benchmark_graphregu.py --datasetName 12.Klein --benchmark /home/jwang/data/scData/12.Klein/Klein_cell_label.csv --EMtype EM --EMregulized-type GraphR --ONEregulized-type LTMG-GraphR --useGAEembedding --npyDir npyeRG1E/ --imputeMode  --EM-epochs 50

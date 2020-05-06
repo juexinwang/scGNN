@@ -11,4 +11,6 @@
 #################################################################
 module load miniconda3
 source activate conda_R
+ulimit -n 10000
+ulimit -a
 python3 -W ignore main_benchmark_graphregu.py --datasetName 13.Zeisel --benchmark /home/jwang/data/scData/13.Zeisel/Zeisel_cell_label.csv --EMtype EM --EMregulized-type Graph --ONEregulized-type LTMG-Graph --useGAEembedding --npyDir npyeG1E/ --imputeMode  --EM-epochs 50
