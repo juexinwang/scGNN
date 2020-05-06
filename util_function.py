@@ -250,7 +250,7 @@ def loss_function(recon_x, x, mu, logvar):
     return BCE + KLD
 
 # Graph
-def loss_function_graph(recon_x, x, mu, logvar, gammaPara=1.0, regulationMatrix=None, regularizer_type='noregu', reguPara=0.001, modelusage='AE'):
+def loss_function_graph(recon_x, x, mu, logvar, graphregu=None, gammaPara=1.0, regulationMatrix=None, regularizer_type='noregu', reguPara=0.001, modelusage='AE'):
     '''
     Regularized by the graph information
     Reconstruction + KL divergence losses summed over all elements and batch
@@ -269,6 +269,14 @@ def loss_function_graph(recon_x, x, mu, logvar, gammaPara=1.0, regulationMatrix=
         loss = BCE + reguPara * regulation_mse_loss_function(recon_x, target, regulationMatrix, reduction='sum')
     elif regularizer_type == 'LTMG01':
         loss = BCE + reguPara * regulation01_mse_loss_function(recon_x, target, regulationMatrix, reduction='sum')
+    elif regularizer_type == 'Graph':
+        loss = BCE + reguPara * graph_mse_loss_function(recon_x, target, graphregu=graphregu, reduction='sum')
+    elif regularizer_type == 'GraphR':
+        loss = BCE + reguPara * graph_mse_loss_function(recon_x, target, graphregu=1-graphregu, reduction='sum')
+    elif regularizer_type == 'LTMG-Graph':
+        loss = BCE + reguPara * regulation_mse_loss_function(recon_x, target, regulationMatrix, reduction='sum') + reguPara * graph_mse_loss_function(recon_x, target, graphregu=graphregu, reduction='sum')
+    elif regularizer_type == 'LTMG-GraphR':
+        loss = BCE + reguPara * regulation_mse_loss_function(recon_x, target, regulationMatrix, reduction='sum') + reguPara * graph_mse_loss_function(recon_x, target, graphregu=1-graphregu, reduction='sum')
 
     # see Appendix B from VAE paper:
     # Kingma and Welling. Auto-Encoding Variational Bayes. ICLR, 2014
@@ -412,6 +420,26 @@ def regulation01_mse_loss_function(input, target, regulationMatrix, size_average
     ret = (input - target) ** 2
     regulationMatrix[regulationMatrix>0]=1
     ret = torch.mul(ret, regulationMatrix)
+    if reduction != 'none':
+        ret = torch.mean(ret) if reduction == 'mean' else torch.sum(ret)      
+    return ret
+
+def graph_mse_loss_function(input, target, graphregu, size_average=None, reduce=None, reduction='mean'):
+    # type: (Tensor, Tensor, Optional[bool], Optional[bool], str) -> Tensor
+    r"""graph_mse_loss_function(input, target, adj, regularizer_type, size_average=None, reduce=None, reduction='mean') -> Tensor
+    Measures the element-wise mean squared error in graph regularizor.
+    See:revised from pytorch class:`~torch.nn.MSELoss` for details.
+    """
+    if not (target.size() == input.size()):
+        print("Using a target size ({}) that is different to the input size ({}). "
+                      "This will likely lead to incorrect results due to broadcasting. "
+                      "Please ensure they have the same size.".format(target.size(), input.size()))
+    if size_average is not None or reduce is not None:
+        reduction = legacy_get_string(size_average, reduce)
+    # Now it use regulariz type to distinguish, it can be imporved later
+    ret = (input - target) ** 2
+    if graphregu != None:
+        ret = torch.matmul(graphregu, ret)
     if reduction != 'none':
         ret = torch.mean(ret) if reduction == 'mean' else torch.sum(ret)      
     return ret
