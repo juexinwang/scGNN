@@ -1,17 +1,17 @@
-mkdir npyImputeG2E_LK5
-mkdir npyImputeG2F_LK5
-mkdir npyImputeN2E_LK5
-mkdir npyImputeG1E_LK5
+mkdir npyImputeG2E_LK
+mkdir npyImputeG2F_LK
+mkdir npyImputeN2E_LK
+mkdir npyImputeG1E_LK
 
-mkdir npyImputeG2E_LK5_2
-mkdir npyImputeG2F_LK5_2
-mkdir npyImputeN2E_LK5_2
-mkdir npyImputeG1E_LK5_2
+mkdir npyImputeG2E_LK_2
+mkdir npyImputeG2F_LK_2
+mkdir npyImputeN2E_LK_2
+mkdir npyImputeG1E_LK_2
 
-mkdir npyImputeG2E_LK5_3
-mkdir npyImputeG2F_LK5_3
-mkdir npyImputeN2E_LK5_3
-mkdir npyImputeG1E_LK5_3
+mkdir npyImputeG2E_LK_3
+mkdir npyImputeG2F_LK_3
+mkdir npyImputeN2E_LK_3
+mkdir npyImputeG1E_LK_3
 
 for i in {9..13}
 do

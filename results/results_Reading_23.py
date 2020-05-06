@@ -182,18 +182,18 @@ if args.imputeMode:
     #     ]
 
     npyList = [
-        '../npyImputeG2E_LK5/', #1
-        '../npyImputeG2F_LK5/', #2
-        '../npyImputeN2E_LK5/', #3
-        '../npyImputeG1E_LK5/', #4
-        '../npyImputeG2E_LK5_2/', #5
-        '../npyImputeG2F_LK5_2/', #6
-        '../npyImputeN2E_LK5_2/', #7
-        '../npyImputeG1E_LK5_2/', #8
-        '../npyImputeG2E_LK5_3/', #9
-        '../npyImputeG2F_LK5_3/', #10
-        '../npyImputeN2E_LK5_3/', #11
-        '../npyImputeG1E_LK5_3/', #12
+        '../npyImputeG2E_LK/', #1
+        '../npyImputeG2F_LK/', #2
+        '../npyImputeN2E_LK/', #3
+        '../npyImputeG1E_LK/', #4
+        '../npyImputeG2E_LK_2/', #5
+        '../npyImputeG2F_LK_2/', #6
+        '../npyImputeN2E_LK_2/', #7
+        '../npyImputeG1E_LK_2/', #8
+        '../npyImputeG2E_LK_3/', #9
+        '../npyImputeG2F_LK_3/', #10
+        '../npyImputeN2E_LK_3/', #11
+        '../npyImputeG1E_LK_3/', #12
         ]
 
 else:
