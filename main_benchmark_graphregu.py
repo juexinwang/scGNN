@@ -32,8 +32,8 @@ parser.add_argument('--epochs', type=int, default=500, metavar='N',
                     help='number of epochs to train (default: 500)')
 parser.add_argument('--EM-epochs', type=int, default=200, metavar='N',
                     help='number of epochs to train in iteration EM (default: 200)')
-parser.add_argument('--EM-iteration', type=int, default=20, metavar='N',
-                    help='number of epochs in EM iteration (default: 3)')
+parser.add_argument('--EM-iteration', type=int, default=10, metavar='N',
+                    help='number of epochs in EM iteration (default: 10)')
 parser.add_argument('--EMtype', type=str, default='EM',
                     help='EM process type (default: celltypeEM) or EM')
 parser.add_argument('--alpha', type=float, default=0.5,
@@ -98,7 +98,7 @@ parser.add_argument('--useGAEembedding', action='store_true', default=False,
                     help='whether use GAE embedding for clustering(default: False)')
 parser.add_argument('--useBothembedding', action='store_true', default=False, 
                     help='whether use both embedding and Graph embedding for clustering(default: False)')
-parser.add_argument('--clustering-method', type=str, default='Louvain',
+parser.add_argument('--clustering-method', type=str, default='LouvainK',
                     help='Clustering method: Louvain/KMeans/SpectralClustering/AffinityPropagation/AgglomerativeClustering/Birch/BirchN/MeanShift/OPTICS/LouvainK/LouvainB')
 parser.add_argument('--maxClusterNumber', type=int, default=30,
                     help='max cluster for celltypeEM without setting number of clusters (default: 30)') 

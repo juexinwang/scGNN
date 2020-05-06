@@ -92,7 +92,7 @@ parser.add_argument('--useGAEembedding', action='store_true', default=False,
                     help='whether use GAE embedding for clustering(default: False)')
 parser.add_argument('--useBothembedding', action='store_true', default=False, 
                     help='whether use both embedding and Graph embedding for clustering(default: False)')
-parser.add_argument('--clustering-method', type=str, default='Louvain',
+parser.add_argument('--clustering-method', type=str, default='LouvainK',
                     help='Clustering method: Louvain/KMeans/SpectralClustering/AffinityPropagation/AgglomerativeClustering/Birch/BirchN/MeanShift/OPTICS/LouvainK/LouvainB')
 parser.add_argument('--maxClusterNumber', type=int, default=30,
                     help='max cluster for celltypeEM without setting number of clusters (default: 30)') 
