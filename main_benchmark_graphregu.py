@@ -458,7 +458,7 @@ if __name__ == "__main__":
             from R_util import generateLouvainCluster
             listResult,size = generateLouvainCluster(edgeList)
             k = len(np.unique(listResult))
-            print('Louvain cluster: '+str(k))
+            print('Louvain cluster: '+str(k)+' with resolution'+str(resolution))
             # resolution of louvain cluster:
             k = int(k*resolution) if k>3 else 2
             clustering = KMeans(n_clusters=k, random_state=0).fit(zOut)
