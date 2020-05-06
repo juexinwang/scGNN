@@ -258,7 +258,7 @@ def train(epoch, train_loader=train_loader, EMFlag=False):
 
     return recon_batch_all, data_all, z_all
 
-def trainONE(epoch, train_loader=train_loader, EMFlag=False):
+def trainONE(epoch, model = model, train_loader=train_loader, EMFlag=False):
     '''
     EMFlag indicates whether in EM processes. 
         If in EM, use regulized-type parsed from program entrance,
@@ -689,8 +689,16 @@ if __name__ == "__main__":
             regulationMatrix = readLTMGnonsparse(args.LTMGDir, ltmgFile)
             regulationMatrix = torch.from_numpy(regulationMatrix)
 
+            # Original
+            if args.model == 'VAE':
+                # model = VAE(dim=scData.features.shape[1]).to(device)
+                model1 = VAE2d(dim=scData.features.shape[1]).to(device)
+            elif args.model == 'AE':
+                model1 = AE(dim=scData.features.shape[1]).to(device)
+            optimizer = optim.Adam(model1.parameters(), lr=1e-3)
+
             for epoch in range(1, args.epochs + 1):
-                recon, original, z = trainONE(epoch, EMFlag=False)
+                recon, original, z = trainONE(epoch, model=model1, EMFlag=False)
                 
             zOut = z.detach().cpu().numpy() 
 
