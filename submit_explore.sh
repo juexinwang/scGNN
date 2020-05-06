@@ -1,5 +1,7 @@
 mkdir npyeG2E
+mkdir npyeG1E
 mkdir npyeRG2E
+mkdir npyeRG1E
 
 for i in {12..13}
 do
