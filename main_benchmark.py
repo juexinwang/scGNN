@@ -511,9 +511,18 @@ if __name__ == "__main__":
         print(listResult)
         print('celltype similarity:'+str(ari))
         ari, ami, nmi, cs, fms, vms, hs = measureClusteringTrueLabel(bench_celltype, listResult)
+        resultarray=[]
+        resultstr = str(silhouette)+' '+str(chs)+' '+str(dbs)+' '+str(ari)+' '+str(ami)+' '+str(nmi)+' '+str(cs)+' '+str(fms)+' '+str(vms)+' '+str(hs)
+        resultarray.append(resultstr)
         print('All Results: ')
-        print(str(silhouette)+' '+str(chs)+' '+str(dbs)+' '+str(ari)+' '+str(ami)+' '+str(nmi)+' '+str(cs)+' '+str(fms)+' '+str(vms)+' '+str(hs))
-        
+        print(resultstr)
+
+        if args.saveFlag:
+            if args.imputeMode:
+                np.savetxt(args.npyDir+args.datasetName+'_'+args.regulized_type+'_'+str(args.dropoutRatio)+'_'+str(args.regularizePara)+'_benchmark'+str(bigepoch)+'.txt',resultarray,fmt='%s')
+            else:
+                np.savetxt(args.npyDir+args.datasetName+'_'+args.regulized_type+'_'+str(args.regularizePara)+'_benchmark'+str(bigepoch)+'.txt',resultarray,fmt='%s')
+
         # graph criteria
         if args.converge_type == 'graph':       
             if graphChange < graphChangeThreshold:
