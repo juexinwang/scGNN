@@ -10,7 +10,7 @@ parser.add_argument('--splitMode', default=False, action='store_true',
                     help='whether split, used for long queue')
 parser.add_argument('--batchStr', type=int, default=0, 
                     help="method used: 0-12")
-parser.add_argument('--regupara', type=float, default='0.1',
+parser.add_argument('--regupara', type=str, default='0.1',
                     help='regupara')                    
 args = parser.parse_args()
 

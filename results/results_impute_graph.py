@@ -21,7 +21,7 @@ parser.add_argument('--npyDir', type=str, default='../npyImpute/',
                     help='directory of npy')
 parser.add_argument('--ratio', type=str, default='0.1',
                     help='dropoutratio')
-parser.add_argument('--regupara', type=float, default='0.1',
+parser.add_argument('--regupara', type=str, default='0.1',
                     help='regupara')
 parser.add_argument('--reconstr', type=str, default='',
                     help='iteration of imputed recon (default: '') alternative: 0,1,2')
