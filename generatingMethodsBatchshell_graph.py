@@ -33,15 +33,15 @@ methodsList = [
     ('run_experiment_1_n_e_LK E1neK','--regulized-type noregu --EMtype EM --clustering-method LouvainK --useGAEembedding --npyDir','npyN1E_LK/'),
     # ('run_experiment_2_g_e_LK E2geK','--regulized-type LTMG --EMtype celltypeEM --clustering-method LouvainK --useGAEembedding  --npyDir','npyG2E_LK/'),
     
-    ('run_experiment_1_g_e_LK E1geK','--regulized-type LTMG --EMtype EM --clustering-method LouvainK --useGAEembedding --npyDir','npyG1E_LK_2/ --seed 2'),
-    ('run_experiment_1_g_f_LK E1gfK','--regulized-type LTMG --EMtype EM --clustering-method LouvainK --npyDir','npyG1F_LK_2/ --seed 2'),
-    ('run_experiment_1_n_e_LK E1neK','--regulized-type noregu --EMtype EM --clustering-method LouvainK --useGAEembedding --npyDir','npyN1E_LK_2/ --seed 2'),
-    # ('run_experiment_2_g_e_LK E2geK','--regulized-type LTMG --EMtype celltypeEM --clustering-method LouvainK --useGAEembedding  --npyDir','npyG2E_LK_2/ --seed 2'),
+    ('run_experiment_1_g_e_LK2 E1geK','--regulized-type LTMG --EMtype EM --clustering-method LouvainK --useGAEembedding --npyDir','npyG1E_LK_2/ --seed 2'),
+    ('run_experiment_1_g_f_LK2 E1gfK','--regulized-type LTMG --EMtype EM --clustering-method LouvainK --npyDir','npyG1F_LK_2/ --seed 2'),
+    ('run_experiment_1_n_e_LK2 E1neK','--regulized-type noregu --EMtype EM --clustering-method LouvainK --useGAEembedding --npyDir','npyN1E_LK_2/ --seed 2'),
+    # ('run_experiment_2_g_e_LK2 E2geK','--regulized-type LTMG --EMtype celltypeEM --clustering-method LouvainK --useGAEembedding  --npyDir','npyG2E_LK_2/ --seed 2'),
 
-    ('run_experiment_1_g_e_LK E1geK','--regulized-type LTMG --EMtype EM --clustering-method LouvainK --useGAEembedding --npyDir','npyG1E_LK_3/ --seed 3'),
-    ('run_experiment_1_g_f_LK E1gfK','--regulized-type LTMG --EMtype EM --clustering-method LouvainK --npyDir','npyG1F_LK_3/ --seed 3'),
-    ('run_experiment_1_n_e_LK E1neK','--regulized-type noregu --EMtype EM --clustering-method LouvainK --useGAEembedding --npyDir','npyN1E_LK_3/ --seed 3'),
-    # ('run_experiment_2_g_e_LK E2geK','--regulized-type LTMG --EMtype celltypeEM --clustering-method LouvainK --useGAEembedding  --npyDir','npyG2E_LK_3/ --seed 3'),
+    ('run_experiment_1_g_e_LK3 E1geK','--regulized-type LTMG --EMtype EM --clustering-method LouvainK --useGAEembedding --npyDir','npyG1E_LK_3/ --seed 3'),
+    ('run_experiment_1_g_f_LK3 E1gfK','--regulized-type LTMG --EMtype EM --clustering-method LouvainK --npyDir','npyG1F_LK_3/ --seed 3'),
+    ('run_experiment_1_n_e_LK3 E1neK','--regulized-type noregu --EMtype EM --clustering-method LouvainK --useGAEembedding --npyDir','npyN1E_LK_3/ --seed 3'),
+    # ('run_experiment_2_g_e_LK3 E2geK','--regulized-type LTMG --EMtype celltypeEM --clustering-method LouvainK --useGAEembedding  --npyDir','npyG2E_LK_3/ --seed 3'),
     
 ]
 
