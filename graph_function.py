@@ -74,9 +74,9 @@ def generateAdj(featureMatrix, graphType='KNNgraph', para = None, parallelLimit 
     else:
         print('Should give graphtype')
     
-    if outAdjTag:
-        graphdict = edgeList2edgeDict(edgeList, featureMatrix.shape[0])
-        adj = nx.adjacency_matrix(nx.from_dict_of_lists(graphdict))
+    # if outAdjTag:
+    graphdict = edgeList2edgeDict(edgeList, featureMatrix.shape[0])
+    adj = nx.adjacency_matrix(nx.from_dict_of_lists(graphdict))
     
     return adj, edgeList
 

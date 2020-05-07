@@ -30,9 +30,9 @@ parser.add_argument('--batch-size', type=int, default=12800, metavar='N',
                     help='input batch size for training (default: 128)')
 parser.add_argument('--epochs', type=int, default=500, metavar='N',
                     help='number of epochs to train (default: 500)')
-parser.add_argument('--EM-epochs', type=int, default=200, metavar='N',
-                    help='number of epochs to train in iteration EM (default: 200)')
-parser.add_argument('--EM-iteration', type=int, default=10, metavar='N',
+parser.add_argument('--EM-epochs', type=int, default=50, metavar='N',
+                    help='number of epochs to train in iteration EM (default: 50)')
+parser.add_argument('--EM-iteration', type=int, default=20, metavar='N',
                     help='number of epochs in EM iteration (default: 10)')
 parser.add_argument('--EMtype', type=str, default='EM',
                     help='EM process type (default: celltypeEM) or EM')
@@ -44,7 +44,7 @@ parser.add_argument('--converge-graphratio', type=float, default=0.01,
                     help='ratio of cell type change in EM iteration (default: 0.01), 0-1')
 parser.add_argument('--converge-celltyperatio', type=float, default=0.99,
                     help='ratio of cell type change in EM iteration (default: 0.99), 0-1')
-parser.add_argument('--celltype-epochs', type=int, default=200, metavar='N',
+parser.add_argument('--celltype-epochs', type=int, default=50, metavar='N',
                     help='number of epochs in celltype training (default: 200)')
 parser.add_argument('--no-cuda', action='store_true', default=True,
                     help='enables CUDA training')
@@ -55,7 +55,7 @@ parser.add_argument('--regulized-type', type=str, default='LTMG',
                     help='regulized type (default: Graph) in EM, otherwise: noregu/LTMG/LTMG01')
 parser.add_argument('--EMregulized-type', type=str, default='Graph',
                     help='regulized type (default: noregu) in EM, otherwise: noregu/Graph/GraphR') 
-parser.add_argument('--ONEregulized-type', type=str, default='Graph', 
+parser.add_argument('--ONEregulized-type', type=str, default='NA', 
                     help='regulized type (default: NA) in oneImpute, otherwise: NA/LTMG-Graph/LTMG-GraphR')
                    
 parser.add_argument('--gammaPara', type=float, default=0.1,
@@ -346,7 +346,7 @@ def trainParallel(i,recon,clusterIndexList,args):
 
 if __name__ == "__main__":
     adjsample = None
-    ptfile = args.npyDir+args.datasetName+'_EMtraining.pt'
+    ptfile = args.npyDir+args.datasetName+'_'+str(args.regularizePara)+'_EMtraining.pt'
     start_time = time.time()
     discreteStr = ''
     if args.discreteTag:
@@ -357,10 +357,10 @@ if __name__ == "__main__":
         # Does not need now
         # save_sparse_matrix(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_'+str(args.dropoutRatio)+'_features.npz',scData.features)
         # sp.save_npz(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_'+str(args.dropoutRatio)+'_features.npz',scData.features)
-        np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_'+str(args.dropoutRatio)+'_features.npy',scData.features)
-        np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_'+str(args.dropoutRatio)+'_dropi.npy',scData.i)
-        np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_'+str(args.dropoutRatio)+'_dropj.npy',scData.j)
-        np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_'+str(args.dropoutRatio)+'_dropix.npy',scData.ix)
+        np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_'+str(args.dropoutRatio)+'_'+str(args.regularizePara)+'_features.npy',scData.features)
+        np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_'+str(args.dropoutRatio)+'_'+str(args.regularizePara)+'_dropi.npy',scData.i)
+        np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_'+str(args.dropoutRatio)+'_'+str(args.regularizePara)+'_dropj.npy',scData.j)
+        np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_'+str(args.dropoutRatio)+'_'+str(args.regularizePara)+'_dropix.npy',scData.ix)
 
     for epoch in range(1, args.epochs + 1):
         recon, original, z = train(epoch, EMFlag=False)
@@ -389,11 +389,11 @@ if __name__ == "__main__":
     if args.saveFlag:
         reconOut = recon.detach().cpu().numpy()
         if args.imputeMode:
-            np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_'+str(args.dropoutRatio)+'_recon.npy',reconOut)
-            np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_'+str(args.dropoutRatio)+'_z.npy',zOut)
+            np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_'+str(args.dropoutRatio)+'_'+str(args.regularizePara)+'_recon.npy',reconOut)
+            np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_'+str(args.dropoutRatio)+'_'+str(args.regularizePara)+'_z.npy',zOut)
         else:  
-            np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_recon.npy',reconOut)
-            np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_z.npy',zOut)
+            np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_'+str(args.regularizePara)+'_recon.npy',reconOut)
+            np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_'+str(args.regularizePara)+'_z.npy',zOut)
     
     # Whether use GAE embedding
     if args.useGAEembedding or args.useBothembedding:
@@ -599,11 +599,11 @@ if __name__ == "__main__":
         if args.saveFlag:
             reconOut = recon.detach().cpu().numpy()
             if args.imputeMode:
-                np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_'+str(args.dropoutRatio)+'_recon'+str(bigepoch)+'.npy',reconOut)
-                np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_'+str(args.dropoutRatio)+'_z'+str(bigepoch)+'.npy',zOut)
+                np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_'+str(args.dropoutRatio)+'_'+str(args.regularizePara)+'_recon'+str(bigepoch)+'.npy',reconOut)
+                np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_'+str(args.dropoutRatio)+'_'+str(args.regularizePara)+'_z'+str(bigepoch)+'.npy',zOut)
             else:
-                np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_recon'+str(bigepoch)+'.npy',reconOut)
-                np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_z'+str(bigepoch)+'.npy',zOut)
+                np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_'+str(args.regularizePara)+'_recon'+str(bigepoch)+'.npy',reconOut)
+                np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_'+str(args.regularizePara)+'_z'+str(bigepoch)+'.npy',zOut)
         
         print("---One iteration in EM process, proceeded %s seconds ---" % (time.time() - iteration_time))
 
@@ -657,9 +657,9 @@ if __name__ == "__main__":
             
     if args.saveFlag:
         if args.imputeMode:
-            np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_'+str(args.dropoutRatio)+'_final_edgeList.npy',edgeList)
+            np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_'+str(args.dropoutRatio)+'_'+str(args.regularizePara)+'_final_edgeList.npy',edgeList)
         else:
-            np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_final_edgeList.npy',edgeList)
+            np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_'+str(args.regularizePara)+'_final_edgeList.npy',edgeList)
         
         # recon_df = pd.DataFrame(reconOut,columns=genelist,index=celllist)
         # recon_df.to_csv(args.npyDir+args.datasetName+'_'+args.regulized_type+'_'+str(args.regularizePara)+'_'+str(args.L1Para)+'_'+str(args.L2Para)+'_recon.csv')
@@ -732,7 +732,7 @@ if __name__ == "__main__":
             print('All Results: ')
             print(str(silhouette)+' '+str(chs)+' '+str(dbs)+' '+str(ari)+' '+str(ami)+' '+str(nmi)+' '+str(cs)+' '+str(fms)+' '+str(vms)+' '+str(hs))
        
-            np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_'+str(args.dropoutRatio)+'_recon'+str(bigepoch+1)+'.npy',reconOut)
-            np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_'+str(args.dropoutRatio)+'_z'+str(bigepoch+1)+'.npy',zOut)
+            np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_'+str(args.dropoutRatio)+'_'+str(args.regularizePara)+'_recon'+str(bigepoch+1)+'.npy',reconOut)
+            np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_'+str(args.dropoutRatio)+'_'+str(args.regularizePara)+'_z'+str(bigepoch+1)+'.npy',zOut)
  
     print("---Total Running Time: %s seconds ---" % (time.time() - start_time))
