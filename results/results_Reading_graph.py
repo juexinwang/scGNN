@@ -135,15 +135,15 @@ if args.imputeMode:
     pyStr = 'results_impute_graph.py'
 
     npyList = [
-        '../graph50/npyImputeG1E_LK/', #0
-        '../graph50/npyImputeG1F_LK/', #1
-        '../graph50/npyImputeN1E_LK/', #2
-        '../graph50/npyImputeG1E_LK_2/', #3
-        '../graph50/npyImputeG1F_LK_2/', #4
-        '../graph50/npyImputeN1E_LK_2/', #5
-        '../graph50/npyImputeG1E_LK_3/', #6
-        '../graph50/npyImputeG1F_LK_3/', #7
-        '../graph50/npyImputeN1E_LK_3/', #8
+        '../graph200/npyImputeG1E_LK/', #0
+        '../graph200/npyImputeG1F_LK/', #1
+        '../graph200/npyImputeN1E_LK/', #2
+        '../graph200/npyImputeG1E_LK_2/', #3
+        '../graph200/npyImputeG1F_LK_2/', #4
+        '../graph200/npyImputeN1E_LK_2/', #5
+        '../graph200/npyImputeG1E_LK_3/', #6
+        '../graph200/npyImputeG1F_LK_3/', #7
+        '../graph200/npyImputeN1E_LK_3/', #8
         ]
 
 else:
