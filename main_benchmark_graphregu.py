@@ -57,6 +57,8 @@ parser.add_argument('--EMregulized-type', type=str, default='Graph',
                     help='regulized type (default: noregu) in EM, otherwise: noregu/Graph/GraphR') 
 parser.add_argument('--ONEregulized-type', type=str, default='NA', 
                     help='regulized type (default: NA) in oneImpute, otherwise: NA/LTMG-Graph/LTMG-GraphR')
+parser.add_argument('--adjtype', type=str, default='weighted',
+                    help='adjtype (default: weighted) otherwise: unweighted') 
                    
 parser.add_argument('--gammaPara', type=float, default=0.1,
                     help='regulized parameter (default: 1.0)')
@@ -381,8 +383,12 @@ if __name__ == "__main__":
     prune_time = time.time()        
     # Here para = 'euclidean:10'
     # adj, edgeList = generateAdj(zOut, graphType='KNNgraphML', para = args.knn_distance+':'+str(args.k)) 
-    adj, edgeList = generateAdj(zOut, graphType=args.prunetype, para = args.knn_distance+':'+str(args.k), outAdjTag = (args.useGAEembedding or args.useBothembedding))
-    adjdense = sp.csr_matrix.todense(adj)
+    if adjtype=='unweighted':
+        adj, edgeList = generateAdj(zOut, graphType=args.prunetype, para = args.knn_distance+':'+str(args.k), outAdjTag = (args.useGAEembedding or args.useBothembedding))
+        adjdense = sp.csr_matrix.todense(adj)
+    elif adjtype=='weighted':
+        adj, edgeList = generateAdjWeighted(zOut, graphType=args.prunetype, para = args.knn_distance+':'+str(args.k), outAdjTag = (args.useGAEembedding or args.useBothembedding))   
+        adjdense = adj.todense(adj)
     adjsample = torch.from_numpy(adjdense)
     adjsample = adjsample.float()
     print("---Pruning takes %s seconds ---" % (time.time() - prune_time))
@@ -573,8 +579,12 @@ if __name__ == "__main__":
         prune_time = time.time()
         # Here para = 'euclidean:10'
         # adj, edgeList = generateAdj(zOut, graphType='KNNgraphML', para = args.knn_distance+':'+str(args.k))
-        adj, edgeList = generateAdj(zOut, graphType=args.prunetype, para = args.knn_distance+':'+str(args.k), outAdjTag = (args.useGAEembedding or args.useBothembedding)) 
-        adjdense = sp.csr_matrix.todense(adj)
+        if adjtype == 'unweighted':
+            adj, edgeList = generateAdj(zOut, graphType=args.prunetype, para = args.knn_distance+':'+str(args.k), outAdjTag = (args.useGAEembedding or args.useBothembedding)) 
+            adjdense = sp.csr_matrix.todense(adj)
+        elif adjtype == 'weighted':
+            adj, edgeList = generateAdjWeighted(zOut, graphType=args.prunetype, para = args.knn_distance+':'+str(args.k), outAdjTag = (args.useGAEembedding or args.useBothembedding))         
+            adjdense = adj.todense(adj)
         adjsample = torch.from_numpy(adjdense)
         adjsample = adjsample.float()
         print("---Pruning takes %s seconds ---" % (time.time() - prune_time))

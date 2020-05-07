@@ -17,7 +17,7 @@ import multiprocessing
 #         self.row=row
 #         self.col=col
 
-# Calculate graph, return adjcency matrix
+# Calculate graph, return adjcency matrix in 0/1
 def generateAdj(featureMatrix, graphType='KNNgraph', para = None, parallelLimit = 0, outAdjTag = True ):
     """
     outAdjTag: saving space for not generating adj for giant network without GAE 
@@ -79,6 +79,39 @@ def generateAdj(featureMatrix, graphType='KNNgraph', para = None, parallelLimit 
     adj = nx.adjacency_matrix(nx.from_dict_of_lists(graphdict))
     
     return adj, edgeList
+
+# Calculate graph, return adjcency matrix in weighted
+def generateAdjWeighted(featureMatrix, graphType='KNNgraph', para = None, parallelLimit = 0, outAdjTag = True ):
+    """
+    outAdjTag: saving space for not generating adj for giant network without GAE 
+    """
+    edgeListWeighted = None
+    adj = None
+
+    if graphType == 'KNNgraphStats':
+        # with weights!
+        # with stats, one std is contained
+        if para != None:
+            parawords = para.split(':')
+            distanceType = parawords[0]
+            k = int(parawords[1])
+        edgeListWeighted = calculateKNNgraphDistanceMatrixStatsWeighted(featureMatrix, distanceType=distanceType, k=k, parallelLimit=parallelLimit)
+    elif graphType == 'KNNgraphStatsSingleThread':
+        # with weights!
+        # with stats, one std is contained, but only use single thread
+        if para != None:
+            parawords = para.split(':')
+            distanceType = parawords[0]
+            k = int(parawords[1])
+        edgeListWeighted = calculateKNNgraphDistanceMatrixStatsSingleThreadWeighted(featureMatrix, distanceType=distanceType, k=k)
+    else:
+        print('Should give graphtype')
+    
+    Gtmp = nx.Graph()
+    Gtmp.add_weighted_edges_from(edgeListWeighted)
+    adj = nx.adjacency_matrix(Gtmp)
+    
+    return adj, edgeListWeighted
 
 #para: measuareName:k
 def calculateKNNgraphDistanceMatrixPairwise(featureMatrix, para):
@@ -297,6 +330,42 @@ def calculateKNNgraphDistanceMatrixStatsSingleThread(featureMatrix, distanceType
     
     return edgeList
 
+# kernelDistance
+def kernelDistance(distance,delta=1.0):
+    '''
+    Calculate kernel distance
+    '''
+    kdist = np.exp(-distance/2*delta**2)
+    return kdist
+
+#para: measuareName:k:threshold
+def calculateKNNgraphDistanceMatrixStatsSingleThreadWeighted(featureMatrix, distanceType='euclidean', k=10, param=None):
+    r"""
+    Thresholdgraph: KNN Graph with stats one-std based methods weighted, SingleThread version
+    """       
+
+    edgeListWeighted=[]
+
+    ## Version 2: for each of the cell, calculate dist, save memory 
+    p_time = time.time()
+    for i in np.arange(featureMatrix.shape[0]):
+        if i%10000==0:
+            print('Start pruning '+str(i)+'th cell, cost '+str(time.time()-p_time)+'s')
+        tmp=featureMatrix[i,:].reshape(1,-1)
+        distMat = distance.cdist(tmp,featureMatrix, distanceType)
+        res = distMat.argsort()[:k+1]
+        tmpdist = distMat[0,res[0][1:k+1]]
+        boundary = np.mean(tmpdist)+np.std(tmpdist)
+        for j in np.arange(1,k+1):
+            # TODO: check, only exclude large outliners
+            # if (distMat[0,res[0][j]]<=mean+std) and (distMat[0,res[0][j]]>=mean-std):
+            if distMat[0,res[0][j]]<=boundary:
+                weight = kernelDistance(distMat[0,res[0][j]])
+                edgeListWeighted.append((i,res[0][j],weight))
+            # else: not add weights
+    
+    return edgeListWeighted
+
 class FindKParallel():
     '''
     A class to find K parallel
@@ -325,10 +394,8 @@ class FindKParallel():
             # TODO: check, only exclude large outliners
             # if (distMat[0,res[0][j]]<=mean+std) and (distMat[0,res[0][j]]>=mean-std):
             if distMat[0,res[0][j]]<=boundary:
-                weight = 1.0
-            else:
-                weight = 0.0
-            edgeList_t.append((i,res[0][j],weight))
+                weight = kernelDistance(distMat[0,res[0][j]])
+                edgeList_t.append((i,res[0][j],weight))
         # print('%'+str(len(edgeList_t)))
         return edgeList_t
     
@@ -370,6 +437,41 @@ def calculateKNNgraphDistanceMatrixStats(featureMatrix, distanceType='euclidean'
     print('Prune out ready in '+str(t2-t1)+' seconds')
        
     return edgeList
+
+#para: measuareName:k:threshold
+def calculateKNNgraphDistanceMatrixStatsWeighted(featureMatrix, distanceType='euclidean', k=10, param=None, parallelLimit=0):
+    r"""
+    Thresholdgraph: KNN Graph with stats one-std based methods using parallel cores
+    """       
+    edgeListWeighted=[]
+    # Get number of availble cores
+    USE_CORES = 0 
+    NUM_CORES = multiprocessing.cpu_count()
+    # if no limit, use all cores
+    if parallelLimit == 0:
+        USE_CORES = NUM_CORES
+    # if limit < cores, use limit number
+    elif parallelLimit < NUM_CORES:
+        USE_CORES = parallelLimit
+    # if limit is not valid, use all cores
+    else:
+        USE_CORES = NUM_CORES
+    print('Start Pruning using '+str(USE_CORES)+' of '+str(NUM_CORES)+' available cores') 
+
+    t= time.time()
+    #Use number of cpus for top-K finding
+    with Pool(USE_CORES) as p:
+        # edgeListT = p.map(vecfindK, range(featureMatrix.shape[0]))
+        edgeListT = FindKParallel(featureMatrix, distanceType, k).work()
+
+    t1=time.time()
+    print('Pruning succeed in '+str(t1-t)+' seconds')
+    flatten = lambda l: [item for sublist in l for item in sublist]   
+    t2=time.time()
+    edgeListWeighted = flatten(edgeListT)    
+    print('Prune out ready in '+str(t2-t1)+' seconds')
+       
+    return edgeListWeighted
 
 
 # edgeList to edgeDict
