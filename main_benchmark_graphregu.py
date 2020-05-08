@@ -383,10 +383,10 @@ if __name__ == "__main__":
     prune_time = time.time()        
     # Here para = 'euclidean:10'
     # adj, edgeList = generateAdj(zOut, graphType='KNNgraphML', para = args.knn_distance+':'+str(args.k)) 
-    if adjtype=='unweighted':
+    if args.adjtype=='unweighted':
         adj, edgeList = generateAdj(zOut, graphType=args.prunetype, para = args.knn_distance+':'+str(args.k), outAdjTag = (args.useGAEembedding or args.useBothembedding))
         adjdense = sp.csr_matrix.todense(adj)
-    elif adjtype=='weighted':
+    elif args.adjtype=='weighted':
         adj, edgeList = generateAdjWeighted(zOut, graphType=args.prunetype, para = args.knn_distance+':'+str(args.k), outAdjTag = (args.useGAEembedding or args.useBothembedding))   
         adjdense = adj.todense(adj)
     adjsample = torch.from_numpy(adjdense)
@@ -579,10 +579,10 @@ if __name__ == "__main__":
         prune_time = time.time()
         # Here para = 'euclidean:10'
         # adj, edgeList = generateAdj(zOut, graphType='KNNgraphML', para = args.knn_distance+':'+str(args.k))
-        if adjtype == 'unweighted':
+        if args.adjtype == 'unweighted':
             adj, edgeList = generateAdj(zOut, graphType=args.prunetype, para = args.knn_distance+':'+str(args.k), outAdjTag = (args.useGAEembedding or args.useBothembedding)) 
             adjdense = sp.csr_matrix.todense(adj)
-        elif adjtype == 'weighted':
+        elif args.adjtype == 'weighted':
             adj, edgeList = generateAdjWeighted(zOut, graphType=args.prunetype, para = args.knn_distance+':'+str(args.k), outAdjTag = (args.useGAEembedding or args.useBothembedding))         
             adjdense = adj.todense(adj)
         adjsample = torch.from_numpy(adjdense)
