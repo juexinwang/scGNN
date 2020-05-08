@@ -573,7 +573,7 @@ for datasetStr in datasetList:
         os.system(commandStr)
     else:
         print(commandStr)
-    for i in range(10):
+    for i in range(11):
         commandStr = 'python -W ignore ' + pyStr + ' --datasetName ' + datasetStr + reguStr + getBenchmarkStr(count) + ' --reconstr '+ str(i) + ' --npyDir ' + npyStr
         if args.runMode:
             os.system(commandStr)
