@@ -42,7 +42,7 @@ parser.add_argument('--converge-type', type=str, default='either',
                     help='type of converge: celltype/graph/both/either (default: celltype) ')
 parser.add_argument('--converge-graphratio', type=float, default=0.01,
                     help='ratio of cell type change in EM iteration (default: 0.01), 0-1')
-parser.add_argument('--converge-celltyperatio', type=float, default=0.99,
+parser.add_argument('--converge-celltyperatio', type=float, default=0.95,
                     help='ratio of cell type change in EM iteration (default: 0.99), 0-1')
 parser.add_argument('--celltype-epochs', type=int, default=50, metavar='N',
                     help='number of epochs in celltype training (default: 200)')
@@ -55,7 +55,7 @@ parser.add_argument('--regulized-type', type=str, default='LTMG',
                     help='regulized type (default: Graph) in EM, otherwise: noregu/LTMG/LTMG01')
 parser.add_argument('--EMregulized-type', type=str, default='Graph',
                     help='regulized type (default: noregu) in EM, otherwise: noregu/Graph/GraphR') 
-parser.add_argument('--ONEregulized-type', type=str, default='NA', 
+parser.add_argument('--ONEregulized-type', type=str, default='LTMG-Graph', 
                     help='regulized type (default: NA) in oneImpute, otherwise: NA/LTMG-Graph/LTMG-GraphR')
 parser.add_argument('--adjtype', type=str, default='weighted',
                     help='adjtype (default: weighted) otherwise: unweighted') 
@@ -349,6 +349,7 @@ def trainParallel(i,recon,clusterIndexList,args):
 if __name__ == "__main__":
     adjsample = None
     ptfile = args.npyDir+args.datasetName+'_'+str(args.regularizePara)+'_EMtraining.pt'
+    ptfileOri = args.npyDir+args.datasetName+'_'+str(args.regularizePara)+'_EMtrainingOri.pt'
     start_time = time.time()
     discreteStr = ''
     if args.discreteTag:
@@ -369,6 +370,7 @@ if __name__ == "__main__":
         
     zOut = z.detach().cpu().numpy() 
     torch.save(model.state_dict(),ptfile)
+    torch.save(model.state_dict(),ptfileOri)
 
     #Define resolution
     #Default: auto, otherwise use user defined resolution
@@ -646,8 +648,12 @@ if __name__ == "__main__":
         if args.saveFlag:
             if args.imputeMode:
                 np.savetxt(args.npyDir+args.datasetName+'_'+args.regulized_type+'_'+str(args.dropoutRatio)+'_'+str(args.regularizePara)+'_benchmark'+str(bigepoch)+'.txt',resultarray,fmt='%s')
+                np.savetxt(args.npyDir+args.datasetName+'_'+args.regulized_type+'_'+str(args.dropoutRatio)+'_'+str(args.regularizePara)+'_graph'+str(bigepoch)+'.csv',edgeList,fmt='%d,%d,%2.1f')
+                np.savetxt(args.npyDir+args.datasetName+'_'+args.regulized_type+'_'+str(args.dropoutRatio)+'_'+str(args.regularizePara)+'_results'+str(bigepoch)+'.txt',listResult,fmt='%d')
             else:
                 np.savetxt(args.npyDir+args.datasetName+'_'+args.regulized_type+'_'+str(args.regularizePara)+'_benchmark'+str(bigepoch)+'.txt',resultarray,fmt='%s')
+                np.savetxt(args.npyDir+args.datasetName+'_'+args.regulized_type+'_'+str(args.regularizePara)+'_graph'+str(bigepoch)+'.csv',edgeList,fmt='%d,%d,%2.1f')
+                np.savetxt(args.npyDir+args.datasetName+'_'+args.regulized_type+'_'+str(args.regularizePara)+'_results'+str(bigepoch)+'.txt',listResult,fmt='%d')
 
 
         # graph criteria
@@ -705,31 +711,20 @@ if __name__ == "__main__":
                 scData = scDatasetDropout(datasetName=args.datasetName, discreteTag=args.discreteTag, ratio=args.dropoutRatio, seed=args.seed)
             train_loader = DataLoader(scData, batch_size=args.batch_size, shuffle=False, **kwargs)
 
-            if args.inferLTMGTag:
-                #run LTMG in R
-                runLTMG(args.LTMGDir+'test/'+args.expressionFile,args.LTMGDir+'test/')
-                ltmgFile = args.ltmgFile
-            else:
-                ltmgFile = args.datasetName+'/T2000_UsingOriginalMatrix/T2000_LTMG.txt'
-
-            regulationMatrix = readLTMGnonsparse(args.LTMGDir, ltmgFile)
-            regulationMatrix = torch.from_numpy(regulationMatrix)
-
-            # Original
-            if args.model == 'VAE':
-                # model = VAE(dim=scData.features.shape[1]).to(device)
-                model1 = VAE2d(dim=scData.features.shape[1]).to(device)
-            elif args.model == 'AE':
-                model1 = AE(dim=scData.features.shape[1]).to(device)
-            optimizer = optim.Adam(model1.parameters(), lr=1e-3)
+            model.load_state_dict(torch.load(ptfileOri))
 
             for epoch in range(1, args.epochs + 1):
-                recon, original, z = trainONE(epoch, model=model1, EMFlag=False)
+                recon, original, z = trainONE(epoch, model=model, EMFlag=False)
                 
-            zOut = z.detach().cpu().numpy() 
+            zOut = z.detach().cpu().numpy()
+            reconOut = recon.detach().cpu().numpy() 
 
-            adj, edgeList = generateAdj(zOut, graphType=args.prunetype, para = args.knn_distance+':'+str(args.k), outAdjTag = (args.useGAEembedding or args.useBothembedding)) 
-
+            if args.adjtype=='unweighted':
+                adj, edgeList = generateAdj(zOut, graphType=args.prunetype, para = args.knn_distance+':'+str(args.k), outAdjTag = (args.useGAEembedding or args.useBothembedding))
+                adjdense = sp.csr_matrix.todense(adj)
+            elif args.adjtype=='weighted':
+                adj, edgeList = generateAdjWeighted(zOut, graphType=args.prunetype, para = args.knn_distance+':'+str(args.k), outAdjTag = (args.useGAEembedding or args.useBothembedding))   
+                adjdense = adj.toarray()
             #Define resolution
             #Default: auto, otherwise use user defined resolution
             if args.resolution == 'auto':
@@ -751,9 +746,19 @@ if __name__ == "__main__":
 
             ari, ami, nmi, cs, fms, vms, hs = measureClusteringTrueLabel(bench_celltype, listResult)
             print('All Results: ')
-            print(str(silhouette)+' '+str(chs)+' '+str(dbs)+' '+str(ari)+' '+str(ami)+' '+str(nmi)+' '+str(cs)+' '+str(fms)+' '+str(vms)+' '+str(hs))
-       
+            
+            resultarray=[]
+            resultstr = str(silhouette)+' '+str(chs)+' '+str(dbs)+' '+str(ari)+' '+str(ami)+' '+str(nmi)+' '+str(cs)+' '+str(fms)+' '+str(vms)+' '+str(hs)
+            resultarray.append(resultstr)
+            print(resultstr)
+
             np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_'+str(args.dropoutRatio)+'_'+str(args.regularizePara)+'_recon'+str(bigepoch+1)+'.npy',reconOut)
             np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_'+str(args.dropoutRatio)+'_'+str(args.regularizePara)+'_z'+str(bigepoch+1)+'.npy',zOut)
+
+            if args.imputeMode:
+                np.savetxt(args.npyDir+args.datasetName+'_'+args.regulized_type+'_'+str(args.dropoutRatio)+'_'+str(args.regularizePara)+'_benchmark'+str(bigepoch+1)+'.txt',resultarray,fmt='%s')
+            else:
+                np.savetxt(args.npyDir+args.datasetName+'_'+args.regulized_type+'_'+str(args.regularizePara)+'_benchmark'+str(bigepoch+1)+'.txt',resultarray,fmt='%s')
+
  
     print("---Total Running Time: %s seconds ---" % (time.time() - start_time))
