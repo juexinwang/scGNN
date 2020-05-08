@@ -388,7 +388,7 @@ if __name__ == "__main__":
         adjdense = sp.csr_matrix.todense(adj)
     elif args.adjtype=='weighted':
         adj, edgeList = generateAdjWeighted(zOut, graphType=args.prunetype, para = args.knn_distance+':'+str(args.k), outAdjTag = (args.useGAEembedding or args.useBothembedding))   
-        adjdense = adj.toarray(adj)
+        adjdense = adj.toarray()
     adjsample = torch.from_numpy(adjdense)
     adjsample = adjsample.float()
     print("---Pruning takes %s seconds ---" % (time.time() - prune_time))
@@ -584,7 +584,7 @@ if __name__ == "__main__":
             adjdense = sp.csr_matrix.todense(adj)
         elif args.adjtype == 'weighted':
             adj, edgeList = generateAdjWeighted(zOut, graphType=args.prunetype, para = args.knn_distance+':'+str(args.k), outAdjTag = (args.useGAEembedding or args.useBothembedding))         
-            adjdense = adj.toarray(adj)
+            adjdense = adj.toarray()
         adjsample = torch.from_numpy(adjdense)
         adjsample = adjsample.float()
         print("---Pruning takes %s seconds ---" % (time.time() - prune_time))
