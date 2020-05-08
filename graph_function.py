@@ -110,6 +110,7 @@ def generateAdjWeighted(featureMatrix, graphType='KNNgraph', para = None, parall
     Gtmp = nx.Graph()
     Gtmp.add_weighted_edges_from(edgeListWeighted)
     adj = nx.adjacency_matrix(Gtmp)
+    print(type(adj))
     
     return adj, edgeListWeighted
 
