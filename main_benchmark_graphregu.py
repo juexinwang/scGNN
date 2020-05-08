@@ -30,7 +30,7 @@ parser.add_argument('--batch-size', type=int, default=12800, metavar='N',
                     help='input batch size for training (default: 128)')
 parser.add_argument('--epochs', type=int, default=500, metavar='N',
                     help='number of epochs to train (default: 500)')
-parser.add_argument('--EM-epochs', type=int, default=50, metavar='N',
+parser.add_argument('--EM-epochs', type=int, default=200, metavar='N',
                     help='number of epochs to train in iteration EM (default: 50)')
 parser.add_argument('--EM-iteration', type=int, default=10, metavar='N',
                     help='number of epochs in EM iteration (default: 10)')
