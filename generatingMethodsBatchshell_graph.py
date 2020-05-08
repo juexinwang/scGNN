@@ -18,7 +18,7 @@ templateStr1 = "#! /bin/bash\n"\
 templateStr2 = "\n#SBATCH -o results-%j.out           # give the job output a custom name\n"\
 "#SBATCH -t 2-00:00                  # two days time limit\n"\
 "#SBATCH -N 1                        # number of nodes\n"\
-"#SBATCH -n 10                        # number of cores (AKA tasks)\n"\
+"#SBATCH -n 2                        # number of cores (AKA tasks)\n"\
 "#SBATCH --mem=128G\n"\
 "#################################################################\n"\
 "module load miniconda3\n"\
@@ -76,7 +76,9 @@ for item in methodsList:
     tmp = batchInfo.split()
     tmpstr1=tmp[0]
     tmpstr2=tmp[1]
-    imputeStr = ''
+    #difference
+    # imputeStr = ''
+    imputeStr = ' --EM-iteration 50 '
     if args.imputeMode:
         tmpstr1 = tmpstr1.replace('run_experiment','run_experimentImpute')
         tmpstr2 = "I"+tmpstr2[1:]
