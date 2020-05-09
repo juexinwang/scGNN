@@ -32,8 +32,8 @@ parser.add_argument('--epochs', type=int, default=500, metavar='N',
                     help='number of epochs to train (default: 500)')
 parser.add_argument('--EM-epochs', type=int, default=200, metavar='N',
                     help='number of epochs to train in iteration EM (default: 200)')
-parser.add_argument('--EM-iteration', type=int, default=10, metavar='N',
-                    help='number of epochs in EM iteration (default: 3)')
+parser.add_argument('--EM-iteration', type=int, default=1, metavar='N',
+                    help='number of epochs in EM iteration (default: 1)')
 parser.add_argument('--EMtype', type=str, default='EM',
                     help='EM process type (default: celltypeEM) or EM')
 parser.add_argument('--alpha', type=float, default=0.5,
