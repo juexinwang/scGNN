@@ -253,7 +253,7 @@ def train(epoch, train_loader=train_loader, EMFlag=False):
     return recon_batch_all, data_all, z_all
 
 if __name__ == "__main__":
-    ptfile = args.npyDir+args.datasetName+'_EMtraining.pt'
+    # ptfile = args.npyDir+args.datasetName+'_EMtraining.pt'
     start_time = time.time()
     discreteStr = ''
     if args.discreteTag:
@@ -273,7 +273,7 @@ if __name__ == "__main__":
         recon, original, z = train(epoch, EMFlag=False)
         
     zOut = z.detach().cpu().numpy() 
-    torch.save(model.state_dict(),ptfile)
+    # torch.save(model.state_dict(),ptfile)
 
     #Define resolution
     #Default: auto, otherwise use user defined resolution
@@ -433,7 +433,7 @@ if __name__ == "__main__":
             reconNew = reconNew.to(device)
 
             for clusterIndex in clusterIndexList:
-                model.load_state_dict(torch.load(ptfile))
+                # model.load_state_dict(torch.load(ptfile))
                 reconUsage = recon[clusterIndex]
                 scDataInter = scDatasetInter(reconUsage)
                 train_loader = DataLoader(scDataInter, batch_size=args.batch_size, shuffle=False, **kwargs)
@@ -451,12 +451,12 @@ if __name__ == "__main__":
         train_loader = DataLoader(scDataInter, batch_size=args.batch_size, shuffle=False, **kwargs)
 
 
-        model.load_state_dict(torch.load(ptfile))
+        # model.load_state_dict(torch.load(ptfile))
         for epoch in range(1, args.EM_epochs + 1):
             recon, original, z = train(epoch, EMFlag=True)
         
         zOut = z.detach().cpu().numpy()
-        torch.save(model.state_dict(),ptfile)
+        # torch.save(model.state_dict(),ptfile)
 
         prune_time = time.time()
         # Here para = 'euclidean:10'
