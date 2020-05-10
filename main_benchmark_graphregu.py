@@ -55,7 +55,7 @@ parser.add_argument('--regulized-type', type=str, default='LTMG',
                     help='regulized type (default: Graph) in EM, otherwise: noregu/LTMG/LTMG01')
 parser.add_argument('--EMregulized-type', type=str, default='Graph',
                     help='regulized type (default: noregu) in EM, otherwise: noregu/Graph/GraphR') 
-parser.add_argument('--ONEregulized-type', type=str, default='LTMG-Graph', 
+parser.add_argument('--ONEregulized-type', type=str, default='NA', 
                     help='regulized type (default: NA) in oneImpute, otherwise: NA/LTMG-Graph/LTMG-GraphR')
 parser.add_argument('--adjtype', type=str, default='weighted',
                     help='adjtype (default: weighted) otherwise: unweighted') 
