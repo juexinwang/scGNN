@@ -78,7 +78,7 @@ for item in methodsList:
     tmpstr2=tmp[1]
     #difference
     # imputeStr = ''
-    imputeStr = ' --EM-iteration 50 '
+    imputeStr = ''
     if args.imputeMode:
         tmpstr1 = tmpstr1.replace('run_experiment','run_experimentImpute')
         tmpstr2 = "I"+tmpstr2[1:]
