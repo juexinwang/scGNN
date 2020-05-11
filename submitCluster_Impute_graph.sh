@@ -1,6 +1,6 @@
-mkdir npyImputeG1E_LK
-mkdir npyImputeG1F_LK
-mkdir npyImputeN1E_LK
+mkdir npyImputeG1E_LK_1
+mkdir npyImputeG1F_LK_1
+mkdir npyImputeN1E_LK_1
 
 mkdir npyImputeG1E_LK_2
 mkdir npyImputeG1F_LK_2

@@ -1,6 +1,6 @@
-mkdir npyG1E_LK
-mkdir npyG1F_LK
-mkdir npyN1E_LK
+mkdir npyG1E_LK_1
+mkdir npyG1F_LK_1
+mkdir npyN1E_LK_1
 
 mkdir npyG1E_LK_2
 mkdir npyG1F_LK_2
