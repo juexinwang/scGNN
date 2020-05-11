@@ -80,13 +80,13 @@ paraList = [
 for item in methodsList:
     batchInfo,scGNNparam,outDirStr = item
     if args.aeOriginal:
-        outDirStr = 'aeO/'+OutDirStr
+        outDirStr = 'aeO/'+outDirStr
     else:
-        outDirStr = 'aeC/'+OutDirStr
+        outDirStr = 'aeC/'+outDirStr
     if args.adjtype=='weighted':
-        outDirStr = 'W'+OutDirStr
+        outDirStr = 'W'+outDirStr
     elif args.adjtype=='unweighted':
-        outDirStr = 'U'+OutDirStr
+        outDirStr = 'U'+outDirStr
 
     tmp = batchInfo.split()
     tmpstr1=tmp[0]
