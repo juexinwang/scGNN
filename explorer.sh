@@ -10,7 +10,7 @@ mkdir -p UaeC/npyImputeG1E_LK_3
 mkdir -p UaeC/npyImputeG1F_LK_3
 mkdir -p UaeC/npyImputeN1E_LK_3
 
-python generatingMethodsBatchshell_graph.py --imputeMode --adjtype --unweighted
+python generatingMethodsBatchshell_graph.py --imputeMode --adjtype unweighted
 bash submitCluster_Impute_graph.sh
 
 mkdir -p UaeO/npyImputeG1E_LK_1
