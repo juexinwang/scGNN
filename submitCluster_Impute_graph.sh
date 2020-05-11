@@ -1,14 +1,3 @@
-mkdir npyImputeG1E_LK_1
-mkdir npyImputeG1F_LK_1
-mkdir npyImputeN1E_LK_1
-
-mkdir npyImputeG1E_LK_2
-mkdir npyImputeG1F_LK_2
-mkdir npyImputeN1E_LK_2
-
-mkdir npyImputeG1E_LK_3
-mkdir npyImputeG1F_LK_3
-mkdir npyImputeN1E_LK_3
 
 for i in {9,11,12,13}
 do

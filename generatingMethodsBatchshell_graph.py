@@ -9,6 +9,8 @@ parser.add_argument('--imputeMode', action='store_true', default=False,
                     help='whether impute')
 parser.add_argument('--aeOriginal', action='store_true', default=False,
                     help='whether use original')
+parser.add_argument('--adjtype', type=str, default='weighted',
+                    help='whether weighted')
 
 args = parser.parse_args()
 
@@ -36,14 +38,14 @@ methodsList = [
     ('run_experiment_1_n_e_LK E1neK','--regulized-type noregu --EMtype EM --clustering-method LouvainK --useGAEembedding --npyDir','npyN1E_LK_1/'),
     # ('run_experiment_2_g_e_LK E2geK','--regulized-type LTMG --EMtype celltypeEM --clustering-method LouvainK --useGAEembedding  --npyDir','npyG2E_LK/'),
     
-    ('run_experiment_1_g_e_LK2 E1geK','--regulized-type LTMG --EMtype EM --clustering-method LouvainK --useGAEembedding --npyDir','npyG1E_LK_2/ --seed 2'),
-    ('run_experiment_1_g_f_LK2 E1gfK','--regulized-type LTMG --EMtype EM --clustering-method LouvainK --npyDir','npyG1F_LK_2/ --seed 2'),
-    ('run_experiment_1_n_e_LK2 E1neK','--regulized-type noregu --EMtype EM --clustering-method LouvainK --useGAEembedding --npyDir','npyN1E_LK_2/ --seed 2'),
+    ('run_experiment_1_g_e_LK2 E1geK','--regulized-type LTMG --EMtype EM --clustering-method LouvainK --useGAEembedding  --seed 2 --npyDir','npyG1E_LK_2/'),
+    ('run_experiment_1_g_f_LK2 E1gfK','--regulized-type LTMG --EMtype EM --clustering-method LouvainK  --seed 2 --npyDir','npyG1F_LK_2/'),
+    ('run_experiment_1_n_e_LK2 E1neK','--regulized-type noregu --EMtype EM --clustering-method LouvainK --useGAEembedding --seed 2 --npyDir','npyN1E_LK_2/'),
     # ('run_experiment_2_g_e_LK2 E2geK','--regulized-type LTMG --EMtype celltypeEM --clustering-method LouvainK --useGAEembedding  --npyDir','npyG2E_LK_2/ --seed 2'),
 
-    ('run_experiment_1_g_e_LK3 E1geK','--regulized-type LTMG --EMtype EM --clustering-method LouvainK --useGAEembedding --npyDir','npyG1E_LK_3/ --seed 3'),
-    ('run_experiment_1_g_f_LK3 E1gfK','--regulized-type LTMG --EMtype EM --clustering-method LouvainK --npyDir','npyG1F_LK_3/ --seed 3'),
-    ('run_experiment_1_n_e_LK3 E1neK','--regulized-type noregu --EMtype EM --clustering-method LouvainK --useGAEembedding --npyDir','npyN1E_LK_3/ --seed 3'),
+    ('run_experiment_1_g_e_LK3 E1geK','--regulized-type LTMG --EMtype EM --clustering-method LouvainK --useGAEembedding --seed 3 --npyDir','npyG1E_LK_3/'),
+    ('run_experiment_1_g_f_LK3 E1gfK','--regulized-type LTMG --EMtype EM --clustering-method LouvainK --seed 3 --npyDir','npyG1F_LK_3/'),
+    ('run_experiment_1_n_e_LK3 E1neK','--regulized-type noregu --EMtype EM --clustering-method LouvainK --useGAEembedding --seed 3 --npyDir','npyN1E_LK_3/'),
     # ('run_experiment_2_g_e_LK3 E2geK','--regulized-type LTMG --EMtype celltypeEM --clustering-method LouvainK --useGAEembedding  --npyDir','npyG2E_LK_3/ --seed 3'),
     
 ]
@@ -77,6 +79,15 @@ paraList = [
 # generate sbatch files:
 for item in methodsList:
     batchInfo,scGNNparam,outDirStr = item
+    if args.aeOriginal:
+        outDirStr = 'aeO/'+OutDirStr
+    else:
+        outDirStr = 'aeC/'+OutDirStr
+    if args.adjtype=='weighted':
+        outDirStr = 'W'+OutDirStr
+    elif args.adjtype=='unweighted':
+        outDirStr = 'U'+OutDirStr
+
     tmp = batchInfo.split()
     tmpstr1=tmp[0]
     tmpstr2=tmp[1]
@@ -88,7 +99,9 @@ for item in methodsList:
         tmpstr2 = "I"+tmpstr2[1:]
         # tmpstr2 = "I"+tmpstr2[2:]
         imputeStr = ' --imputeMode  '
-        outDirStr = "npyImpute"+outDirStr[3:]
+        # outDirStr = "npyImpute"+outDirStr[3:]
+        # For secondary directory
+        outDirStr = "npyImpute"+outDirStr[8:]
     outputFilename = args.outputDir + tmpstr1
     abbrStr = tmpstr2   
 
