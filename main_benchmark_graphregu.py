@@ -59,6 +59,8 @@ parser.add_argument('--ONEregulized-type', type=str, default='NA',
                     help='regulized type (default: NA) in oneImpute, otherwise: NA/LTMG-Graph/LTMG-GraphR')
 parser.add_argument('--adjtype', type=str, default='weighted',
                     help='adjtype (default: weighted) otherwise: unweighted') 
+parser.add_argument('--aeOriginal', action='store_true', default=False, 
+                    help='whether use original parameter of feature autoencoder (default: False)')
                    
 parser.add_argument('--gammaPara', type=float, default=0.1,
                     help='regulized parameter (default: 1.0)')
@@ -572,7 +574,8 @@ if __name__ == "__main__":
         train_loader = DataLoader(scDataInter, batch_size=args.batch_size, shuffle=False, **kwargs)
 
         # model.load_state_dict(torch.load(ptfile))
-        # model.load_state_dict(torch.load(ptfileOri))
+        if args.aeOriginal:
+            model.load_state_dict(torch.load(ptfileOri))
         for epoch in range(1, args.EM_epochs + 1):
             recon, original, z = train(epoch, EMFlag=True)
         
