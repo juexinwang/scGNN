@@ -12,7 +12,7 @@ mkdir npyN1E_LK_3
 
 for i in {9,11,12,13}
 do
-for j in {0..3}
+for j in {0..4}
 do
 sbatch run_experiment_1_g_e_LK_$i\_$j.sh
 sleep 1
