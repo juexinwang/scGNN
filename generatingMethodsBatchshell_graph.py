@@ -101,7 +101,7 @@ for item in methodsList:
         imputeStr = ' --imputeMode  '
         # outDirStr = "npyImpute"+outDirStr[3:]
         # For secondary directory
-        outDirStr = "npyImpute"+outDirStr[8:]
+        outDirStr = outDirStr.replace('npy','npyImpute')
     outputFilename = args.outputDir + tmpstr1
     abbrStr = tmpstr2   
 
