@@ -572,7 +572,7 @@ if __name__ == "__main__":
         train_loader = DataLoader(scDataInter, batch_size=args.batch_size, shuffle=False, **kwargs)
 
         # model.load_state_dict(torch.load(ptfile))
-        model.load_state_dict(torch.load(ptfileOri))
+        # model.load_state_dict(torch.load(ptfileOri))
         for epoch in range(1, args.EM_epochs + 1):
             recon, original, z = train(epoch, EMFlag=True)
         
