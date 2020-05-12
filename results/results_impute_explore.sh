@@ -1,7 +1,9 @@
 module load miniconda3
 source activate conda_R
 dir='UaeC/'
-#$dir='UaeO/'
+#dir='UaeO/'
+#dir='WaeC/'
+#dir='WaeO/'
 for dataset in {'9.Chung','11.Kolodziejczyk','12.Klein','13.Zeisel'}
 do
 echo $dataset
