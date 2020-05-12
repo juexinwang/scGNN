@@ -54,7 +54,7 @@ parser.add_argument('--seed', type=int, default=1, metavar='S',
 parser.add_argument('--regulized-type', type=str, default='LTMG',
                     help='regulized type (default: Graph) in EM, otherwise: noregu/LTMG/LTMG01')
 parser.add_argument('--EMregulized-type', type=str, default='Graph',
-                    help='regulized type (default: noregu) in EM, otherwise: noregu/Graph/GraphR') 
+                    help='regulized type (default: noregu) in EM, otherwise: noregu/Graph/GraphR/Celltype') 
 parser.add_argument('--ONEregulized-type', type=str, default='NA', 
                     help='regulized type (default: NA) in oneImpute, otherwise: NA/LTMG-Graph/LTMG-GraphR')
 parser.add_argument('--adjtype', type=str, default='weighted',
@@ -66,6 +66,8 @@ parser.add_argument('--gammaPara', type=float, default=0.1,
                     help='regulized parameter (default: 1.0)')
 parser.add_argument('--regularizePara', type=float, default=0.9,
                     help='regulized parameter (default: 0.001)')
+parser.add_argument('--reguParaCelltype', type=float, default=0.9,
+                    help='celltype parameter (default: 0.001)')
 parser.add_argument('--L1Para', type=float, default=0.0,
                     help='regulized parameter (default: 0.001)')
 parser.add_argument('--L2Para', type=float, default=0.0,
@@ -207,15 +209,36 @@ def train(epoch, train_loader=train_loader, EMFlag=False):
         regulationMatrixBatch = regulationMatrix[dataindex,:]
         # print('))))'+str(regulationMatrixBatch.shape))
         optimizer.zero_grad()
-        # print('**afterzero')
+        # graph regu
+        # if args.model == 'VAE':
+        #     recon_batch, mu, logvar, z = model(data)
+        #     # Original
+        #     # loss = loss_function(recon_batch, data, mu, logvar)
+        #     if EMFlag and (not args.EMreguTag):
+        #         loss = loss_function_graph(recon_batch, data.view(-1, recon_batch.shape[1]), mu, logvar, graphregu=adjsample, gammaPara=args.gammaPara, regulationMatrix=regulationMatrixBatch, regularizer_type=args.EMregulized_type, reguPara=args.regularizePara, modelusage=args.model)
+        #     else: 
+        #         loss = loss_function_graph(recon_batch, data.view(-1, recon_batch.shape[1]), mu, logvar, graphregu=adjsample, gammaPara=args.gammaPara, regulationMatrix=regulationMatrixBatch, regularizer_type=args.regulized_type, reguPara=args.regularizePara, modelusage=args.model)    
+            
+        # elif args.model == 'AE':
+        #     recon_batch, z = model(data)
+        #     mu_dummy = ''
+        #     logvar_dummy = ''
+        #     # Original
+        #     # loss = loss_function(recon_batch, data, mu, logvar)
+        #     if EMFlag and (not args.EMreguTag):
+        #         loss = loss_function_graph(recon_batch, data.view(-1, recon_batch.shape[1]), mu_dummy, logvar_dummy, graphregu=adjsample, gammaPara=args.gammaPara, regulationMatrix=regulationMatrixBatch, regularizer_type=args.EMregulized_type, reguPara=args.regularizePara, modelusage=args.model)    
+        #     else:
+        #         loss = loss_function_graph(recon_batch, data.view(-1, recon_batch.shape[1]), mu_dummy, logvar_dummy, graphregu=adjsample, gammaPara=args.gammaPara, regulationMatrix=regulationMatrixBatch, regularizer_type=args.regulized_type, reguPara=args.regularizePara, modelusage=args.model)
+
+        #celltype regu
         if args.model == 'VAE':
             recon_batch, mu, logvar, z = model(data)
             # Original
             # loss = loss_function(recon_batch, data, mu, logvar)
             if EMFlag and (not args.EMreguTag):
-                loss = loss_function_graph(recon_batch, data.view(-1, recon_batch.shape[1]), mu, logvar, graphregu=adjsample, gammaPara=args.gammaPara, regulationMatrix=regulationMatrixBatch, regularizer_type=args.EMregulized_type, reguPara=args.regularizePara, modelusage=args.model)
+                loss = loss_function_graph_celltype(recon_batch, data.view(-1, recon_batch.shape[1]), mu, logvar, graphregu=adjsample, celltyperegu=celltypesample, gammaPara=args.gammaPara, regulationMatrix=regulationMatrixBatch, regularizer_type=args.EMregulized_type, reguPara=args.regularizePara, reguParaCelltype=args.reguParaCelltype, modelusage=args.model)
             else: 
-                loss = loss_function_graph(recon_batch, data.view(-1, recon_batch.shape[1]), mu, logvar, graphregu=adjsample, gammaPara=args.gammaPara, regulationMatrix=regulationMatrixBatch, regularizer_type=args.regulized_type, reguPara=args.regularizePara, modelusage=args.model)    
+                loss = loss_function_graph_celltype(recon_batch, data.view(-1, recon_batch.shape[1]), mu, logvar, graphregu=adjsample, celltyperegu=celltypesample, gammaPara=args.gammaPara, regulationMatrix=regulationMatrixBatch, regularizer_type=args.regulized_type, reguPara=args.regularizePara, reguParaCelltype=args.reguParaCelltype, modelusage=args.model)    
             
         elif args.model == 'AE':
             recon_batch, z = model(data)
@@ -224,10 +247,10 @@ def train(epoch, train_loader=train_loader, EMFlag=False):
             # Original
             # loss = loss_function(recon_batch, data, mu, logvar)
             if EMFlag and (not args.EMreguTag):
-                loss = loss_function_graph(recon_batch, data.view(-1, recon_batch.shape[1]), mu_dummy, logvar_dummy, graphregu=adjsample, gammaPara=args.gammaPara, regulationMatrix=regulationMatrixBatch, regularizer_type=args.EMregulized_type, reguPara=args.regularizePara, modelusage=args.model)    
+                loss = loss_function_graph_celltype(recon_batch, data.view(-1, recon_batch.shape[1]), mu_dummy, logvar_dummy, graphregu=adjsample, celltyperegu=celltypesample, gammaPara=args.gammaPara, regulationMatrix=regulationMatrixBatch, regularizer_type=args.EMregulized_type, reguPara=args.regularizePara, reguParaCelltype=args.reguParaCelltype, modelusage=args.model)    
             else:
-                loss = loss_function_graph(recon_batch, data.view(-1, recon_batch.shape[1]), mu_dummy, logvar_dummy, graphregu=adjsample, gammaPara=args.gammaPara, regulationMatrix=regulationMatrixBatch, regularizer_type=args.regulized_type, reguPara=args.regularizePara, modelusage=args.model)
-               
+                loss = loss_function_graph_celltype(recon_batch, data.view(-1, recon_batch.shape[1]), mu_dummy, logvar_dummy, graphregu=adjsample, celltyperegu=celltypesample, gammaPara=args.gammaPara, regulationMatrix=regulationMatrixBatch, regularizer_type=args.regulized_type, reguPara=args.regularizePara, reguParaCelltype=args.reguParaCelltype, modelusage=args.model)
+         
         # L1 and L2 regularization
         # 0.0 for no regularization 
         l1 = 0.0
@@ -350,6 +373,7 @@ def trainParallel(i,recon,clusterIndexList,args):
 
 if __name__ == "__main__":
     adjsample = None
+    celltypesample = None
     # ptfile = args.npyDir+args.datasetName+'_'+str(args.regularizePara)+'_EMtraining.pt'
     ptfileOri = args.npyDir+args.datasetName+'_'+str(args.regularizePara)+'_EMtrainingOri.pt'
     torch.save(model.state_dict(),ptfileOri)
@@ -648,6 +672,12 @@ if __name__ == "__main__":
         resultarray.append(resultstr)
         print('All Results: ')
         print(resultstr)
+
+        #generate celltype regularizer from celltype
+        celltypesample = generateCelltypeRegu(listResult)
+
+        celltypesample = torch.from_numpy(celltypesample)
+        celltypesample = celltypesample.float()
 
         if args.saveFlag:
             if args.imputeMode:

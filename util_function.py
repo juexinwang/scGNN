@@ -288,6 +288,41 @@ def loss_function_graph(recon_x, x, mu, logvar, graphregu=None, gammaPara=1.0, r
 
     return loss
 
+# Graph
+def loss_function_graph_celltype(recon_x, x, mu, logvar, graphregu=None, celltyperegu=None, gammaPara=1.0, regulationMatrix=None, regularizer_type='noregu', reguPara=0.001, reguParaCelltype=0.001, modelusage='AE'):
+    '''
+    Regularized by the graph information
+    Reconstruction + KL divergence losses summed over all elements and batch
+    '''
+    # Original 
+    # BCE = F.binary_cross_entropy(recon_x, x.view(-1, 784), reduction='sum')
+    # Graph
+    target = x
+    if regularizer_type == 'Graph' or regularizer_type == 'LTMG' or regularizer_type == 'LTMG01':
+        target.requires_grad = True
+    # Euclidean
+    BCE = gammaPara * vallina_mse_loss_function(recon_x, target, reduction='sum')
+    if regularizer_type == 'noregu':
+        loss = BCE
+    elif regularizer_type == 'LTMG':
+        loss = BCE + reguPara * regulation_mse_loss_function(recon_x, target, regulationMatrix, reduction='sum')
+    elif regularizer_type == 'LTMG01':
+        loss = BCE + reguPara * regulation01_mse_loss_function(recon_x, target, regulationMatrix, reduction='sum')
+    elif regularizer_type == 'Graph':
+        loss = BCE + reguPara * graph_mse_loss_function(recon_x, target, graphregu=graphregu, reduction='sum')
+    elif regularizer_type == 'Celltype':
+        loss = BCE + reguPara * graph_mse_loss_function(recon_x, target, graphregu=graphregu, reduction='sum') + reguParaCelltype * graph_mse_loss_function(recon_x, target, graphregu=celltyperegu, reduction='sum')
+    
+    # see Appendix B from VAE paper:
+    # Kingma and Welling. Auto-Encoding Variational Bayes. ICLR, 2014
+    # https://arxiv.org/abs/1312.6114
+    # 0.5 * sum(1 + log(sigma^2) - mu^2 - sigma^2)
+    if modelusage == 'VAE':
+        KLD = -0.5 * torch.sum(1 + logvar - mu.pow(2) - logvar.exp())
+        loss = loss + KLD    
+
+    return loss
+
 # change from pytorch
 # Does not work now
 # def graph_binary_cross_entropy(input, target, adj, weight=None, size_average=None,
@@ -592,3 +627,24 @@ def loadscExpression(csvFilename, sparseMode=True):
         matrix = matrix.astype(float)
 
     return matrix, genelist, celllist
+
+def generateCelltypeRegu(listResult):
+    celltypesample = np.zeros((len(listResult),len(listResult)))
+    tdict = {}
+    count = 0
+    for item in listResult:
+        if item in tdict:
+            tlist = tdict[item]
+        else:
+            tlist = []
+        tlist.append(count)
+        tdict[item] = tlist
+        count += 1
+
+    for key in sorted(tdict):
+        tlist = tdict[key]
+        for item1 in tlist:
+            for item2 in tlist:
+                celltypesample[item1,item2]=1.0
+
+    return celltypesample
