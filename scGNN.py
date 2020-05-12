@@ -308,8 +308,8 @@ class CelltypeAEParallel():
 if __name__ == "__main__":
     adjsample = None
     celltypesample = None
-    # ptfile = args.npyDir+args.datasetName+'_'+str(args.regularizePara)+'_EMtraining.pt'
-    ptfileOri = args.npyDir+args.datasetName+'_'+str(args.regularizePara)+'_EMtrainingOri.pt'
+    # ptfile = args.outputDir+args.datasetName+'_'+str(args.regularizePara)+'_EMtraining.pt'
+    ptfileOri = args.outputDir+args.datasetName+'_'+str(args.regularizePara)+'_EMtrainingOri.pt'
     torch.save(model.state_dict(),ptfileOri)
 
     # May need reconstruct
