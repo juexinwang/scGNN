@@ -37,6 +37,16 @@ parser.add_argument('--outputDir', type=str, default='npyGraphTest/',
 parser.add_argument('--nonsparseMode', action='store_true', default=False, 
                     help='SparseMode for running for huge dataset')
 
+#New add, need change later
+parser.add_argument('--EMregulized-type', type=str, default='Graph',
+                    help='regulized type (default: noregu) in EM, otherwise: noregu/Graph/GraphR/Celltype') 
+parser.add_argument('--adjtype', type=str, default='unweighted',
+                    help='adjtype (default: weighted) otherwise: unweighted') 
+parser.add_argument('--aeOriginal', action='store_true', default=False, 
+                    help='whether use original parameter of feature autoencoder (default: False)')
+parser.add_argument('--reguParaCelltype', type=float, default=0.0,
+                    help='celltype parameter (default: 0.001)')
+
 #Speed related
 parser.add_argument('--batch-size', type=int, default=12800, metavar='N',
                     help='input batch size for training (default: 12800)')
@@ -46,7 +56,7 @@ parser.add_argument('--EM-epochs', type=int, default=200, metavar='N',
                     help='number of epochs to train in process of iteration EM (default: 200)')
 parser.add_argument('--celltype-epochs', type=int, default=200, metavar='N',
                     help='number of epochs in celltype training (default: 200)')
-parser.add_argument('--EM-iteration', type=int, default=10, metavar='N',
+parser.add_argument('--EM-iteration', type=int, default=1, metavar='N',
                     help='number of iteration in total EM iteration (default: 10)')
 parser.add_argument('--quickmode', action='store_true', default=False,
                     help='whether use quickmode, skip celltype autoencoder (default: no quickmode)')
@@ -58,8 +68,8 @@ parser.add_argument('--model', type=str, default='AE',
                     help='VAE/AE (default: AE)')
 parser.add_argument('--gammaPara', type=float, default=0.1,
                     help='regulized parameter (default: 0.1)')
-parser.add_argument('--regularizePara', type=float, default=0.9,
-                    help='regulized parameter (default: 0.9)')
+parser.add_argument('--regularizePara', type=float, default=0.1,
+                    help='regulized parameter (default: 0.1)')
 parser.add_argument('--L1Para', type=float, default=0.0,
                     help='L1 regulized parameter (default: 0.001)')
 parser.add_argument('--L2Para', type=float, default=0.0,
@@ -70,7 +80,7 @@ parser.add_argument('--k', type=int, default=10,
                     help='parameter k in KNN graph (default: 10)')
 parser.add_argument('--knn-distance', type=str, default='euclidean',
                     help='KNN graph distance type: euclidean/cosine/correlation (default: euclidean)')
-parser.add_argument('--prunetype', type=str, default='KNNgraphStats',
+parser.add_argument('--prunetype', type=str, default='KNNgraphStatsSingleThread',
                     help='prune type, KNNgraphStats/KNNgraphML/KNNgraphStatsSingleThread (default: KNNgraphStats)')
 
 #Graph Autoencoder
@@ -192,14 +202,36 @@ def train(epoch, train_loader=train_loader, EMFlag=False):
         else:
             regulationMatrixBatch = None
         optimizer.zero_grad()
+
+        #celltype regu
+        # if args.model == 'VAE':
+        #     recon_batch, mu, logvar, z = model(data)
+        #     # Original
+        #     # loss = loss_function(recon_batch, data, mu, logvar)
+        #     if EMFlag and (not args.EMreguTag):
+        #         loss = loss_function_graph(recon_batch, data.view(-1, recon_batch.shape[1]), mu, logvar, gammaPara=args.gammaPara, regulationMatrix=regulationMatrixBatch, regularizer_type='noregu', reguPara=args.regularizePara, modelusage=args.model)
+        #     else: 
+        #         loss = loss_function_graph(recon_batch, data.view(-1, recon_batch.shape[1]), mu, logvar, gammaPara=args.gammaPara, regulationMatrix=regulationMatrixBatch, regularizer_type=args.regulized_type, reguPara=args.regularizePara, modelusage=args.model)    
+            
+        # elif args.model == 'AE':
+        #     recon_batch, z = model(data)
+        #     mu_dummy = ''
+        #     logvar_dummy = ''
+        #     # Original
+        #     # loss = loss_function(recon_batch, data, mu, logvar)
+        #     if EMFlag and (not args.EMreguTag):
+        #         loss = loss_function_graph(recon_batch, data.view(-1, recon_batch.shape[1]), mu_dummy, logvar_dummy, gammaPara=args.gammaPara, regulationMatrix=regulationMatrixBatch, regularizer_type='noregu', reguPara=args.regularizePara, modelusage=args.model)    
+        #     else:
+        #         loss = loss_function_graph(recon_batch, data.view(-1, recon_batch.shape[1]), mu_dummy, logvar_dummy, gammaPara=args.gammaPara, regulationMatrix=regulationMatrixBatch, regularizer_type=args.regulized_type, reguPara=args.regularizePara, modelusage=args.model)
+
         if args.model == 'VAE':
             recon_batch, mu, logvar, z = model(data)
             # Original
             # loss = loss_function(recon_batch, data, mu, logvar)
             if EMFlag and (not args.EMreguTag):
-                loss = loss_function_graph(recon_batch, data.view(-1, recon_batch.shape[1]), mu, logvar, gammaPara=args.gammaPara, regulationMatrix=regulationMatrixBatch, regularizer_type='noregu', reguPara=args.regularizePara, modelusage=args.model)
+                loss = loss_function_graph_celltype(recon_batch, data.view(-1, recon_batch.shape[1]), mu, logvar, graphregu=adjsample, celltyperegu=celltypesample, gammaPara=args.gammaPara, regulationMatrix=regulationMatrixBatch, regularizer_type=args.EMregulized_type, reguPara=args.regularizePara, reguParaCelltype=args.reguParaCelltype, modelusage=args.model)
             else: 
-                loss = loss_function_graph(recon_batch, data.view(-1, recon_batch.shape[1]), mu, logvar, gammaPara=args.gammaPara, regulationMatrix=regulationMatrixBatch, regularizer_type=args.regulized_type, reguPara=args.regularizePara, modelusage=args.model)    
+                loss = loss_function_graph_celltype(recon_batch, data.view(-1, recon_batch.shape[1]), mu, logvar, graphregu=adjsample, celltyperegu=celltypesample, gammaPara=args.gammaPara, regulationMatrix=regulationMatrixBatch, regularizer_type=args.regulized_type, reguPara=args.regularizePara, reguParaCelltype=args.reguParaCelltype, modelusage=args.model)    
             
         elif args.model == 'AE':
             recon_batch, z = model(data)
@@ -208,10 +240,11 @@ def train(epoch, train_loader=train_loader, EMFlag=False):
             # Original
             # loss = loss_function(recon_batch, data, mu, logvar)
             if EMFlag and (not args.EMreguTag):
-                loss = loss_function_graph(recon_batch, data.view(-1, recon_batch.shape[1]), mu_dummy, logvar_dummy, gammaPara=args.gammaPara, regulationMatrix=regulationMatrixBatch, regularizer_type='noregu', reguPara=args.regularizePara, modelusage=args.model)    
+                loss = loss_function_graph_celltype(recon_batch, data.view(-1, recon_batch.shape[1]), mu_dummy, logvar_dummy, graphregu=adjsample, celltyperegu=celltypesample, gammaPara=args.gammaPara, regulationMatrix=regulationMatrixBatch, regularizer_type=args.EMregulized_type, reguPara=args.regularizePara, reguParaCelltype=args.reguParaCelltype, modelusage=args.model)    
             else:
-                loss = loss_function_graph(recon_batch, data.view(-1, recon_batch.shape[1]), mu_dummy, logvar_dummy, gammaPara=args.gammaPara, regulationMatrix=regulationMatrixBatch, regularizer_type=args.regulized_type, reguPara=args.regularizePara, modelusage=args.model)
-               
+                loss = loss_function_graph_celltype(recon_batch, data.view(-1, recon_batch.shape[1]), mu_dummy, logvar_dummy, graphregu=adjsample, celltyperegu=celltypesample, gammaPara=args.gammaPara, regulationMatrix=regulationMatrixBatch, regularizer_type=args.regulized_type, reguPara=args.regularizePara, reguParaCelltype=args.reguParaCelltype, modelusage=args.model)
+        
+
         # L1 and L2 regularization
         # 0.0 for no regularization 
         l1 = 0.0
@@ -273,6 +306,12 @@ class CelltypeAEParallel():
 
 
 if __name__ == "__main__":
+    adjsample = None
+    celltypesample = None
+    # ptfile = args.npyDir+args.datasetName+'_'+str(args.regularizePara)+'_EMtraining.pt'
+    ptfileOri = args.npyDir+args.datasetName+'_'+str(args.regularizePara)+'_EMtrainingOri.pt'
+    torch.save(model.state_dict(),ptfileOri)
+
     # May need reconstruct
     # start_time = time.time()
 
@@ -288,7 +327,15 @@ if __name__ == "__main__":
         # Here para = 'euclidean:10'
         # adj, edgeList = generateAdj(zOut, graphType='KNNgraphML', para = args.knn_distance+':'+str(args.k)) 
         print('---'+str(datetime.timedelta(seconds=int(time.time()-start_time)))+'---Start Prune')
-        adj, edgeList = generateAdj(zOut, graphType=args.prunetype, para = args.knn_distance+':'+str(args.k), parallelLimit=args.parallelLimit) 
+        # adj, edgeList = generateAdj(zOut, graphType=args.prunetype, para = args.knn_distance+':'+str(args.k), parallelLimit=args.parallelLimit) 
+        if args.adjtype=='unweighted':
+            adj, edgeList = generateAdj(zOut, graphType=args.prunetype, para = args.knn_distance+':'+str(args.k), outAdjTag = (args.useGAEembedding or args.useBothembedding))
+            adjdense = sp.csr_matrix.todense(adj)
+        elif args.adjtype=='weighted':
+            adj, edgeList = generateAdjWeighted(zOut, graphType=args.prunetype, para = args.knn_distance+':'+str(args.k), outAdjTag = (args.useGAEembedding or args.useBothembedding))   
+            adjdense = adj.toarray()
+        adjsample = torch.from_numpy(adjdense)
+        adjsample = adjsample.float()
         print('---'+str(datetime.timedelta(seconds=int(time.time()-start_time)))+'---Prune Finished')
         mem=resource.getrusage(resource.RUSAGE_SELF).ru_maxrss
         print('Mem consumption: '+str(mem))
@@ -503,6 +550,8 @@ if __name__ == "__main__":
         scDataInter = scDatasetInter(recon)
         train_loader = DataLoader(scDataInter, batch_size=args.batch_size, shuffle=False, **kwargs)
 
+        if args.aeOriginal:
+            model.load_state_dict(torch.load(ptfileOri))
         for epoch in range(1, args.EM_epochs + 1):
             recon, original, z = train(epoch, EMFlag=True)
         
@@ -513,7 +562,15 @@ if __name__ == "__main__":
         # Here para = 'euclidean:10'
         # adj, edgeList = generateAdj(zOut, graphType='KNNgraphML', para = args.knn_distance+':'+str(args.k)) 
         print('---'+str(datetime.timedelta(seconds=int(time.time()-start_time)))+'---Start Prune')
-        adj, edgeList = generateAdj(zOut, graphType=args.prunetype, para = args.knn_distance+':'+str(args.k), parallelLimit= args.parallelLimit, outAdjTag = (args.useGAEembedding or args.useBothembedding)) 
+        # adj, edgeList = generateAdj(zOut, graphType=args.prunetype, para = args.knn_distance+':'+str(args.k), parallelLimit= args.parallelLimit, outAdjTag = (args.useGAEembedding or args.useBothembedding)) 
+        if args.adjtype == 'unweighted':
+            adj, edgeList = generateAdj(zOut, graphType=args.prunetype, para = args.knn_distance+':'+str(args.k), outAdjTag = (args.useGAEembedding or args.useBothembedding)) 
+            adjdense = sp.csr_matrix.todense(adj)
+        elif args.adjtype == 'weighted':
+            adj, edgeList = generateAdjWeighted(zOut, graphType=args.prunetype, para = args.knn_distance+':'+str(args.k), outAdjTag = (args.useGAEembedding or args.useBothembedding))         
+            adjdense = adj.toarray()
+        adjsample = torch.from_numpy(adjdense)
+        adjsample = adjsample.float()
         print('---'+str(datetime.timedelta(seconds=int(time.time()-start_time)))+'---Prune Finished')
         mem=resource.getrusage(resource.RUSAGE_SELF).ru_maxrss
         print('Mem consumption: '+str(mem))
@@ -589,6 +646,12 @@ if __name__ == "__main__":
         print(listResultOld)
         print(listResult)
         print('celltype similarity:'+str(ari))
+
+        #generate celltype regularizer from celltype
+        celltypesample = generateCelltypeRegu(listResult)
+
+        celltypesample = torch.from_numpy(celltypesample)
+        celltypesample = celltypesample.float()
         
         # graph criteria
         if args.converge_type == 'graph':       
