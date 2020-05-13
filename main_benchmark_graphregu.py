@@ -374,7 +374,7 @@ def trainParallel(i,recon,clusterIndexList,args):
 if __name__ == "__main__":
     adjsample = None
     celltypesample = None
-    outParaTag = str(args.gammaPara)+'/'+str(args.regularizePara)+'/'+str(args.reguParaCelltype)
+    outParaTag = str(args.gammaPara)+'-'+str(args.regularizePara)+'-'+str(args.reguParaCelltype)
     # ptfile = args.npyDir+args.datasetName+'_'+str(args.regularizePara)+'_EMtraining.pt'
 
     # ptfileOri = args.npyDir+args.datasetName+'_'+str(args.regularizePara)+'_EMtrainingOri.pt'
