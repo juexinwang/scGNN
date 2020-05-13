@@ -792,7 +792,7 @@ if __name__ == "__main__":
             if args.imputeMode:
                 np.savetxt(args.npyDir+args.datasetName+'_'+args.regulized_type+'_'+str(args.dropoutRatio)+'_'+outParaTag+'_benchmark'+str(bigepoch+1)+'.txt',resultarray,fmt='%s')
             else:
-                np.savetxt(args.npyDir+args.datasetName+'_'+args.regulized_type+'_'+outParaTag)+'_benchmark'+str(bigepoch+1)+'.txt',resultarray,fmt='%s')
+                np.savetxt(args.npyDir+args.datasetName+'_'+args.regulized_type+'_'+outParaTag+'_benchmark'+str(bigepoch+1)+'.txt',resultarray,fmt='%s')
 
  
     print("---Total Running Time: %s seconds ---" % (time.time() - start_time))
