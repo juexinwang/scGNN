@@ -374,8 +374,11 @@ def trainParallel(i,recon,clusterIndexList,args):
 if __name__ == "__main__":
     adjsample = None
     celltypesample = None
+    outParaTag = str(args.gammaPara)+'/'+str(args.regularizePara)+'/'+str(args.reguParaCelltype)
     # ptfile = args.npyDir+args.datasetName+'_'+str(args.regularizePara)+'_EMtraining.pt'
-    ptfileOri = args.npyDir+args.datasetName+'_'+str(args.regularizePara)+'_EMtrainingOri.pt'
+
+    # ptfileOri = args.npyDir+args.datasetName+'_'+str(args.regularizePara)+'_EMtrainingOri.pt'
+    ptfileOri = args.npyDir+args.datasetName+'_'+outParaTag+'_EMtrainingOri.pt'
     torch.save(model.state_dict(),ptfileOri)
     start_time = time.time()
     discreteStr = ''
@@ -384,13 +387,10 @@ if __name__ == "__main__":
 
     # Save results only when impute
     if args.imputeMode:
-        # Does not need now
-        # save_sparse_matrix(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_'+str(args.dropoutRatio)+'_features.npz',scData.features)
-        # sp.save_npz(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_'+str(args.dropoutRatio)+'_features.npz',scData.features)
-        np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_'+str(args.dropoutRatio)+'_'+str(args.regularizePara)+'_features.npy',scData.features)
-        np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_'+str(args.dropoutRatio)+'_'+str(args.regularizePara)+'_dropi.npy',scData.i)
-        np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_'+str(args.dropoutRatio)+'_'+str(args.regularizePara)+'_dropj.npy',scData.j)
-        np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_'+str(args.dropoutRatio)+'_'+str(args.regularizePara)+'_dropix.npy',scData.ix)
+        np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_'+str(args.dropoutRatio)+'_'+outParaTag+'_features.npy',scData.features)
+        np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_'+str(args.dropoutRatio)+'_'+outParaTag+'_dropi.npy',scData.i)
+        np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_'+str(args.dropoutRatio)+'_'+outParaTag+'_dropj.npy',scData.j)
+        np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_'+str(args.dropoutRatio)+'_'+outParaTag+'_dropix.npy',scData.ix)
 
     for epoch in range(1, args.epochs + 1):
         recon, original, z = train(epoch, EMFlag=False)
@@ -423,11 +423,11 @@ if __name__ == "__main__":
     if args.saveFlag:
         reconOut = recon.detach().cpu().numpy()
         if args.imputeMode:
-            np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_'+str(args.dropoutRatio)+'_'+str(args.regularizePara)+'_recon.npy',reconOut)
-            np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_'+str(args.dropoutRatio)+'_'+str(args.regularizePara)+'_z.npy',zOut)
+            np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_'+str(args.dropoutRatio)+'_'+outParaTag+'_recon.npy',reconOut)
+            np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_'+str(args.dropoutRatio)+'_'+outParaTag+'_z.npy',zOut)
         else:  
-            np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_'+str(args.regularizePara)+'_recon.npy',reconOut)
-            np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_'+str(args.regularizePara)+'_z.npy',zOut)
+            np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_'+outParaTag+'_recon.npy',reconOut)
+            np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_'+outParaTag+'_z.npy',zOut)
     
     # Whether use GAE embedding
     if args.useGAEembedding or args.useBothembedding:
@@ -639,11 +639,11 @@ if __name__ == "__main__":
         if args.saveFlag:
             reconOut = recon.detach().cpu().numpy()
             if args.imputeMode:
-                np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_'+str(args.dropoutRatio)+'_'+str(args.regularizePara)+'_recon'+str(bigepoch)+'.npy',reconOut)
-                np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_'+str(args.dropoutRatio)+'_'+str(args.regularizePara)+'_z'+str(bigepoch)+'.npy',zOut)
+                np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_'+str(args.dropoutRatio)+'_'+outParaTag+'_recon'+str(bigepoch)+'.npy',reconOut)
+                np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_'+str(args.dropoutRatio)+'_'+outParaTag+'_z'+str(bigepoch)+'.npy',zOut)
             else:
-                np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_'+str(args.regularizePara)+'_recon'+str(bigepoch)+'.npy',reconOut)
-                np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_'+str(args.regularizePara)+'_z'+str(bigepoch)+'.npy',zOut)
+                np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_'+outParaTag+'_recon'+str(bigepoch)+'.npy',reconOut)
+                np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_'+outParaTag+'_z'+str(bigepoch)+'.npy',zOut)
         
         print("---One iteration in EM process, proceeded %s seconds ---" % (time.time() - iteration_time))
 
@@ -681,13 +681,13 @@ if __name__ == "__main__":
 
         if args.saveFlag:
             if args.imputeMode:
-                np.savetxt(args.npyDir+args.datasetName+'_'+args.regulized_type+'_'+str(args.dropoutRatio)+'_'+str(args.regularizePara)+'_benchmark'+str(bigepoch)+'.txt',resultarray,fmt='%s')
-                np.savetxt(args.npyDir+args.datasetName+'_'+args.regulized_type+'_'+str(args.dropoutRatio)+'_'+str(args.regularizePara)+'_graph'+str(bigepoch)+'.csv',edgeList,fmt='%d,%d,%2.1f')
-                np.savetxt(args.npyDir+args.datasetName+'_'+args.regulized_type+'_'+str(args.dropoutRatio)+'_'+str(args.regularizePara)+'_results'+str(bigepoch)+'.txt',listResult,fmt='%d')
+                np.savetxt(args.npyDir+args.datasetName+'_'+args.regulized_type+'_'+str(args.dropoutRatio)+'_'+outParaTag+'_benchmark'+str(bigepoch)+'.txt',resultarray,fmt='%s')
+                np.savetxt(args.npyDir+args.datasetName+'_'+args.regulized_type+'_'+str(args.dropoutRatio)+'_'+outParaTag+'_graph'+str(bigepoch)+'.csv',edgeList,fmt='%d,%d,%2.1f')
+                np.savetxt(args.npyDir+args.datasetName+'_'+args.regulized_type+'_'+str(args.dropoutRatio)+'_'+outParaTag+'_results'+str(bigepoch)+'.txt',listResult,fmt='%d')
             else:
-                np.savetxt(args.npyDir+args.datasetName+'_'+args.regulized_type+'_'+str(args.regularizePara)+'_benchmark'+str(bigepoch)+'.txt',resultarray,fmt='%s')
-                np.savetxt(args.npyDir+args.datasetName+'_'+args.regulized_type+'_'+str(args.regularizePara)+'_graph'+str(bigepoch)+'.csv',edgeList,fmt='%d,%d,%2.1f')
-                np.savetxt(args.npyDir+args.datasetName+'_'+args.regulized_type+'_'+str(args.regularizePara)+'_results'+str(bigepoch)+'.txt',listResult,fmt='%d')
+                np.savetxt(args.npyDir+args.datasetName+'_'+args.regulized_type+'_'+outParaTag+'_benchmark'+str(bigepoch)+'.txt',resultarray,fmt='%s')
+                np.savetxt(args.npyDir+args.datasetName+'_'+args.regulized_type+'_'+outParaTag+'_graph'+str(bigepoch)+'.csv',edgeList,fmt='%d,%d,%2.1f')
+                np.savetxt(args.npyDir+args.datasetName+'_'+args.regulized_type+'_'+outParaTag+'_results'+str(bigepoch)+'.txt',listResult,fmt='%d')
 
 
         # graph criteria
@@ -718,25 +718,25 @@ if __name__ == "__main__":
             
     if args.saveFlag:
         if args.imputeMode:
-            np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_'+str(args.dropoutRatio)+'_'+str(args.regularizePara)+'_final_edgeList.npy',edgeList)
+            np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_'+str(args.dropoutRatio)+'_'+outParaTag+'_final_edgeList.npy',edgeList)
         else:
-            np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_'+str(args.regularizePara)+'_final_edgeList.npy',edgeList)
+            np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_'+outParaTag+'_final_edgeList.npy',edgeList)
         
         # recon_df = pd.DataFrame(reconOut,columns=genelist,index=celllist)
         # recon_df.to_csv(args.npyDir+args.datasetName+'_'+args.regulized_type+'_'+str(args.regularizePara)+'_'+str(args.L1Para)+'_'+str(args.L2Para)+'_recon.csv')
         # embedding_df = pd.DataFrame(zOut,index=celllist)
         # embedding_df.to_csv(args.npyDir+args.datasetName+'_'+args.regulized_type+'_'+str(args.regularizePara)+'_'+str(args.L1Para)+'_'+str(args.L2Para)+'_embedding.csv')    
-        np.savetxt(args.npyDir+args.datasetName+'_'+args.regulized_type+'_'+str(args.regularizePara)+'_'+str(args.L1Para)+'_'+str(args.L2Para)+'_recon.csv',reconOut,delimiter=",",fmt='%10.4f')
-        np.savetxt(args.npyDir+args.datasetName+'_'+args.regulized_type+'_'+str(args.regularizePara)+'_'+str(args.L1Para)+'_'+str(args.L2Para)+'_embedding.csv',zOut, delimiter=",",fmt='%10.4f')
-        np.savetxt(args.npyDir+args.datasetName+'_'+args.regulized_type+'_'+str(args.regularizePara)+'_'+str(args.L1Para)+'_'+str(args.L2Para)+'_graph.csv',edgeList,fmt='%d,%d,%2.1f')
-        np.savetxt(args.npyDir+args.datasetName+'_'+args.regulized_type+'_'+str(args.regularizePara)+'_'+str(args.L1Para)+'_'+str(args.L2Para)+'_results.txt',listResult,fmt='%d')
+        np.savetxt(args.npyDir+args.datasetName+'_'+args.regulized_type+'_'+outParaTag+'_'+str(args.L1Para)+'_'+str(args.L2Para)+'_recon.csv',reconOut,delimiter=",",fmt='%10.4f')
+        np.savetxt(args.npyDir+args.datasetName+'_'+args.regulized_type+'_'+outParaTag+'_'+str(args.L1Para)+'_'+str(args.L2Para)+'_embedding.csv',zOut, delimiter=",",fmt='%10.4f')
+        np.savetxt(args.npyDir+args.datasetName+'_'+args.regulized_type+'_'+outParaTag+'_'+str(args.L1Para)+'_'+str(args.L2Para)+'_graph.csv',edgeList,fmt='%d,%d,%2.1f')
+        np.savetxt(args.npyDir+args.datasetName+'_'+args.regulized_type+'_'+outParaTag+'_'+str(args.L1Para)+'_'+str(args.L2Para)+'_results.txt',listResult,fmt='%d')
 
         resultarray=[]
         silhouette, chs, dbs = measureClusteringNoLabel(zOut, listResult)
         ari, ami, nmi, cs, fms, vms, hs = measureClusteringTrueLabel(bench_celltype, listResult)
         resultstr = str(silhouette)+' '+str(chs)+' '+str(dbs)+' '+str(ari)+' '+str(ami)+' '+str(nmi)+' '+str(cs)+' '+str(fms)+' '+str(vms)+' '+str(hs)
         resultarray.append(resultstr)
-        np.savetxt(args.npyDir+args.datasetName+'_'+args.regulized_type+'_'+str(args.regularizePara)+'_'+str(args.L1Para)+'_'+str(args.L2Para)+'_benchmark.txt',resultarray,fmt='%s')
+        np.savetxt(args.npyDir+args.datasetName+'_'+args.regulized_type+'_'+outParaTag+'_'+str(args.L1Para)+'_'+str(args.L2Para)+'_benchmark.txt',resultarray,fmt='%s')
 
         if not args.ONEregulized_type == 'NA':
             if not args.imputeMode:
@@ -786,13 +786,13 @@ if __name__ == "__main__":
             resultarray.append(resultstr)
             print(resultstr)
 
-            np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_'+str(args.dropoutRatio)+'_'+str(args.regularizePara)+'_recon'+str(bigepoch+1)+'.npy',reconOut)
-            np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_'+str(args.dropoutRatio)+'_'+str(args.regularizePara)+'_z'+str(bigepoch+1)+'.npy',zOut)
+            np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_'+str(args.dropoutRatio)+'_'+outParaTag+'_recon'+str(bigepoch+1)+'.npy',reconOut)
+            np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_'+str(args.dropoutRatio)+'_'+outParaTag+'_z'+str(bigepoch+1)+'.npy',zOut)
 
             if args.imputeMode:
-                np.savetxt(args.npyDir+args.datasetName+'_'+args.regulized_type+'_'+str(args.dropoutRatio)+'_'+str(args.regularizePara)+'_benchmark'+str(bigepoch+1)+'.txt',resultarray,fmt='%s')
+                np.savetxt(args.npyDir+args.datasetName+'_'+args.regulized_type+'_'+str(args.dropoutRatio)+'_'+outParaTag+'_benchmark'+str(bigepoch+1)+'.txt',resultarray,fmt='%s')
             else:
-                np.savetxt(args.npyDir+args.datasetName+'_'+args.regulized_type+'_'+str(args.regularizePara)+'_benchmark'+str(bigepoch+1)+'.txt',resultarray,fmt='%s')
+                np.savetxt(args.npyDir+args.datasetName+'_'+args.regulized_type+'_'+outParaTag)+'_benchmark'+str(bigepoch+1)+'.txt',resultarray,fmt='%s')
 
  
     print("---Total Running Time: %s seconds ---" % (time.time() - start_time))
