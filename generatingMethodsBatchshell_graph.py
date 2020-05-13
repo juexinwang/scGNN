@@ -7,9 +7,9 @@ parser.add_argument('--outputDir', type=str, default='',
                     help='Directory of batch files for cluster running')
 parser.add_argument('--imputeMode', action='store_true', default=False,
                     help='whether impute')
-parser.add_argument('--aeOriginal', action='store_true', default=False,
+parser.add_argument('--aeOriginal', action='store_true', default=True,
                     help='whether use original')
-parser.add_argument('--adjtype', type=str, default='weighted',
+parser.add_argument('--adjtype', type=str, default='unweighted',
                     help='whether weighted')
 
 args = parser.parse_args()

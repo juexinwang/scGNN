@@ -57,9 +57,9 @@ parser.add_argument('--EMregulized-type', type=str, default='Graph',
                     help='regulized type (default: noregu) in EM, otherwise: noregu/Graph/GraphR/Celltype') 
 parser.add_argument('--ONEregulized-type', type=str, default='NA', 
                     help='regulized type (default: NA) in oneImpute, otherwise: NA/LTMG-Graph/LTMG-GraphR')
-parser.add_argument('--adjtype', type=str, default='weighted',
+parser.add_argument('--adjtype', type=str, default='unweighted',
                     help='adjtype (default: weighted) otherwise: unweighted') 
-parser.add_argument('--aeOriginal', action='store_true', default=False, 
+parser.add_argument('--aeOriginal', action='store_true', default=True, 
                     help='whether use original parameter of feature autoencoder (default: False)')
                    
 parser.add_argument('--gammaPara', type=float, default=0.1,
