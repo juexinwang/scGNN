@@ -44,7 +44,7 @@ parser.add_argument('--converge-graphratio', type=float, default=0.01,
                     help='ratio of cell type change in EM iteration (default: 0.01), 0-1')
 parser.add_argument('--converge-celltyperatio', type=float, default=0.95,
                     help='ratio of cell type change in EM iteration (default: 0.99), 0-1')
-parser.add_argument('--celltype-epochs', type=int, default=50, metavar='N',
+parser.add_argument('--celltype-epochs', type=int, default=200, metavar='N',
                     help='number of epochs in celltype training (default: 200)')
 parser.add_argument('--no-cuda', action='store_true', default=True,
                     help='enables CUDA training')
