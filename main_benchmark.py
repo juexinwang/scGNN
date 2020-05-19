@@ -311,7 +311,7 @@ if __name__ == "__main__":
         torch.save(model.state_dict(),ptfileEnd)
 
         # Store reconOri for imputation
-        reconOri = recon.copy()
+        reconOri = recon.clone()
 
         # Step 1. Inferring celltype
         #Define resolution
