@@ -21,7 +21,7 @@ from LTMG_R import *
 import pandas as pd
 import torch.multiprocessing as mp
 
-# Used only for benchmark, needs Preprocessing_main.py first, then proceed by this script.
+# Benchmark for both celltype identification and imputation, needs Preprocessing_main.py first, then proceed by this script.
 parser = argparse.ArgumentParser(description='Graph EM AutoEncoder for scRNA')
 parser.add_argument('--datasetName', type=str, default='1.Biase',
                     help='TGFb/sci-CAR/sci-CAR_LTMG/MMPbasal/MMPbasal_all/MMPbasal_allgene/MMPbasal_allcell/MMPepo/MMPbasal_LTMG/MMPbasal_all_LTMG/MMPbasal_2000')
@@ -32,7 +32,7 @@ parser.add_argument('--epochs', type=int, default=500, metavar='N',
                     help='number of epochs to train (default: 500)')
 parser.add_argument('--EM-epochs', type=int, default=200, metavar='N',
                     help='number of epochs to train in iteration EM (default: 200)')
-parser.add_argument('--EM-iteration', type=int, default=1, metavar='N',
+parser.add_argument('--EM-iteration', type=int, default=10, metavar='N',
                     help='number of epochs in EM iteration (default: 1)')
 parser.add_argument('--EMtype', type=str, default='EM',
                     help='EM process type (default: celltypeEM) or EM')
@@ -42,7 +42,7 @@ parser.add_argument('--converge-type', type=str, default='either',
                     help='type of converge: celltype/graph/both/either (default: celltype) ')
 parser.add_argument('--converge-graphratio', type=float, default=0.01,
                     help='ratio of cell type change in EM iteration (default: 0.01), 0-1')
-parser.add_argument('--converge-celltyperatio', type=float, default=0.99,
+parser.add_argument('--converge-celltyperatio', type=float, default=0.95,
                     help='ratio of cell type change in EM iteration (default: 0.99), 0-1')
 parser.add_argument('--celltype-epochs', type=int, default=200, metavar='N',
                     help='number of epochs in celltype training (default: 200)')
@@ -52,10 +52,22 @@ parser.add_argument('--seed', type=int, default=1, metavar='S',
                     help='random seed (default: 1)')
 parser.add_argument('--regulized-type', type=str, default='LTMG',
                     help='regulized type (default: Graph) in EM, otherwise: noregu/LTMG/LTMG01')
+
+# imputation related
+parser.add_argument('--EMregulized-type', type=str, default='Graph',
+                    help='regulized type (default: noregu) in EM, otherwise: noregu/Graph/GraphR/Celltype') 
+parser.add_argument('--adjtype', type=str, default='unweighted',
+                    help='adjtype (default: weighted) otherwise: unweighted') 
+parser.add_argument('--aePara', type=str, default='start', 
+                    help='whether use parameter of first feature autoencoder: start/end/cont')
+
+
 parser.add_argument('--gammaPara', type=float, default=0.1,
                     help='regulized parameter (default: 1.0)')
 parser.add_argument('--regularizePara', type=float, default=0.9,
                     help='regulized parameter (default: 0.001)')
+parser.add_argument('--reguParaCelltype', type=float, default=0.9,
+                    help='celltype parameter (default: 0.001)')
 parser.add_argument('--L1Para', type=float, default=0.0,
                     help='regulized parameter (default: 0.001)')
 parser.add_argument('--L2Para', type=float, default=0.0,
@@ -72,6 +84,8 @@ parser.add_argument('--zerofillFlag', action='store_true', default=False,
                     help='fill zero or not before EM process (default: False)')
 
 #Debug related
+parser.add_argument('--debugMode', type=str, default='save', 
+                    help='debugMode: save or load')
 parser.add_argument('--saveFlag', action='store_true', default=True, 
                     help='whether save npy results or not')
 parser.add_argument('--npyDir', type=str, default='npyGraphTest/',
@@ -179,11 +193,12 @@ bench_pd=pd.read_csv(args.benchmark,index_col=0)
 bench_celltype=bench_pd.iloc[:,0].to_numpy()
 
 #TODO: have to improve save npy
-def train(epoch, train_loader=train_loader, EMFlag=False):
+def train(epoch, train_loader=train_loader, EMFlag=False, taskType='celltype'):
     '''
     EMFlag indicates whether in EM processes. 
         If in EM, use regulized-type parsed from program entrance,
         Otherwise, noregu
+        taskType: celltype or imputation
     '''
     model.train()
     train_loss = 0 
@@ -202,22 +217,35 @@ def train(epoch, train_loader=train_loader, EMFlag=False):
             recon_batch, mu, logvar, z = model(data)
             # Original
             # loss = loss_function(recon_batch, data, mu, logvar)
-            if EMFlag and (not args.EMreguTag):
-                loss = loss_function_graph(recon_batch, data.view(-1, recon_batch.shape[1]), mu, logvar, gammaPara=args.gammaPara, regulationMatrix=regulationMatrixBatch, regularizer_type='noregu', reguPara=args.regularizePara, modelusage=args.model)
-            else: 
-                loss = loss_function_graph(recon_batch, data.view(-1, recon_batch.shape[1]), mu, logvar, gammaPara=args.gammaPara, regulationMatrix=regulationMatrixBatch, regularizer_type=args.regulized_type, reguPara=args.regularizePara, modelusage=args.model)    
-            
+            if taskType == 'celltype':
+                if EMFlag and (not args.EMreguTag):
+                    loss = loss_function_graph(recon_batch, data.view(-1, recon_batch.shape[1]), mu, logvar, gammaPara=args.gammaPara, regulationMatrix=regulationMatrixBatch, regularizer_type='noregu', reguPara=args.regularizePara, modelusage=args.model)
+                else: 
+                    loss = loss_function_graph(recon_batch, data.view(-1, recon_batch.shape[1]), mu, logvar, gammaPara=args.gammaPara, regulationMatrix=regulationMatrixBatch, regularizer_type=args.regulized_type, reguPara=args.regularizePara, modelusage=args.model)
+            elif taskType == 'imputaton':
+                if EMFlag and (not args.EMreguTag):
+                    loss = loss_function_graph_celltype(recon_batch, data.view(-1, recon_batch.shape[1]), mu, logvar, graphregu=adjsample, celltyperegu=celltypesample, gammaPara=args.gammaPara, regulationMatrix=regulationMatrixBatch, regularizer_type=args.EMregulized_type, reguPara=args.regularizePara, reguParaCelltype=args.reguParaCelltype, modelusage=args.model)
+                else: 
+                    loss = loss_function_graph_celltype(recon_batch, data.view(-1, recon_batch.shape[1]), mu, logvar, graphregu=adjsample, celltyperegu=celltypesample, gammaPara=args.gammaPara, regulationMatrix=regulationMatrixBatch, regularizer_type=args.regulized_type, reguPara=args.regularizePara, reguParaCelltype=args.reguParaCelltype, modelusage=args.model)    
+                            
         elif args.model == 'AE':
             recon_batch, z = model(data)
             mu_dummy = ''
             logvar_dummy = ''
             # Original
             # loss = loss_function(recon_batch, data, mu, logvar)
-            if EMFlag and (not args.EMreguTag):
-                loss = loss_function_graph(recon_batch, data.view(-1, recon_batch.shape[1]), mu_dummy, logvar_dummy, gammaPara=args.gammaPara, regulationMatrix=regulationMatrixBatch, regularizer_type='noregu', reguPara=args.regularizePara, modelusage=args.model)    
-            else:
-                loss = loss_function_graph(recon_batch, data.view(-1, recon_batch.shape[1]), mu_dummy, logvar_dummy, gammaPara=args.gammaPara, regulationMatrix=regulationMatrixBatch, regularizer_type=args.regulized_type, reguPara=args.regularizePara, modelusage=args.model)
-               
+            if taskType == 'celltype':
+                if EMFlag and (not args.EMreguTag):
+                    loss = loss_function_graph(recon_batch, data.view(-1, recon_batch.shape[1]), mu_dummy, logvar_dummy, gammaPara=args.gammaPara, regulationMatrix=regulationMatrixBatch, regularizer_type='noregu', reguPara=args.regularizePara, modelusage=args.model)    
+                else:
+                    loss = loss_function_graph(recon_batch, data.view(-1, recon_batch.shape[1]), mu_dummy, logvar_dummy, gammaPara=args.gammaPara, regulationMatrix=regulationMatrixBatch, regularizer_type=args.regulized_type, reguPara=args.regularizePara, modelusage=args.model)
+            elif taskType == 'imputaton':
+                if EMFlag and (not args.EMreguTag):
+                    loss = loss_function_graph_celltype(recon_batch, data.view(-1, recon_batch.shape[1]), mu_dummy, logvar_dummy, graphregu=adjsample, celltyperegu=celltypesample, gammaPara=args.gammaPara, regulationMatrix=regulationMatrixBatch, regularizer_type=args.EMregulized_type, reguPara=args.regularizePara, reguParaCelltype=args.reguParaCelltype, modelusage=args.model)    
+                else:
+                    loss = loss_function_graph_celltype(recon_batch, data.view(-1, recon_batch.shape[1]), mu_dummy, logvar_dummy, graphregu=adjsample, celltyperegu=celltypesample, gammaPara=args.gammaPara, regulationMatrix=regulationMatrixBatch, regularizer_type=args.regulized_type, reguPara=args.regularizePara, reguParaCelltype=args.reguParaCelltype, modelusage=args.model)
+         
+
         # L1 and L2 regularization
         # 0.0 for no regularization 
         l1 = 0.0
@@ -253,8 +281,13 @@ def train(epoch, train_loader=train_loader, EMFlag=False):
     return recon_batch_all, data_all, z_all
 
 if __name__ == "__main__":
-    # ptfile = args.npyDir+args.datasetName+'_EMtraining.pt'
     start_time = time.time()
+    # store parameter
+    outParaTag = str(args.gammaPara)+'-'+str(args.regularizePara)+'-'+str(args.reguParaCelltype)   
+    ptfileStart = args.npyDir+args.datasetName+'_EMtrainingStart.pt'
+    ptfileEnd   = args.npyDir+args.datasetName+'_EMtrainingEnd.pt'
+    torch.save(model.state_dict(),ptfileStart)
+
     discreteStr = ''
     if args.discreteTag:
         discreteStr = 'D'
@@ -264,17 +297,20 @@ if __name__ == "__main__":
         # Does not need now
         # save_sparse_matrix(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_'+str(args.dropoutRatio)+'_features.npz',scData.features)
         # sp.save_npz(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_'+str(args.dropoutRatio)+'_features.npz',scData.features)
-        np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_'+str(args.dropoutRatio)+'_features.npy',scData.features)
-        np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_'+str(args.dropoutRatio)+'_dropi.npy',scData.i)
-        np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_'+str(args.dropoutRatio)+'_dropj.npy',scData.j)
-        np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_'+str(args.dropoutRatio)+'_dropix.npy',scData.ix)
-
+        np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_'+str(args.dropoutRatio)+'_'+outParaTag+'_features.npy',scData.features)
+        np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_'+str(args.dropoutRatio)+'_'+outParaTag+'_dropi.npy',scData.i)
+        np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_'+str(args.dropoutRatio)+'_'+outParaTag+'_dropj.npy',scData.j)
+        np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_'+str(args.dropoutRatio)+'_'+outParaTag+'_dropix.npy',scData.ix)
     for epoch in range(1, args.epochs + 1):
         recon, original, z = train(epoch, EMFlag=False)
         
     zOut = z.detach().cpu().numpy() 
-    # torch.save(model.state_dict(),ptfile)
+    torch.save(model.state_dict(),ptfileEnd)
 
+    # Store reconOri for imputation
+    reconOri = recon.copy()
+
+    # Step 1. Inferring celltype
     #Define resolution
     #Default: auto, otherwise use user defined resolution
     if args.resolution == 'auto':
@@ -288,16 +324,21 @@ if __name__ == "__main__":
     prune_time = time.time()        
     # Here para = 'euclidean:10'
     # adj, edgeList = generateAdj(zOut, graphType='KNNgraphML', para = args.knn_distance+':'+str(args.k)) 
-    adj, edgeList = generateAdj(zOut, graphType=args.prunetype, para = args.knn_distance+':'+str(args.k), outAdjTag = (args.useGAEembedding or args.useBothembedding))
+    if args.adjtype == 'unweighted':
+        adj, edgeList = generateAdj(zOut, graphType=args.prunetype, para = args.knn_distance+':'+str(args.k), outAdjTag = (args.useGAEembedding or args.useBothembedding)) 
+        adjdense = sp.csr_matrix.todense(adj)
+    elif args.adjtype == 'weighted':
+        adj, edgeList = generateAdjWeighted(zOut, graphType=args.prunetype, para = args.knn_distance+':'+str(args.k), outAdjTag = (args.useGAEembedding or args.useBothembedding))         
+        adjdense = adj.toarray()    
     print("---Pruning takes %s seconds ---" % (time.time() - prune_time))
     if args.saveFlag:
         reconOut = recon.detach().cpu().numpy()
         if args.imputeMode:
-            np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_'+str(args.dropoutRatio)+'_recon.npy',reconOut)
-            np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_'+str(args.dropoutRatio)+'_z.npy',zOut)
+            np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_'+str(args.dropoutRatio)+'_'+outParaTag+'_recon.npy',reconOut)
+            np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_'+str(args.dropoutRatio)+'_'+outParaTag+'_z.npy',zOut)
         else:  
-            np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_recon.npy',reconOut)
-            np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_z.npy',zOut)
+            np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_'+outParaTag+'_recon.npy',reconOut)
+            np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_'+outParaTag+'_z.npy',zOut)
     
     # Whether use GAE embedding
     if args.useGAEembedding or args.useBothembedding:
@@ -433,7 +474,6 @@ if __name__ == "__main__":
             reconNew = reconNew.to(device)
 
             for clusterIndex in clusterIndexList:
-                # model.load_state_dict(torch.load(ptfile))
                 reconUsage = recon[clusterIndex]
                 scDataInter = scDatasetInter(reconUsage)
                 train_loader = DataLoader(scDataInter, batch_size=args.batch_size, shuffle=False, **kwargs)
@@ -450,18 +490,20 @@ if __name__ == "__main__":
         scDataInter = scDatasetInter(recon)
         train_loader = DataLoader(scDataInter, batch_size=args.batch_size, shuffle=False, **kwargs)
 
-
-        # model.load_state_dict(torch.load(ptfile))
         for epoch in range(1, args.EM_epochs + 1):
             recon, original, z = train(epoch, EMFlag=True)
         
         zOut = z.detach().cpu().numpy()
-        # torch.save(model.state_dict(),ptfile)
 
         prune_time = time.time()
         # Here para = 'euclidean:10'
         # adj, edgeList = generateAdj(zOut, graphType='KNNgraphML', para = args.knn_distance+':'+str(args.k))
-        adj, edgeList = generateAdj(zOut, graphType=args.prunetype, para = args.knn_distance+':'+str(args.k), outAdjTag = (args.useGAEembedding or args.useBothembedding)) 
+        if args.adjtype == 'unweighted':
+            adj, edgeList = generateAdj(zOut, graphType=args.prunetype, para = args.knn_distance+':'+str(args.k), outAdjTag = (args.useGAEembedding or args.useBothembedding)) 
+            adjdense = sp.csr_matrix.todense(adj)
+        elif args.adjtype == 'weighted':
+            adj, edgeList = generateAdjWeighted(zOut, graphType=args.prunetype, para = args.knn_distance+':'+str(args.k), outAdjTag = (args.useGAEembedding or args.useBothembedding))         
+            adjdense = adj.toarray()
         print("---Pruning takes %s seconds ---" % (time.time() - prune_time))
 
         # Whether use GAE embedding
@@ -484,11 +526,11 @@ if __name__ == "__main__":
         if args.saveFlag:
             reconOut = recon.detach().cpu().numpy()
             if args.imputeMode:
-                np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_'+str(args.dropoutRatio)+'_recon'+str(bigepoch)+'.npy',reconOut)
-                np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_'+str(args.dropoutRatio)+'_z'+str(bigepoch)+'.npy',zOut)
+                np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_'+str(args.dropoutRatio)+'_'+outParaTag+'_recon'+str(bigepoch)+'.npy',reconOut)
+                np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_'+str(args.dropoutRatio)+'_'+outParaTag+'_z'+str(bigepoch)+'.npy',zOut)
             else:
-                np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_recon'+str(bigepoch)+'.npy',reconOut)
-                np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_z'+str(bigepoch)+'.npy',zOut)
+                np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_'+outParaTag+'_recon'+str(bigepoch)+'.npy',reconOut)
+                np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_'+outParaTag+'_z'+str(bigepoch)+'.npy',zOut)
         
         print("---One iteration in EM process, proceeded %s seconds ---" % (time.time() - iteration_time))
 
@@ -519,9 +561,13 @@ if __name__ == "__main__":
 
         if args.saveFlag:
             if args.imputeMode:
-                np.savetxt(args.npyDir+args.datasetName+'_'+args.regulized_type+'_'+str(args.dropoutRatio)+'_'+str(args.regularizePara)+'_benchmark'+str(bigepoch)+'.txt',resultarray,fmt='%s')
+                np.savetxt(args.npyDir+args.datasetName+'_'+args.regulized_type+'_'+str(args.dropoutRatio)+'_'+outParaTag+'_benchmark'+str(bigepoch)+'.txt',resultarray,fmt='%s')
+                np.savetxt(args.npyDir+args.datasetName+'_'+args.regulized_type+'_'+str(args.dropoutRatio)+'_'+outParaTag+'_graph'+str(bigepoch)+'.csv',edgeList,fmt='%d,%d,%2.1f')
+                np.savetxt(args.npyDir+args.datasetName+'_'+args.regulized_type+'_'+str(args.dropoutRatio)+'_'+outParaTag+'_results'+str(bigepoch)+'.txt',listResult,fmt='%d')
             else:
-                np.savetxt(args.npyDir+args.datasetName+'_'+args.regulized_type+'_'+str(args.regularizePara)+'_benchmark'+str(bigepoch)+'.txt',resultarray,fmt='%s')
+                np.savetxt(args.npyDir+args.datasetName+'_'+args.regulized_type+'_'+outParaTag+'_benchmark'+str(bigepoch)+'.txt',resultarray,fmt='%s')
+                np.savetxt(args.npyDir+args.datasetName+'_'+args.regulized_type+'_'+outParaTag+'_graph'+str(bigepoch)+'.csv',edgeList,fmt='%d,%d,%2.1f')
+                np.savetxt(args.npyDir+args.datasetName+'_'+args.regulized_type+'_'+outParaTag+'_results'+str(bigepoch)+'.txt',listResult,fmt='%d')
 
         # graph criteria
         if args.converge_type == 'graph':       
@@ -548,28 +594,74 @@ if __name__ == "__main__":
         adjOld = adjNew
         listResultOld = listResult
         # torch.cuda.empty_cache()
-            
+
+
+    # Step 2. Imputation with best results of graph and celltype
+    if args.debugMode == 'save':
+        if args.imputeMode:
+            np.save(args.npyDir+args.datasetName+'_'+str(args.dropoutRatio)+'_'+args.regulized_type+'_reconOri.npy',reconOri)
+            np.save(args.npyDir+args.datasetName+'_'+str(args.dropoutRatio)+'_'+args.regulized_type+'_adj.npy',adj)
+            np.save(args.npyDir+args.datasetName+'_'+str(args.dropoutRatio)+'_'+args.regulized_type+'_listResult.npy',listResult)
+        else:
+            np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+'_reconOri.npy',reconOri)
+            np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+'_adj.npy',adj)
+            np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+'_listResult.npy',listResult)
+    elif args.debugMode == 'load':
+        if args.imputeMode:
+            reconOri = np.load(args.npyDir+args.datasetName+'_'+str(args.dropoutRatio)+'_'+args.regulized_type+'_reconOri.npy')
+            adj = np.load(args.npyDir+args.datasetName+'_'+str(args.dropoutRatio)+'_'+args.regulized_type+'_adj.npy')
+            listResult = np.load(args.npyDir+args.datasetName+'_'+str(args.dropoutRatio)+'_'+args.regulized_type+'_listResult.npy')
+        else:
+            reconOri = np.load(args.npyDir+args.datasetName+'_'+args.regulized_type+'_reconOri.npy')
+            adj = np.load(args.npyDir+args.datasetName+'_'+args.regulized_type+'_adj.npy')
+            listResult = np.load(args.npyDir+args.datasetName+'_'+args.regulized_type+'_listResult.npy')
+
+    # Use new dataloader
+    scDataInter = scDatasetInter(reconOri)
+    train_loader = DataLoader(scDataInter, batch_size=args.batch_size, shuffle=False, **kwargs)
+
+    if args.aeStart == 'start':
+        model.load_state_dict(torch.load(ptfileStart))
+    elif args.aeStart == 'end':
+        model.load_state_dict(torch.load(ptfileEnd))
+    
+    # generate graph regularizer from graph
+    adjdense = sp.csr_matrix.todense(adj)
+    adjsample = torch.from_numpy(adjdense)
+    adjsample = adjsample.float()
+
+    # generate celltype regularizer from celltype
+    celltypesample = generateCelltypeRegu(listResult)
+
+    celltypesample = torch.from_numpy(celltypesample)
+    celltypesample = celltypesample.float()
+
+    for epoch in range(1, args.EM_epochs + 1):
+        recon, original, z = train(epoch, EMFlag=True, taskType='imputation')
+    
+    reconOut = recon.detach().cpu().numpy()
+        
     if args.saveFlag:
         if args.imputeMode:
-            np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_'+str(args.dropoutRatio)+'_final_edgeList.npy',edgeList)
+            np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_'+str(args.dropoutRatio)+'_'+outParaTag+'_final_edgeList.npy',edgeList)
         else:
-            np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_final_edgeList.npy',edgeList)
+            np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_'+outParaTag+'_final_edgeList.npy',edgeList)
         
         # recon_df = pd.DataFrame(reconOut,columns=genelist,index=celllist)
         # recon_df.to_csv(args.npyDir+args.datasetName+'_'+args.regulized_type+'_'+str(args.regularizePara)+'_'+str(args.L1Para)+'_'+str(args.L2Para)+'_recon.csv')
         # embedding_df = pd.DataFrame(zOut,index=celllist)
         # embedding_df.to_csv(args.npyDir+args.datasetName+'_'+args.regulized_type+'_'+str(args.regularizePara)+'_'+str(args.L1Para)+'_'+str(args.L2Para)+'_embedding.csv')    
-        np.savetxt(args.npyDir+args.datasetName+'_'+args.regulized_type+'_'+str(args.regularizePara)+'_'+str(args.L1Para)+'_'+str(args.L2Para)+'_recon.csv',reconOut,delimiter=",",fmt='%10.4f')
-        np.savetxt(args.npyDir+args.datasetName+'_'+args.regulized_type+'_'+str(args.regularizePara)+'_'+str(args.L1Para)+'_'+str(args.L2Para)+'_embedding.csv',zOut, delimiter=",",fmt='%10.4f')
-        np.savetxt(args.npyDir+args.datasetName+'_'+args.regulized_type+'_'+str(args.regularizePara)+'_'+str(args.L1Para)+'_'+str(args.L2Para)+'_graph.csv',edgeList,fmt='%d,%d,%2.1f')
-        np.savetxt(args.npyDir+args.datasetName+'_'+args.regulized_type+'_'+str(args.regularizePara)+'_'+str(args.L1Para)+'_'+str(args.L2Para)+'_results.txt',listResult,fmt='%d')
+        np.savetxt(args.npyDir+args.datasetName+'_'+args.regulized_type+'_'+outParaTag+'_'+str(args.L1Para)+'_'+str(args.L2Para)+'_recon.csv',reconOut,delimiter=",",fmt='%10.4f')
+        np.savetxt(args.npyDir+args.datasetName+'_'+args.regulized_type+'_'+outParaTag+'_'+str(args.L1Para)+'_'+str(args.L2Para)+'_embedding.csv',zOut, delimiter=",",fmt='%10.4f')
+        np.savetxt(args.npyDir+args.datasetName+'_'+args.regulized_type+'_'+outParaTag+'_'+str(args.L1Para)+'_'+str(args.L2Para)+'_graph.csv',edgeList,fmt='%d,%d,%2.1f')
+        np.savetxt(args.npyDir+args.datasetName+'_'+args.regulized_type+'_'+outParaTag+'_'+str(args.L1Para)+'_'+str(args.L2Para)+'_results.txt',listResult,fmt='%d')
 
         resultarray=[]
         silhouette, chs, dbs = measureClusteringNoLabel(zOut, listResult)
         ari, ami, nmi, cs, fms, vms, hs = measureClusteringTrueLabel(bench_celltype, listResult)
         resultstr = str(silhouette)+' '+str(chs)+' '+str(dbs)+' '+str(ari)+' '+str(ami)+' '+str(nmi)+' '+str(cs)+' '+str(fms)+' '+str(vms)+' '+str(hs)
         resultarray.append(resultstr)
-        np.savetxt(args.npyDir+args.datasetName+'_'+args.regulized_type+'_'+str(args.regularizePara)+'_'+str(args.L1Para)+'_'+str(args.L2Para)+'_benchmark.txt',resultarray,fmt='%s')
+        np.savetxt(args.npyDir+args.datasetName+'_'+args.regulized_type+'_'+outParaTag+'_'+str(args.L1Para)+'_'+str(args.L2Para)+'_benchmark.txt',resultarray,fmt='%s')
  
 
 
