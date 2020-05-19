@@ -642,9 +642,9 @@ if __name__ == "__main__":
         scDataInter = scDatasetInter(reconOri)
         train_loader = DataLoader(scDataInter, batch_size=args.batch_size, shuffle=False, **kwargs)
 
-        if args.aeStart == 'start':
+        if args.aePara == 'start':
             model.load_state_dict(torch.load(ptfileStart))
-        elif args.aeStart == 'end':
+        elif args.aePara == 'end':
             model.load_state_dict(torch.load(ptfileEnd))
         
         # generate graph regularizer from graph
