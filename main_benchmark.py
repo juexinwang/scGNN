@@ -283,12 +283,13 @@ def train(epoch, train_loader=train_loader, EMFlag=False, taskType='celltype'):
 if __name__ == "__main__":
     start_time = time.time()
 
+    outParaTag = str(args.gammaPara)+'-'+str(args.regularizePara)+'-'+str(args.reguParaCelltype)   
+    ptfileStart = args.npyDir+args.datasetName+'_EMtrainingStart.pt'
+    ptfileEnd   = args.npyDir+args.datasetName+'_EMtrainingEnd.pt'
+
     # Step 1. celltype clustering
     if args.debugMode == 'save':
         # store parameter
-        outParaTag = str(args.gammaPara)+'-'+str(args.regularizePara)+'-'+str(args.reguParaCelltype)   
-        ptfileStart = args.npyDir+args.datasetName+'_EMtrainingStart.pt'
-        ptfileEnd   = args.npyDir+args.datasetName+'_EMtrainingEnd.pt'
         torch.save(model.state_dict(),ptfileStart)
 
         discreteStr = ''
