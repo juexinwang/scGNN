@@ -282,230 +282,67 @@ def train(epoch, train_loader=train_loader, EMFlag=False, taskType='celltype'):
 
 if __name__ == "__main__":
     start_time = time.time()
-    # store parameter
-    outParaTag = str(args.gammaPara)+'-'+str(args.regularizePara)+'-'+str(args.reguParaCelltype)   
-    ptfileStart = args.npyDir+args.datasetName+'_EMtrainingStart.pt'
-    ptfileEnd   = args.npyDir+args.datasetName+'_EMtrainingEnd.pt'
-    torch.save(model.state_dict(),ptfileStart)
 
-    discreteStr = ''
-    if args.discreteTag:
-        discreteStr = 'D'
+    # Step 1. celltype clustering
+    if args.debugMode == 'save':
+        # store parameter
+        outParaTag = str(args.gammaPara)+'-'+str(args.regularizePara)+'-'+str(args.reguParaCelltype)   
+        ptfileStart = args.npyDir+args.datasetName+'_EMtrainingStart.pt'
+        ptfileEnd   = args.npyDir+args.datasetName+'_EMtrainingEnd.pt'
+        torch.save(model.state_dict(),ptfileStart)
 
-    # Save results only when impute
-    if args.imputeMode:
-        # Does not need now
-        # save_sparse_matrix(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_'+str(args.dropoutRatio)+'_features.npz',scData.features)
-        # sp.save_npz(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_'+str(args.dropoutRatio)+'_features.npz',scData.features)
-        np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_'+str(args.dropoutRatio)+'_'+outParaTag+'_features.npy',scData.features)
-        np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_'+str(args.dropoutRatio)+'_'+outParaTag+'_dropi.npy',scData.i)
-        np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_'+str(args.dropoutRatio)+'_'+outParaTag+'_dropj.npy',scData.j)
-        np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_'+str(args.dropoutRatio)+'_'+outParaTag+'_dropix.npy',scData.ix)
-    for epoch in range(1, args.epochs + 1):
-        recon, original, z = train(epoch, EMFlag=False)
-        
-    zOut = z.detach().cpu().numpy() 
-    torch.save(model.state_dict(),ptfileEnd)
+        discreteStr = ''
+        if args.discreteTag:
+            discreteStr = 'D'
 
-    # Store reconOri for imputation
-    reconOri = recon.copy()
-
-    # Step 1. Inferring celltype
-    #Define resolution
-    #Default: auto, otherwise use user defined resolution
-    if args.resolution == 'auto':
-        if zOut.shape[0]< 2000:
-            resolution = 0.8
-        else:
-            resolution = 0.5
-    else:
-        resolution = float(args.resolution)
-
-    prune_time = time.time()        
-    # Here para = 'euclidean:10'
-    # adj, edgeList = generateAdj(zOut, graphType='KNNgraphML', para = args.knn_distance+':'+str(args.k)) 
-    if args.adjtype == 'unweighted':
-        adj, edgeList = generateAdj(zOut, graphType=args.prunetype, para = args.knn_distance+':'+str(args.k), outAdjTag = (args.useGAEembedding or args.useBothembedding)) 
-        adjdense = sp.csr_matrix.todense(adj)
-    elif args.adjtype == 'weighted':
-        adj, edgeList = generateAdjWeighted(zOut, graphType=args.prunetype, para = args.knn_distance+':'+str(args.k), outAdjTag = (args.useGAEembedding or args.useBothembedding))         
-        adjdense = adj.toarray()    
-    print("---Pruning takes %s seconds ---" % (time.time() - prune_time))
-    if args.saveFlag:
-        reconOut = recon.detach().cpu().numpy()
+        # Save results only when impute
         if args.imputeMode:
-            np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_'+str(args.dropoutRatio)+'_'+outParaTag+'_recon.npy',reconOut)
-            np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_'+str(args.dropoutRatio)+'_'+outParaTag+'_z.npy',zOut)
-        else:  
-            np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_'+outParaTag+'_recon.npy',reconOut)
-            np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_'+outParaTag+'_z.npy',zOut)
-    
-    # Whether use GAE embedding
-    if args.useGAEembedding or args.useBothembedding:
-        zDiscret = zOut>np.mean(zOut,axis=0)
-        zDiscret = 1.0*zDiscret
-        if args.useGAEembedding:
-            zOut=GAEembedding(zDiscret, adj, args)
-        elif args.useBothembedding:
-            zEmbedding=GAEembedding(zDiscret, adj, args)
-            zOut=np.concatenate((zOut,zEmbedding),axis=1)
-        # Debug!!! No use Embedding
-        #
-        # prune_time = time.time()
-        # # Here para = 'euclidean:10'
-        # adj, edgeList = generateAdj(zOut, graphType='KNNgraphML', para = args.knn_distance+':'+str(args.k)) 
-        # adjdense = sp.csr_matrix.todense(adj)
-        # adjsample = torch.from_numpy(adjdense)
-        # print("---Pruning takes %s seconds ---" % (time.time() - prune_time))
-        # if args.saveFlag:
-        #     if args.imputeMode:
-        #         np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_'+str(args.dropoutRatio)+'_zGAE.npy',zOut)
-        #     else:
-        #         np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_zGAE.npy',zOut)
-        # # np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_init_edgeList.npy',edgeList)
-    
-    # For iteration studies
-    G0 = nx.Graph()
-    G0.add_weighted_edges_from(edgeList)
-    nlG0=nx.normalized_laplacian_matrix(G0)
-    # set iteration criteria for converge
-    adjOld = nlG0
-    # set celltype criteria for converge
-    listResultOld = [1 for i in range(zOut.shape[0])]
-
-    #Fill the zeros before EM iteration
-    # TODO: better implementation later, now we don't filling zeros for now
-    if args.zerofillFlag:
-        for nz_index in range(len(scData.nz_i)):
-            # tmp = scipy.sparse.lil_matrix.todense(scData.features[scData.nz_i[nz_index], scData.nz_j[nz_index]])
-            # tmp = np.asarray(tmp).reshape(-1)[0]
-            tmp = scData.features[scData.nz_i[nz_index], scData.nz_j[nz_index]]
-            reconOut[scData.nz_i[nz_index], scData.nz_j[nz_index]] = tmp
-        recon = reconOut
-
-    print("---Before EM process, proceeded %s seconds ---" % (time.time() - start_time))
-    print("EM processes started")
-    for bigepoch in range(0, args.EM_iteration):
-        iteration_time = time.time()
-
-        # Now for both methods, we need do clustering, using clustering results to check converge
-        # TODO May reimplement later
-        # Clustering: Get cluster
-        clustering_time = time.time()
-        if args.clustering_method=='Louvain':
-            # Louvain: the only function has R dependent
-            # Seperate here for platforms without R support
-            from R_util import generateLouvainCluster
-            listResult,size = generateLouvainCluster(edgeList)
-            k = len(np.unique(listResult))
-            print('Louvain cluster: '+str(k))
-        elif args.clustering_method=='LouvainK':
-            from R_util import generateLouvainCluster
-            listResult,size = generateLouvainCluster(edgeList)
-            k = len(np.unique(listResult))
-            print('Louvain cluster: '+str(k))
-            # resolution of louvain cluster:
-            k = int(k*resolution) if k>3 else 2
-            clustering = KMeans(n_clusters=k, random_state=0).fit(zOut)
-            listResult = clustering.predict(zOut)
-        elif args.clustering_method=='LouvainB':
-            from R_util import generateLouvainCluster
-            listResult,size = generateLouvainCluster(edgeList)
-            k = len(np.unique(listResult))
-            print('Louvain cluster: '+str(k))
-            # resolution of louvain cluster:
-            k = int(k*resolution) if k>3 else 2
-            clustering = Birch(n_clusters=k).fit(zOut)
-            listResult = clustering.predict(zOut)
-        elif args.clustering_method=='KMeans':
-            clustering = KMeans(n_clusters=args.n_clusters, random_state=0).fit(zOut)
-            listResult = clustering.predict(zOut)
-        elif args.clustering_method=='SpectralClustering':
-            clustering = SpectralClustering(n_clusters=args.n_clusters, assign_labels="discretize", random_state=0).fit(zOut)
-            listResult = clustering.labels_.tolist()
-        elif args.clustering_method=='AffinityPropagation':
-            clustering = AffinityPropagation().fit(zOut)
-            listResult = clustering.predict(zOut)
-        elif args.clustering_method=='AgglomerativeClustering':
-            clustering = AgglomerativeClustering(linkage=args.linkage).fit(zOut)
-            listResult = clustering.labels_.tolist()
-        elif args.clustering_method=='Birch':
-            clustering = Birch(n_clusters=args.n_clusters).fit(zOut)
-            listResult = clustering.predict(zOut)
-        elif args.clustering_method=='BirchN':
-            clustering = Birch(n_clusters=None).fit(zOut)
-            listResult = clustering.predict(zOut)
-        elif args.clustering_method=='MeanShift':
-            clustering = MeanShift().fit(zOut)
-            listResult = clustering.labels_.tolist()
-        elif args.clustering_method=='OPTICS':
-            clustering = OPTICS(min_samples=int(args.k/2), min_cluster_size=args.minMemberinCluster).fit(zOut)
-            listResult = clustering.labels_.tolist()
-        else:
-            print("Error: Clustering method not appropriate")
-        print("---Clustering takes %s seconds ---" % (time.time() - clustering_time))
-
-        # If clusters more than maxclusters, then have to stop
-        if len(set(listResult))>args.maxClusterNumber or len(set(listResult))<=1:
-            print("Stopping: Number of clusters is " + str(len(set(listResult))) + ".")
-            # Exit
-            # return None
-            # Else: dealing with the number
-            listResult = trimClustering(listResult,minMemberinCluster=args.minMemberinCluster,maxClusterNumber=args.maxClusterNumber)
-        
-        #Calculate silhouette
-        measure_clustering_results(zOut, listResult)
-        print('Total Cluster Number: '+str(len(set(listResult))))
-
-        #Graph regulizated EM AE with celltype AE, do the additional AE
-        if args.EMtype == 'celltypeEM': 
-            # Each cluster has a autoencoder, and organize them back in iteraization
-            clusterIndexList = []
-            for i in range(len(set(listResult))):
-                clusterIndexList.append([])
-            for i in range(len(listResult)):
-                clusterIndexList[listResult[i]].append(i)
-
-            reconNew = np.zeros((scData.features.shape[0],scData.features.shape[1]))
+            # Does not need now
+            # save_sparse_matrix(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_'+str(args.dropoutRatio)+'_features.npz',scData.features)
+            # sp.save_npz(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_'+str(args.dropoutRatio)+'_features.npz',scData.features)
+            np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_'+str(args.dropoutRatio)+'_'+outParaTag+'_features.npy',scData.features)
+            np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_'+str(args.dropoutRatio)+'_'+outParaTag+'_dropi.npy',scData.i)
+            np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_'+str(args.dropoutRatio)+'_'+outParaTag+'_dropj.npy',scData.j)
+            np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_'+str(args.dropoutRatio)+'_'+outParaTag+'_dropix.npy',scData.ix)
+        for epoch in range(1, args.epochs + 1):
+            recon, original, z = train(epoch, EMFlag=False)
             
-            # Convert to Tensor
-            reconNew = torch.from_numpy(reconNew)
-            reconNew = reconNew.type(torch.FloatTensor)
-            reconNew = reconNew.to(device)
+        zOut = z.detach().cpu().numpy() 
+        torch.save(model.state_dict(),ptfileEnd)
 
-            for clusterIndex in clusterIndexList:
-                reconUsage = recon[clusterIndex]
-                scDataInter = scDatasetInter(reconUsage)
-                train_loader = DataLoader(scDataInter, batch_size=args.batch_size, shuffle=False, **kwargs)
-                for epoch in range(1, args.celltype_epochs + 1):
-                    reconCluster, originalCluster, zCluster = train(epoch, EMFlag=True)                
-                count = 0
-                for i in clusterIndex:
-                    reconNew[i] = reconCluster[count,:]
-                    count +=1
-            # Update
-            recon = reconNew
-        
-        # Use new dataloader
-        scDataInter = scDatasetInter(recon)
-        train_loader = DataLoader(scDataInter, batch_size=args.batch_size, shuffle=False, **kwargs)
+        # Store reconOri for imputation
+        reconOri = recon.copy()
 
-        for epoch in range(1, args.EM_epochs + 1):
-            recon, original, z = train(epoch, EMFlag=True)
-        
-        zOut = z.detach().cpu().numpy()
+        # Step 1. Inferring celltype
+        #Define resolution
+        #Default: auto, otherwise use user defined resolution
+        if args.resolution == 'auto':
+            if zOut.shape[0]< 2000:
+                resolution = 0.8
+            else:
+                resolution = 0.5
+        else:
+            resolution = float(args.resolution)
 
-        prune_time = time.time()
+        prune_time = time.time()        
         # Here para = 'euclidean:10'
-        # adj, edgeList = generateAdj(zOut, graphType='KNNgraphML', para = args.knn_distance+':'+str(args.k))
+        # adj, edgeList = generateAdj(zOut, graphType='KNNgraphML', para = args.knn_distance+':'+str(args.k)) 
         if args.adjtype == 'unweighted':
             adj, edgeList = generateAdj(zOut, graphType=args.prunetype, para = args.knn_distance+':'+str(args.k), outAdjTag = (args.useGAEembedding or args.useBothembedding)) 
             adjdense = sp.csr_matrix.todense(adj)
         elif args.adjtype == 'weighted':
             adj, edgeList = generateAdjWeighted(zOut, graphType=args.prunetype, para = args.knn_distance+':'+str(args.k), outAdjTag = (args.useGAEembedding or args.useBothembedding))         
-            adjdense = adj.toarray()
+            adjdense = adj.toarray()    
         print("---Pruning takes %s seconds ---" % (time.time() - prune_time))
-
+        if args.saveFlag:
+            reconOut = recon.detach().cpu().numpy()
+            if args.imputeMode:
+                np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_'+str(args.dropoutRatio)+'_'+outParaTag+'_recon.npy',reconOut)
+                np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_'+str(args.dropoutRatio)+'_'+outParaTag+'_z.npy',zOut)
+            else:  
+                np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_'+outParaTag+'_recon.npy',reconOut)
+                np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_'+outParaTag+'_z.npy',zOut)
+        
         # Whether use GAE embedding
         if args.useGAEembedding or args.useBothembedding:
             zDiscret = zOut>np.mean(zOut,axis=0)
@@ -515,89 +352,272 @@ if __name__ == "__main__":
             elif args.useBothembedding:
                 zEmbedding=GAEembedding(zDiscret, adj, args)
                 zOut=np.concatenate((zOut,zEmbedding),axis=1)
-            # Debug!!
+            # Debug!!! No use Embedding
+            #
             # prune_time = time.time()
             # # Here para = 'euclidean:10'
             # adj, edgeList = generateAdj(zOut, graphType='KNNgraphML', para = args.knn_distance+':'+str(args.k)) 
             # adjdense = sp.csr_matrix.todense(adj)
             # adjsample = torch.from_numpy(adjdense)
             # print("---Pruning takes %s seconds ---" % (time.time() - prune_time))
+            # if args.saveFlag:
+            #     if args.imputeMode:
+            #         np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_'+str(args.dropoutRatio)+'_zGAE.npy',zOut)
+            #     else:
+            #         np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_zGAE.npy',zOut)
+            # # np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_init_edgeList.npy',edgeList)
+        
+        # For iteration studies
+        G0 = nx.Graph()
+        G0.add_weighted_edges_from(edgeList)
+        nlG0=nx.normalized_laplacian_matrix(G0)
+        # set iteration criteria for converge
+        adjOld = nlG0
+        # set celltype criteria for converge
+        listResultOld = [1 for i in range(zOut.shape[0])]
 
-        if args.saveFlag:
-            reconOut = recon.detach().cpu().numpy()
-            if args.imputeMode:
-                np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_'+str(args.dropoutRatio)+'_'+outParaTag+'_recon'+str(bigepoch)+'.npy',reconOut)
-                np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_'+str(args.dropoutRatio)+'_'+outParaTag+'_z'+str(bigepoch)+'.npy',zOut)
+        #Fill the zeros before EM iteration
+        # TODO: better implementation later, now we don't filling zeros for now
+        if args.zerofillFlag:
+            for nz_index in range(len(scData.nz_i)):
+                # tmp = scipy.sparse.lil_matrix.todense(scData.features[scData.nz_i[nz_index], scData.nz_j[nz_index]])
+                # tmp = np.asarray(tmp).reshape(-1)[0]
+                tmp = scData.features[scData.nz_i[nz_index], scData.nz_j[nz_index]]
+                reconOut[scData.nz_i[nz_index], scData.nz_j[nz_index]] = tmp
+            recon = reconOut
+
+        print("---Before EM process, proceeded %s seconds ---" % (time.time() - start_time))
+        print("EM processes started")
+        for bigepoch in range(0, args.EM_iteration):
+            iteration_time = time.time()
+
+            # Now for both methods, we need do clustering, using clustering results to check converge
+            # TODO May reimplement later
+            # Clustering: Get cluster
+            clustering_time = time.time()
+            if args.clustering_method=='Louvain':
+                # Louvain: the only function has R dependent
+                # Seperate here for platforms without R support
+                from R_util import generateLouvainCluster
+                listResult,size = generateLouvainCluster(edgeList)
+                k = len(np.unique(listResult))
+                print('Louvain cluster: '+str(k))
+            elif args.clustering_method=='LouvainK':
+                from R_util import generateLouvainCluster
+                listResult,size = generateLouvainCluster(edgeList)
+                k = len(np.unique(listResult))
+                print('Louvain cluster: '+str(k))
+                # resolution of louvain cluster:
+                k = int(k*resolution) if k>3 else 2
+                clustering = KMeans(n_clusters=k, random_state=0).fit(zOut)
+                listResult = clustering.predict(zOut)
+            elif args.clustering_method=='LouvainB':
+                from R_util import generateLouvainCluster
+                listResult,size = generateLouvainCluster(edgeList)
+                k = len(np.unique(listResult))
+                print('Louvain cluster: '+str(k))
+                # resolution of louvain cluster:
+                k = int(k*resolution) if k>3 else 2
+                clustering = Birch(n_clusters=k).fit(zOut)
+                listResult = clustering.predict(zOut)
+            elif args.clustering_method=='KMeans':
+                clustering = KMeans(n_clusters=args.n_clusters, random_state=0).fit(zOut)
+                listResult = clustering.predict(zOut)
+            elif args.clustering_method=='SpectralClustering':
+                clustering = SpectralClustering(n_clusters=args.n_clusters, assign_labels="discretize", random_state=0).fit(zOut)
+                listResult = clustering.labels_.tolist()
+            elif args.clustering_method=='AffinityPropagation':
+                clustering = AffinityPropagation().fit(zOut)
+                listResult = clustering.predict(zOut)
+            elif args.clustering_method=='AgglomerativeClustering':
+                clustering = AgglomerativeClustering(linkage=args.linkage).fit(zOut)
+                listResult = clustering.labels_.tolist()
+            elif args.clustering_method=='Birch':
+                clustering = Birch(n_clusters=args.n_clusters).fit(zOut)
+                listResult = clustering.predict(zOut)
+            elif args.clustering_method=='BirchN':
+                clustering = Birch(n_clusters=None).fit(zOut)
+                listResult = clustering.predict(zOut)
+            elif args.clustering_method=='MeanShift':
+                clustering = MeanShift().fit(zOut)
+                listResult = clustering.labels_.tolist()
+            elif args.clustering_method=='OPTICS':
+                clustering = OPTICS(min_samples=int(args.k/2), min_cluster_size=args.minMemberinCluster).fit(zOut)
+                listResult = clustering.labels_.tolist()
             else:
-                np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_'+outParaTag+'_recon'+str(bigepoch)+'.npy',reconOut)
-                np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_'+outParaTag+'_z'+str(bigepoch)+'.npy',zOut)
-        
-        print("---One iteration in EM process, proceeded %s seconds ---" % (time.time() - iteration_time))
+                print("Error: Clustering method not appropriate")
+            print("---Clustering takes %s seconds ---" % (time.time() - clustering_time))
 
-        #Iteration usage
-        Gc = nx.Graph()
-        Gc.add_weighted_edges_from(edgeList)
-        adjGc = nx.adjacency_matrix(Gc)
-        
-        # Update new adj
-        adjNew = args.alpha*nlG0 + (1-args.alpha) * adjGc/np.sum(adjGc,axis=0)
-        
-        #debug
-        graphChange = np.mean(abs(adjNew-adjOld))
-        graphChangeThreshold = args.converge_graphratio * np.mean(abs(nlG0))
-        print('adjNew:{} adjOld:{} G0:{}'.format(adjNew, adjOld, nlG0))
-        print('mean:{} threshold:{}'.format(graphChange, graphChangeThreshold))
-        silhouette, chs, dbs = measureClusteringNoLabel(zOut, listResult)
-        ari, ami, nmi, cs, fms, vms, hs = measureClusteringTrueLabel(listResultOld, listResult)
-        print(listResultOld)
-        print(listResult)
-        print('celltype similarity:'+str(ari))
-        ari, ami, nmi, cs, fms, vms, hs = measureClusteringTrueLabel(bench_celltype, listResult)
-        resultarray=[]
-        resultstr = str(silhouette)+' '+str(chs)+' '+str(dbs)+' '+str(ari)+' '+str(ami)+' '+str(nmi)+' '+str(cs)+' '+str(fms)+' '+str(vms)+' '+str(hs)
-        resultarray.append(resultstr)
-        print('All Results: ')
-        print(resultstr)
+            # If clusters more than maxclusters, then have to stop
+            if len(set(listResult))>args.maxClusterNumber or len(set(listResult))<=1:
+                print("Stopping: Number of clusters is " + str(len(set(listResult))) + ".")
+                # Exit
+                # return None
+                # Else: dealing with the number
+                listResult = trimClustering(listResult,minMemberinCluster=args.minMemberinCluster,maxClusterNumber=args.maxClusterNumber)
+            
+            #Calculate silhouette
+            measure_clustering_results(zOut, listResult)
+            print('Total Cluster Number: '+str(len(set(listResult))))
 
+            #Graph regulizated EM AE with celltype AE, do the additional AE
+            if args.EMtype == 'celltypeEM': 
+                # Each cluster has a autoencoder, and organize them back in iteraization
+                clusterIndexList = []
+                for i in range(len(set(listResult))):
+                    clusterIndexList.append([])
+                for i in range(len(listResult)):
+                    clusterIndexList[listResult[i]].append(i)
+
+                reconNew = np.zeros((scData.features.shape[0],scData.features.shape[1]))
+                
+                # Convert to Tensor
+                reconNew = torch.from_numpy(reconNew)
+                reconNew = reconNew.type(torch.FloatTensor)
+                reconNew = reconNew.to(device)
+
+                for clusterIndex in clusterIndexList:
+                    reconUsage = recon[clusterIndex]
+                    scDataInter = scDatasetInter(reconUsage)
+                    train_loader = DataLoader(scDataInter, batch_size=args.batch_size, shuffle=False, **kwargs)
+                    for epoch in range(1, args.celltype_epochs + 1):
+                        reconCluster, originalCluster, zCluster = train(epoch, EMFlag=True)                
+                    count = 0
+                    for i in clusterIndex:
+                        reconNew[i] = reconCluster[count,:]
+                        count +=1
+                # Update
+                recon = reconNew
+            
+            # Use new dataloader
+            scDataInter = scDatasetInter(recon)
+            train_loader = DataLoader(scDataInter, batch_size=args.batch_size, shuffle=False, **kwargs)
+
+            for epoch in range(1, args.EM_epochs + 1):
+                recon, original, z = train(epoch, EMFlag=True)
+            
+            zOut = z.detach().cpu().numpy()
+
+            prune_time = time.time()
+            # Here para = 'euclidean:10'
+            # adj, edgeList = generateAdj(zOut, graphType='KNNgraphML', para = args.knn_distance+':'+str(args.k))
+            if args.adjtype == 'unweighted':
+                adj, edgeList = generateAdj(zOut, graphType=args.prunetype, para = args.knn_distance+':'+str(args.k), outAdjTag = (args.useGAEembedding or args.useBothembedding)) 
+                adjdense = sp.csr_matrix.todense(adj)
+            elif args.adjtype == 'weighted':
+                adj, edgeList = generateAdjWeighted(zOut, graphType=args.prunetype, para = args.knn_distance+':'+str(args.k), outAdjTag = (args.useGAEembedding or args.useBothembedding))         
+                adjdense = adj.toarray()
+            print("---Pruning takes %s seconds ---" % (time.time() - prune_time))
+
+            # Whether use GAE embedding
+            if args.useGAEembedding or args.useBothembedding:
+                zDiscret = zOut>np.mean(zOut,axis=0)
+                zDiscret = 1.0*zDiscret
+                if args.useGAEembedding:
+                    zOut=GAEembedding(zDiscret, adj, args)
+                elif args.useBothembedding:
+                    zEmbedding=GAEembedding(zDiscret, adj, args)
+                    zOut=np.concatenate((zOut,zEmbedding),axis=1)
+                # Debug!!
+                # prune_time = time.time()
+                # # Here para = 'euclidean:10'
+                # adj, edgeList = generateAdj(zOut, graphType='KNNgraphML', para = args.knn_distance+':'+str(args.k)) 
+                # adjdense = sp.csr_matrix.todense(adj)
+                # adjsample = torch.from_numpy(adjdense)
+                # print("---Pruning takes %s seconds ---" % (time.time() - prune_time))
+
+            if args.saveFlag:
+                reconOut = recon.detach().cpu().numpy()
+                if args.imputeMode:
+                    np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_'+str(args.dropoutRatio)+'_'+outParaTag+'_recon'+str(bigepoch)+'.npy',reconOut)
+                    np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_'+str(args.dropoutRatio)+'_'+outParaTag+'_z'+str(bigepoch)+'.npy',zOut)
+                else:
+                    np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_'+outParaTag+'_recon'+str(bigepoch)+'.npy',reconOut)
+                    np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_'+outParaTag+'_z'+str(bigepoch)+'.npy',zOut)
+            
+            print("---One iteration in EM process, proceeded %s seconds ---" % (time.time() - iteration_time))
+
+            #Iteration usage
+            Gc = nx.Graph()
+            Gc.add_weighted_edges_from(edgeList)
+            adjGc = nx.adjacency_matrix(Gc)
+            
+            # Update new adj
+            adjNew = args.alpha*nlG0 + (1-args.alpha) * adjGc/np.sum(adjGc,axis=0)
+            
+            #debug
+            graphChange = np.mean(abs(adjNew-adjOld))
+            graphChangeThreshold = args.converge_graphratio * np.mean(abs(nlG0))
+            print('adjNew:{} adjOld:{} G0:{}'.format(adjNew, adjOld, nlG0))
+            print('mean:{} threshold:{}'.format(graphChange, graphChangeThreshold))
+            silhouette, chs, dbs = measureClusteringNoLabel(zOut, listResult)
+            ari, ami, nmi, cs, fms, vms, hs = measureClusteringTrueLabel(listResultOld, listResult)
+            print(listResultOld)
+            print(listResult)
+            print('celltype similarity:'+str(ari))
+            ari, ami, nmi, cs, fms, vms, hs = measureClusteringTrueLabel(bench_celltype, listResult)
+            resultarray=[]
+            resultstr = str(silhouette)+' '+str(chs)+' '+str(dbs)+' '+str(ari)+' '+str(ami)+' '+str(nmi)+' '+str(cs)+' '+str(fms)+' '+str(vms)+' '+str(hs)
+            resultarray.append(resultstr)
+            print('All Results: ')
+            print(resultstr)
+
+            if args.saveFlag:
+                if args.imputeMode:
+                    np.savetxt(args.npyDir+args.datasetName+'_'+args.regulized_type+'_'+str(args.dropoutRatio)+'_'+outParaTag+'_benchmark'+str(bigepoch)+'.txt',resultarray,fmt='%s')
+                    np.savetxt(args.npyDir+args.datasetName+'_'+args.regulized_type+'_'+str(args.dropoutRatio)+'_'+outParaTag+'_graph'+str(bigepoch)+'.csv',edgeList,fmt='%d,%d,%2.1f')
+                    np.savetxt(args.npyDir+args.datasetName+'_'+args.regulized_type+'_'+str(args.dropoutRatio)+'_'+outParaTag+'_results'+str(bigepoch)+'.txt',listResult,fmt='%d')
+                else:
+                    np.savetxt(args.npyDir+args.datasetName+'_'+args.regulized_type+'_'+outParaTag+'_benchmark'+str(bigepoch)+'.txt',resultarray,fmt='%s')
+                    np.savetxt(args.npyDir+args.datasetName+'_'+args.regulized_type+'_'+outParaTag+'_graph'+str(bigepoch)+'.csv',edgeList,fmt='%d,%d,%2.1f')
+                    np.savetxt(args.npyDir+args.datasetName+'_'+args.regulized_type+'_'+outParaTag+'_results'+str(bigepoch)+'.txt',listResult,fmt='%d')
+
+            # graph criteria
+            if args.converge_type == 'graph':       
+                if graphChange < graphChangeThreshold:
+                    print('Converge now!')
+                    break
+            # celltype criteria
+            elif args.converge_type == 'celltype':            
+                if ari>args.converge_celltyperatio:
+                    print('Converge now!')
+                    break
+            # if both criteria are meets
+            elif args.converge_type == 'both': 
+                if graphChange < graphChangeThreshold and ari > args.converge_celltyperatio:
+                    print('Converge now!')
+                    break
+            # if either criteria are meets
+            elif args.converge_type == 'either': 
+                if graphChange < graphChangeThreshold or ari > args.converge_celltyperatio:
+                    print('Converge now!')
+                    break
+
+            # Update
+            adjOld = adjNew
+            listResultOld = listResult
+            # torch.cuda.empty_cache()
+
+        # Output celltype related results
         if args.saveFlag:
             if args.imputeMode:
-                np.savetxt(args.npyDir+args.datasetName+'_'+args.regulized_type+'_'+str(args.dropoutRatio)+'_'+outParaTag+'_benchmark'+str(bigepoch)+'.txt',resultarray,fmt='%s')
-                np.savetxt(args.npyDir+args.datasetName+'_'+args.regulized_type+'_'+str(args.dropoutRatio)+'_'+outParaTag+'_graph'+str(bigepoch)+'.csv',edgeList,fmt='%d,%d,%2.1f')
-                np.savetxt(args.npyDir+args.datasetName+'_'+args.regulized_type+'_'+str(args.dropoutRatio)+'_'+outParaTag+'_results'+str(bigepoch)+'.txt',listResult,fmt='%d')
+                np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_'+str(args.dropoutRatio)+'_'+outParaTag+'_final_edgeList.npy',edgeList)
             else:
-                np.savetxt(args.npyDir+args.datasetName+'_'+args.regulized_type+'_'+outParaTag+'_benchmark'+str(bigepoch)+'.txt',resultarray,fmt='%s')
-                np.savetxt(args.npyDir+args.datasetName+'_'+args.regulized_type+'_'+outParaTag+'_graph'+str(bigepoch)+'.csv',edgeList,fmt='%d,%d,%2.1f')
-                np.savetxt(args.npyDir+args.datasetName+'_'+args.regulized_type+'_'+outParaTag+'_results'+str(bigepoch)+'.txt',listResult,fmt='%d')
+                np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_'+outParaTag+'_final_edgeList.npy',edgeList)
+            
+            # np.savetxt(args.npyDir+args.datasetName+'_'+args.regulized_type+'_'+outParaTag+'_'+str(args.L1Para)+'_'+str(args.L2Para)+'_recon.csv',reconOut,delimiter=",",fmt='%10.4f')
+            np.savetxt(args.npyDir+args.datasetName+'_'+args.regulized_type+'_'+outParaTag+'_'+str(args.L1Para)+'_'+str(args.L2Para)+'_embedding.csv',zOut, delimiter=",",fmt='%10.4f')
+            np.savetxt(args.npyDir+args.datasetName+'_'+args.regulized_type+'_'+outParaTag+'_'+str(args.L1Para)+'_'+str(args.L2Para)+'_graph.csv',edgeList,fmt='%d,%d,%2.1f')
+            np.savetxt(args.npyDir+args.datasetName+'_'+args.regulized_type+'_'+outParaTag+'_'+str(args.L1Para)+'_'+str(args.L2Para)+'_results.txt',listResult,fmt='%d')
 
-        # graph criteria
-        if args.converge_type == 'graph':       
-            if graphChange < graphChangeThreshold:
-                print('Converge now!')
-                break
-        # celltype criteria
-        elif args.converge_type == 'celltype':            
-            if ari>args.converge_celltyperatio:
-                print('Converge now!')
-                break
-        # if both criteria are meets
-        elif args.converge_type == 'both': 
-            if graphChange < graphChangeThreshold and ari > args.converge_celltyperatio:
-                print('Converge now!')
-                break
-        # if either criteria are meets
-        elif args.converge_type == 'either': 
-            if graphChange < graphChangeThreshold or ari > args.converge_celltyperatio:
-                print('Converge now!')
-                break
-
-        # Update
-        adjOld = adjNew
-        listResultOld = listResult
-        # torch.cuda.empty_cache()
-
-
-    # Step 2. Imputation with best results of graph and celltype
-    if args.debugMode == 'save':
+            resultarray=[]
+            silhouette, chs, dbs = measureClusteringNoLabel(zOut, listResult)
+            ari, ami, nmi, cs, fms, vms, hs = measureClusteringTrueLabel(bench_celltype, listResult)
+            resultstr = str(silhouette)+' '+str(chs)+' '+str(dbs)+' '+str(ari)+' '+str(ami)+' '+str(nmi)+' '+str(cs)+' '+str(fms)+' '+str(vms)+' '+str(hs)
+            resultarray.append(resultstr)
+            np.savetxt(args.npyDir+args.datasetName+'_'+args.regulized_type+'_'+outParaTag+'_'+str(args.L1Para)+'_'+str(args.L2Para)+'_benchmark.txt',resultarray,fmt='%s')
+    
+        # save internal results for imputation
         if args.imputeMode:
             np.save(args.npyDir+args.datasetName+'_'+str(args.dropoutRatio)+'_'+args.regulized_type+'_reconOri.npy',reconOri)
             np.save(args.npyDir+args.datasetName+'_'+str(args.dropoutRatio)+'_'+args.regulized_type+'_adj.npy',adj)
@@ -606,6 +626,7 @@ if __name__ == "__main__":
             np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+'_reconOri.npy',reconOri)
             np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+'_adj.npy',adj)
             np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+'_listResult.npy',listResult)
+    # Step 2. Imputation with best results of graph and celltype
     elif args.debugMode == 'load':
         if args.imputeMode:
             reconOri = np.load(args.npyDir+args.datasetName+'_'+str(args.dropoutRatio)+'_'+args.regulized_type+'_reconOri.npy')
@@ -616,53 +637,33 @@ if __name__ == "__main__":
             adj = np.load(args.npyDir+args.datasetName+'_'+args.regulized_type+'_adj.npy')
             listResult = np.load(args.npyDir+args.datasetName+'_'+args.regulized_type+'_listResult.npy')
 
-    # Use new dataloader
-    scDataInter = scDatasetInter(reconOri)
-    train_loader = DataLoader(scDataInter, batch_size=args.batch_size, shuffle=False, **kwargs)
+        # Use new dataloader
+        scDataInter = scDatasetInter(reconOri)
+        train_loader = DataLoader(scDataInter, batch_size=args.batch_size, shuffle=False, **kwargs)
 
-    if args.aeStart == 'start':
-        model.load_state_dict(torch.load(ptfileStart))
-    elif args.aeStart == 'end':
-        model.load_state_dict(torch.load(ptfileEnd))
-    
-    # generate graph regularizer from graph
-    adjdense = sp.csr_matrix.todense(adj)
-    adjsample = torch.from_numpy(adjdense)
-    adjsample = adjsample.float()
-
-    # generate celltype regularizer from celltype
-    celltypesample = generateCelltypeRegu(listResult)
-
-    celltypesample = torch.from_numpy(celltypesample)
-    celltypesample = celltypesample.float()
-
-    for epoch in range(1, args.EM_epochs + 1):
-        recon, original, z = train(epoch, EMFlag=True, taskType='imputation')
-    
-    reconOut = recon.detach().cpu().numpy()
+        if args.aeStart == 'start':
+            model.load_state_dict(torch.load(ptfileStart))
+        elif args.aeStart == 'end':
+            model.load_state_dict(torch.load(ptfileEnd))
         
-    if args.saveFlag:
-        if args.imputeMode:
-            np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_'+str(args.dropoutRatio)+'_'+outParaTag+'_final_edgeList.npy',edgeList)
-        else:
-            np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_'+outParaTag+'_final_edgeList.npy',edgeList)
-        
-        # recon_df = pd.DataFrame(reconOut,columns=genelist,index=celllist)
-        # recon_df.to_csv(args.npyDir+args.datasetName+'_'+args.regulized_type+'_'+str(args.regularizePara)+'_'+str(args.L1Para)+'_'+str(args.L2Para)+'_recon.csv')
-        # embedding_df = pd.DataFrame(zOut,index=celllist)
-        # embedding_df.to_csv(args.npyDir+args.datasetName+'_'+args.regulized_type+'_'+str(args.regularizePara)+'_'+str(args.L1Para)+'_'+str(args.L2Para)+'_embedding.csv')    
-        np.savetxt(args.npyDir+args.datasetName+'_'+args.regulized_type+'_'+outParaTag+'_'+str(args.L1Para)+'_'+str(args.L2Para)+'_recon.csv',reconOut,delimiter=",",fmt='%10.4f')
-        np.savetxt(args.npyDir+args.datasetName+'_'+args.regulized_type+'_'+outParaTag+'_'+str(args.L1Para)+'_'+str(args.L2Para)+'_embedding.csv',zOut, delimiter=",",fmt='%10.4f')
-        np.savetxt(args.npyDir+args.datasetName+'_'+args.regulized_type+'_'+outParaTag+'_'+str(args.L1Para)+'_'+str(args.L2Para)+'_graph.csv',edgeList,fmt='%d,%d,%2.1f')
-        np.savetxt(args.npyDir+args.datasetName+'_'+args.regulized_type+'_'+outParaTag+'_'+str(args.L1Para)+'_'+str(args.L2Para)+'_results.txt',listResult,fmt='%d')
+        # generate graph regularizer from graph
+        adjdense = sp.csr_matrix.todense(adj)
+        adjsample = torch.from_numpy(adjdense)
+        adjsample = adjsample.float()
 
-        resultarray=[]
-        silhouette, chs, dbs = measureClusteringNoLabel(zOut, listResult)
-        ari, ami, nmi, cs, fms, vms, hs = measureClusteringTrueLabel(bench_celltype, listResult)
-        resultstr = str(silhouette)+' '+str(chs)+' '+str(dbs)+' '+str(ari)+' '+str(ami)+' '+str(nmi)+' '+str(cs)+' '+str(fms)+' '+str(vms)+' '+str(hs)
-        resultarray.append(resultstr)
-        np.savetxt(args.npyDir+args.datasetName+'_'+args.regulized_type+'_'+outParaTag+'_'+str(args.L1Para)+'_'+str(args.L2Para)+'_benchmark.txt',resultarray,fmt='%s')
+        # generate celltype regularizer from celltype
+        celltypesample = generateCelltypeRegu(listResult)
+
+        celltypesample = torch.from_numpy(celltypesample)
+        celltypesample = celltypesample.float()
+
+        for epoch in range(1, args.EM_epochs + 1):
+            recon, original, z = train(epoch, EMFlag=True, taskType='imputation')
+        
+        reconOut = recon.detach().cpu().numpy()
+
+        # out imputation Results    
+        if args.saveFlag:        
+            np.savetxt(args.npyDir+args.datasetName+'_'+args.regulized_type+'_'+outParaTag+'_'+str(args.L1Para)+'_'+str(args.L2Para)+'_recon.csv',reconOut,delimiter=",",fmt='%10.4f')
  
-
-
     print("---Total Running Time: %s seconds ---" % (time.time() - start_time))
