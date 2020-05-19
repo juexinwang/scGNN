@@ -1,7 +1,7 @@
-for i in {9,11,12}
+for i in {9,11,12,13}
 # for i in {13..13}
 do
-for j in {10,26,27}
+for j in {0..27}
 do
 sbatch run_experimentImpute_1_g_e_LK_$i\_$j.sh
 sleep 1

@@ -312,6 +312,7 @@ if __name__ == "__main__":
 
         # Store reconOri for imputation
         reconOri = recon.clone()
+        reconOri = reconOri.detach().cpu().numpy()
 
         # Step 1. Inferring celltype
         #Define resolution
