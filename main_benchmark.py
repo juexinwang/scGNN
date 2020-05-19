@@ -222,7 +222,7 @@ def train(epoch, train_loader=train_loader, EMFlag=False, taskType='celltype'):
                     loss = loss_function_graph(recon_batch, data.view(-1, recon_batch.shape[1]), mu, logvar, gammaPara=args.gammaPara, regulationMatrix=regulationMatrixBatch, regularizer_type='noregu', reguPara=args.regularizePara, modelusage=args.model)
                 else: 
                     loss = loss_function_graph(recon_batch, data.view(-1, recon_batch.shape[1]), mu, logvar, gammaPara=args.gammaPara, regulationMatrix=regulationMatrixBatch, regularizer_type=args.regulized_type, reguPara=args.regularizePara, modelusage=args.model)
-            elif taskType == 'imputaton':
+            elif taskType == 'imputation':
                 if EMFlag and (not args.EMreguTag):
                     loss = loss_function_graph_celltype(recon_batch, data.view(-1, recon_batch.shape[1]), mu, logvar, graphregu=adjsample, celltyperegu=celltypesample, gammaPara=args.gammaPara, regulationMatrix=regulationMatrixBatch, regularizer_type=args.EMregulized_type, reguPara=args.regularizePara, reguParaCelltype=args.reguParaCelltype, modelusage=args.model)
                 else: 
@@ -239,7 +239,7 @@ def train(epoch, train_loader=train_loader, EMFlag=False, taskType='celltype'):
                     loss = loss_function_graph(recon_batch, data.view(-1, recon_batch.shape[1]), mu_dummy, logvar_dummy, gammaPara=args.gammaPara, regulationMatrix=regulationMatrixBatch, regularizer_type='noregu', reguPara=args.regularizePara, modelusage=args.model)    
                 else:
                     loss = loss_function_graph(recon_batch, data.view(-1, recon_batch.shape[1]), mu_dummy, logvar_dummy, gammaPara=args.gammaPara, regulationMatrix=regulationMatrixBatch, regularizer_type=args.regulized_type, reguPara=args.regularizePara, modelusage=args.model)
-            elif taskType == 'imputaton':
+            elif taskType == 'imputation':
                 if EMFlag and (not args.EMreguTag):
                     loss = loss_function_graph_celltype(recon_batch, data.view(-1, recon_batch.shape[1]), mu_dummy, logvar_dummy, graphregu=adjsample, celltyperegu=celltypesample, gammaPara=args.gammaPara, regulationMatrix=regulationMatrixBatch, regularizer_type=args.EMregulized_type, reguPara=args.regularizePara, reguParaCelltype=args.reguParaCelltype, modelusage=args.model)    
                 else:
