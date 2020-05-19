@@ -1,7 +1,7 @@
-mkdir npyG2E_LK
-mkdir npyG2F_LK
-mkdir npyN2E_LK
-mkdir npyG1E_LK
+mkdir npyG2E_LK_1
+mkdir npyG2F_LK_1
+mkdir npyN2E_LK_1
+mkdir npyG1E_LK_1
 
 for i in {9,11,12,13}
 do

@@ -28,10 +28,10 @@ templateStr2 = "\n#SBATCH -o results-%j.out           # give the job output a cu
 #batchInfo,scGNNparam,outDir
 #huge matrix
 methodsList = [
-    ('run_experiment_1_g_e_LK E1geK','--regulized-type LTMG --EMtype EM --clustering-method LouvainK --useGAEembedding --npyDir','npyG1E_LK/'),
-    ('run_experiment_2_g_e_LK E2geK','--regulized-type LTMG --EMtype celltypeEM --clustering-method LouvainK --useGAEembedding  --npyDir','npyG2E_LK/'),
-    ('run_experiment_2_g_f_LK E2gfK','--regulized-type LTMG --EMtype celltypeEM --clustering-method LouvainK --npyDir','npyG2F_LK/'),
-    ('run_experiment_2_n_e_LK E2neK','--regulized-type noregu --EMtype celltypeEM --clustering-method LouvainK --useGAEembedding --npyDir','npyN2E_LK/'),
+    ('run_experiment_1_g_e_LK E1geK','--regulized-type LTMG --EMtype EM --clustering-method LouvainK --useGAEembedding --npyDir','npyG1E_LK_1/ --seed 1'),
+    ('run_experiment_2_g_e_LK E2geK','--regulized-type LTMG --EMtype celltypeEM --clustering-method LouvainK --useGAEembedding  --npyDir','npyG2E_LK_1/ --seed 1'),
+    ('run_experiment_2_g_f_LK E2gfK','--regulized-type LTMG --EMtype celltypeEM --clustering-method LouvainK --npyDir','npyG2F_LK_1/ --seed 1'),
+    ('run_experiment_2_n_e_LK E2neK','--regulized-type noregu --EMtype celltypeEM --clustering-method LouvainK --useGAEembedding --npyDir','npyN2E_LK_1/ --seed 1'),
 
     ('run_experiment_1_g_e_LK_2 21geK','--regulized-type LTMG --EMtype EM --clustering-method LouvainK --useGAEembedding --npyDir','npyG1E_LK_2/ --seed 2'),
     ('run_experiment_2_g_e_LK_2 22geK','--regulized-type LTMG --EMtype celltypeEM --clustering-method LouvainK --useGAEembedding  --npyDir','npyG2E_LK_2/ --seed 2'),
