@@ -631,11 +631,11 @@ if __name__ == "__main__":
     elif args.debugMode == 'load':
         if args.imputeMode:
             reconOri = np.load(args.npyDir+args.datasetName+'_'+str(args.dropoutRatio)+'_'+args.regulized_type+'_reconOri.npy')
-            adj = np.load(args.npyDir+args.datasetName+'_'+str(args.dropoutRatio)+'_'+args.regulized_type+'_adj.npy')
+            adj = np.load(args.npyDir+args.datasetName+'_'+str(args.dropoutRatio)+'_'+args.regulized_type+'_adj.npy',allow_pickle=True)
             listResult = np.load(args.npyDir+args.datasetName+'_'+str(args.dropoutRatio)+'_'+args.regulized_type+'_listResult.npy')
         else:
             reconOri = np.load(args.npyDir+args.datasetName+'_'+args.regulized_type+'_reconOri.npy')
-            adj = np.load(args.npyDir+args.datasetName+'_'+args.regulized_type+'_adj.npy')
+            adj = np.load(args.npyDir+args.datasetName+'_'+args.regulized_type+'_adj.npy',allow_pickle=True)
             listResult = np.load(args.npyDir+args.datasetName+'_'+args.regulized_type+'_listResult.npy')
 
         # Use new dataloader
@@ -648,6 +648,7 @@ if __name__ == "__main__":
             model.load_state_dict(torch.load(ptfileEnd))
         
         # generate graph regularizer from graph
+        adj = adj.tolist()
         adjdense = sp.csr_matrix.todense(adj)
         adjsample = torch.from_numpy(adjdense)
         adjsample = adjsample.float()
