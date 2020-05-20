@@ -65,7 +65,6 @@ dropix           = np.load(args.npyDir+args.datasetName+'_'+args.regulized_type+
 # featuresImpute   = np.load(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_'+args.ratio+'_'+args.regupara+'_recon'+args.reconstr+'.npy')
 featuresImpute   = pd.read_csv(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_'+args.regupara+'_0.0_0.0_recon'+args.reconstr+'.csv')
 featuresImpute = featuresImpute.to_numpy()
-featuresImpute = featuresImpute.transpose()
 
 l1ErrorMean, l1ErrorMedian, l1ErrorMin, l1ErrorMax = imputation_error_log(featuresImpute, featuresOriginal, features, dropi, dropj, dropix)
 print('{:.4f} {:.4f} {:.4f} {:.4f} '.format(l1ErrorMean, l1ErrorMedian, l1ErrorMin, l1ErrorMax), end='')

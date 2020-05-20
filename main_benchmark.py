@@ -666,7 +666,8 @@ if __name__ == "__main__":
         reconOut = recon.detach().cpu().numpy()
 
         # out imputation Results    
-        if args.saveFlag:        
-            np.savetxt(args.npyDir+args.datasetName+'_'+args.regulized_type+'_'+outParaTag+'_'+str(args.L1Para)+'_'+str(args.L2Para)+'_recon.csv',reconOut,delimiter=",",fmt='%10.4f')
+        if args.saveFlag:
+            np.save   (args.npyDir+args.datasetName+'_'+args.regulized_type+'_'+str(args.dropoutRatio)+'_'+outParaTag+'_recon.npy',reconOut)        
+            np.savetxt(args.npyDir+args.datasetName+'_'+args.regulized_type+'_'+str(args.dropoutRatio)+'_'+outParaTag+'_recon.csv',reconOut,delimiter=",",fmt='%10.4f')
  
     print("---Total Running Time: %s seconds ---" % (time.time() - start_time))
