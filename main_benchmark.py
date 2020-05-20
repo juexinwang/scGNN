@@ -58,7 +58,7 @@ parser.add_argument('--EMregulized-type', type=str, default='Graph',
                     help='regulized type (default: noregu) in EM, otherwise: noregu/Graph/GraphR/Celltype') 
 parser.add_argument('--adjtype', type=str, default='unweighted',
                     help='adjtype (default: weighted) otherwise: unweighted') 
-parser.add_argument('--aePara', type=str, default='end', 
+parser.add_argument('--aePara', type=str, default='start', 
                     help='whether use parameter of first feature autoencoder: start/end/cont')
 
 

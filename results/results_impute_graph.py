@@ -53,9 +53,13 @@ if args.discreteTag:
 #Note: features is not actually used here
 #  features         = load_sparse_matrix(args.npyDir+args.datasetName+'_'+args.regulized_type+'_'+args.ratio+'_features.npz').tolil()
 features         = None
-dropi            = np.load(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_'+args.ratio+'_'+args.regupara+'_dropi.npy')
-dropj            = np.load(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_'+args.ratio+'_'+args.regupara+'_dropj.npy')
-dropix           = np.load(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_'+args.ratio+'_'+args.regupara+'_dropix.npy')
+# dropi            = np.load(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_'+args.ratio+'_'+args.regupara+'_dropi.npy')
+# dropj            = np.load(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_'+args.ratio+'_'+args.regupara+'_dropj.npy')
+# dropix           = np.load(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_'+args.ratio+'_'+args.regupara+'_dropix.npy')
+dropi            = np.load(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_'+args.ratio+'_0.1-0.9-0.9_dropi.npy')
+dropj            = np.load(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_'+args.ratio+'_0.1-0.9-0.9_dropj.npy')
+dropix           = np.load(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_'+args.ratio+'_0.1-0.9-0.9_dropix.npy')
+
 
 featuresImpute   = np.load(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_'+args.ratio+'_'+args.regupara+'_recon'+args.reconstr+'.npy')
 l1ErrorMean, l1ErrorMedian, l1ErrorMin, l1ErrorMax = imputation_error_log(featuresImpute, featuresOriginal, features, dropi, dropj, dropix)

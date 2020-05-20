@@ -298,7 +298,7 @@ def loss_function_graph_celltype(recon_x, x, mu, logvar, graphregu=None, celltyp
     # BCE = F.binary_cross_entropy(recon_x, x.view(-1, 784), reduction='sum')
     # Graph
     target = x
-    if regularizer_type == 'Graph' or regularizer_type == 'LTMG' or regularizer_type == 'LTMG01':
+    if regularizer_type == 'Graph' or regularizer_type == 'LTMG' or regularizer_type == 'LTMG01' or regularizer_type == 'Celltype':
         target.requires_grad = True
     # Euclidean
     BCE = gammaPara * vallina_mse_loss_function(recon_x, target, reduction='sum')
