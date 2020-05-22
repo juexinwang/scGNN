@@ -19,6 +19,7 @@ from benchmark_util import *
 from gae_embedding import GAEembedding,measure_clustering_results,test_clustering_benchmark_results
 from LTMG_R import *
 import pandas as pd
+import torch.multiprocessing as mp
 
 # Further version at May 21st
 # Benchmark for both celltype identification and imputation, needs Preprocessing_main.py first, then proceed by this script.
@@ -33,7 +34,7 @@ parser.add_argument('--epochs', type=int, default=500, metavar='N',
 parser.add_argument('--EM-epochs', type=int, default=200, metavar='N',
                     help='number of epochs to train in iteration EM (default: 200)')
 parser.add_argument('--EM-iteration', type=int, default=10, metavar='N',
-                    help='number of epochs in EM iteration (default: 10)')
+                    help='number of epochs in EM iteration (default: 1)')
 parser.add_argument('--EMtype', type=str, default='EM',
                     help='EM process type (default: celltypeEM) or EM')
 parser.add_argument('--alpha', type=float, default=0.5,
@@ -54,12 +55,13 @@ parser.add_argument('--regulized-type', type=str, default='LTMG',
                     help='regulized type (default: Graph) in EM, otherwise: noregu/LTMG/LTMG01')
 
 # imputation related
-parser.add_argument('--EMregulized-type', type=str, default='Celltype',
+parser.add_argument('--EMregulized-type', type=str, default='Graph',
                     help='regulized type (default: noregu) in EM, otherwise: noregu/Graph/GraphR/Celltype') 
-# parser.add_argument('--adjtype', type=str, default='unweighted',
-#                     help='adjtype (default: weighted) otherwise: unweighted') 
-# parser.add_argument('--aePara', type=str, default='start', 
-#                     help='whether use parameter of first feature autoencoder: start/end/cont')
+parser.add_argument('--adjtype', type=str, default='unweighted',
+                    help='adjtype (default: weighted) otherwise: unweighted') 
+parser.add_argument('--aePara', type=str, default='start', 
+                    help='whether use parameter of first feature autoencoder: start/end/cont')
+
 
 parser.add_argument('--gammaPara', type=float, default=0.1,
                     help='regulized parameter (default: 1.0)')
@@ -204,10 +206,14 @@ def train(epoch, train_loader=train_loader, EMFlag=False, taskType='celltype'):
     # for batch_idx, (data, _) in enumerate(train_loader):
     # for batch_idx, data in enumerate(train_loader):
     for batch_idx, (data, dataindex) in enumerate(train_loader):
+        # print('))'+str(batch_idx))
         data = data.type(torch.FloatTensor)
         data = data.to(device)
+        # print(')))'+str(data.shape))
         regulationMatrixBatch = regulationMatrix[dataindex,:]
+        # print('))))'+str(regulationMatrixBatch.shape))
         optimizer.zero_grad()
+        # print('**afterzero')
         if args.model == 'VAE':
             recon_batch, mu, logvar, z = model(data)
             # Original
@@ -249,10 +255,11 @@ def train(epoch, train_loader=train_loader, EMFlag=False, taskType='celltype'):
             l1 = l1 + p.abs().sum()
             l2 = l2 + p.pow(2).sum()
         loss = loss + args.L1Para * l1 + args.L2Para * l2
-
+        # print('**preback')
         loss.backward()
         train_loss += loss.item()
         optimizer.step()
+        # print('((afterback')
         if batch_idx % args.log_interval == 0:
             print('Train Epoch: {} [{}/{} ({:.0f}%)]\tLoss: {:.6f}'.format(
                 epoch, batch_idx * len(data), len(train_loader.dataset),
@@ -279,7 +286,7 @@ if __name__ == "__main__":
 
     outParaTag = str(args.gammaPara)+'-'+str(args.regularizePara)+'-'+str(args.reguParaCelltype)   
     ptfileStart = args.npyDir+args.datasetName+'_EMtrainingStart.pt'
-    # ptfileEnd   = args.npyDir+args.datasetName+'_EMtrainingEnd.pt'
+    ptfileEnd   = args.npyDir+args.datasetName+'_EMtrainingEnd.pt'
 
     # Step 1. celltype clustering
     if args.debugMode == 'save':
@@ -303,7 +310,7 @@ if __name__ == "__main__":
             recon, original, z = train(epoch, EMFlag=False)
             
         zOut = z.detach().cpu().numpy() 
-        # torch.save(model.state_dict(),ptfileEnd)
+        torch.save(model.state_dict(),ptfileEnd)
 
         # Store reconOri for imputation
         reconOri = recon.clone()
@@ -322,15 +329,13 @@ if __name__ == "__main__":
 
         prune_time = time.time()        
         # Here para = 'euclidean:10'
-        # adj, edgeList = generateAdj(zOut, graphType='KNNgraphML', para = args.knn_distance+':'+str(args.k))
-        adj, edgeList = generateAdj(zOut, graphType=args.prunetype, para = args.knn_distance+':'+str(args.k), outAdjTag = (args.useGAEembedding or args.useBothembedding))  
-        adjdense = sp.csr_matrix.todense(adj)
-        # if args.adjtype == 'unweighted':
-        #     adj, edgeList = generateAdj(zOut, graphType=args.prunetype, para = args.knn_distance+':'+str(args.k), outAdjTag = (args.useGAEembedding or args.useBothembedding)) 
-        #     adjdense = sp.csr_matrix.todense(adj)
-        # elif args.adjtype == 'weighted':
-        #     adj, edgeList = generateAdjWeighted(zOut, graphType=args.prunetype, para = args.knn_distance+':'+str(args.k), outAdjTag = (args.useGAEembedding or args.useBothembedding))         
-        #     adjdense = adj.toarray()    
+        # adj, edgeList = generateAdj(zOut, graphType='KNNgraphML', para = args.knn_distance+':'+str(args.k)) 
+        if args.adjtype == 'unweighted':
+            adj, edgeList = generateAdj(zOut, graphType=args.prunetype, para = args.knn_distance+':'+str(args.k), outAdjTag = (args.useGAEembedding or args.useBothembedding)) 
+            adjdense = sp.csr_matrix.todense(adj)
+        elif args.adjtype == 'weighted':
+            adj, edgeList = generateAdjWeighted(zOut, graphType=args.prunetype, para = args.knn_distance+':'+str(args.k), outAdjTag = (args.useGAEembedding or args.useBothembedding))         
+            adjdense = adj.toarray()    
         print("---Pruning takes %s seconds ---" % (time.time() - prune_time))
         if args.saveFlag:
             reconOut = recon.detach().cpu().numpy()
@@ -499,14 +504,12 @@ if __name__ == "__main__":
             prune_time = time.time()
             # Here para = 'euclidean:10'
             # adj, edgeList = generateAdj(zOut, graphType='KNNgraphML', para = args.knn_distance+':'+str(args.k))
-            adj, edgeList = generateAdj(zOut, graphType=args.prunetype, para = args.knn_distance+':'+str(args.k), outAdjTag = (args.useGAEembedding or args.useBothembedding)) 
-            adjdense = sp.csr_matrix.todense(adj)
-            # if args.adjtype == 'unweighted':
-            #     adj, edgeList = generateAdj(zOut, graphType=args.prunetype, para = args.knn_distance+':'+str(args.k), outAdjTag = (args.useGAEembedding or args.useBothembedding)) 
-            #     adjdense = sp.csr_matrix.todense(adj)
-            # elif args.adjtype == 'weighted':
-            #     adj, edgeList = generateAdjWeighted(zOut, graphType=args.prunetype, para = args.knn_distance+':'+str(args.k), outAdjTag = (args.useGAEembedding or args.useBothembedding))         
-            #     adjdense = adj.toarray()
+            if args.adjtype == 'unweighted':
+                adj, edgeList = generateAdj(zOut, graphType=args.prunetype, para = args.knn_distance+':'+str(args.k), outAdjTag = (args.useGAEembedding or args.useBothembedding)) 
+                adjdense = sp.csr_matrix.todense(adj)
+            elif args.adjtype == 'weighted':
+                adj, edgeList = generateAdjWeighted(zOut, graphType=args.prunetype, para = args.knn_distance+':'+str(args.k), outAdjTag = (args.useGAEembedding or args.useBothembedding))         
+                adjdense = adj.toarray()
             print("---Pruning takes %s seconds ---" % (time.time() - prune_time))
 
             # Whether use GAE embedding
@@ -641,11 +644,10 @@ if __name__ == "__main__":
         scDataInter = scDatasetInter(reconOri)
         train_loader = DataLoader(scDataInter, batch_size=args.batch_size, shuffle=False, **kwargs)
 
-        model.load_state_dict(torch.load(ptfileStart))
-        # if args.aePara == 'start':
-        #     model.load_state_dict(torch.load(ptfileStart))
-        # elif args.aePara == 'end':
-        #     model.load_state_dict(torch.load(ptfileEnd))
+        if args.aePara == 'start':
+            model.load_state_dict(torch.load(ptfileStart))
+        elif args.aePara == 'end':
+            model.load_state_dict(torch.load(ptfileEnd))
         
         # generate graph regularizer from graph
         adj = adj.tolist()
