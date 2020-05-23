@@ -341,6 +341,10 @@ if __name__ == "__main__":
             else:  
                 np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_'+outParaTag+'_recon.npy',reconOut)
                 np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_'+outParaTag+'_z.npy',zOut)
+                # debug
+                np.savetxt(args.npyDir+args.datasetName+'_'+args.regulized_type+'_'+outParaTag+'_graphStart.csv',edgeList,fmt='%d,%d,%2.1f')
+                np.savetxt(args.npyDir+args.datasetName+'_'+args.regulized_type+'_'+outParaTag+'_adj.txt',adjdense)
+
         
         # Whether use GAE embedding
         if args.useGAEembedding or args.useBothembedding:
@@ -535,6 +539,10 @@ if __name__ == "__main__":
                 else:
                     np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_'+outParaTag+'_recon'+str(bigepoch)+'.npy',reconOut)
                     np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_'+outParaTag+'_z'+str(bigepoch)+'.npy',zOut)
+
+                    #debug
+                    np.savetxt(args.npyDir+args.datasetName+'_'+args.regulized_type+'_'+outParaTag+'_graphStart'+str(bigepoch)+'.csv',edgeList,fmt='%d,%d,%2.1f')
+                    np.savetxt(args.npyDir+args.datasetName+'_'+args.regulized_type+'_'+outParaTag+'_adj'+str(bigepoch)+'.txt',adjdense)
             
             print("---One iteration in EM process, proceeded %s seconds ---" % (time.time() - iteration_time))
 
