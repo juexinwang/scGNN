@@ -263,7 +263,6 @@ def loss_function_graph(recon_x, x, mu, logvar, graphregu=None, gammaPara=1.0, r
         target.requires_grad = True
     # Euclidean
     BCE = gammaPara * vallina_mse_loss_function(recon_x, target, reduction='sum')
-    print(BCE)
     if regularizer_type == 'noregu':
         loss = BCE
     elif regularizer_type == 'LTMG':
@@ -421,10 +420,10 @@ def vallina_mse_loss_function(input, target, size_average=None, reduce=None, red
     #     expanded_input, expanded_target = torch.broadcast_tensors(input, target)
     #     ret = torch._C._nn.mse_loss(expanded_input, expanded_target, get_enum(reduction)) 
     ret = (input - target) ** 2
-    print(ret)
+    # print(ret)
     if reduction != 'none':
         ret = torch.mean(ret) if reduction == 'mean' else torch.sum(ret)    
-    print(ret)
+    # print(ret)
     return ret
 
 # Regulation mse as the regularizor
