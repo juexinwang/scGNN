@@ -421,8 +421,10 @@ def vallina_mse_loss_function(input, target, size_average=None, reduce=None, red
     #     expanded_input, expanded_target = torch.broadcast_tensors(input, target)
     #     ret = torch._C._nn.mse_loss(expanded_input, expanded_target, get_enum(reduction)) 
     ret = (input - target) ** 2
+    print(ret)
     if reduction != 'none':
         ret = torch.mean(ret) if reduction == 'mean' else torch.sum(ret)    
+    print(ret)
     return ret
 
 # Regulation mse as the regularizor
