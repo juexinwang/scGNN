@@ -250,7 +250,7 @@ def loss_function(recon_x, x, mu, logvar):
     return BCE + KLD
 
 # Graph
-def loss_function_graph(recon_x, x, mu, logvar, graphregu=None, gammaPara=1.0, regulationMatrix=None, regularizer_type='noregu', reguPara=0.001, modelusage='AE'):
+def loss_function_graph(recon_x, x, mu, logvar, graphregu=None, gammaPara=1.0, regulationMatrix=None, regularizer_type='noregu', reguPara=0.001, modelusage='AE',reduction='sum'):
     '''
     Regularized by the graph information
     Reconstruction + KL divergence losses summed over all elements and batch
@@ -262,21 +262,22 @@ def loss_function_graph(recon_x, x, mu, logvar, graphregu=None, gammaPara=1.0, r
     if regularizer_type == 'Graph' or regularizer_type == 'LTMG' or regularizer_type == 'LTMG01':
         target.requires_grad = True
     # Euclidean
-    BCE = gammaPara * vallina_mse_loss_function(recon_x, target, reduction='sum')
+    # BCE = gammaPara * vallina_mse_loss_function(recon_x, target, reduction='sum')
+    BCE = gammaPara * vallina_mse_loss_function(recon_x, target, reduction=reduction)
     if regularizer_type == 'noregu':
         loss = BCE
     elif regularizer_type == 'LTMG':
-        loss = BCE + reguPara * regulation_mse_loss_function(recon_x, target, regulationMatrix, reduction='sum')
+        loss = BCE + reguPara * regulation_mse_loss_function(recon_x, target, regulationMatrix, reduction=reduction)
     elif regularizer_type == 'LTMG01':
-        loss = BCE + reguPara * regulation01_mse_loss_function(recon_x, target, regulationMatrix, reduction='sum')
+        loss = BCE + reguPara * regulation01_mse_loss_function(recon_x, target, regulationMatrix, reduction=reduction)
     elif regularizer_type == 'Graph':
-        loss = BCE + reguPara * graph_mse_loss_function(recon_x, target, graphregu=graphregu, reduction='sum')
+        loss = BCE + reguPara * graph_mse_loss_function(recon_x, target, graphregu=graphregu, reduction=reduction)
     elif regularizer_type == 'GraphR':
-        loss = BCE + reguPara * graph_mse_loss_function(recon_x, target, graphregu=1-graphregu, reduction='sum')
+        loss = BCE + reguPara * graph_mse_loss_function(recon_x, target, graphregu=1-graphregu, reduction=reduction)
     elif regularizer_type == 'LTMG-Graph':
-        loss = BCE + reguPara * regulation_mse_loss_function(recon_x, target, regulationMatrix, reduction='sum') + reguPara * graph_mse_loss_function(recon_x, target, graphregu=graphregu, reduction='sum')
+        loss = BCE + reguPara * regulation_mse_loss_function(recon_x, target, regulationMatrix, reduction=reduction) + reguPara * graph_mse_loss_function(recon_x, target, graphregu=graphregu, reduction=reduction)
     elif regularizer_type == 'LTMG-GraphR':
-        loss = BCE + reguPara * regulation_mse_loss_function(recon_x, target, regulationMatrix, reduction='sum') + reguPara * graph_mse_loss_function(recon_x, target, graphregu=1-graphregu, reduction='sum')
+        loss = BCE + reguPara * regulation_mse_loss_function(recon_x, target, regulationMatrix, reduction=reduction) + reguPara * graph_mse_loss_function(recon_x, target, graphregu=1-graphregu, reduction=reduction)
 
     # see Appendix B from VAE paper:
     # Kingma and Welling. Auto-Encoding Variational Bayes. ICLR, 2014
@@ -289,7 +290,7 @@ def loss_function_graph(recon_x, x, mu, logvar, graphregu=None, gammaPara=1.0, r
     return loss
 
 # Graph
-def loss_function_graph_celltype(recon_x, x, mu, logvar, graphregu=None, celltyperegu=None, gammaPara=1.0, regulationMatrix=None, regularizer_type='noregu', reguPara=0.001, reguParaCelltype=0.001, modelusage='AE'):
+def loss_function_graph_celltype(recon_x, x, mu, logvar, graphregu=None, celltyperegu=None, gammaPara=1.0, regulationMatrix=None, regularizer_type='noregu', reguPara=0.001, reguParaCelltype=0.001, modelusage='AE', reduction='sum'):
     '''
     Regularized by the graph information
     Reconstruction + KL divergence losses summed over all elements and batch
@@ -301,17 +302,18 @@ def loss_function_graph_celltype(recon_x, x, mu, logvar, graphregu=None, celltyp
     if regularizer_type == 'Graph' or regularizer_type == 'LTMG' or regularizer_type == 'LTMG01' or regularizer_type == 'Celltype':
         target.requires_grad = True
     # Euclidean
-    BCE = gammaPara * vallina_mse_loss_function(recon_x, target, reduction='sum')
+    # BCE = gammaPara * vallina_mse_loss_function(recon_x, target, reduction='sum')
+    BCE = gammaPara * vallina_mse_loss_function(recon_x, target, reduction=reduction)
     if regularizer_type == 'noregu':
         loss = BCE
     elif regularizer_type == 'LTMG':
-        loss = BCE + reguPara * regulation_mse_loss_function(recon_x, target, regulationMatrix, reduction='sum')
+        loss = BCE + reguPara * regulation_mse_loss_function(recon_x, target, regulationMatrix, reduction=reduction)
     elif regularizer_type == 'LTMG01':
-        loss = BCE + reguPara * regulation01_mse_loss_function(recon_x, target, regulationMatrix, reduction='sum')
+        loss = BCE + reguPara * regulation01_mse_loss_function(recon_x, target, regulationMatrix, reduction=reduction)
     elif regularizer_type == 'Graph':
-        loss = BCE + reguPara * graph_mse_loss_function(recon_x, target, graphregu=graphregu, reduction='sum')
+        loss = BCE + reguPara * graph_mse_loss_function(recon_x, target, graphregu=graphregu, reduction=reduction)
     elif regularizer_type == 'Celltype':
-        loss = BCE + reguPara * graph_mse_loss_function(recon_x, target, graphregu=graphregu, reduction='sum') + reguParaCelltype * graph_mse_loss_function(recon_x, target, graphregu=celltyperegu, reduction='sum')
+        loss = BCE + reguPara * graph_mse_loss_function(recon_x, target, graphregu=graphregu, reduction=reduction) + reguParaCelltype * graph_mse_loss_function(recon_x, target, graphregu=celltyperegu, reduction=reduction)
     
     # see Appendix B from VAE paper:
     # Kingma and Welling. Auto-Encoding Variational Bayes. ICLR, 2014
