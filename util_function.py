@@ -263,6 +263,7 @@ def loss_function_graph(recon_x, x, mu, logvar, graphregu=None, gammaPara=1.0, r
         target.requires_grad = True
     # Euclidean
     BCE = gammaPara * vallina_mse_loss_function(recon_x, target, reduction='sum')
+    print(BCE)
     if regularizer_type == 'noregu':
         loss = BCE
     elif regularizer_type == 'LTMG':
