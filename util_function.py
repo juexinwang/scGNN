@@ -403,13 +403,25 @@ def vallina_mse_loss_function(input, target, size_average=None, reduce=None, red
     if size_average is not None or reduce is not None:
         reduction = legacy_get_string(size_average, reduce)
     # Now it use regulariz type to distinguish, it can be imporved later
-    if target.requires_grad:
-        ret = (input - target) ** 2
+    # Original, for not require grads, using c++ version
+    # However, it has bugs there, different number of cpu cause different results because of MKL parallel library
+    # Not known yet whether GPU has same problem.
+    # Solution 1: set same number of cpu when running, it works for reproduce everything but not applicable for other users
+    # https://pytorch.org/docs/stable/torch.html#torch.set_num_threads
+    # https://pytorch.org/docs/stable/notes/cpu_threading_torchscript_inference.html
+    # Solution 2: not use C++ codes, as we did here.
+    # https://github.com/pytorch/pytorch/issues/8710
+
+    # if target.requires_grad:
+    #     ret = (input - target) ** 2
+    #     if reduction != 'none':
+    #         ret = torch.mean(ret) if reduction == 'mean' else torch.sum(ret)
+    # else:
+    #     expanded_input, expanded_target = torch.broadcast_tensors(input, target)
+    #     ret = torch._C._nn.mse_loss(expanded_input, expanded_target, get_enum(reduction)) 
+    ret = (input - target) ** 2
         if reduction != 'none':
-            ret = torch.mean(ret) if reduction == 'mean' else torch.sum(ret)
-    else:
-        expanded_input, expanded_target = torch.broadcast_tensors(input, target)
-        ret = torch._C._nn.mse_loss(expanded_input, expanded_target, get_enum(reduction))     
+            ret = torch.mean(ret) if reduction == 'mean' else torch.sum(ret)    
     return ret
 
 # Regulation mse as the regularizor
