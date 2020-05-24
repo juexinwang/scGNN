@@ -415,8 +415,8 @@ def vallina_mse_loss_function(input, target, size_average=None, reduce=None, red
     # https://github.com/pytorch/pytorch/issues/8710
     if target.requires_grad:
         # ret = (input - target) ** 2
-        # 100 to reduce float loss
-        ret = (100*input - 100*target) ** 2
+        # 0.001 to reduce float loss
+        ret = (0.001*input - 0.001*target) ** 2
         if reduction != 'none':
             ret = torch.mean(ret) if reduction == 'mean' else torch.sum(ret)
     else:
@@ -442,7 +442,7 @@ def regulation_mse_loss_function(input, target, regulationMatrix, size_average=N
         reduction = legacy_get_string(size_average, reduce)
     # Now it use regulariz type to distinguish, it can be imporved later
     # ret = (input - target) ** 2
-    ret = (100*input - 100*target) ** 2
+    ret = (0.001*input - 0.001*target) ** 2
     ret = torch.mul(ret, regulationMatrix)
     if reduction != 'none':
         ret = torch.mean(ret) if reduction == 'mean' else torch.sum(ret)      
@@ -466,7 +466,7 @@ def regulation01_mse_loss_function(input, target, regulationMatrix, size_average
         reduction = legacy_get_string(size_average, reduce)
     # Now it use regulariz type to distinguish, it can be imporved later
     # ret = (input - target) ** 2
-    ret = (100*input - 100*target) ** 2
+    ret = (0.001*input - 0.001*target) ** 2
     regulationMatrix[regulationMatrix>0]=1
     ret = torch.mul(ret, regulationMatrix)
     if reduction != 'none':
@@ -487,7 +487,7 @@ def graph_mse_loss_function(input, target, graphregu, size_average=None, reduce=
         reduction = legacy_get_string(size_average, reduce)
     # Now it use regulariz type to distinguish, it can be imporved later
     # ret = (input - target) ** 2
-    ret = (100*input - 100*target) ** 2
+    ret = (0.001*input - 0.001*target) ** 2
     if graphregu != None:
         # print(graphregu.type())
         # print(ret.type())
