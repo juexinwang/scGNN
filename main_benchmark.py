@@ -313,7 +313,8 @@ if __name__ == "__main__":
             recon, original, z = train(epoch, EMFlag=False)
             
         zOut = z.detach().cpu().numpy()
-        torch.save(model.state_dict(),ptfile)
+        # torch.save(model.state_dict(),ptfile)
+        ptstatus = model.state_dict()
 
         # Store reconOri for imputation
         reconOri = recon.clone()
@@ -484,7 +485,9 @@ if __name__ == "__main__":
                 reconNew = reconNew.type(torch.DoubleTensor)
                 reconNew = reconNew.to(device)
                 
-                model.load_state_dict(torch.load(ptfile))
+                # model.load_state_dict(torch.load(ptfile))
+                model.load_state_dict(ptstatus)
+                
                 for clusterIndex in clusterIndexList:
                     reconUsage = recon[clusterIndex]
                     scDataInter = scDatasetInter(reconUsage)
@@ -497,7 +500,8 @@ if __name__ == "__main__":
                         count +=1
                 # Update
                 recon = reconNew
-                torch.save(model.state_dict(),ptfile)
+                # torch.save(model.state_dict(),ptfile)
+                ptstatus = model.state_dict()
             
             # Use new dataloader
             scDataInter = scDatasetInter(recon)
