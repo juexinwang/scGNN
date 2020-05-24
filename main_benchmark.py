@@ -155,7 +155,7 @@ checkargs(args)
 torch.manual_seed(args.seed)
 device = torch.device("cuda" if args.cuda else "cpu")
 
-if not args.coresUsage == 'all'
+if not args.coresUsage == 'all':
     torch.set_num_threads(int(args.coresUsage))
 
 kwargs = {'num_workers': 1, 'pin_memory': True} if args.cuda else {}
