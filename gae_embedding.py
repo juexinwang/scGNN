@@ -122,6 +122,8 @@ def GAEembedding(z, adj, args):
 
     pos_weight = float(adj.shape[0] * adj.shape[0] - adj.sum()) / adj.sum()
     norm = adj.shape[0] * adj.shape[0] / float((adj.shape[0] * adj.shape[0] - adj.sum()) * 2)
+    # DoubleTensor
+    adj_norm = torch.DoubleTensor(adj_norm)
 
     if args.GAEmodel == 'gcn_vae':
         model = GCNModelVAE(feat_dim, args.GAEhidden1, args.GAEhidden2, args.GAEdropout)
