@@ -186,6 +186,8 @@ if args.model == 'VAE':
     model = VAE2d(dim=scData.features.shape[1]).to(device)
 elif args.model == 'AE':
     model = AE(dim=scData.features.shape[1]).to(device)
+# change to model with DoubleTensor
+model=model.double()
 optimizer = optim.Adam(model.parameters(), lr=1e-3)
 
 #Benchmark
