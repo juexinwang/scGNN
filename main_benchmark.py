@@ -85,6 +85,8 @@ parser.add_argument('--zerofillFlag', action='store_true', default=False,
                     help='fill zero or not before EM process (default: False)')
 
 #Debug related
+parser.add_argument('--coresUsage', type=str, default='all', 
+                    help='how many cores used: all/1/...')
 parser.add_argument('--debugMode', type=str, default='save', 
                     help='debugMode: save/load/normal')
 parser.add_argument('--saveFlag', action='store_true', default=True, 
@@ -152,6 +154,9 @@ checkargs(args)
 
 torch.manual_seed(args.seed)
 device = torch.device("cuda" if args.cuda else "cpu")
+
+if not args.coresUsage == 'all'
+    torch.set_num_threads(int(args.coresUsage))
 
 kwargs = {'num_workers': 1, 'pin_memory': True} if args.cuda else {}
 print(args)

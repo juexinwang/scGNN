@@ -414,7 +414,9 @@ def vallina_mse_loss_function(input, target, size_average=None, reduce=None, red
     # Solution 2: not use C++ codes, as we did here.
     # https://github.com/pytorch/pytorch/issues/8710
     if target.requires_grad:
-        ret = (input - target) ** 2
+        # ret = (input - target) ** 2
+        # 100 to reduce float loss
+        ret = (100*input - 100*target) ** 2
         if reduction != 'none':
             ret = torch.mean(ret) if reduction == 'mean' else torch.sum(ret)
     else:
@@ -439,7 +441,8 @@ def regulation_mse_loss_function(input, target, regulationMatrix, size_average=N
     if size_average is not None or reduce is not None:
         reduction = legacy_get_string(size_average, reduce)
     # Now it use regulariz type to distinguish, it can be imporved later
-    ret = (input - target) ** 2
+    # ret = (input - target) ** 2
+    ret = (100*input - 100*target) ** 2
     ret = torch.mul(ret, regulationMatrix)
     if reduction != 'none':
         ret = torch.mean(ret) if reduction == 'mean' else torch.sum(ret)      
@@ -462,7 +465,8 @@ def regulation01_mse_loss_function(input, target, regulationMatrix, size_average
     if size_average is not None or reduce is not None:
         reduction = legacy_get_string(size_average, reduce)
     # Now it use regulariz type to distinguish, it can be imporved later
-    ret = (input - target) ** 2
+    # ret = (input - target) ** 2
+    ret = (100*input - 100*target) ** 2
     regulationMatrix[regulationMatrix>0]=1
     ret = torch.mul(ret, regulationMatrix)
     if reduction != 'none':
@@ -482,7 +486,8 @@ def graph_mse_loss_function(input, target, graphregu, size_average=None, reduce=
     if size_average is not None or reduce is not None:
         reduction = legacy_get_string(size_average, reduce)
     # Now it use regulariz type to distinguish, it can be imporved later
-    ret = (input - target) ** 2
+    # ret = (input - target) ** 2
+    ret = (100*input - 100*target) ** 2
     if graphregu != None:
         # print(graphregu.type())
         # print(ret.type())
