@@ -17,7 +17,7 @@ class GraphConvolution(Module):
         self.dropout = dropout
         # self.dropout = Parameter(torch.FloatTensor(dropout))
         self.act = act
-        self.weight = Parameter(torch.FloatTensor(in_features, out_features))
+        self.weight = Parameter(torch.DoubleTensor(in_features, out_features))
         self.reset_parameters()
 
     def reset_parameters(self):

@@ -73,7 +73,7 @@ def gae_for(args):
     adj_norm = preprocess_graph(adj)
     adj_label = adj_train + sp.eye(adj_train.shape[0])
     # adj_label = sparse_to_tuple(adj_label)
-    adj_label = torch.FloatTensor(adj_label.toarray())
+    adj_label = torch.DoubleTensor(adj_label.toarray())
 
     pos_weight = float(adj.shape[0] * adj.shape[0] - adj.sum()) / adj.sum()
     norm = adj.shape[0] * adj.shape[0] / float((adj.shape[0] * adj.shape[0] - adj.sum()) * 2)

@@ -49,7 +49,7 @@ def load_data(dataset):
 
     features = sp.vstack((allx, tx)).tolil()
     features[test_idx_reorder, :] = features[test_idx_range, :]
-    features = torch.FloatTensor(np.array(features.todense()))
+    features = torch.DoubleTensor(np.array(features.todense()))
     adj = nx.adjacency_matrix(nx.from_dict_of_lists(graph))
 
     labels = np.vstack((ally, ty))
@@ -278,7 +278,7 @@ def sparse_mx_to_torch_sparse_tensor(sparse_mx):
         np.vstack((sparse_mx.row, sparse_mx.col)).astype(np.int64))
     values = torch.from_numpy(sparse_mx.data)
     shape = torch.Size(sparse_mx.shape)
-    return torch.sparse.FloatTensor(indices, values, shape)
+    return torch.sparse.DoubleTensor(indices, values, shape)
 
 
 def get_roc_score(emb, adj_orig, edges_pos, edges_neg):
