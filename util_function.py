@@ -413,15 +413,22 @@ def vallina_mse_loss_function(input, target, size_average=None, reduce=None, red
     # https://pytorch.org/docs/stable/notes/cpu_threading_torchscript_inference.html
     # Solution 2: not use C++ codes, as we did here.
     # https://github.com/pytorch/pytorch/issues/8710
-    if target.requires_grad:
-        # ret = (input - target) ** 2
-        # 0.001 to reduce float loss
-        ret = (0.001*input - 0.001*target) ** 2
-        if reduction != 'none':
-            ret = torch.mean(ret) if reduction == 'mean' else torch.sum(ret)
-    else:
-        expanded_input, expanded_target = torch.broadcast_tensors(input, target)
-        ret = torch._C._nn.mse_loss(expanded_input, expanded_target, get_enum(reduction)) 
+    
+    # if target.requires_grad:
+    #     # ret = (input - target) ** 2
+    #     # 0.001 to reduce float loss
+    #     ret = (0.001*input - 0.001*target) ** 2
+    #     if reduction != 'none':
+    #         ret = torch.mean(ret) if reduction == 'mean' else torch.sum(ret)
+    # else:
+    #     expanded_input, expanded_target = torch.broadcast_tensors(input, target)
+    #     ret = torch._C._nn.mse_loss(expanded_input, expanded_target, get_enum(reduction)) 
+    
+    # ret = (input - target) ** 2
+    # 0.001 to reduce float loss
+    ret = (0.001*input - 0.001*target) ** 2
+    if reduction != 'none':
+        ret = torch.mean(ret) if reduction == 'mean' else torch.sum(ret)
     return ret
 
 # Regulation mse as the regularizor
