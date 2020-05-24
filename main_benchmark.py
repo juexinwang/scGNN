@@ -288,7 +288,7 @@ if __name__ == "__main__":
 
     outParaTag = str(args.gammaPara)+'-'+str(args.regularizePara)+'-'+str(args.reguParaCelltype)   
     ptfileStart = args.npyDir+args.datasetName+'_EMtrainingStart.pt'
-    # ptfileEnd   = args.npyDir+args.datasetName+'_EMtrainingEnd.pt'
+    ptfile      = args.npyDir+args.datasetName+'_EMtraining.pt'
 
     # Step 1. celltype clustering
     if args.debugMode == 'save':
@@ -312,8 +312,8 @@ if __name__ == "__main__":
         for epoch in range(1, args.epochs + 1):
             recon, original, z = train(epoch, EMFlag=False)
             
-        zOut = z.detach().cpu().numpy() 
-        # torch.save(model.state_dict(),ptfileEnd)
+        zOut = z.detach().cpu().numpy()
+        torch.save(model.state_dict(),ptfile)
 
         # Store reconOri for imputation
         reconOri = recon.clone()
@@ -483,7 +483,8 @@ if __name__ == "__main__":
                 reconNew = torch.from_numpy(reconNew)
                 reconNew = reconNew.type(torch.DoubleTensor)
                 reconNew = reconNew.to(device)
-
+                
+                model.load_state_dict(torch.load(ptfile))
                 for clusterIndex in clusterIndexList:
                     reconUsage = recon[clusterIndex]
                     scDataInter = scDatasetInter(reconUsage)
@@ -496,6 +497,7 @@ if __name__ == "__main__":
                         count +=1
                 # Update
                 recon = reconNew
+                torch.save(model.state_dict(),ptfile)
             
             # Use new dataloader
             scDataInter = scDatasetInter(recon)
