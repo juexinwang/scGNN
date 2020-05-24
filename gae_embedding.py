@@ -127,6 +127,8 @@ def GAEembedding(z, adj, args):
         model = GCNModelVAE(feat_dim, args.GAEhidden1, args.GAEhidden2, args.GAEdropout)
     else:
         model = GCNModelAE(feat_dim, args.GAEhidden1, args.GAEhidden2, args.GAEdropout)
+    # change to model with DoubleTensor
+    model=model.double()
     optimizer = optim.Adam(model.parameters(), lr=args.GAElr)
 
     # if args.dw == 1:
