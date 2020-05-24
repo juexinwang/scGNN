@@ -195,7 +195,7 @@ def train(epoch, train_loader=train_loader, EMFlag=False):
     # for batch_idx, (data, _) in enumerate(train_loader):
     # for batch_idx, data in enumerate(train_loader):
     for batch_idx, (data, dataindex) in enumerate(train_loader):
-        data = data.type(torch.FloatTensor)
+        data = data.type(torch.DoubleTensor)
         data = data.to(device)
         if not args.regulized_type == 'noregu':
             regulationMatrixBatch = regulationMatrix[dataindex,:]
@@ -511,7 +511,7 @@ if __name__ == "__main__":
             
             # Convert to Tensor
             reconNew = torch.from_numpy(reconNew)
-            reconNew = reconNew.type(torch.FloatTensor)
+            reconNew = reconNew.type(torch.DoubleTensor)
             reconNew = reconNew.to(device)
 
             # Original, no parallel

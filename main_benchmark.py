@@ -52,7 +52,7 @@ parser.add_argument('--seed', type=int, default=1, metavar='S',
                     help='random seed (default: 1)')
 parser.add_argument('--regulized-type', type=str, default='LTMG',
                     help='regulized type (default: Graph) in EM, otherwise: noregu/LTMG/LTMG01')
-parser.add_argument('--reduction', type=str, default='mean',
+parser.add_argument('--reduction', type=str, default='sum',
                     help='reduction type: mean/sum, default(sum)')
 
 # imputation related
@@ -206,7 +206,7 @@ def train(epoch, train_loader=train_loader, EMFlag=False, taskType='celltype'):
     # for batch_idx, (data, _) in enumerate(train_loader):
     # for batch_idx, data in enumerate(train_loader):
     for batch_idx, (data, dataindex) in enumerate(train_loader):
-        data = data.type(torch.FloatTensor)
+        data = data.type(torch.DoubleTensor)
         data = data.to(device)
         regulationMatrixBatch = regulationMatrix[dataindex,:]
         optimizer.zero_grad()
@@ -474,7 +474,7 @@ if __name__ == "__main__":
                 
                 # Convert to Tensor
                 reconNew = torch.from_numpy(reconNew)
-                reconNew = reconNew.type(torch.FloatTensor)
+                reconNew = reconNew.type(torch.DoubleTensor)
                 reconNew = reconNew.to(device)
 
                 for clusterIndex in clusterIndexList:
