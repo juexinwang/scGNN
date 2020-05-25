@@ -667,13 +667,15 @@ if __name__ == "__main__":
         adj = adj.tolist()
         adjdense = sp.csr_matrix.todense(adj)
         adjsample = torch.from_numpy(adjdense)
+        # adjsample = adjsample.float()
         adjsample = adjsample.type(torch.DoubleTensor)
 
         # generate celltype regularizer from celltype
         celltypesample = generateCelltypeRegu(listResult)
 
         celltypesample = torch.from_numpy(celltypesample)
-        celltypesample = celltypesample.float()
+        # celltypesample = celltypesample.float()
+        celltypesample = celltypesample.type(torch.DoubleTensor)
 
         for epoch in range(1, args.EM_epochs + 1):
             recon, original, z = train(epoch, EMFlag=True, taskType='imputation')
