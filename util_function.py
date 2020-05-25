@@ -496,8 +496,8 @@ def graph_mse_loss_function(input, target, graphregu, size_average=None, reduce=
     ret = (input - target) ** 2
     # ret = (0.001*input - 0.001*target) ** 2
     if graphregu != None:
-        # print(graphregu.type())
-        # print(ret.type())
+        print(graphregu.type())
+        print(ret.type())
         ret = torch.matmul(graphregu, ret)
     if reduction != 'none':
         ret = torch.mean(ret) if reduction == 'mean' else torch.sum(ret)      
