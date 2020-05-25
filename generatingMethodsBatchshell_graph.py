@@ -23,7 +23,7 @@ templateStr1 = "#! /bin/bash\n"\
 templateStr2 = "\n#SBATCH -o results-%j.out           # give the job output a custom name\n"\
 "#SBATCH -t 2-00:00                  # two days time limit\n"\
 "#SBATCH -N 1                        # number of nodes\n"\
-"#SBATCH -n 1                        # number of cores (AKA tasks)\n"\
+"#SBATCH -n 10                        # number of cores (AKA tasks)\n"\
 "#SBATCH --mem=128G\n"\
 "#################################################################\n"\
 "module load miniconda3\n"\
