@@ -55,6 +55,8 @@ def main(raw_args=None):
     parser.add_argument('--ns', type=int, default=1, help="whether to use negative samples for skipgram")
     parser.add_argument('--n-clusters', default=11, type=int, help='number of clusters, 7 for cora, 6 for citeseer')
     parser.add_argument('--GAEplot', type=int, default=0, help="whether to plot the clusters using tsne")
+    parser.add_argument('--precisionModel', type=str, default='Float', 
+                    help='Single Precision/Double precision: Float/Double (default:Float)')
     args = parser.parse_args()
 
 #gae embedding
@@ -89,7 +91,8 @@ def GAEembedding(z, adj, args):
     # featrues from z
     # Louvain
     features = z
-    features = torch.DoubleTensor(features)
+    # features = torch.DoubleTensor(features)
+    features = torch.FloatTensor(features)
 
     # Old implementation
     # adj, features, y_test, tx, ty, test_maks, true_labels = load_data(args.dataset_str)
@@ -118,7 +121,8 @@ def GAEembedding(z, adj, args):
     adj_norm = preprocess_graph(adj)
     adj_label = adj_train + sp.eye(adj_train.shape[0])
     # adj_label = sparse_to_tuple(adj_label)
-    adj_label = torch.DoubleTensor(adj_label.toarray())
+    # adj_label = torch.DoubleTensor(adj_label.toarray())
+    adj_label = torch.FloatTensor(adj_label.toarray())
 
     pos_weight = float(adj.shape[0] * adj.shape[0] - adj.sum()) / adj.sum()
     norm = adj.shape[0] * adj.shape[0] / float((adj.shape[0] * adj.shape[0] - adj.sum()) * 2)
@@ -127,8 +131,8 @@ def GAEembedding(z, adj, args):
         model = GCNModelVAE(feat_dim, args.GAEhidden1, args.GAEhidden2, args.GAEdropout)
     else:
         model = GCNModelAE(feat_dim, args.GAEhidden1, args.GAEhidden2, args.GAEdropout)
-    # change to model with DoubleTensor
-    model=model.double()
+    if args.precisionModel == 'Double':
+        model=model.double()
     optimizer = optim.Adam(model.parameters(), lr=args.GAElr)
 
     # if args.dw == 1:

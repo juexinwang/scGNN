@@ -83,7 +83,7 @@ paraList = [
     '--gammaPara 0.0 --regularizePara 0.1 --reguParaCelltype 0.3',
     '--gammaPara 0.0 --regularizePara 0.1 --reguParaCelltype 0.9',
     '--gammaPara 0.0 --regularizePara 0.3 --reguParaCelltype 0.1',
-    '--gammaPara 0.0 --regularizePara 0.9 --reguParaCelltype 0.1',
+    '--gammaPara 0.0 --regularizePara 0.9 --reguParaCelltype 0.1',#*
 
     '--gammaPara 0.1 --regularizePara 0.0 --reguParaCelltype 0.9',
     '--gammaPara 0.1 --regularizePara 0.1 --reguParaCelltype 0.0',
@@ -95,7 +95,7 @@ paraList = [
 
     '--gammaPara 0.3 --regularizePara 0.0 --reguParaCelltype 0.9',
     '--gammaPara 0.3 --regularizePara 0.1 --reguParaCelltype 0.0',
-    '--gammaPara 0.3 --regularizePara 0.1 --reguParaCelltype 0.1',
+    '--gammaPara 0.3 --regularizePara 0.1 --reguParaCelltype 0.1',#*
     '--gammaPara 0.3 --regularizePara 0.1 --reguParaCelltype 0.3',
     '--gammaPara 0.3 --regularizePara 0.1 --reguParaCelltype 0.9',
     '--gammaPara 0.3 --regularizePara 0.3 --reguParaCelltype 0.1',

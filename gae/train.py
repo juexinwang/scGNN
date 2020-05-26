@@ -43,6 +43,8 @@ parser.add_argument('--context', type=int, default=0, help="whether to use conte
 parser.add_argument('--ns', type=int, default=1, help="whether to use negative samples for skipgram")
 parser.add_argument('--n-clusters', default=7, type=int, help='number of clusters, 7 for cora, 6 for citeseer')
 parser.add_argument('--plot', type=int, default=0, help="whether to plot the clusters using tsne")
+parser.add_argument('--precisionModel', type=str, default='Float', 
+                    help='Single Precision/Double precision: Float/Double (default:Float)')
 args = parser.parse_args()
 
 
@@ -73,7 +75,8 @@ def gae_for(args):
     adj_norm = preprocess_graph(adj)
     adj_label = adj_train + sp.eye(adj_train.shape[0])
     # adj_label = sparse_to_tuple(adj_label)
-    adj_label = torch.DoubleTensor(adj_label.toarray())
+    # adj_label = torch.DoubleTensor(adj_label.toarray())
+    adj_label = torch.FloatTensor(adj_label.toarray())
 
     pos_weight = float(adj.shape[0] * adj.shape[0] - adj.sum()) / adj.sum()
     norm = adj.shape[0] * adj.shape[0] / float((adj.shape[0] * adj.shape[0] - adj.sum()) * 2)

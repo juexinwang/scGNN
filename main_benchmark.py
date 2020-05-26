@@ -85,8 +85,10 @@ parser.add_argument('--zerofillFlag', action='store_true', default=False,
                     help='fill zero or not before EM process (default: False)')
 
 #Debug related
-parser.add_argument('--coresUsage', type=str, default='all', 
-                    help='how many cores used: all/1/...')
+parser.add_argument('--precisionModel', type=str, default='Float', 
+                    help='Single Precision/Double precision: Float/Double (default:Float)')
+parser.add_argument('--coresUsage', type=str, default='1', 
+                    help='how many cores used: all/1/... (default:1)')
 parser.add_argument('--debugMode', type=str, default='save', 
                     help='debugMode: save/load/normal')
 parser.add_argument('--saveFlag', action='store_true', default=True, 
@@ -191,8 +193,8 @@ if args.model == 'VAE':
     model = VAE2d(dim=scData.features.shape[1]).to(device)
 elif args.model == 'AE':
     model = AE(dim=scData.features.shape[1]).to(device)
-# change to model with DoubleTensor
-model=model.double()
+if args.precisionModel == 'Double':
+    model=model.double()
 optimizer = optim.Adam(model.parameters(), lr=1e-3)
 
 #Benchmark
@@ -213,7 +215,10 @@ def train(epoch, train_loader=train_loader, EMFlag=False, taskType='celltype'):
     # for batch_idx, (data, _) in enumerate(train_loader):
     # for batch_idx, data in enumerate(train_loader):
     for batch_idx, (data, dataindex) in enumerate(train_loader):
-        data = data.type(torch.DoubleTensor)
+        if args.precisionModel == 'Double':
+            data = data.type(torch.DoubleTensor)
+        elif args.precisionModel == 'Float':
+            data = data.type(torch.FloatTensor)
         data = data.to(device)
         regulationMatrixBatch = regulationMatrix[dataindex,:]
         optimizer.zero_grad()
@@ -482,7 +487,10 @@ if __name__ == "__main__":
                 
                 # Convert to Tensor
                 reconNew = torch.from_numpy(reconNew)
-                reconNew = reconNew.type(torch.DoubleTensor)
+                if args.precisionModel == 'Double':
+                    reconNew = reconNew.type(torch.DoubleTensor)
+                elif args.precisionModel == 'Float':
+                    reconNew = reconNew.type(torch.FloatTensor)
                 reconNew = reconNew.to(device)
                 
                 # model.load_state_dict(torch.load(ptfile))
@@ -667,15 +675,19 @@ if __name__ == "__main__":
         adj = adj.tolist()
         adjdense = sp.csr_matrix.todense(adj)
         adjsample = torch.from_numpy(adjdense)
-        # adjsample = adjsample.float()
-        adjsample = adjsample.type(torch.DoubleTensor)
+        if args.precisionModel == 'Float':
+            adjsample = adjsample.float()
+        elif args.precisionModel == 'Double':
+            adjsample = adjsample.type(torch.DoubleTensor)
 
         # generate celltype regularizer from celltype
         celltypesample = generateCelltypeRegu(listResult)
 
         celltypesample = torch.from_numpy(celltypesample)
-        # celltypesample = celltypesample.float()
-        celltypesample = celltypesample.type(torch.DoubleTensor)
+        if args.precisionModel == 'Float':
+            celltypesample = celltypesample.float()
+        elif args.precisionModel == 'Double':
+            celltypesample = celltypesample.type(torch.DoubleTensor)
 
         for epoch in range(1, args.EM_epochs + 1):
             recon, original, z = train(epoch, EMFlag=True, taskType='imputation')
