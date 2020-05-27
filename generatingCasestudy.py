@@ -30,12 +30,12 @@ methodsList = [
 
 # select
 datasetNameList = [
-    'AD_GSE138852_2x8CT',  #1
-    'AD_GSE103334_NORMED_8CT', #2
-    'E-GEOD-139324', #3 *
-    'liver_cancer_GSE98638_11CT --nonsparseMode', #4 *
-    'liver_cancer_10X_20CT',  #5 *
-    'liver_cancer_smart_22CT --nonsparseMode', #6 *
+    'AD_GSE138852_2x8CT',  #1 **
+    'AD_GSE103334_NORMED_8CT', #2 **
+    'E-GEOD-139324', #3 
+    'liver_cancer_GSE98638_11CT --nonsparseMode', #4 **
+    'liver_cancer_10X_20CT',  #5 **
+    'liver_cancer_smart_22CT --nonsparseMode', #6 **
     'GSM2388072', #7
     'BR', #8
     'Par', #9

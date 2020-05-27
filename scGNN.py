@@ -152,6 +152,9 @@ checkargs(args)
 torch.manual_seed(args.seed)
 device = torch.device("cuda" if args.cuda else "cpu")
 
+if not args.coresUsage == 'all':
+    torch.set_num_threads(int(args.coresUsage))
+
 kwargs = {'num_workers': 1, 'pin_memory': True} if args.cuda else {}
 print(args)
 start_time = time.time()
@@ -180,22 +183,28 @@ if args.model == 'VAE':
     model = VAE2d(dim=scData.features.shape[1]).to(device)
 elif args.model == 'AE':
     model = AE(dim=scData.features.shape[1]).to(device)
+if args.precisionModel == 'Double':
+    model=model.double()
 optimizer = optim.Adam(model.parameters(), lr=1e-3)
 print ('---'+str(datetime.timedelta(seconds=int(time.time()-start_time)))+'---Pytorch model ready.')
 
 #TODO: have to improve save npy
-def train(epoch, train_loader=train_loader, EMFlag=False):
+def train(epoch, train_loader=train_loader, EMFlag=False, taskType='celltype'):
     '''
     EMFlag indicates whether in EM processes. 
         If in EM, use regulized-type parsed from program entrance,
         Otherwise, noregu
+        taskType: celltype or imputation
     '''
     model.train()
     train_loss = 0 
     # for batch_idx, (data, _) in enumerate(train_loader):
     # for batch_idx, data in enumerate(train_loader):
     for batch_idx, (data, dataindex) in enumerate(train_loader):
-        data = data.type(torch.DoubleTensor)
+        if args.precisionModel == 'Double':
+            data = data.type(torch.DoubleTensor)
+        elif args.precisionModel == 'Float':
+            data = data.type(torch.FloatTensor)
         data = data.to(device)
         if not args.regulized_type == 'noregu':
             regulationMatrixBatch = regulationMatrix[dataindex,:]
@@ -228,10 +237,16 @@ def train(epoch, train_loader=train_loader, EMFlag=False):
             recon_batch, mu, logvar, z = model(data)
             # Original
             # loss = loss_function(recon_batch, data, mu, logvar)
-            if EMFlag and (not args.EMreguTag):
-                loss = loss_function_graph_celltype(recon_batch, data.view(-1, recon_batch.shape[1]), mu, logvar, graphregu=adjsample, celltyperegu=celltypesample, gammaPara=args.gammaPara, regulationMatrix=regulationMatrixBatch, regularizer_type=args.EMregulized_type, reguPara=args.regularizePara, reguParaCelltype=args.reguParaCelltype, modelusage=args.model)
-            else: 
-                loss = loss_function_graph_celltype(recon_batch, data.view(-1, recon_batch.shape[1]), mu, logvar, graphregu=adjsample, celltyperegu=celltypesample, gammaPara=args.gammaPara, regulationMatrix=regulationMatrixBatch, regularizer_type=args.regulized_type, reguPara=args.regularizePara, reguParaCelltype=args.reguParaCelltype, modelusage=args.model)    
+            if taskType == 'celltype':
+                if EMFlag and (not args.EMreguTag):
+                    loss = loss_function_graph(recon_batch, data.view(-1, recon_batch.shape[1]), mu, logvar, gammaPara=args.gammaPara, regulationMatrix=regulationMatrixBatch, regularizer_type='noregu', reguPara=args.regularizePara, modelusage=args.model, reduction=args.reduction)
+                else: 
+                    loss = loss_function_graph(recon_batch, data.view(-1, recon_batch.shape[1]), mu, logvar, gammaPara=args.gammaPara, regulationMatrix=regulationMatrixBatch, regularizer_type=args.regulized_type, reguPara=args.regularizePara, modelusage=args.model, reduction=args.reduction)
+            elif taskType == 'imputation':
+                if EMFlag and (not args.EMreguTag):
+                    loss = loss_function_graph_celltype(recon_batch, data.view(-1, recon_batch.shape[1]), mu, logvar, graphregu=adjsample, celltyperegu=celltypesample, gammaPara=args.gammaPara, regulationMatrix=regulationMatrixBatch, regularizer_type=args.EMregulized_type, reguPara=args.regularizePara, reguParaCelltype=args.reguParaCelltype, modelusage=args.model, reduction=args.reduction)
+                else: 
+                    loss = loss_function_graph_celltype(recon_batch, data.view(-1, recon_batch.shape[1]), mu, logvar, graphregu=adjsample, celltyperegu=celltypesample, gammaPara=args.gammaPara, regulationMatrix=regulationMatrixBatch, regularizer_type=args.regulized_type, reguPara=args.regularizePara, reguParaCelltype=args.reguParaCelltype, modelusage=args.model, reduction=args.reduction)    
             
         elif args.model == 'AE':
             recon_batch, z = model(data)
@@ -239,12 +254,17 @@ def train(epoch, train_loader=train_loader, EMFlag=False):
             logvar_dummy = ''
             # Original
             # loss = loss_function(recon_batch, data, mu, logvar)
-            if EMFlag and (not args.EMreguTag):
-                loss = loss_function_graph_celltype(recon_batch, data.view(-1, recon_batch.shape[1]), mu_dummy, logvar_dummy, graphregu=adjsample, celltyperegu=celltypesample, gammaPara=args.gammaPara, regulationMatrix=regulationMatrixBatch, regularizer_type=args.EMregulized_type, reguPara=args.regularizePara, reguParaCelltype=args.reguParaCelltype, modelusage=args.model)    
-            else:
-                loss = loss_function_graph_celltype(recon_batch, data.view(-1, recon_batch.shape[1]), mu_dummy, logvar_dummy, graphregu=adjsample, celltyperegu=celltypesample, gammaPara=args.gammaPara, regulationMatrix=regulationMatrixBatch, regularizer_type=args.regulized_type, reguPara=args.regularizePara, reguParaCelltype=args.reguParaCelltype, modelusage=args.model)
-        
-
+            if taskType == 'celltype':
+                if EMFlag and (not args.EMreguTag):
+                    loss = loss_function_graph(recon_batch, data.view(-1, recon_batch.shape[1]), mu_dummy, logvar_dummy, gammaPara=args.gammaPara, regulationMatrix=regulationMatrixBatch, regularizer_type='noregu', reguPara=args.regularizePara, modelusage=args.model, reduction=args.reduction)    
+                else:
+                    loss = loss_function_graph(recon_batch, data.view(-1, recon_batch.shape[1]), mu_dummy, logvar_dummy, gammaPara=args.gammaPara, regulationMatrix=regulationMatrixBatch, regularizer_type=args.regulized_type, reguPara=args.regularizePara, modelusage=args.model, reduction=args.reduction)
+            elif taskType == 'imputation':
+                if EMFlag and (not args.EMreguTag):
+                    loss = loss_function_graph_celltype(recon_batch, data.view(-1, recon_batch.shape[1]), mu_dummy, logvar_dummy, graphregu=adjsample, celltyperegu=celltypesample, gammaPara=args.gammaPara, regulationMatrix=regulationMatrixBatch, regularizer_type=args.EMregulized_type, reguPara=args.regularizePara, reguParaCelltype=args.reguParaCelltype, modelusage=args.model, reduction=args.reduction)    
+                else:
+                    loss = loss_function_graph_celltype(recon_batch, data.view(-1, recon_batch.shape[1]), mu_dummy, logvar_dummy, graphregu=adjsample, celltyperegu=celltypesample, gammaPara=args.gammaPara, regulationMatrix=regulationMatrixBatch, regularizer_type=args.regulized_type, reguPara=args.regularizePara, reguParaCelltype=args.reguParaCelltype, modelusage=args.model, reduction=args.reduction)
+                 
         # L1 and L2 regularization
         # 0.0 for no regularization 
         l1 = 0.0
@@ -278,64 +298,45 @@ def train(epoch, train_loader=train_loader, EMFlag=False):
 
     return recon_batch_all, data_all, z_all
 
-class CelltypeAEParallel():
-    '''
-    Celltype AutoEncoder training in parallel
-    '''
-    def __init__(self,recon,clusterIndexList,args):
-        self.recon = recon
-        self.clusterIndexList = clusterIndexList   
-        self.batch_size = args.batch_size
-        self.celltype_epochs = args.celltype_epochs
-
-    def trainParallel(self,i):
-        '''
-        Train each autoencoder in paral
-        '''
-        clusterIndex = self.clusterIndexList[i]
-        reconUsage = self.recon[clusterIndex]
-        scDataInter = scDatasetInter(reconUsage)
-        train_loader = DataLoader(scDataInter, batch_size=self.batch_size, shuffle=False, **kwargs)
-        for epoch in range(1, self.celltype_epochs + 1):
-            reconCluster, originalCluster, zCluster = train(epoch, EMFlag=True)                
-        
-        return reconCluster
-    
-    def work(self):
-        return Pool().map(self.trainParallel, range(len(self.clusterIndexList)))
-
 
 if __name__ == "__main__":
+    start_time = time.time()
     adjsample = None
     celltypesample = None
-    # ptfile = args.outputDir+args.datasetName+'_'+str(args.regularizePara)+'_EMtraining.pt'
-    ptfileOri = args.outputDir+args.datasetName+'_'+str(args.regularizePara)+'_EMtrainingOri.pt'
-    torch.save(model.state_dict(),ptfileOri)
+    outParaTag = str(args.gammaPara)+'-'+str(args.regularizePara)+'-'+str(args.reguParaCelltype)   
+    ptfileStart = args.npyDir+args.datasetName+'_EMtrainingStart.pt'
+    ptfile      = args.npyDir+args.datasetName+'_EMtraining.pt'
 
-    # May need reconstruct
-    # start_time = time.time()
 
     # Debug
     if args.debugMode == 'savePrune' or args.debugMode == 'noDebug':
+        # store parameter
+        torch.save(model.state_dict(),ptfileStart)
         print('Start training...')
         for epoch in range(1, args.Regu_epochs + 1):
             recon, original, z = train(epoch, EMFlag=False)
             
         zOut = z.detach().cpu().numpy()
-        print ('zOut ready at '+ str(time.time()-start_time)) 
-            
+        print ('zOut ready at '+ str(time.time()-start_time))
+        ptstatus = model.state_dict() 
+        
+        # Store reconOri for imputation
+        reconOri = recon.clone()
+        reconOri = reconOri.detach().cpu().numpy()
+
+        # Step 1. Inferring celltype
+
         # Here para = 'euclidean:10'
         # adj, edgeList = generateAdj(zOut, graphType='KNNgraphML', para = args.knn_distance+':'+str(args.k)) 
         print('---'+str(datetime.timedelta(seconds=int(time.time()-start_time)))+'---Start Prune')
-        # adj, edgeList = generateAdj(zOut, graphType=args.prunetype, para = args.knn_distance+':'+str(args.k), parallelLimit=args.parallelLimit) 
-        if args.adjtype=='unweighted':
             adj, edgeList = generateAdj(zOut, graphType=args.prunetype, para = args.knn_distance+':'+str(args.k), outAdjTag = (args.useGAEembedding or args.useBothembedding))
             adjdense = sp.csr_matrix.todense(adj)
-        elif args.adjtype=='weighted':
-            adj, edgeList = generateAdjWeighted(zOut, graphType=args.prunetype, para = args.knn_distance+':'+str(args.k), outAdjTag = (args.useGAEembedding or args.useBothembedding))   
-            adjdense = adj.toarray()
-        adjsample = torch.from_numpy(adjdense)
-        adjsample = adjsample.float()
+        # if args.adjtype == 'unweighted':
+        #     adj, edgeList = generateAdj(zOut, graphType=args.prunetype, para = args.knn_distance+':'+str(args.k), outAdjTag = (args.useGAEembedding or args.useBothembedding)) 
+        #     adjdense = sp.csr_matrix.todense(adj)
+        # elif args.adjtype == 'weighted':
+        #     adj, edgeList = generateAdjWeighted(zOut, graphType=args.prunetype, para = args.knn_distance+':'+str(args.k), outAdjTag = (args.useGAEembedding or args.useBothembedding))         
+        #     adjdense = adj.toarray()
         print('---'+str(datetime.timedelta(seconds=int(time.time()-start_time)))+'---Prune Finished')
         mem=resource.getrusage(resource.RUSAGE_SELF).ru_maxrss
         print('Mem consumption: '+str(mem))
@@ -492,12 +493,12 @@ if __name__ == "__main__":
             listResult = trimClustering(listResult,minMemberinCluster=args.minMemberinCluster,maxClusterNumber=args.maxClusterNumber)
         
         #Calculate silhouette
-        # measure_clustering_results(zOut, listResult)
+        measure_clustering_results(zOut, listResult)
         print('Total Cluster Number: '+str(len(set(listResult))))
         mem=resource.getrusage(resource.RUSAGE_SELF).ru_maxrss
         print('Mem consumption: '+str(mem))
 
-        #Graph regulizated EM AE with celltype AE
+        #Graph regulizated EM AE with celltype AE, do the additional AE
         if not args.quickmode : 
             # Each cluster has a autoencoder, and organize them back in iteraization
             print('---'+str(datetime.timedelta(seconds=int(time.time()-start_time)))+'---Start celltype autoencoder.')
@@ -511,10 +512,14 @@ if __name__ == "__main__":
             
             # Convert to Tensor
             reconNew = torch.from_numpy(reconNew)
-            reconNew = reconNew.type(torch.DoubleTensor)
+            if args.precisionModel == 'Double':
+                    reconNew = reconNew.type(torch.DoubleTensor)
+                elif args.precisionModel == 'Float':
+                    reconNew = reconNew.type(torch.FloatTensor)
             reconNew = reconNew.to(device)
 
-            # Original, no parallel
+            model.load_state_dict(ptstatus)
+
             for clusterIndex in clusterIndexList:
                 reconUsage = recon[clusterIndex]
                 scDataInter = scDatasetInter(reconUsage)
@@ -543,6 +548,7 @@ if __name__ == "__main__":
             
             # Update
             recon = reconNew
+            ptstatus = model.state_dict()
         
         mem=resource.getrusage(resource.RUSAGE_SELF).ru_maxrss
         print('Mem consumption: '+str(mem))
@@ -550,8 +556,6 @@ if __name__ == "__main__":
         scDataInter = scDatasetInter(recon)
         train_loader = DataLoader(scDataInter, batch_size=args.batch_size, shuffle=False, **kwargs)
 
-        if args.aeOriginal:
-            model.load_state_dict(torch.load(ptfileOri))
         for epoch in range(1, args.EM_epochs + 1):
             recon, original, z = train(epoch, EMFlag=True)
         
@@ -563,14 +567,14 @@ if __name__ == "__main__":
         # adj, edgeList = generateAdj(zOut, graphType='KNNgraphML', para = args.knn_distance+':'+str(args.k)) 
         print('---'+str(datetime.timedelta(seconds=int(time.time()-start_time)))+'---Start Prune')
         # adj, edgeList = generateAdj(zOut, graphType=args.prunetype, para = args.knn_distance+':'+str(args.k), parallelLimit= args.parallelLimit, outAdjTag = (args.useGAEembedding or args.useBothembedding)) 
-        if args.adjtype == 'unweighted':
-            adj, edgeList = generateAdj(zOut, graphType=args.prunetype, para = args.knn_distance+':'+str(args.k), outAdjTag = (args.useGAEembedding or args.useBothembedding)) 
-            adjdense = sp.csr_matrix.todense(adj)
-        elif args.adjtype == 'weighted':
-            adj, edgeList = generateAdjWeighted(zOut, graphType=args.prunetype, para = args.knn_distance+':'+str(args.k), outAdjTag = (args.useGAEembedding or args.useBothembedding))         
-            adjdense = adj.toarray()
-        adjsample = torch.from_numpy(adjdense)
-        adjsample = adjsample.float()
+        adj, edgeList = generateAdj(zOut, graphType=args.prunetype, para = args.knn_distance+':'+str(args.k), outAdjTag = (args.useGAEembedding or args.useBothembedding)) 
+        adjdense = sp.csr_matrix.todense(adj)
+        # if args.adjtype == 'unweighted':
+            #     adj, edgeList = generateAdj(zOut, graphType=args.prunetype, para = args.knn_distance+':'+str(args.k), outAdjTag = (args.useGAEembedding or args.useBothembedding)) 
+            #     adjdense = sp.csr_matrix.todense(adj)
+            # elif args.adjtype == 'weighted':
+            #     adj, edgeList = generateAdjWeighted(zOut, graphType=args.prunetype, para = args.knn_distance+':'+str(args.k), outAdjTag = (args.useGAEembedding or args.useBothembedding))         
+            #     adjdense = adj.toarray()
         print('---'+str(datetime.timedelta(seconds=int(time.time()-start_time)))+'---Prune Finished')
         mem=resource.getrusage(resource.RUSAGE_SELF).ru_maxrss
         print('Mem consumption: '+str(mem))
