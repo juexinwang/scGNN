@@ -288,8 +288,8 @@ if __name__ == "__main__":
     adjsample = None
     celltypesample = None
     # outParaTag = str(args.gammaImputePara)+'-'+str(args.graphImputePara)+'-'+str(args.celltypeImputePara)   
-    ptfileStart = args.npyDir+args.datasetName+'_EMtrainingStart.pt'
-    ptfile      = args.npyDir+args.datasetName+'_EMtraining.pt'
+    ptfileStart = args.outputDir+args.datasetName+'_EMtrainingStart.pt'
+    # ptfile      = args.outputDir+args.datasetName+'_EMtraining.pt'
 
     # Debug
     if args.debugMode == 'savePrune' or args.debugMode == 'noDebug':
