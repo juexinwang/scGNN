@@ -97,7 +97,7 @@ parser.add_argument('--debugMode', type=str, default='noDebug',
                     help='savePrune/loadPrune for debug reason (default: noDebug)')
 parser.add_argument('--nonsparseMode', action='store_true', default=False, 
                     help='SparseMode for running for huge dataset')
-                    
+
 #LTMG related
 parser.add_argument('--LTMGDir', type=str, default='/storage/htc/joshilab/wangjue/casestudy/',
                     help='directory of LTMGDir, default:(/home/wangjue/biodata/scData/allBench/)')
@@ -312,8 +312,8 @@ if __name__ == "__main__":
         # Here para = 'euclidean:10'
         # adj, edgeList = generateAdj(zOut, graphType='KNNgraphML', para = args.knn_distance+':'+str(args.k)) 
         print('---'+str(datetime.timedelta(seconds=int(time.time()-start_time)))+'---Start Prune')
-            adj, edgeList = generateAdj(zOut, graphType=args.prunetype, para = args.knn_distance+':'+str(args.k), outAdjTag = (args.useGAEembedding or args.useBothembedding))
-            adjdense = sp.csr_matrix.todense(adj)
+        adj, edgeList = generateAdj(zOut, graphType=args.prunetype, para = args.knn_distance+':'+str(args.k), outAdjTag = (args.useGAEembedding or args.useBothembedding))
+        adjdense = sp.csr_matrix.todense(adj)
         # if args.adjtype == 'unweighted':
         #     adj, edgeList = generateAdj(zOut, graphType=args.prunetype, para = args.knn_distance+':'+str(args.k), outAdjTag = (args.useGAEembedding or args.useBothembedding)) 
         #     adjdense = sp.csr_matrix.todense(adj)
