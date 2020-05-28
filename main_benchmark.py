@@ -50,13 +50,15 @@ parser.add_argument('--no-cuda', action='store_true', default=True,
 parser.add_argument('--seed', type=int, default=1, metavar='S',
                     help='random seed (default: 1)')
 parser.add_argument('--regulized-type', type=str, default='LTMG',
-                    help='regulized type (default: Graph) in EM, otherwise: noregu/LTMG/LTMG01')
+                    help='regulized type (default: LTMG) in EM, otherwise: noregu/LTMG/LTMG01')
 parser.add_argument('--reduction', type=str, default='sum',
                     help='reduction type: mean/sum, default(sum)')
+parser.add_argument('--model', type=str, default='AE',
+                    help='VAE/AE (default: AE)')
 parser.add_argument('--gammaPara', type=float, default=0.1,
-                    help='regulized parameter (default: 1.0)')
+                    help='regulized parameter (default: 0.1)')
 parser.add_argument('--regularizePara', type=float, default=0.9,
-                    help='regulized parameter (default: 0.001)')
+                    help='regulized parameter (default: 0.9)')
 
 # imputation related
 parser.add_argument('--EMregulized-type', type=str, default='Celltype',
@@ -72,17 +74,16 @@ parser.add_argument('--graphImputePara', type=float, default=0.3,
 parser.add_argument('--celltypeImputePara', type=float, default=0.1,
                     help='celltype parameter (default: 0.1)')
 parser.add_argument('--L1Para', type=float, default=0.0,
-                    help='regulized parameter (default: 0.001)')
+                    help='L1 regulized parameter (default: 0.001)')
 parser.add_argument('--L2Para', type=float, default=0.0,
-                    help='regulized parameter (default: 0.001)')
+                    help='L2 regulized parameter (default: 0.001)')
 parser.add_argument('--discreteTag', action='store_true', default=False, 
                     help='whether input is raw or 0/1 (default: False)')
+#Build cell graph
 parser.add_argument('--k', type=int, default=10,
                     help='parameter k in KNN graph (default: 10)')
 parser.add_argument('--knn-distance', type=str, default='euclidean',
-                    help='KNN graph distance type (default: euclidean)')                    
-parser.add_argument('--model', type=str, default='AE',
-                    help='VAE/AE (default: AE)')
+                    help='KNN graph distance type: euclidean/cosine/correlation (default: euclidean)')
 parser.add_argument('--zerofillFlag', action='store_true', default=False, 
                     help='fill zero or not before EM process (default: False)')
 
@@ -649,8 +650,8 @@ if __name__ == "__main__":
     #     model.load_state_dict(torch.load(ptfileEnd))
     
     # generate graph regularizer from graph
-    adj = adj.tolist()
-    adjdense = sp.csr_matrix.todense(adj)
+    # adj = adj.tolist() # Used for read/load
+    # adjdense = sp.csr_matrix.todense(adj)
     adjsample = torch.from_numpy(adjdense)
     if args.precisionModel == 'Float':
         adjsample = adjsample.float()

@@ -64,12 +64,28 @@ parser.add_argument('--quickmode', action='store_true', default=False,
 #Regulation autoencoder
 parser.add_argument('--regulized-type', type=str, default='LTMG',
                     help='regulized type (default: LTMG) in EM, otherwise: noregu/LTMG/LTMG01')
+parser.add_argument('--reduction', type=str, default='sum',
+                    help='reduction type: mean/sum, default(sum)')
 parser.add_argument('--model', type=str, default='AE',
                     help='VAE/AE (default: AE)')
 parser.add_argument('--gammaPara', type=float, default=0.1,
                     help='regulized parameter (default: 0.1)')
-parser.add_argument('--regularizePara', type=float, default=0.1,
-                    help='regulized parameter (default: 0.1)')
+parser.add_argument('--regularizePara', type=float, default=0.9,
+                    help='regulized parameter (default: 0.9)')
+
+# imputation related
+parser.add_argument('--EMregulized-type', type=str, default='Celltype',
+                    help='regulized type (default: noregu) in EM, otherwise: noregu/Graph/GraphR/Celltype')
+# parser.add_argument('--adjtype', type=str, default='unweighted',
+#                     help='adjtype (default: weighted) otherwise: unweighted') 
+# parser.add_argument('--aePara', type=str, default='start', 
+#                     help='whether use parameter of first feature autoencoder: start/end/cont') 
+parser.add_argument('--gammaImputePara', type=float, default=0.0,
+                    help='regulized parameter (default: 0.0)')
+parser.add_argument('--graphImputePara', type=float, default=0.3,
+                    help='graph parameter (default: 0.3)')
+parser.add_argument('--celltypeImputePara', type=float, default=0.1,
+                    help='celltype parameter (default: 0.1)')
 parser.add_argument('--L1Para', type=float, default=0.0,
                     help='L1 regulized parameter (default: 0.001)')
 parser.add_argument('--L2Para', type=float, default=0.0,
@@ -88,13 +104,6 @@ parser.add_argument('--useGAEembedding', action='store_true', default=False,
                     help='whether use GAE embedding for clustering(default: False)')
 parser.add_argument('--useBothembedding', action='store_true', default=False, 
                     help='whether use both embedding and Graph embedding for clustering(default: False)')
-parser.add_argument('--GAEmodel', type=str, default='gcn_vae', help="models used")
-parser.add_argument('--GAEepochs', type=int, default=200, help='Number of epochs to train.')
-parser.add_argument('--GAEhidden1', type=int, default=32, help='Number of units in hidden layer 1.')
-parser.add_argument('--GAEhidden2', type=int, default=16, help='Number of units in hidden layer 2.')
-parser.add_argument('--GAElr', type=float, default=0.01, help='Initial learning rate.')
-parser.add_argument('--GAEdropout', type=float, default=0., help='Dropout rate (1 - keep probability).')
-parser.add_argument('--GAElr_dw', type=float, default=0.001, help='Initial learning rate for regularization.')
 
 #Clustering related
 parser.add_argument('--n-clusters', default=20, type=int, help='number of clusters if predifined for KMeans/Birch ')
@@ -140,6 +149,15 @@ parser.add_argument('--debugMode', type=str, default='noDebug',
                     help='savePrune/loadPrune for debug reason (default: noDebug)')
 parser.add_argument('--parallelLimit', type=int, default=0,
                     help='Number of cores usage for parallel pruning, 0 for use all cores (default: 0)')
+
+#GAE related
+parser.add_argument('--GAEmodel', type=str, default='gcn_vae', help="models used")
+parser.add_argument('--GAEepochs', type=int, default=200, help='Number of epochs to train.')
+parser.add_argument('--GAEhidden1', type=int, default=32, help='Number of units in hidden layer 1.')
+parser.add_argument('--GAEhidden2', type=int, default=16, help='Number of units in hidden layer 2.')
+parser.add_argument('--GAElr', type=float, default=0.01, help='Initial learning rate.')
+parser.add_argument('--GAEdropout', type=float, default=0., help='Dropout rate (1 - keep probability).')
+parser.add_argument('--GAElr_dw', type=float, default=0.001, help='Initial learning rate for regularization.')
 
 args = parser.parse_args()
 args.cuda = not args.no_cuda and torch.cuda.is_available()
