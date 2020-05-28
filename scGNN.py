@@ -496,9 +496,9 @@ if __name__ == "__main__":
             # Convert to Tensor
             reconNew = torch.from_numpy(reconNew)
             if args.precisionModel == 'Double':
-                    reconNew = reconNew.type(torch.DoubleTensor)
-                elif args.precisionModel == 'Float':
-                    reconNew = reconNew.type(torch.FloatTensor)
+                reconNew = reconNew.type(torch.DoubleTensor)
+            elif args.precisionModel == 'Float':
+                reconNew = reconNew.type(torch.FloatTensor)
             reconNew = reconNew.to(device)
 
             model.load_state_dict(ptstatus)
