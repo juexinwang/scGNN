@@ -26,9 +26,9 @@ parser.add_argument('--datasetName', type=str, default='1.Biase',
                     help='TGFb/sci-CAR/sci-CAR_LTMG/MMPbasal/MMPbasal_all/MMPbasal_allgene/MMPbasal_allcell/MMPepo/MMPbasal_LTMG/MMPbasal_all_LTMG/MMPbasal_2000')
 # Dataset: 1-13 benchmark: 1.Biase/2.Li/3.Treutlein/4.Yan/5.Goolam/6.Guo/7.Deng/8.Pollen/9.Chung/10.Usoskin/11.Kolodziejczyk/12.Klein/13.Zeisel
 parser.add_argument('--batch-size', type=int, default=12800, metavar='N',
-                    help='input batch size for training (default: 128)')
+                    help='input batch size for training (default: 12800)')
 parser.add_argument('--epochs', type=int, default=500, metavar='N',
-                    help='number of epochs to train (default: 500)')
+                    help='number of epochs to train in Regulatory Autoencoder (default: 500)')
 parser.add_argument('--EM-epochs', type=int, default=200, metavar='N',
                     help='number of epochs to train in iteration EM (default: 200)')
 parser.add_argument('--EM-iteration', type=int, default=10, metavar='N',
@@ -77,6 +77,8 @@ parser.add_argument('--L1Para', type=float, default=0.0,
                     help='L1 regulized parameter (default: 0.001)')
 parser.add_argument('--L2Para', type=float, default=0.0,
                     help='L2 regulized parameter (default: 0.001)')
+parser.add_argument('--EMreguTag', action='store_true', default=False,
+                    help='whether regu in EM process')
 parser.add_argument('--discreteTag', action='store_true', default=False, 
                     help='whether input is raw or 0/1 (default: False)')
 #Build cell graph
@@ -84,6 +86,8 @@ parser.add_argument('--k', type=int, default=10,
                     help='parameter k in KNN graph (default: 10)')
 parser.add_argument('--knn-distance', type=str, default='euclidean',
                     help='KNN graph distance type: euclidean/cosine/correlation (default: euclidean)')
+parser.add_argument('--prunetype', type=str, default='KNNgraphStatsSingleThread',
+                    help='prune type, KNNgraphStats/KNNgraphML/KNNgraphStatsSingleThread (default: KNNgraphStats)')
 parser.add_argument('--zerofillFlag', action='store_true', default=False, 
                     help='fill zero or not before EM process (default: False)')
 
@@ -98,6 +102,8 @@ parser.add_argument('--npyDir', type=str, default='npyGraphTest/',
                     help='save npy results in directory')
 parser.add_argument('--log-interval', type=int, default=100, metavar='N',
                     help='how many batches to wait before logging training status')
+
+#LTMG related
 parser.add_argument('--inferLTMGTag', action='store_true', default=False,
                     help='Whether infer LTMG')                   
 parser.add_argument('--LTMGDir', type=str, default='/home/jwang/data/scData/',
@@ -112,6 +118,7 @@ parser.add_argument('--useGAEembedding', action='store_true', default=False,
                     help='whether use GAE embedding for clustering(default: False)')
 parser.add_argument('--useBothembedding', action='store_true', default=False, 
                     help='whether use both embedding and Graph embedding for clustering(default: False)')
+parser.add_argument('--n-clusters', default=20, type=int, help='number of clusters if predifined for KMeans/Birch ')
 parser.add_argument('--clustering-method', type=str, default='LouvainK',
                     help='Clustering method: Louvain/KMeans/SpectralClustering/AffinityPropagation/AgglomerativeClustering/Birch/BirchN/MeanShift/OPTICS/LouvainK/LouvainB')
 parser.add_argument('--maxClusterNumber', type=int, default=30,
@@ -120,10 +127,7 @@ parser.add_argument('--minMemberinCluster', type=int, default=5,
                     help='max cluster for celltypeEM without setting number of clusters (default: 100)')
 parser.add_argument('--resolution', type=str, default='auto',
                     help='the number of resolution on Louvain (default: auto/0.5/0.8)')
-parser.add_argument('--prunetype', type=str, default='KNNgraphStatsSingleThread',
-                    help='prune type, KNNgraphStats/KNNgraphML/KNNgraphStatsSingleThread (default: KNNgraphStats)')
-parser.add_argument('--EMreguTag', action='store_true', default=False,
-                    help='whether regu in EM process')
+
 
 #Benchmark related
 parser.add_argument('--benchmark', type=str, default='/home/jwang/data/scData/13.Zeisel/Zeisel_cell_label.csv',
@@ -141,7 +145,7 @@ parser.add_argument('--GAEhidden2', type=int, default=16, help='Number of units 
 parser.add_argument('--GAElr', type=float, default=0.01, help='Initial learning rate.')
 parser.add_argument('--GAEdropout', type=float, default=0., help='Dropout rate (1 - keep probability).')
 parser.add_argument('--GAElr_dw', type=float, default=0.001, help='Initial learning rate for regularization.')
-parser.add_argument('--n-clusters', default=20, type=int, help='number of clusters, 7 for cora, 6 for citeseer, 11 for 5.Pollen, 20 for MMP')
+
 #Start Impute or not, only used for evaluating Impute
 parser.add_argument('--imputeMode', default=False, action='store_true',
                     help='impute or not (default: False). Caution: usually change npuDir if set imputeMode as true')

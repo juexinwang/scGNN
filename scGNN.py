@@ -26,42 +26,23 @@ parser.add_argument('--datasetName', type=str, default='481193cb-c021-4e04-b477-
                     help='For 10X: folder name of 10X dataset; For CSV: csv file name')
 parser.add_argument('--datasetDir', type=str, default='/storage/htc/joshilab/wangjue/casestudy/',
                     help='Directory of dataset: default(/home/wangjue/biodata/scData/10x/6/)')                  
-parser.add_argument('--LTMGDir', type=str, default='/storage/htc/joshilab/wangjue/casestudy/',
-                    help='directory of LTMGDir, default:(/home/wangjue/biodata/scData/allBench/)')
-parser.add_argument('--ltmgExpressionFile', type=str, default='Use_expression.csv',
-                    help='expression File after ltmg in csv')
-parser.add_argument('--ltmgFile', type=str, default='LTMG_sparse.mtx',
-                    help='expression File in csv. (default:LTMG_sparse.mtx for sparse mode/ ltmg.csv for nonsparse mode) ')
-parser.add_argument('--outputDir', type=str, default='npyGraphTest/',
-                    help='save npy results in directory')
-parser.add_argument('--nonsparseMode', action='store_true', default=False, 
-                    help='SparseMode for running for huge dataset')
 
-#New add, need change later
-parser.add_argument('--EMregulized-type', type=str, default='Graph',
-                    help='regulized type (default: noregu) in EM, otherwise: noregu/Graph/GraphR/Celltype') 
-parser.add_argument('--adjtype', type=str, default='unweighted',
-                    help='adjtype (default: weighted) otherwise: unweighted') 
-parser.add_argument('--aeOriginal', action='store_true', default=False, 
-                    help='whether use original parameter of feature autoencoder (default: False)')
-parser.add_argument('--reguParaCelltype', type=float, default=0.0,
-                    help='celltype parameter (default: 0.001)')
-
-#Speed related
 parser.add_argument('--batch-size', type=int, default=12800, metavar='N',
                     help='input batch size for training (default: 12800)')
 parser.add_argument('--Regu-epochs', type=int, default=500, metavar='N',
                     help='number of epochs to train in Regulatory Autoencoder (default: 500)')
 parser.add_argument('--EM-epochs', type=int, default=200, metavar='N',
-                    help='number of epochs to train in process of iteration EM (default: 200)')
-parser.add_argument('--celltype-epochs', type=int, default=200, metavar='N',
-                    help='number of epochs in celltype training (default: 200)')
-parser.add_argument('--EM-iteration', type=int, default=1, metavar='N',
+                    help='number of epochs to train in iteration EM (default: 200)')
+parser.add_argument('--EM-iteration', type=int, default=10, metavar='N',
                     help='number of iteration in total EM iteration (default: 10)')
 parser.add_argument('--quickmode', action='store_true', default=False,
                     help='whether use quickmode, skip celltype autoencoder (default: no quickmode)')
-
-#Regulation autoencoder
+parser.add_argument('--celltype-epochs', type=int, default=200, metavar='N',
+                    help='number of epochs in celltype training (default: 200)')
+parser.add_argument('--no-cuda', action='store_true', default=True,
+                    help='enables CUDA training')
+parser.add_argument('--seed', type=int, default=1, metavar='S',
+                    help='random seed (default: 1)')
 parser.add_argument('--regulized-type', type=str, default='LTMG',
                     help='regulized type (default: LTMG) in EM, otherwise: noregu/LTMG/LTMG01')
 parser.add_argument('--reduction', type=str, default='sum',
@@ -90,6 +71,8 @@ parser.add_argument('--L1Para', type=float, default=0.0,
                     help='L1 regulized parameter (default: 0.001)')
 parser.add_argument('--L2Para', type=float, default=0.0,
                     help='L2 regulized parameter (default: 0.001)')
+parser.add_argument('--EMreguTag', action='store_true', default=False,
+                    help='whether regu in EM process')
 
 #Build cell graph
 parser.add_argument('--k', type=int, default=10,
@@ -99,22 +82,44 @@ parser.add_argument('--knn-distance', type=str, default='euclidean',
 parser.add_argument('--prunetype', type=str, default='KNNgraphStatsSingleThread',
                     help='prune type, KNNgraphStats/KNNgraphML/KNNgraphStatsSingleThread (default: KNNgraphStats)')
 
-#Graph Autoencoder
+#Debug related
+parser.add_argument('--precisionModel', type=str, default='Float', 
+                    help='Single Precision/Double precision: Float/Double (default:Float)')
+parser.add_argument('--coresUsage', type=str, default='1', 
+                    help='how many cores used: all/1/... (default:1)')
+parser.add_argument('--outputDir', type=str, default='npyGraphTest/',
+                    help='save npy results in directory')
+parser.add_argument('--log-interval', type=int, default=100, metavar='N',
+                    help='how many batches to wait before logging training status')                    
+parser.add_argument('--saveinternal', action='store_true', default=True, 
+                    help='whether save internal npy results or not')
+parser.add_argument('--debugMode', type=str, default='noDebug',
+                    help='savePrune/loadPrune for debug reason (default: noDebug)')
+parser.add_argument('--nonsparseMode', action='store_true', default=False, 
+                    help='SparseMode for running for huge dataset')
+                    
+#LTMG related
+parser.add_argument('--LTMGDir', type=str, default='/storage/htc/joshilab/wangjue/casestudy/',
+                    help='directory of LTMGDir, default:(/home/wangjue/biodata/scData/allBench/)')
+parser.add_argument('--ltmgExpressionFile', type=str, default='Use_expression.csv',
+                    help='expression File after ltmg in csv')
+parser.add_argument('--ltmgFile', type=str, default='LTMG_sparse.mtx',
+                    help='expression File in csv. (default:LTMG_sparse.mtx for sparse mode/ ltmg.csv for nonsparse mode) ')
+
+#Clustering related
 parser.add_argument('--useGAEembedding', action='store_true', default=False, 
                     help='whether use GAE embedding for clustering(default: False)')
 parser.add_argument('--useBothembedding', action='store_true', default=False, 
                     help='whether use both embedding and Graph embedding for clustering(default: False)')
-
-#Clustering related
 parser.add_argument('--n-clusters', default=20, type=int, help='number of clusters if predifined for KMeans/Birch ')
 parser.add_argument('--clustering-method', type=str, default='LouvainK',
                     help='Clustering method: Louvain/KMeans/SpectralClustering/AffinityPropagation/AgglomerativeClustering/Birch/BirchN/MeanShift/OPTICS/LouvainK/LouvainB')
-parser.add_argument('--resolution', type=str, default='auto',
-                    help='the number of resolution on Louvain (default: auto/0.5/0.8)')
 parser.add_argument('--maxClusterNumber', type=int, default=30,
                     help='max cluster for celltypeEM without setting number of clusters (default: 30)') 
 parser.add_argument('--minMemberinCluster', type=int, default=5,
                     help='max cluster for celltypeEM without setting number of clusters (default: 100)')
+parser.add_argument('--resolution', type=str, default='auto',
+                    help='the number of resolution on Louvain (default: auto/0.5/0.8)')                                    
 
 # Converge related
 parser.add_argument('--alpha', type=float, default=0.5,
@@ -133,22 +138,6 @@ parser.add_argument('--noPostprocessingTag', action='store_false', default=True,
                     help='whether postprocess imputated results, default: (True)') 
 parser.add_argument('--postThreshold', type=float, default=0.01, 
                     help='Threshold to force expression as 0, default:(0.01)')  
-
-# Debug
-parser.add_argument('--no-cuda', action='store_true', default=True,
-                    help='enables CUDA training')
-parser.add_argument('--seed', type=int, default=1, metavar='S',
-                    help='random seed (default: 1)')
-parser.add_argument('--saveinternal', action='store_true', default=True, 
-                    help='whether save internal npy results or not')
-parser.add_argument('--log-interval', type=int, default=100, metavar='N',
-                    help='how many batches to wait before logging training status')                    
-parser.add_argument('--EMreguTag', action='store_true', default=False,
-                    help='whether regu in EM process')
-parser.add_argument('--debugMode', type=str, default='noDebug',
-                    help='savePrune/loadPrune for debug reason (default: noDebug)')
-parser.add_argument('--parallelLimit', type=int, default=0,
-                    help='Number of cores usage for parallel pruning, 0 for use all cores (default: 0)')
 
 #GAE related
 parser.add_argument('--GAEmodel', type=str, default='gcn_vae', help="models used")
@@ -229,28 +218,6 @@ def train(epoch, train_loader=train_loader, EMFlag=False, taskType='celltype'):
         else:
             regulationMatrixBatch = None
         optimizer.zero_grad()
-
-        #celltype regu
-        # if args.model == 'VAE':
-        #     recon_batch, mu, logvar, z = model(data)
-        #     # Original
-        #     # loss = loss_function(recon_batch, data, mu, logvar)
-        #     if EMFlag and (not args.EMreguTag):
-        #         loss = loss_function_graph(recon_batch, data.view(-1, recon_batch.shape[1]), mu, logvar, gammaPara=args.gammaPara, regulationMatrix=regulationMatrixBatch, regularizer_type='noregu', reguPara=args.regularizePara, modelusage=args.model)
-        #     else: 
-        #         loss = loss_function_graph(recon_batch, data.view(-1, recon_batch.shape[1]), mu, logvar, gammaPara=args.gammaPara, regulationMatrix=regulationMatrixBatch, regularizer_type=args.regulized_type, reguPara=args.regularizePara, modelusage=args.model)    
-            
-        # elif args.model == 'AE':
-        #     recon_batch, z = model(data)
-        #     mu_dummy = ''
-        #     logvar_dummy = ''
-        #     # Original
-        #     # loss = loss_function(recon_batch, data, mu, logvar)
-        #     if EMFlag and (not args.EMreguTag):
-        #         loss = loss_function_graph(recon_batch, data.view(-1, recon_batch.shape[1]), mu_dummy, logvar_dummy, gammaPara=args.gammaPara, regulationMatrix=regulationMatrixBatch, regularizer_type='noregu', reguPara=args.regularizePara, modelusage=args.model)    
-        #     else:
-        #         loss = loss_function_graph(recon_batch, data.view(-1, recon_batch.shape[1]), mu_dummy, logvar_dummy, gammaPara=args.gammaPara, regulationMatrix=regulationMatrixBatch, regularizer_type=args.regulized_type, reguPara=args.regularizePara, modelusage=args.model)
-
         if args.model == 'VAE':
             recon_batch, mu, logvar, z = model(data)
             # Original
@@ -262,9 +229,9 @@ def train(epoch, train_loader=train_loader, EMFlag=False, taskType='celltype'):
                     loss = loss_function_graph(recon_batch, data.view(-1, recon_batch.shape[1]), mu, logvar, gammaPara=args.gammaPara, regulationMatrix=regulationMatrixBatch, regularizer_type=args.regulized_type, reguPara=args.regularizePara, modelusage=args.model, reduction=args.reduction)
             elif taskType == 'imputation':
                 if EMFlag and (not args.EMreguTag):
-                    loss = loss_function_graph_celltype(recon_batch, data.view(-1, recon_batch.shape[1]), mu, logvar, graphregu=adjsample, celltyperegu=celltypesample, gammaPara=args.gammaPara, regulationMatrix=regulationMatrixBatch, regularizer_type=args.EMregulized_type, reguPara=args.regularizePara, reguParaCelltype=args.reguParaCelltype, modelusage=args.model, reduction=args.reduction)
+                    loss = loss_function_graph_celltype(recon_batch, data.view(-1, recon_batch.shape[1]), mu, logvar, graphregu=adjsample, celltyperegu=celltypesample, gammaPara=args.gammaImputePara, regulationMatrix=regulationMatrixBatch, regularizer_type=args.EMregulized_type, reguPara=args.graphImputePara, reguParaCelltype=args.celltypeImputePara, modelusage=args.model, reduction=args.reduction)
                 else: 
-                    loss = loss_function_graph_celltype(recon_batch, data.view(-1, recon_batch.shape[1]), mu, logvar, graphregu=adjsample, celltyperegu=celltypesample, gammaPara=args.gammaPara, regulationMatrix=regulationMatrixBatch, regularizer_type=args.regulized_type, reguPara=args.regularizePara, reguParaCelltype=args.reguParaCelltype, modelusage=args.model, reduction=args.reduction)    
+                    loss = loss_function_graph_celltype(recon_batch, data.view(-1, recon_batch.shape[1]), mu, logvar, graphregu=adjsample, celltyperegu=celltypesample, gammaPara=args.gammaImputePara, regulationMatrix=regulationMatrixBatch, regularizer_type=args.regulized_type, reguPara=args.graphImputePara, reguParaCelltype=args.celltypeImputePara, modelusage=args.model, reduction=args.reduction)    
             
         elif args.model == 'AE':
             recon_batch, z = model(data)
@@ -279,9 +246,9 @@ def train(epoch, train_loader=train_loader, EMFlag=False, taskType='celltype'):
                     loss = loss_function_graph(recon_batch, data.view(-1, recon_batch.shape[1]), mu_dummy, logvar_dummy, gammaPara=args.gammaPara, regulationMatrix=regulationMatrixBatch, regularizer_type=args.regulized_type, reguPara=args.regularizePara, modelusage=args.model, reduction=args.reduction)
             elif taskType == 'imputation':
                 if EMFlag and (not args.EMreguTag):
-                    loss = loss_function_graph_celltype(recon_batch, data.view(-1, recon_batch.shape[1]), mu_dummy, logvar_dummy, graphregu=adjsample, celltyperegu=celltypesample, gammaPara=args.gammaPara, regulationMatrix=regulationMatrixBatch, regularizer_type=args.EMregulized_type, reguPara=args.regularizePara, reguParaCelltype=args.reguParaCelltype, modelusage=args.model, reduction=args.reduction)    
+                    loss = loss_function_graph_celltype(recon_batch, data.view(-1, recon_batch.shape[1]), mu_dummy, logvar_dummy, graphregu=adjsample, celltyperegu=celltypesample, gammaPara=args.gammaImputePara, regulationMatrix=regulationMatrixBatch, regularizer_type=args.EMregulized_type, reguPara=args.graphImputePara, reguParaCelltype=args.celltypeImputePara, modelusage=args.model, reduction=args.reduction)    
                 else:
-                    loss = loss_function_graph_celltype(recon_batch, data.view(-1, recon_batch.shape[1]), mu_dummy, logvar_dummy, graphregu=adjsample, celltyperegu=celltypesample, gammaPara=args.gammaPara, regulationMatrix=regulationMatrixBatch, regularizer_type=args.regulized_type, reguPara=args.regularizePara, reguParaCelltype=args.reguParaCelltype, modelusage=args.model, reduction=args.reduction)
+                    loss = loss_function_graph_celltype(recon_batch, data.view(-1, recon_batch.shape[1]), mu_dummy, logvar_dummy, graphregu=adjsample, celltyperegu=celltypesample, gammaPara=args.gammaImputePara, regulationMatrix=regulationMatrixBatch, regularizer_type=args.regulized_type, reguPara=args.graphImputePara, reguParaCelltype=args.celltypeImputePara, modelusage=args.model, reduction=args.reduction)
                  
         # L1 and L2 regularization
         # 0.0 for no regularization 
@@ -316,15 +283,13 @@ def train(epoch, train_loader=train_loader, EMFlag=False, taskType='celltype'):
 
     return recon_batch_all, data_all, z_all
 
-
 if __name__ == "__main__":
     start_time = time.time()
     adjsample = None
     celltypesample = None
-    outParaTag = str(args.gammaPara)+'-'+str(args.regularizePara)+'-'+str(args.reguParaCelltype)   
+    # outParaTag = str(args.gammaImputePara)+'-'+str(args.graphImputePara)+'-'+str(args.celltypeImputePara)   
     ptfileStart = args.npyDir+args.datasetName+'_EMtrainingStart.pt'
     ptfile      = args.npyDir+args.datasetName+'_EMtraining.pt'
-
 
     # Debug
     if args.debugMode == 'savePrune' or args.debugMode == 'noDebug':
@@ -552,17 +517,6 @@ if __name__ == "__main__":
                 del originalCluster
                 del zCluster
                 torch.cuda.empty_cache()
-
-            # parallel
-            # with Pool() as p:
-            #     reconp = CelltypeAEParallel(recon,clusterIndexList,args).work()
-
-            # for index in range(len(clusterIndexList)):
-            #     count = 0
-            #     clist = clusterIndexList[index]
-            #     for i in clist:
-            #         reconNew[i] = reconp[index][count,:]
-            #         count +=1
             
             # Update
             recon = reconNew
@@ -584,7 +538,6 @@ if __name__ == "__main__":
         # Here para = 'euclidean:10'
         # adj, edgeList = generateAdj(zOut, graphType='KNNgraphML', para = args.knn_distance+':'+str(args.k)) 
         print('---'+str(datetime.timedelta(seconds=int(time.time()-start_time)))+'---Start Prune')
-        # adj, edgeList = generateAdj(zOut, graphType=args.prunetype, para = args.knn_distance+':'+str(args.k), parallelLimit= args.parallelLimit, outAdjTag = (args.useGAEembedding or args.useBothembedding)) 
         adj, edgeList = generateAdj(zOut, graphType=args.prunetype, para = args.knn_distance+':'+str(args.k), outAdjTag = (args.useGAEembedding or args.useBothembedding)) 
         adjdense = sp.csr_matrix.todense(adj)
         # if args.adjtype == 'unweighted':
@@ -669,11 +622,6 @@ if __name__ == "__main__":
         print(listResult)
         print('celltype similarity:'+str(ari))
 
-        #generate celltype regularizer from celltype
-        celltypesample = generateCelltypeRegu(listResult)
-
-        celltypesample = torch.from_numpy(celltypesample)
-        celltypesample = celltypesample.float()
         
         # graph criteria
         if args.converge_type == 'graph':       
@@ -699,26 +647,49 @@ if __name__ == "__main__":
         # Update
         listResultOld = listResult
         print('---'+str(datetime.timedelta(seconds=int(time.time()-start_time)))+"---"+str(bigepoch)+"th iteration in EM Finished")
+
+    # Use new dataloader    
+    print('---'+str(datetime.timedelta(seconds=int(time.time()-start_time)))+"---Starts Imputation")
+    scDataInter = scDatasetInter(reconOri)
+    train_loader = DataLoader(scDataInter, batch_size=args.batch_size, shuffle=False, **kwargs)
+
+    model.load_state_dict(torch.load(ptfileStart))
+    # if args.aePara == 'start':
+    #     model.load_state_dict(torch.load(ptfileStart))
+    # elif args.aePara == 'end':
+    #     model.load_state_dict(torch.load(ptfileEnd))
     
-    # Output final results
-    print('All iterations finished, start output results.')
-    # if args.saveinternal:
+    # generate graph regularizer from graph
+    # adj = adj.tolist() # Used for read/load
+    # adjdense = sp.csr_matrix.todense(adj)
+    adjsample = torch.from_numpy(adjdense)
+    if args.precisionModel == 'Float':
+        adjsample = adjsample.float()
+    elif args.precisionModel == 'Double':
+        adjsample = adjsample.type(torch.DoubleTensor)
+
+    # generate celltype regularizer from celltype
+    celltypesample = generateCelltypeRegu(listResult)
+    celltypesample = torch.from_numpy(celltypesample)
+    if args.precisionModel == 'Float':
+        celltypesample = celltypesample.float()
+    elif args.precisionModel == 'Double':
+        celltypesample = celltypesample.type(torch.DoubleTensor)
+
+    for epoch in range(1, args.EM_epochs + 1):
+        recon, original, z = train(epoch, EMFlag=True, taskType='imputation')
+    
     reconOut = recon.detach().cpu().numpy()
     if not args.noPostprocessingTag:
         threshold_indices = reconOut < args.postThreshold
         reconOut[threshold_indices] = 0.0
-    # np.save(   args.outputDir+args.datasetName+'_'+args.regulized_type+'_'+str(args.regularizePara)+'_'+str(args.L1Para)+'_'+str(args.L2Para)+'_recon.npy',reconOut)
-    # np.save(   args.outputDir+args.datasetName+'_'+args.regulized_type+'_'+str(args.regularizePara)+'_'+str(args.L1Para)+'_'+str(args.L2Para)+'_z.npy',zOut)
-    # np.save(   args.outputDir+args.datasetName+'_'+args.regulized_type+'_'+str(args.regularizePara)+'_'+str(args.L1Para)+'_'+str(args.L2Para)+'_final_edgeList.npy',edgeList)
-    # np.savetxt(args.outputDir+args.datasetName+'_'+args.regulized_type+'_'+str(args.regularizePara)+'_'+str(args.L1Para)+'_'+str(args.L2Para)+'_results.txt',listResult,fmt='%d')
-    
-    # save txt
-    # np.savetxt(args.outputDir+args.datasetName+'_'+args.regulized_type+'_'+str(args.regularizePara)+'_'+str(args.L1Para)+'_'+str(args.L2Para)+'_recon.csv',reconOut,delimiter=",",fmt='%10.4f')
-    # np.savetxt(args.outputDir+args.datasetName+'_'+args.regulized_type+'_'+str(args.regularizePara)+'_'+str(args.L1Para)+'_'+str(args.L2Para)+'_embedding.csv',zOut, delimiter=",",fmt='%10.4f')
-    # np.savetxt(args.outputDir+args.datasetName+'_'+args.regulized_type+'_'+str(args.regularizePara)+'_'+str(args.L1Para)+'_'+str(args.L2Para)+'_graph.csv',edgeList,fmt='%d,%d,%2.1f')
-    # np.savetxt(args.outputDir+args.datasetName+'_'+args.regulized_type+'_'+str(args.regularizePara)+'_'+str(args.L1Para)+'_'+str(args.L2Para)+'_results.txt',listResult,fmt='%d') 
-    
-    # Output
+      
+    # Output final results
+    print('---'+str(datetime.timedelta(seconds=int(time.time()-start_time)))+'---All iterations finished, start output results.') 
+    # Output imputation Results    
+    # np.save   (args.npyDir+args.datasetName+'_'+args.regulized_type+'_'+outParaTag+'_recon.npy',reconOut)        
+    # np.savetxt(args.npyDir+args.datasetName+'_'+args.regulized_type+'_'+outParaTag+'_recon.csv',reconOut,delimiter=",",fmt='%10.4f')   
+    # Output celltype Results
     recon_df = pd.DataFrame(np.transpose(reconOut),index=genelist,columns=celllist)
     recon_df.to_csv(args.outputDir+args.datasetName+'_'+args.regulized_type+'_'+str(args.regularizePara)+'_'+str(args.L1Para)+'_'+str(args.L2Para)+'_recon.csv')
     emblist=[]
