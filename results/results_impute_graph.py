@@ -16,7 +16,7 @@ parser.add_argument('--datasetName', type=str, default='4.Yan',
                     help='databaseName')
 parser.add_argument('--discreteTag', action='store_true', default=False,
                     help='whether input is raw or 0/1 (default: False)')
-parser.add_argument('--regulized-type', type=str, default='Graph',
+parser.add_argument('--regulized-type', type=str, default='LTMG',
                     help='regulized type (default: Graph), otherwise: noregu')
 parser.add_argument('--npyDir', type=str, default='../npyImpute/',
                     help='directory of npy')
@@ -57,12 +57,16 @@ features         = None
 # dropi            = np.load(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_'+args.ratio+'_'+args.regupara+'_dropi.npy')
 # dropj            = np.load(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_'+args.ratio+'_'+args.regupara+'_dropj.npy')
 # dropix           = np.load(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_'+args.ratio+'_'+args.regupara+'_dropix.npy')
-dropi            = np.load(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_'+args.ratio+'_0.1-0.9-0.9_dropi.npy')
-dropj            = np.load(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_'+args.ratio+'_0.1-0.9-0.9_dropj.npy')
-dropix           = np.load(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_'+args.ratio+'_0.1-0.9-0.9_dropix.npy')
+# dropi            = np.load(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_'+args.ratio+'_0.1-0.9-0.9_dropi.npy')
+# dropj            = np.load(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_'+args.ratio+'_0.1-0.9-0.9_dropj.npy')
+# dropix           = np.load(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_'+args.ratio+'_0.1-0.9-0.9_dropix.npy')
+dropi            = np.load(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_'+args.ratio+'_0.0-0.3-0.1_dropi.npy')
+dropj            = np.load(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_'+args.ratio+'_0.0-0.3-0.1_dropj.npy')
+dropix           = np.load(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_'+args.ratio+'_0.0-0.3-0.1_dropix.npy')
 
 
-featuresImpute   = np.load(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_'+args.ratio+'_'+args.regupara+'_recon'+args.reconstr+'.npy')
+# featuresImpute   = np.load(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_'+args.ratio+'_'+args.regupara+'_recon'+args.reconstr+'.npy')
+featuresImpute   = np.load(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_'+args.ratio+'_recon'+args.reconstr+'.npy')
 # featuresImpute   = pd.read_csv(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_'+args.regupara+'_0.0_0.0_recon'+args.reconstr+'.csv')
 # featuresImpute = featuresImpute.to_numpy()
 
