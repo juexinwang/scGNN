@@ -35,11 +35,15 @@ oriz = ori.copy()
 
 # for 0.3/0.6/0.9
 # npyDir = args.npyDir+'_'+args.ratio+'_'+args.replica+'/'
-npyDir = args.npyDir+'/'
+npyDir = args.npyDir+'_'+args.replica+'/'
+# npyDir = args.npyDir+'/'
 
-dropi            = np.load(npyDir+args.datasetName+'_'+args.regulized_type+'_'+args.ratio+'_dropi.npy')
-dropj            = np.load(npyDir+args.datasetName+'_'+args.regulized_type+'_'+args.ratio+'_dropj.npy')
-dropix           = np.load(npyDir+args.datasetName+'_'+args.regulized_type+'_'+args.ratio+'_dropix.npy')
+# dropi            = np.load(npyDir+args.datasetName+'_'+args.regulized_type+'_'+args.ratio+'_dropi.npy')
+# dropj            = np.load(npyDir+args.datasetName+'_'+args.regulized_type+'_'+args.ratio+'_dropj.npy')
+# dropix           = np.load(npyDir+args.datasetName+'_'+args.regulized_type+'_'+args.ratio+'_dropix.npy')
+dropi            = np.load(npyDir+args.datasetName+'_'+args.regulized_type+'_'+args.ratio+'0.0-0.3-0.1_dropi.npy')
+dropj            = np.load(npyDir+args.datasetName+'_'+args.regulized_type+'_'+args.ratio+'0.0-0.3-0.1_dropj.npy')
+dropix           = np.load(npyDir+args.datasetName+'_'+args.regulized_type+'_'+args.ratio+'0.0-0.3-0.1_dropix.npy')
 
 for item in dropix:
 	oriz[dropi[item],dropj[item]]=0.0
