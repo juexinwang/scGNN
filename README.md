@@ -4,11 +4,13 @@ single cell Graph Neural Networks
 
 ## About:
 
-Graph Neural Network for Single Cell Impute and celltype identification. 
+Graph Neural Network for Single Cell scRNA Imputation and celltype identification. 
 
 ## Reqirements:
 
 Tested on Ubuntu 16.04 and CentOS 7 with Python 3.6.8
+
+Option 1: Direct individual install
 
     pip install numpy
     pip install torch
@@ -29,7 +31,9 @@ R integration:
     library(devtools)
     install_github("BMEngineeR/scGNNLTMG")
 
-You can simply run ```pip install -r requirements.txt``` to install all the necessary packages.
+Option 2: simply run ```pip install -r requirements.txt``` to install all the necessary packages.
+
+Option 3: Use Docker
 
 ## Example:
 
@@ -37,6 +41,7 @@ Accepting scRNA format: 10X and CSV
 Example data:
 After filtering: 9760 cells 13052 genes, finally select 2000 genes
 https://data.humancellatlas.org/project-assets/project-matrices/4d6f6c96-2a83-43d8-8fe1-0f53bffd4674.homo_sapiens.mtx.zip
+
 30K liver cells (10X)
 
 1. Generating Use_expression.csv (preprocessed file) and ltmg.csv (ltmg)
@@ -72,18 +77,18 @@ TODO: ltmgDir
 
 ## Notes for Cluster Running Benchmark: (main_benchmark.py) Here for eproducibility.
 ---------
-module load miniconda3
-conda create -n my_environment python=3.7
-source activate my_environment
+    module load miniconda3
+    conda create -n my_environment python=3.7
+    source activate my_environment
 
 Preprocess benchmarks:
 
  1. generating usage csv
 
-python Preprocessing_scFile.py --inputfile /home/wangjue/biodata/scData/allBench/10.Usoskin/T2000_UsingOriginalMatrix/T2000_expression.txt --outputfile /home/wangjue/biodata/scData/10.Usoskin.csv --cellcount 622 --genecount 2000 --split space --cellheadflag False
+    python Preprocessing_scFile.py --inputfile /home/wangjue/biodata/scData/allBench/10.Usoskin/T2000_UsingOriginalMatrix/T2000_expression.txt --outputfile /home/wangjue/biodata/scData/10.Usoskin.csv --cellcount 622 --genecount 2000 --split space --cellheadflag False
 
 2. generating sparse coding under data/
-python Preprocessing_main.py --expression-name 10.Usoskin
+    python Preprocessing_main.py --expression-name 10.Usoskin
 
 
 Now We totally have 63 methods in testing:
