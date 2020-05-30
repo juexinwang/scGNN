@@ -1,15 +1,7 @@
-python -W ignore MAGIC_impute_usage.py --datasetName 12.Klein --ratio 0.1 --replica 1
-python -W ignore MAGIC_impute_usage.py --datasetName 12.Klein --ratio 0.1 --replica 2
-python -W ignore MAGIC_impute_usage.py --datasetName 12.Klein --ratio 0.1 --replica 3
-python -W ignore MAGIC_impute_usage.py --datasetName 12.Klein --ratio 0.3 --replica 1
-python -W ignore MAGIC_impute_usage.py --datasetName 12.Klein --ratio 0.3 --replica 2
-python -W ignore MAGIC_impute_usage.py --datasetName 12.Klein --ratio 0.3 --replica 3
-python -W ignore MAGIC_impute_usage.py --datasetName 12.Klein --ratio 0.6 --replica 1
-python -W ignore MAGIC_impute_usage.py --datasetName 12.Klein --ratio 0.6 --replica 2
-python -W ignore MAGIC_impute_usage.py --datasetName 12.Klein --ratio 0.6 --replica 3
-python -W ignore MAGIC_impute_usage.py --datasetName 12.Klein --ratio 0.8 --replica 1
-python -W ignore MAGIC_impute_usage.py --datasetName 12.Klein --ratio 0.8 --replica 2
-python -W ignore MAGIC_impute_usage.py --datasetName 12.Klein --ratio 0.8 --replica 3
-python -W ignore MAGIC_impute_usage.py --datasetName 12.Klein --ratio 0.9 --replica 1
-python -W ignore MAGIC_impute_usage.py --datasetName 12.Klein --ratio 0.9 --replica 2
-python -W ignore MAGIC_impute_usage.py --datasetName 12.Klein --ratio 0.9 --replica 3
+for i in {0.1,0.3,0.6,0.8}
+do
+for j in {1..10}
+do
+python -W ignore MAGIC_impute_usage.py --datasetName 12.Klein --ratio $i --replica $j
+done
+done
