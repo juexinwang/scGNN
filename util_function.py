@@ -495,10 +495,10 @@ def graph_mse_loss_function(input, target, graphregu, size_average=None, reduce=
     # Now it use regulariz type to distinguish, it can be imporved later
     ret = (input - target) ** 2
     # ret = (0.001*input - 0.001*target) ** 2
-    if graphregu != None:
+    # if graphregu != None:
         # print(graphregu.type())
         # print(ret.type())
-        ret = torch.matmul(graphregu, ret)
+    ret = torch.matmul(graphregu, ret)
     if reduction != 'none':
         ret = torch.mean(ret) if reduction == 'mean' else torch.sum(ret)      
     return ret
