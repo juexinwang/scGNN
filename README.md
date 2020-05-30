@@ -90,6 +90,7 @@ Preprocess benchmarks:
 2. generating sparse coding under data/
     python Preprocessing_main.py --expression-name 10.Usoskin
 
+Or directly use data folder
 
 Now We totally have 63 methods in testing:
 * for using R support: geneLouvianCluster.py, otherwise we do not use rpy2
