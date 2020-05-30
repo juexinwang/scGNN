@@ -64,4 +64,3 @@ for item in methodsList:
         with open(outputFilename+"_12_"+dropoutPara+".sh",'w') as fw:
             fw.write(outStr)
             fw.close()
-        count += 1
