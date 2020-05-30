@@ -33,7 +33,7 @@ R integration:
 
 Option 2: simply run ```pip install -r requirements.txt``` to install all the necessary packages.
 
-Option 3: Use Docker
+Option 3: Use Docker #TODO
 
 ## Example:
 
@@ -90,34 +90,41 @@ Preprocess benchmarks:
 2. generating sparse coding under data/
     python Preprocessing_main.py --expression-name 10.Usoskin
 
-Or directly use data folder
+Or directly unzip data folder ```gunzip data```
 
-Now We totally have 63 methods in testing:
-* for using R support: geneLouvianCluster.py, otherwise we do not use rpy2
+Now We totally have 4 dropout ratio in testing imputation (0.1,0.3,0.6,0.9):
 
-    experiment_2_g_e.sh *
+1. Generating job scripts for each of the benchmark datsets:
 
-1. Generating shells for sbatch: This will generate lots of shell files!
+    ```python generating_Impute_0.1-0.8.py```
 
-    python generatingMethodsBatchshell.py
-    python generatingMethodsBatchshell.py --imputeMode
+2. Submit job scripts in cluster (HPC):
 
-2. Submit shells in cluster (Lewis in University of Missouri):
+    ```submitCluster_impute_0.1-0.8.sh```
 
-    submitCluster_Celltype.sh
-    submitCluster_Impute.sh
+3. Get results when jobs finished
 
-3. Get results in cluster
+    ```cd results``` 
+    ```bash results_impute_explore_0.3.sh```
 
-    3.1 Generating results shells and Submit scripts to cluster, we use batch mode here
-        cd results
-        bash submitCluster_Result_Celltype.sh
-        bash submitCluster_Result_Impute.sh
-        
-    3.2 On cluster, store the job information as jobinfo.txt
+(Optional): Check MAGIC results: 
+    ```cd otherresults``` 
+    ```bash results_impute_explore_0.3.sh```
 
-    3.3 (on Localmachine)Parsing results when ready:
-        python summary_cmd.py 
+Identify celltypes
+
+1. Generating job scripts for each of the benchmark datsets:
+
+    ```python generating_celltype.py```
+
+2. Submit job scripts in cluster (HPC):
+
+    ```submitCluster_celltype.sh```
+
+3. Get results in npyG2E_LK_1 when jobs finished
+ 
+    ```ls npyG2E_LK_1/*_benchmark.txt```
+
 
 ## Reference:
 
