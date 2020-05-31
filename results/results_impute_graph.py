@@ -65,8 +65,8 @@ dropj            = np.load(args.npyDir+args.datasetName+'_'+args.regulized_type+
 dropix           = np.load(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_'+args.ratio+'_0.0-0.3-0.1_dropix.npy')
 
 
-# featuresImpute   = np.load(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_'+args.ratio+'_'+args.regupara+'_recon'+args.reconstr+'.npy')
-featuresImpute   = np.load(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_'+args.ratio+'_0.0-0.3-0.1_recon'+args.reconstr+'.npy')
+featuresImpute   = np.load(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_'+args.ratio+'_'+args.regupara+'_recon'+args.reconstr+'.npy')
+# featuresImpute   = np.load(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_'+args.ratio+'_0.0-0.3-0.1_recon'+args.reconstr+'.npy')
 # featuresImpute   = pd.read_csv(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_'+args.regupara+'_0.0_0.0_recon'+args.reconstr+'.csv')
 # featuresImpute = featuresImpute.to_numpy()
 
