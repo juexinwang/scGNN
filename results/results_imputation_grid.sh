@@ -4,7 +4,7 @@ source activate conda_R
 #dir='UaeO'
 #dir='WaeC'
 #dir='WaeO'
-dir=''
+dir='Float_cpu1'
 for dataset in {'9.Chung','11.Kolodziejczyk','12.Klein','13.Zeisel'}
 # for dataset in {'13.Zeisel','13.Zeisel'}
 do
