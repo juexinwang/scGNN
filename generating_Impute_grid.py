@@ -17,7 +17,7 @@ args = parser.parse_args()
 templateStr1 = "#! /bin/bash\n"\
 "######################### Batch Headers #########################\n"\
 "#SBATCH -A xulab\n"\
-"#SBATCH -p Lewis,BioCompute               # use the BioCompute partition\n"\
+"#SBATCH -p Lewis               # use the BioCompute partition\n"\
 "#SBATCH -J "
 
 templateStr2 = "\n#SBATCH -o results-%j.out           # give the job output a custom name\n"\
@@ -77,37 +77,37 @@ datasetNameList = [
 #     ]
 
 paraList = [
-    '--gammaPara 0.0 --regularizePara 0.0 --reguParaCelltype 0.9',
-    '--gammaPara 0.0 --regularizePara 0.1 --reguParaCelltype 0.0',
-    '--gammaPara 0.0 --regularizePara 0.1 --reguParaCelltype 0.1',
-    '--gammaPara 0.0 --regularizePara 0.1 --reguParaCelltype 0.3',
-    '--gammaPara 0.0 --regularizePara 0.1 --reguParaCelltype 0.9',
-    '--gammaPara 0.0 --regularizePara 0.3 --reguParaCelltype 0.1',#*
-    '--gammaPara 0.0 --regularizePara 0.9 --reguParaCelltype 0.1',
+    '--gammaImputePara 0.0 --graphImputePara 0.0 --celltypeImputePara 0.9',
+    '--gammaImputePara 0.0 --graphImputePara 0.1 --celltypeImputePara 0.0',
+    '--gammaImputePara 0.0 --graphImputePara 0.1 --celltypeImputePara 0.1',
+    '--gammaImputePara 0.0 --graphImputePara 0.1 --celltypeImputePara 0.3',
+    '--gammaImputePara 0.0 --graphImputePara 0.1 --celltypeImputePara 0.9',
+    '--gammaImputePara 0.0 --graphImputePara 0.3 --celltypeImputePara 0.1',#*
+    '--gammaImputePara 0.0 --graphImputePara 0.9 --celltypeImputePara 0.1',
 
-    '--gammaPara 0.1 --regularizePara 0.0 --reguParaCelltype 0.9',
-    '--gammaPara 0.1 --regularizePara 0.1 --reguParaCelltype 0.0',
-    '--gammaPara 0.1 --regularizePara 0.1 --reguParaCelltype 0.1',
-    '--gammaPara 0.1 --regularizePara 0.1 --reguParaCelltype 0.3',
-    '--gammaPara 0.1 --regularizePara 0.1 --reguParaCelltype 0.9',
-    '--gammaPara 0.1 --regularizePara 0.3 --reguParaCelltype 0.1',
-    '--gammaPara 0.1 --regularizePara 0.9 --reguParaCelltype 0.1',
+    '--gammaImputePara 0.1 --graphImputePara 0.0 --celltypeImputePara 0.9',
+    '--gammaImputePara 0.1 --graphImputePara 0.1 --celltypeImputePara 0.0',
+    '--gammaImputePara 0.1 --graphImputePara 0.1 --celltypeImputePara 0.1',
+    '--gammaImputePara 0.1 --graphImputePara 0.1 --celltypeImputePara 0.3',
+    '--gammaImputePara 0.1 --graphImputePara 0.1 --celltypeImputePara 0.9',
+    '--gammaImputePara 0.1 --graphImputePara 0.3 --celltypeImputePara 0.1',
+    '--gammaImputePara 0.1 --graphImputePara 0.9 --celltypeImputePara 0.1',
 
-    '--gammaPara 0.3 --regularizePara 0.0 --reguParaCelltype 0.9',
-    '--gammaPara 0.3 --regularizePara 0.1 --reguParaCelltype 0.0',
-    '--gammaPara 0.3 --regularizePara 0.1 --reguParaCelltype 0.1',#*
-    '--gammaPara 0.3 --regularizePara 0.1 --reguParaCelltype 0.3',
-    '--gammaPara 0.3 --regularizePara 0.1 --reguParaCelltype 0.9',
-    '--gammaPara 0.3 --regularizePara 0.3 --reguParaCelltype 0.1',
-    '--gammaPara 0.3 --regularizePara 0.9 --reguParaCelltype 0.1',
+    '--gammaImputePara 0.3 --graphImputePara 0.0 --celltypeImputePara 0.9',
+    '--gammaImputePara 0.3 --graphImputePara 0.1 --celltypeImputePara 0.0',
+    '--gammaImputePara 0.3 --graphImputePara 0.1 --celltypeImputePara 0.1',#*
+    '--gammaImputePara 0.3 --graphImputePara 0.1 --celltypeImputePara 0.3',
+    '--gammaImputePara 0.3 --graphImputePara 0.1 --celltypeImputePara 0.9',
+    '--gammaImputePara 0.3 --graphImputePara 0.3 --celltypeImputePara 0.1',
+    '--gammaImputePara 0.3 --graphImputePara 0.9 --celltypeImputePara 0.1',
 
-    '--gammaPara 0.9 --regularizePara 0.0 --reguParaCelltype 0.9',
-    '--gammaPara 0.9 --regularizePara 0.1 --reguParaCelltype 0.0',
-    '--gammaPara 0.9 --regularizePara 0.1 --reguParaCelltype 0.1',
-    '--gammaPara 0.9 --regularizePara 0.1 --reguParaCelltype 0.3',
-    '--gammaPara 0.9 --regularizePara 0.1 --reguParaCelltype 0.9',
-    '--gammaPara 0.9 --regularizePara 0.3 --reguParaCelltype 0.1',
-    '--gammaPara 0.9 --regularizePara 0.9 --reguParaCelltype 0.1',
+    '--gammaImputePara 0.9 --graphImputePara 0.0 --celltypeImputePara 0.9',
+    '--gammaImputePara 0.9 --graphImputePara 0.1 --celltypeImputePara 0.0',
+    '--gammaImputePara 0.9 --graphImputePara 0.1 --celltypeImputePara 0.1',
+    '--gammaImputePara 0.9 --graphImputePara 0.1 --celltypeImputePara 0.3',
+    '--gammaImputePara 0.9 --graphImputePara 0.1 --celltypeImputePara 0.9',
+    '--gammaImputePara 0.9 --graphImputePara 0.3 --celltypeImputePara 0.1',
+    '--gammaImputePara 0.9 --graphImputePara 0.9 --celltypeImputePara 0.1',
     ]
 
 # generate sbatch files:
@@ -143,7 +143,7 @@ for item in methodsList:
     for datasetName in datasetNameList:
         tcount = 0
         for para in paraList:
-            commandLine = "python3 -W ignore main_benchmark.py --debugMode load --datasetName "+datasetName+" "+scGNNparam+" "+outDirStr+" "+imputeStr+" "+para+"\n"
+            commandLine = "python3 -W ignore main_benchmark_impute.py --datasetName "+datasetName+" "+scGNNparam+" "+outDirStr+" "+imputeStr+" "+para+"\n"
             outStr = templateStr1 + abbrStr + "_" + str(count) + templateStr2 + commandLine + "\n"
             with open(outputFilename+"_"+str(count)+"_"+str(tcount)+".sh",'w') as fw:
                 fw.write(outStr)
