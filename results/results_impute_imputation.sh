@@ -6,6 +6,6 @@ echo $dataset
 tdataset=$(echo $dataset | cut -d'.' -f 2)
 for j in {1..3}
 do
-python -W ignore results_impute_graph.py --datasetName $dataset --regulized-type LTMG  --benchmark --labelFilename /home/jwang/data/scData/$dataset\/$tdataset\_cell_label.csv --npyDir ../npyImputeG1E_LK_$j\/
+python -W ignore results_impute_graph.py --datasetName $dataset --regulized-type LTMG  --benchmark --labelFilename /home/jwang/data/scData/$dataset\/$tdataset\_cell_label.csv --npyDir ../npyImputeG2E_LK_$j\/
 done
 done
