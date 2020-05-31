@@ -17,11 +17,11 @@ args = parser.parse_args()
 templateStr1 = "#! /bin/bash\n"\
 "######################### Batch Headers #########################\n"\
 "#SBATCH -A xulab\n"\
-"#SBATCH -p Lewis               # use the BioCompute partition\n"\
+"#SBATCH -p General               # use the BioCompute partition\n"\
 "#SBATCH -J "
 
 templateStr2 = "\n#SBATCH -o results-%j.out           # give the job output a custom name\n"\
-"#SBATCH -t 2-00:00                  # two days time limit\n"\
+"#SBATCH -t 4:00:00                  # two days time limit 2-00:00\n"\
 "#SBATCH -N 1                        # number of nodes\n"\
 "#SBATCH -n 1                        # number of cores (AKA tasks)\n"\
 "#SBATCH --mem=128G\n"\
