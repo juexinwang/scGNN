@@ -13,7 +13,7 @@ mkdir npyImputeG2F_LK_3n
 mkdir npyImputeN2E_LK_3n
 mkdir npyImputeG1E_LK_3n
 
-for i in {9,11,12,13}
+for i in {12,13}
 do
 sbatch run_experimentImpute_2_g_e_LK_1_$i.sh
 sleep 1

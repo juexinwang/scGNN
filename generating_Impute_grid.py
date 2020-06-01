@@ -21,7 +21,7 @@ templateStr1 = "#! /bin/bash\n"\
 "#SBATCH -J "
 
 templateStr2 = "\n#SBATCH -o results-%j.out           # give the job output a custom name\n"\
-"#SBATCH -t 14:00:00                  # two days time limit 2-00:00\n"\
+"#SBATCH -t 1:00:00                  # two days time limit 2-00:00\n"\
 "#SBATCH -N 1                        # number of nodes\n"\
 "#SBATCH -n 1                        # number of cores (AKA tasks)\n"\
 "#SBATCH --mem=128G\n"\
@@ -143,7 +143,7 @@ for item in methodsList:
     for datasetName in datasetNameList:
         tcount = 0
         for para in paraList:
-            commandLine = "python3 -W ignore main_benchmark.py --datasetName "+datasetName+" "+scGNNparam+" "+outDirStr+" "+imputeStr+" "+para+"\n"
+            commandLine = "python3 -W ignore main_benchmark_impute.py --datasetName "+datasetName+" "+scGNNparam+" "+outDirStr+" "+imputeStr+" "+para+"\n"
             outStr = templateStr1 + abbrStr + "_" + str(count) + templateStr2 + commandLine + "\n"
             with open(outputFilename+"_"+str(count)+"_"+str(tcount)+".sh",'w') as fw:
                 fw.write(outStr)
