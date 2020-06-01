@@ -5,7 +5,7 @@ import argparse
 parser = argparse.ArgumentParser(description='Generating sbatch files for HPC cluster running')
 parser.add_argument('--outputDir', type=str, default='',
                     help='Directory of batch files for cluster running')
-parser.add_argument('--imputeMode', action='store_true', default=False,
+parser.add_argument('--imputeMode', action='store_true', default=True,
                     help='whether impute')
 parser.add_argument('--aeOriginal', action='store_true', default=True,
                     help='whether use original')

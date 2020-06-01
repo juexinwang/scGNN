@@ -1,5 +1,5 @@
 # for i in {9,11,12,13}
-for i in {13..13}
+for i in {12..13}
 do
 for j in {0..27}
 do
