@@ -636,7 +636,7 @@ if __name__ == "__main__":
     
     if args.imputeMode:
         reconOri = np.load(args.npyDir+args.datasetName+'_'+str(args.dropoutRatio)+'_'+args.regulized_type+'_reconOri.npy')
-        adjdense = np.load(args.npyDir+args.datasetName+'_'+str(args.dropoutRatio)+'_'+args.regulized_type+'_adj.npy')
+        adjdense = np.load(args.npyDir+args.datasetName+'_'+str(args.dropoutRatio)+'_'+args.regulized_type+'_adj.npy',allow_pickle=True)
         listResult = np.load(args.npyDir+args.datasetName+'_'+str(args.dropoutRatio)+'_'+args.regulized_type+'_listResult.npy')
     else:
         reconOri = np.load(args.npyDir+args.datasetName+'_'+args.regulized_type+'_reconOri.npy')
