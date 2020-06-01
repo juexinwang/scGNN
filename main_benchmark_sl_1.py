@@ -296,11 +296,16 @@ if __name__ == "__main__":
     start_time = time.time()
     outParaTag = str(args.gammaImputePara)+'-'+str(args.graphImputePara)+'-'+str(args.celltypeImputePara)   
     ptfileStart = args.npyDir+args.datasetName+'_EMtrainingStart.pt'
+    stateStart = {
+        # 'epoch': epoch,
+        'state_dict': model.state_dict(),
+        'optimizer': optimizer.state_dict(),
+    }
     ptfile      = args.npyDir+args.datasetName+'_EMtraining.pt'
 
     # Step 1. celltype clustering
     # store parameter
-    torch.save(model.state_dict(),ptfileStart)
+    torch.save(stateStart,ptfileStart)
 
     # Save results only when impute
     discreteStr = ''
@@ -648,7 +653,9 @@ if __name__ == "__main__":
     scDataInter = scDatasetInter(reconOri)
     train_loader = DataLoader(scDataInter, batch_size=args.batch_size, shuffle=False, **kwargs)
 
-    model.load_state_dict(torch.load(ptfileStart))
+    stateStart = torch.load(ptfileStart)
+    model.load_state_dict(stateStart['state_dict'])
+    optimizer.load_state_dict(stateStart['optimizer'])
     # if args.aePara == 'start':
     #     model.load_state_dict(torch.load(ptfileStart))
     # elif args.aePara == 'end':
