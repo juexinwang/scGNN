@@ -654,7 +654,7 @@ if __name__ == "__main__":
     #     model.load_state_dict(torch.load(ptfileEnd))
     
     # generate graph regularizer from graph
-    adj = adj.tolist() # Used for read/load
+    # adj = adj.tolist() # Used for read/load
     adjdense = sp.csr_matrix.todense(adj)
     adjsample = torch.from_numpy(adjdense)
     if args.precisionModel == 'Float':
