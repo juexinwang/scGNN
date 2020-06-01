@@ -647,6 +647,8 @@ if __name__ == "__main__":
     scDataInter = scDatasetInter(reconOri)
     train_loader = DataLoader(scDataInter, batch_size=args.batch_size, shuffle=False, **kwargs)
 
+    # model.load_state_dict(torch.load(ptfileStart))
+    model = torch.load(ptfileStart)
     # if args.aePara == 'start':
     #     model.load_state_dict(torch.load(ptfileStart))
     # elif args.aePara == 'end':
@@ -670,7 +672,6 @@ if __name__ == "__main__":
     elif args.precisionModel == 'Double':
         celltypesample = celltypesample.type(torch.DoubleTensor)
 
-    model.load_state_dict(torch.load(ptfileStart))
     for epoch in range(1, args.EM_epochs + 1):
         recon, original, z = train(epoch, EMFlag=True, taskType='imputation')
     
