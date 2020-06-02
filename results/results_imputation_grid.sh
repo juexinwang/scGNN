@@ -6,7 +6,7 @@ source activate conda_R
 #dir='WaeO'
 dir=''
 # for dataset in {'9.Chung','11.Kolodziejczyk','12.Klein','13.Zeisel'}
-for dataset in {'13.Zeisel','13.Zeisel'}
+for dataset in {'12.Klein','13.Zeisel'}
 do
 echo $dataset
 tdataset=$(echo $dataset | cut -d'.' -f 2)
