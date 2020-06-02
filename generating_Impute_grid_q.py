@@ -36,7 +36,7 @@ methodsList = [
     ('run_experiment_1_g_e_qLK1 E1geK','--regulized-type LTMG --EMtype EM --clustering-method LouvainK --useGAEembedding --seed 1 --npyDir','npyG1E_LK_1/'),
     ('run_experiment_2_g_f_qLK1 E2gfK','--regulized-type LTMG --EMtype celltypeEM --clustering-method LouvainK --seed 1 --npyDir','npyG2F_LK_1/'),
     ('run_experiment_2_n_e_qLK1 E2neK','--regulized-type noregu --EMtype celltypeEM --clustering-method LouvainK --useGAEembedding --seed 1 --npyDir','npyN2E_LK_1/'),
-    ('run_experiment_2_g_e_qLK1 E2geK','--regulized-type LTMG --EMtype celltypeEM --clustering-method LouvainK --useGAEembedding --seed 1  --npyDir','npyG2E_LK_1/'),
+    ('run_experiment_2_g_e_qLK1 E2geK','--regulized-type LTMG --EMtype celltypeEM --clustering-method LouvainK --useGAEembedding --seed 1  --npyDir','npyG2E_LK_1q/'),
     
     ('run_experiment_1_g_e_qLK2 E1geK','--regulized-type LTMG --EMtype EM --clustering-method LouvainK --useGAEembedding  --seed 2 --npyDir','npyG1E_LK_2/'),
     ('run_experiment_2_g_f_qLK2 E2gfK','--regulized-type LTMG --EMtype celltypeEM --clustering-method LouvainK  --seed 2 --npyDir','npyG2F_LK_2/'),
@@ -143,7 +143,7 @@ for item in methodsList:
     for datasetName in datasetNameList:
         tcount = 0
         for para in paraList:
-            commandLine = "python3 -W ignore main_benchmark.py --datasetName "+datasetName+" "+scGNNparam+" "+outDirStr+" "+imputeStr+" "+para+"\n"
+            commandLine = "python3 -W ignore main_benchmark_impute_1.py --datasetName "+datasetName+" "+scGNNparam+" "+outDirStr+" "+imputeStr+" "+para+"\n"
             outStr = templateStr1 + abbrStr + "_" + str(count) + templateStr2 + commandLine + "\n"
             with open(outputFilename+"_"+str(count)+"_"+str(tcount)+".sh",'w') as fw:
                 fw.write(outStr)

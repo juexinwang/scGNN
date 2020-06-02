@@ -294,7 +294,12 @@ if __name__ == "__main__":
     # Debug
     if args.debugMode == 'savePrune' or args.debugMode == 'noDebug':
         # store parameter
-        torch.save(model.state_dict(),ptfileStart)
+        stateStart = {
+            # 'epoch': epoch,
+            'state_dict': model.state_dict(),
+            'optimizer': optimizer.state_dict(),
+        }
+        torch.save(stateStart,ptfileStart)
         print('Start training...')
         for epoch in range(1, args.Regu_epochs + 1):
             recon, original, z = train(epoch, EMFlag=False)
@@ -653,7 +658,10 @@ if __name__ == "__main__":
     scDataInter = scDatasetInter(reconOri)
     train_loader = DataLoader(scDataInter, batch_size=args.batch_size, shuffle=False, **kwargs)
 
-    model.load_state_dict(torch.load(ptfileStart))
+    stateStart = torch.load(ptfileStart)
+    model.load_state_dict(stateStart['state_dict'])
+    optimizer.load_state_dict(stateStart['optimizer'])
+    # model.load_state_dict(torch.load(ptfileStart))    
     # if args.aePara == 'start':
     #     model.load_state_dict(torch.load(ptfileStart))
     # elif args.aePara == 'end':
