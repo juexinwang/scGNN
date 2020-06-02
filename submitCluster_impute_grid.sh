@@ -13,7 +13,7 @@ mkdir npyImputeG2F_LK_3a
 mkdir npyImputeN2E_LK_3a
 mkdir npyImputeG1E_LK_3a
 # for i in {9,11,12,13}
-for i in {13..13}
+for i in {13,12}
 do
 for j in {0..27}
 do
