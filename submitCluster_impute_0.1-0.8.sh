@@ -9,7 +9,7 @@ mkdir npyImputeG2E_LK_8
 mkdir npyImputeG2E_LK_9
 mkdir npyImputeG2E_LK_10
 
-for i in {4..10}
+for i in {1..10}
 do
 sbatch run_experimentImpute_2_g_e_LK_$i\_12_0.1.sh
 # sbatch run_experimentImpute_2_g_e_LK_$i\_12_0.2.sh
