@@ -62,7 +62,7 @@ parser.add_argument('--regularizePara', type=float, default=0.9,
 
 # imputation related
 parser.add_argument('--EMregulized-type', type=str, default='Celltype',
-                    help='regulized type (default: noregu) in EM, otherwise: noregu/Graph/GraphR/Celltype')
+                    help='regulized type (default: noregu) in EM, otherwise: noregu/Graph/GraphR/Celltype/CelltypeR')
 # parser.add_argument('--adjtype', type=str, default='unweighted',
 #                     help='adjtype (default: weighted) otherwise: unweighted') 
 # parser.add_argument('--aePara', type=str, default='start', 
