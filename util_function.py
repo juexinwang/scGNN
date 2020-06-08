@@ -314,6 +314,8 @@ def loss_function_graph_celltype(recon_x, x, mu, logvar, graphregu=None, celltyp
         loss = BCE + reguPara * graph_mse_loss_function(recon_x, target, graphregu=graphregu, reduction=reduction)
     elif regularizer_type == 'Celltype':
         loss = BCE + reguPara * graph_mse_loss_function(recon_x, target, graphregu=graphregu, reduction=reduction) + reguParaCelltype * graph_mse_loss_function(recon_x, target, graphregu=celltyperegu, reduction=reduction)
+    elif regularizer_type == 'CelltypeR':
+        loss = BCE + (1-gammaPara) * regulation01_mse_loss_function(recon_x, target, regulationMatrix, reduction=reduction) + reguPara * graph_mse_loss_function(recon_x, target, graphregu=graphregu, reduction=reduction) + reguParaCelltype * graph_mse_loss_function(recon_x, target, graphregu=celltyperegu, reduction=reduction)
     
     # see Appendix B from VAE paper:
     # Kingma and Welling. Auto-Encoding Variational Bayes. ICLR, 2014
