@@ -28,16 +28,16 @@ templateStr2 = "\n#SBATCH -o results-%j.out           # give the job output a cu
 #batchInfo,scGNNparam,outDir
 #huge matrix
 methodsList = [
-    ('run_experiment_2_g_e_LK_1 E2geK','--regulized-type LTMG --EMtype celltypeEM --clustering-method LouvainK --useGAEembedding  --npyDir','npyG2E_LK_1a/ --seed 1'),
-    ('run_experiment_2_g_e_LK_2 22geK','--regulized-type LTMG --EMtype celltypeEM --clustering-method LouvainK --useGAEembedding  --npyDir','npyG2E_LK_2a/ --seed 2'),
-    ('run_experiment_2_g_e_LK_3 32geK','--regulized-type LTMG --EMtype celltypeEM --clustering-method LouvainK --useGAEembedding  --npyDir','npyG2E_LK_3a/ --seed 3'),
-    ('run_experiment_2_g_e_LK_4 42geK','--regulized-type LTMG --EMtype celltypeEM --clustering-method LouvainK --useGAEembedding  --npyDir','npyG2E_LK_4a/ --seed 4'),
-    ('run_experiment_2_g_e_LK_5 52geK','--regulized-type LTMG --EMtype celltypeEM --clustering-method LouvainK --useGAEembedding  --npyDir','npyG2E_LK_5a/ --seed 5'),
-    ('run_experiment_2_g_e_LK_6 62geK','--regulized-type LTMG --EMtype celltypeEM --clustering-method LouvainK --useGAEembedding  --npyDir','npyG2E_LK_6a/ --seed 6'),
-    ('run_experiment_2_g_e_LK_7 72geK','--regulized-type LTMG --EMtype celltypeEM --clustering-method LouvainK --useGAEembedding  --npyDir','npyG2E_LK_7a/ --seed 7'),
-    ('run_experiment_2_g_e_LK_8 82geK','--regulized-type LTMG --EMtype celltypeEM --clustering-method LouvainK --useGAEembedding  --npyDir','npyG2E_LK_8a/ --seed 8'),
-    ('run_experiment_2_g_e_LK_9 92geK','--regulized-type LTMG --EMtype celltypeEM --clustering-method LouvainK --useGAEembedding  --npyDir','npyG2E_LK_9a/ --seed 9'),
-    ('run_experiment_2_g_e_LK_10 02geK','--regulized-type LTMG --EMtype celltypeEM --clustering-method LouvainK --useGAEembedding  --npyDir','npyG2E_LK_10a/ --seed 10'),
+    ('run_experiment_2_g_e_LK_1 E2geK','--regulized-type LTMG --EMtype celltypeEM --clustering-method LouvainK --useGAEembedding  --npyDir','npyG2E_LK_1/ --seed 1'),
+    ('run_experiment_2_g_e_LK_2 22geK','--regulized-type LTMG --EMtype celltypeEM --clustering-method LouvainK --useGAEembedding  --npyDir','npyG2E_LK_2/ --seed 2'),
+    ('run_experiment_2_g_e_LK_3 32geK','--regulized-type LTMG --EMtype celltypeEM --clustering-method LouvainK --useGAEembedding  --npyDir','npyG2E_LK_3/ --seed 3'),
+    ('run_experiment_2_g_e_LK_4 42geK','--regulized-type LTMG --EMtype celltypeEM --clustering-method LouvainK --useGAEembedding  --npyDir','npyG2E_LK_4/ --seed 4'),
+    ('run_experiment_2_g_e_LK_5 52geK','--regulized-type LTMG --EMtype celltypeEM --clustering-method LouvainK --useGAEembedding  --npyDir','npyG2E_LK_5/ --seed 5'),
+    ('run_experiment_2_g_e_LK_6 62geK','--regulized-type LTMG --EMtype celltypeEM --clustering-method LouvainK --useGAEembedding  --npyDir','npyG2E_LK_6/ --seed 6'),
+    ('run_experiment_2_g_e_LK_7 72geK','--regulized-type LTMG --EMtype celltypeEM --clustering-method LouvainK --useGAEembedding  --npyDir','npyG2E_LK_7/ --seed 7'),
+    ('run_experiment_2_g_e_LK_8 82geK','--regulized-type LTMG --EMtype celltypeEM --clustering-method LouvainK --useGAEembedding  --npyDir','npyG2E_LK_8/ --seed 8'),
+    ('run_experiment_2_g_e_LK_9 92geK','--regulized-type LTMG --EMtype celltypeEM --clustering-method LouvainK --useGAEembedding  --npyDir','npyG2E_LK_9/ --seed 9'),
+    ('run_experiment_2_g_e_LK_10 02geK','--regulized-type LTMG --EMtype celltypeEM --clustering-method LouvainK --useGAEembedding  --npyDir','npyG2E_LK_10/ --seed 10'),
 ]
 
 dropoutList = ['0.1','0.2','0.3','0.4','0.5','0.6','0.7','0.8']
