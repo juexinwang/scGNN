@@ -1,0 +1,152 @@
+import argparse
+
+# python generatingMethodsBatchshell_louvain.py
+# python generatingMethodsBatchshell_louvain.py --imputeMode
+parser = argparse.ArgumentParser(description='Generating sbatch files for HPC cluster running')
+parser.add_argument('--outputDir', type=str, default='',
+                    help='Directory of batch files for cluster running')
+parser.add_argument('--imputeMode', action='store_true', default=True,
+                    help='whether impute')
+parser.add_argument('--aeOriginal', action='store_true', default=True,
+                    help='whether use original')
+parser.add_argument('--adjtype', type=str, default='unweighted',
+                    help='whether weighted')
+
+args = parser.parse_args()
+
+templateStr1 = "#! /bin/bash\n"\
+"######################### Batch Headers #########################\n"\
+"#SBATCH -A xulab\n"\
+"#SBATCH -p BioCompute,Lewis               # use the BioCompute partition\n"\
+"#SBATCH -J "
+
+templateStr2 = "\n#SBATCH -o results-%j.out           # give the job output a custom name\n"\
+"#SBATCH -t 1-00:00                  # two days time limit 2-00:00\n"\
+"#SBATCH -N 1                        # number of nodes\n"\
+"#SBATCH -n 1                        # number of cores (AKA tasks)\n"\
+"#SBATCH --mem=128G\n"\
+"#################################################################\n"\
+"module load miniconda3\n"\
+"source activate conda_R\n"
+
+#tuple list
+#batchInfo,scGNNparam,outDir
+#huge matrix
+methodsList = [
+    ('run_experiment_1_g_e_LK1 E1geK','--regulized-type LTMG --EMtype EM --clustering-method LouvainK --useGAEembedding --seed 1 --npyDir','npyG1E_LK_1r/'),
+    ('run_experiment_2_g_f_LK1 E2gfK','--regulized-type LTMG --EMtype celltypeEM --clustering-method LouvainK --seed 1 --npyDir','npyG2F_LK_1r/'),
+    ('run_experiment_2_n_e_LK1 E2neK','--regulized-type noregu --EMtype celltypeEM --clustering-method LouvainK --useGAEembedding --seed 1 --npyDir','npyN2E_LK_1r/'),
+    ('run_experiment_2_g_e_LK1 E2geK','--regulized-type LTMG --EMtype celltypeEM --clustering-method LouvainK --useGAEembedding --seed 1  --npyDir','npyG2E_LK_1r/'),
+    
+    ('run_experiment_1_g_e_LK2 E1geK','--regulized-type LTMG --EMtype EM --clustering-method LouvainK --useGAEembedding  --seed 2 --npyDir','npyG1E_LK_2r/'),
+    ('run_experiment_2_g_f_LK2 E2gfK','--regulized-type LTMG --EMtype celltypeEM --clustering-method LouvainK  --seed 2 --npyDir','npyG2F_LK_2r/'),
+    ('run_experiment_2_n_e_LK2 E2neK','--regulized-type noregu --EMtype celltypeEM --clustering-method LouvainK --useGAEembedding --seed 2 --npyDir','npyN2E_LK_2r/'),
+    ('run_experiment_2_g_e_LK2 E2geK','--regulized-type LTMG --EMtype celltypeEM --clustering-method LouvainK --useGAEembedding  --seed 2 --npyDir','npyG2E_LK_2r/'),
+
+    ('run_experiment_1_g_e_LK3 E1geK','--regulized-type LTMG --EMtype EM --clustering-method LouvainK --useGAEembedding --seed 3 --npyDir','npyG1E_LK_3r/'),
+    ('run_experiment_2_g_f_LK3 E1gfK','--regulized-type LTMG --EMtype celltypeEM --clustering-method LouvainK --seed 3 --npyDir','npyG2F_LK_3r/'),
+    ('run_experiment_2_n_e_LK3 E1neK','--regulized-type noregu --EMtype celltypeEM --clustering-method LouvainK --useGAEembedding --seed 3 --npyDir','npyN2E_LK_3r/'),
+    ('run_experiment_2_g_e_LK3 E2geK','--regulized-type LTMG --EMtype celltypeEM --clustering-method LouvainK --useGAEembedding  --seed 3 --npyDir','npyG2E_LK_3r/'),
+    
+]
+
+
+# select
+datasetNameList = [
+    '1.Biase --n-clusters 3 --benchmark /home/jwang/data/scData/1.Biase/Biase_cell_label.csv',
+    '2.Li --n-clusters 9 --benchmark /home/jwang/data/scData/2.Li/Li_cell_label.csv',
+    '3.Treutlein --n-clusters 5 --benchmark /home/jwang/data/scData/3.Treutlein/Treutlein_cell_label.csv',
+    '4.Yan --n-clusters 7 --benchmark /home/jwang/data/scData/4.Yan/Yan_cell_label.csv',
+    '5.Goolam --n-clusters 5 --benchmark /home/jwang/data/scData/5.Goolam/Goolam_cell_label.csv',
+    '6.Guo --n-clusters 9 --benchmark /home/jwang/data/scData/6.Guo/Guo_cell_label.csv',
+    '7.Deng --n-clusters 10 --benchmark /home/jwang/data/scData/7.Deng/Deng_cell_label.csv',
+    '8.Pollen --n-clusters 11 --benchmark /home/jwang/data/scData/8.Pollen/Pollen_cell_label.csv',
+    '9.Chung --n-clusters 4 --benchmark /home/jwang/data/scData/9.Chung/Chung_cell_label.csv',
+    '10.Usoskin --n-clusters 11 --benchmark /home/jwang/data/scData/10.Usoskin/Usoskin_cell_label.csv',
+    '11.Kolodziejczyk --n-clusters 3 --benchmark /home/jwang/data/scData/11.Kolodziejczyk/Kolodziejczyk_cell_label.csv',
+    '12.Klein --n-clusters 4 --benchmark /home/jwang/data/scData/12.Klein/Klein_cell_label.csv',
+    '13.Zeisel --n-clusters 7 --benchmark /home/jwang/data/scData/13.Zeisel/Zeisel_cell_label.csv'
+]
+
+# paraList = [
+#     '--gammaPara 0.1 --regularizePara 0.0',
+#     '--gammaPara 0.1 --regularizePara 0.1',
+#     '--gammaPara 0.1 --regularizePara 0.5',
+#     '--gammaPara 0.1 --regularizePara 0.9',
+#     '--gammaPara 0.0 --regularizePara 1.0',
+#     ]
+
+paraList = [
+    '--gammaImputePara 0.0 --graphImputePara 0.0 --celltypeImputePara 0.9',
+    '--gammaImputePara 0.0 --graphImputePara 0.1 --celltypeImputePara 0.0',
+    '--gammaImputePara 0.0 --graphImputePara 0.1 --celltypeImputePara 0.1',
+    '--gammaImputePara 0.0 --graphImputePara 0.1 --celltypeImputePara 0.3',
+    '--gammaImputePara 0.0 --graphImputePara 0.1 --celltypeImputePara 0.9',
+    '--gammaImputePara 0.0 --graphImputePara 0.3 --celltypeImputePara 0.1',#*
+    '--gammaImputePara 0.0 --graphImputePara 0.9 --celltypeImputePara 0.1',
+
+    '--gammaImputePara 0.1 --graphImputePara 0.0 --celltypeImputePara 0.9',
+    '--gammaImputePara 0.1 --graphImputePara 0.1 --celltypeImputePara 0.0',
+    '--gammaImputePara 0.1 --graphImputePara 0.1 --celltypeImputePara 0.1',
+    '--gammaImputePara 0.1 --graphImputePara 0.1 --celltypeImputePara 0.3',
+    '--gammaImputePara 0.1 --graphImputePara 0.1 --celltypeImputePara 0.9',
+    '--gammaImputePara 0.1 --graphImputePara 0.3 --celltypeImputePara 0.1',
+    '--gammaImputePara 0.1 --graphImputePara 0.9 --celltypeImputePara 0.1',
+
+    '--gammaImputePara 0.3 --graphImputePara 0.0 --celltypeImputePara 0.9',
+    '--gammaImputePara 0.3 --graphImputePara 0.1 --celltypeImputePara 0.0',
+    '--gammaImputePara 0.3 --graphImputePara 0.1 --celltypeImputePara 0.1',#*
+    '--gammaImputePara 0.3 --graphImputePara 0.1 --celltypeImputePara 0.3',
+    '--gammaImputePara 0.3 --graphImputePara 0.1 --celltypeImputePara 0.9',
+    '--gammaImputePara 0.3 --graphImputePara 0.3 --celltypeImputePara 0.1',
+    '--gammaImputePara 0.3 --graphImputePara 0.9 --celltypeImputePara 0.1',
+
+    '--gammaImputePara 0.9 --graphImputePara 0.0 --celltypeImputePara 0.9',
+    '--gammaImputePara 0.9 --graphImputePara 0.1 --celltypeImputePara 0.0',
+    '--gammaImputePara 0.9 --graphImputePara 0.1 --celltypeImputePara 0.1',
+    '--gammaImputePara 0.9 --graphImputePara 0.1 --celltypeImputePara 0.3',
+    '--gammaImputePara 0.9 --graphImputePara 0.1 --celltypeImputePara 0.9',
+    '--gammaImputePara 0.9 --graphImputePara 0.3 --celltypeImputePara 0.1',
+    '--gammaImputePara 0.9 --graphImputePara 0.9 --celltypeImputePara 0.1',
+    ]
+
+# generate sbatch files:
+for item in methodsList:
+    batchInfo,scGNNparam,outDirStr = item
+    # if args.aeOriginal:
+    #     outDirStr = 'aeO/'+outDirStr
+    # else:
+    #     outDirStr = 'aeC/'+outDirStr
+    # if args.adjtype=='weighted':
+    #     outDirStr = 'W'+outDirStr
+    # elif args.adjtype=='unweighted':
+    #     outDirStr = 'U'+outDirStr
+
+    tmp = batchInfo.split()
+    tmpstr1=tmp[0]
+    tmpstr2=tmp[1]
+    #difference
+    # imputeStr = ''
+    imputeStr = ''
+    if args.imputeMode:
+        tmpstr1 = tmpstr1.replace('run_experiment','run_experimentImpute')
+        tmpstr2 = "I"+tmpstr2[1:]
+        # tmpstr2 = "I"+tmpstr2[2:]
+        imputeStr = ' --imputeMode  '
+        # outDirStr = "npyImpute"+outDirStr[3:]
+        # For secondary directory
+        outDirStr = outDirStr.replace('npy','npyImpute')
+    outputFilename = args.outputDir + tmpstr1
+    abbrStr = tmpstr2   
+
+    count = 1
+    for datasetName in datasetNameList:
+        tcount = 0
+        for para in paraList:
+            commandLine = "python3 -W ignore main_benchmark.py --datasetName "+datasetName+" "+scGNNparam+" "+outDirStr+" "+imputeStr+" "+para+"\n"
+            outStr = templateStr1 + abbrStr + "_" + str(count) + templateStr2 + commandLine + "\n"
+            with open(outputFilename+"_"+str(count)+"_"+str(tcount)+".sh",'w') as fw:
+                fw.write(outStr)
+                fw.close()
+            tcount += 1
+        count += 1
