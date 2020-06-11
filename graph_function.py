@@ -18,9 +18,9 @@ import multiprocessing
 #         self.col=col
 
 # Calculate graph, return adjcency matrix in 0/1
-def generateAdj(featureMatrix, graphType='KNNgraph', para = None, parallelLimit = 0, outAdjTag = True ):
+def generateAdj(featureMatrix, graphType='KNNgraph', para = None, parallelLimit = 0 ):
     """
-    outAdjTag: saving space for not generating adj for giant network without GAE 
+    Generating edgeList 
     """
     edgeList = None
     adj = None
@@ -74,11 +74,7 @@ def generateAdj(featureMatrix, graphType='KNNgraph', para = None, parallelLimit 
     else:
         print('Should give graphtype')
     
-    # if outAdjTag:
-    graphdict = edgeList2edgeDict(edgeList, featureMatrix.shape[0])
-    adj = nx.adjacency_matrix(nx.from_dict_of_lists(graphdict))
-    
-    return adj, edgeList
+    return edgeList
 
 # Calculate graph, return adjcency matrix in weighted
 def generateAdjWeighted(featureMatrix, graphType='KNNgraph', para = None, parallelLimit = 0, outAdjTag = True ):

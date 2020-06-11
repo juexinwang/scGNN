@@ -320,13 +320,12 @@ if __name__ == "__main__":
         # Here para = 'euclidean:10'
         # adj, edgeList = generateAdj(zOut, graphType='KNNgraphML', para = args.knn_distance+':'+str(args.k)) 
         print('---'+str(datetime.timedelta(seconds=int(time.time()-start_time)))+'---Start Prune')
-        adj, edgeList = generateAdj(zOut, graphType=args.prunetype, para = args.knn_distance+':'+str(args.k), outAdjTag = (args.useGAEembedding or args.useBothembedding))
-        adjdense = sp.csr_matrix.todense(adj)
+        edgeList = generateAdj(zOut, graphType=args.prunetype, para = args.knn_distance+':'+str(args.k))       
         # if args.adjtype == 'unweighted':
-        #     adj, edgeList = generateAdj(zOut, graphType=args.prunetype, para = args.knn_distance+':'+str(args.k), outAdjTag = (args.useGAEembedding or args.useBothembedding)) 
+        #     adj, edgeList = generateAdj(zOut, graphType=args.prunetype, para = args.knn_distance+':'+str(args.k)) 
         #     adjdense = sp.csr_matrix.todense(adj)
         # elif args.adjtype == 'weighted':
-        #     adj, edgeList = generateAdjWeighted(zOut, graphType=args.prunetype, para = args.knn_distance+':'+str(args.k), outAdjTag = (args.useGAEembedding or args.useBothembedding))         
+        #     adj, edgeList = generateAdjWeighted(zOut, graphType=args.prunetype, para = args.knn_distance+':'+str(args.k))         
         #     adjdense = adj.toarray()
         print('---'+str(datetime.timedelta(seconds=int(time.time()-start_time)))+'---Prune Finished')
         mem=resource.getrusage(resource.RUSAGE_SELF).ru_maxrss
@@ -546,13 +545,12 @@ if __name__ == "__main__":
         # Here para = 'euclidean:10'
         # adj, edgeList = generateAdj(zOut, graphType='KNNgraphML', para = args.knn_distance+':'+str(args.k)) 
         print('---'+str(datetime.timedelta(seconds=int(time.time()-start_time)))+'---Start Prune')
-        adj, edgeList = generateAdj(zOut, graphType=args.prunetype, para = args.knn_distance+':'+str(args.k), outAdjTag = (args.useGAEembedding or args.useBothembedding)) 
-        adjdense = sp.csr_matrix.todense(adj)
+        edgeList = generateAdj(zOut, graphType=args.prunetype, para = args.knn_distance+':'+str(args.k)) 
         # if args.adjtype == 'unweighted':
-            #     adj, edgeList = generateAdj(zOut, graphType=args.prunetype, para = args.knn_distance+':'+str(args.k), outAdjTag = (args.useGAEembedding or args.useBothembedding)) 
+            #     adj, edgeList = generateAdj(zOut, graphType=args.prunetype, para = args.knn_distance+':'+str(args.k)) 
             #     adjdense = sp.csr_matrix.todense(adj)
             # elif args.adjtype == 'weighted':
-            #     adj, edgeList = generateAdjWeighted(zOut, graphType=args.prunetype, para = args.knn_distance+':'+str(args.k), outAdjTag = (args.useGAEembedding or args.useBothembedding))         
+            #     adj, edgeList = generateAdjWeighted(zOut, graphType=args.prunetype, para = args.knn_distance+':'+str(args.k))         
             #     adjdense = adj.toarray()
         print('---'+str(datetime.timedelta(seconds=int(time.time()-start_time)))+'---Prune Finished')
         mem=resource.getrusage(resource.RUSAGE_SELF).ru_maxrss
@@ -629,7 +627,6 @@ if __name__ == "__main__":
         print(listResultOld)
         print(listResult)
         print('celltype similarity:'+str(ari))
-
         
         # graph criteria
         if args.converge_type == 'graph':       
@@ -673,6 +670,11 @@ if __name__ == "__main__":
     # generate graph regularizer from graph
     # adj = adj.tolist() # Used for read/load
     # adjdense = sp.csr_matrix.todense(adj)
+    
+    # generate adj from edgeList
+    graphdict = edgeList2edgeDict(edgeList, zOut.shape[0])
+    adj = nx.adjacency_matrix(nx.from_dict_of_lists(graphdict))
+    adjdense = sp.csr_matrix.todense(adj)
     adjsample = torch.from_numpy(adjdense)
     if args.precisionModel == 'Float':
         adjsample = adjsample.float()
