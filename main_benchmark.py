@@ -294,7 +294,8 @@ def train(epoch, train_loader=train_loader, EMFlag=False, taskType='celltype'):
 
 if __name__ == "__main__":
     start_time = time.time()
-    outParaTag = str(args.gammaImputePara)+'-'+str(args.graphImputePara)+'-'+str(args.celltypeImputePara)   
+    outParaTag = str(args.k)+'-'+str(args.gammaPara)+'-'+str(args.regularizePara)+'-'+str(args.gammaImputePara)+'-'+str(args.graphImputePara)+'-'+str(args.celltypeImputePara)
+    # outParaTag = str(args.gammaImputePara)+'-'+str(args.graphImputePara)+'-'+str(args.celltypeImputePara)   
     ptfileStart = args.npyDir+args.datasetName+'_EMtrainingStart.pt'
     stateStart = {
         # 'epoch': epoch,
