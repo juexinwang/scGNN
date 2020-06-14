@@ -86,7 +86,7 @@ for item in methodsList:
     for datasetName in datasetNameList:
         for paraK in paraKList:
             for para in paraList:
-                commandLine = "python3 -W ignore main_benchmark.py --datasetName "+datasetName+" "+scGNNparam+" "+paraK+" "+para+" "+outDirStr+imputeStr+"\n"
+                commandLine = "python3 -W ignore main_benchmark.py --datasetName "+datasetName+" "+scGNNparam+" "+outDirStr+" "+paraK+" "+para+imputeStr+"\n"
                 outStr = templateStr1 + abbrStr + "_" + str(count) + templateStr2 + commandLine + "\n"
                 with open(outputFilename+"_"+str(count)+".sh",'w') as fw:
                     fw.write(outStr)
