@@ -655,6 +655,8 @@ if __name__ == "__main__":
 
     # Use new dataloader    
     print('---'+str(datetime.timedelta(seconds=int(time.time()-start_time)))+"---Starts Imputation")
+    mem=resource.getrusage(resource.RUSAGE_SELF).ru_maxrss
+    print('Mem consumption: '+str(mem))
     scDataInter = scDatasetInter(reconOri)
     train_loader = DataLoader(scDataInter, batch_size=args.batch_size, shuffle=False, **kwargs)
 
@@ -671,6 +673,10 @@ if __name__ == "__main__":
     # adj = adj.tolist() # Used for read/load
     # adjdense = sp.csr_matrix.todense(adj)
     
+    # Check out memory
+    mem=resource.getrusage(resource.RUSAGE_SELF).ru_maxrss
+    print('Mem consumption: '+str(mem))
+
     # generate adj from edgeList
     adjdense = sp.csr_matrix.todense(adj)
     adjsample = torch.from_numpy(adjdense)
@@ -678,6 +684,8 @@ if __name__ == "__main__":
         adjsample = adjsample.float()
     elif args.precisionModel == 'Double':
         adjsample = adjsample.type(torch.DoubleTensor)
+    mem=resource.getrusage(resource.RUSAGE_SELF).ru_maxrss
+    print('Mem consumption: '+str(mem))
 
     # generate celltype regularizer from celltype
     celltypesample = generateCelltypeRegu(listResult)
@@ -687,6 +695,8 @@ if __name__ == "__main__":
     elif args.precisionModel == 'Double':
         celltypesample = celltypesample.type(torch.DoubleTensor)
 
+    mem=resource.getrusage(resource.RUSAGE_SELF).ru_maxrss
+    print('Mem consumption: '+str(mem))
     for epoch in range(1, args.EM_epochs + 1):
         recon, original, z = train(epoch, EMFlag=True, taskType='imputation')
     
