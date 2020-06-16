@@ -73,6 +73,8 @@ parser.add_argument('--L2Para', type=float, default=0.0,
                     help='L2 regulized parameter (default: 0.001)')
 parser.add_argument('--EMreguTag', action='store_true', default=False,
                     help='whether regu in EM process')
+parser.add_argument('--sparseImputation', type=str, default='nonsparse',
+                    help='whether use sparse in imputation: sparse/nonsparse (default: nonsparse)')
 
 #Build cell graph
 parser.add_argument('--k', type=int, default=10,
@@ -196,7 +198,7 @@ optimizer = optim.Adam(model.parameters(), lr=1e-3)
 print ('---'+str(datetime.timedelta(seconds=int(time.time()-start_time)))+'---Pytorch model ready.')
 
 #TODO: have to improve save npy
-def train(epoch, train_loader=train_loader, EMFlag=False, taskType='celltype'):
+def train(epoch, train_loader=train_loader, EMFlag=False, taskType='celltype', sparseImputation='nonsparse'):
     '''
     EMFlag indicates whether in EM processes. 
         If in EM, use regulized-type parsed from program entrance,
@@ -218,8 +220,29 @@ def train(epoch, train_loader=train_loader, EMFlag=False, taskType='celltype'):
         else:
             regulationMatrixBatch = None
         if taskType == 'imputation':
-            celltypesampleBatch = celltypesample[dataindex,:][:,dataindex]
-            adjsampleBatch = adjsample[dataindex,:][:,dataindex]
+            if sparseImputation='nonsparse':
+                celltypesampleBatch = celltypesample[dataindex,:][:,dataindex]
+                adjsampleBatch = adjsample[dataindex,:][:,dataindex]
+            elif sparseImputation='sparse': 
+                celltypesampleBatch = generateCelltypeRegu(listResult[dataindex])
+                celltypesampleBatch = torch.from_numpy(celltypesampleBatch)
+                if args.precisionModel == 'Float':
+                    celltypesampleBatch = celltypesampleBatch.float()
+                elif args.precisionModel == 'Double':
+                    celltypesampleBatch = celltypesampleBatch.type(torch.DoubleTensor)
+                mem=resource.getrusage(resource.RUSAGE_SELF).ru_maxrss
+                print('celltype Mem consumption: '+str(mem))
+
+                adjsampleBatch = adj[dataindex,:][:,dataindex]
+                adjsampleBatch = sp.csr_matrix.todense(adjsampleBatch)
+                adjsampleBatch = torch.from_numpy(adjsampleBatch)
+                if args.precisionModel == 'Float':
+                    adjsampleBatch = adjsampleBatch.float()
+                elif args.precisionModel == 'Double':
+                    adjsampleBatch = adjsampleBatch.type(torch.DoubleTensor)
+                mem=resource.getrusage(resource.RUSAGE_SELF).ru_maxrss
+                print('adj Mem consumption: '+str(mem))
+
         optimizer.zero_grad()
         if args.model == 'VAE':
             recon_batch, mu, logvar, z = model(data)
@@ -673,29 +696,30 @@ if __name__ == "__main__":
     # adj = adj.tolist() # Used for read/load
     # adjdense = sp.csr_matrix.todense(adj)
 
-    # generate adj from edgeList
-    # TODO: needs to find partial results from adj and celltype if the results are very huge
-    adjdense = sp.csr_matrix.todense(adj)
-    adjsample = torch.from_numpy(adjdense)
-    if args.precisionModel == 'Float':
-        adjsample = adjsample.float()
-    elif args.precisionModel == 'Double':
-        adjsample = adjsample.type(torch.DoubleTensor)
-    mem=resource.getrusage(resource.RUSAGE_SELF).ru_maxrss
-    print('Mem consumption: '+str(mem))
+    #Better option: use torch.sparse
+    if sparseImputation == 'nonsparse':
+        # generate adj from edgeList
+        adjdense = sp.csr_matrix.todense(adj)
+        adjsample = torch.from_numpy(adjdense)
+        if args.precisionModel == 'Float':
+            adjsample = adjsample.float()
+        elif args.precisionModel == 'Double':
+            adjsample = adjsample.type(torch.DoubleTensor)
+        mem=resource.getrusage(resource.RUSAGE_SELF).ru_maxrss
+        print('Mem consumption: '+str(mem))
 
-    # generate celltype regularizer from celltype
-    celltypesample = generateCelltypeRegu(listResult)
-    celltypesample = torch.from_numpy(celltypesample)
-    if args.precisionModel == 'Float':
-        celltypesample = celltypesample.float()
-    elif args.precisionModel == 'Double':
-        celltypesample = celltypesample.type(torch.DoubleTensor)
+        # generate celltype regularizer from celltype
+        celltypesample = generateCelltypeRegu(listResult)
+        celltypesample = torch.from_numpy(celltypesample)
+        if args.precisionModel == 'Float':
+            celltypesample = celltypesample.float()
+        elif args.precisionModel == 'Double':
+            celltypesample = celltypesample.type(torch.DoubleTensor)
+        mem=resource.getrusage(resource.RUSAGE_SELF).ru_maxrss
+        print('Mem consumption: '+str(mem))
 
-    mem=resource.getrusage(resource.RUSAGE_SELF).ru_maxrss
-    print('Mem consumption: '+str(mem))
     for epoch in range(1, args.EM_epochs + 1):
-        recon, original, z = train(epoch, EMFlag=True, taskType='imputation')
+        recon, original, z = train(epoch, EMFlag=True, taskType='imputation', sparseImputation=args.sparseImputation)
     
     reconOut = recon.detach().cpu().numpy()
     if not args.noPostprocessingTag:
