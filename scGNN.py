@@ -220,10 +220,10 @@ def train(epoch, train_loader=train_loader, EMFlag=False, taskType='celltype', s
         else:
             regulationMatrixBatch = None
         if taskType == 'imputation':
-            if sparseImputation='nonsparse':
+            if sparseImputation=='nonsparse':
                 celltypesampleBatch = celltypesample[dataindex,:][:,dataindex]
                 adjsampleBatch = adjsample[dataindex,:][:,dataindex]
-            elif sparseImputation='sparse': 
+            elif sparseImputation=='sparse': 
                 celltypesampleBatch = generateCelltypeRegu(listResult[dataindex])
                 celltypesampleBatch = torch.from_numpy(celltypesampleBatch)
                 if args.precisionModel == 'Float':
