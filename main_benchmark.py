@@ -296,7 +296,7 @@ if __name__ == "__main__":
     start_time = time.time()
     outParaTag = str(args.k)+'-'+str(args.gammaPara)+'-'+str(args.regularizePara)+'-'+str(args.gammaImputePara)+'-'+str(args.graphImputePara)+'-'+str(args.celltypeImputePara)
     # outParaTag = str(args.gammaImputePara)+'-'+str(args.graphImputePara)+'-'+str(args.celltypeImputePara)   
-    ptfileStart = args.npyDir+args.datasetName+'_EMtrainingStart.pt'
+    ptfileStart = args.npyDir+args.datasetName+'_'+outParaTag+'_EMtrainingStart.pt'
     stateStart = {
         # 'epoch': epoch,
         'state_dict': model.state_dict(),
