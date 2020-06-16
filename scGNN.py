@@ -672,12 +672,9 @@ if __name__ == "__main__":
     # generate graph regularizer from graph
     # adj = adj.tolist() # Used for read/load
     # adjdense = sp.csr_matrix.todense(adj)
-    
-    # Check out memory
-    mem=resource.getrusage(resource.RUSAGE_SELF).ru_maxrss
-    print('Mem consumption: '+str(mem))
 
     # generate adj from edgeList
+    # TODO: needs to find partial results from adj and celltype if the results are very huge
     adjdense = sp.csr_matrix.todense(adj)
     adjsample = torch.from_numpy(adjdense)
     if args.precisionModel == 'Float':

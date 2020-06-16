@@ -516,7 +516,7 @@ if __name__ == "__main__":
         prune_time = time.time()
         # Here para = 'euclidean:10'
         # adj, edgeList = generateAdj(zOut, graphType='KNNgraphML', para = args.knn_distance+':'+str(args.k))
-        adj, edgeList = generateAdj(zOut, graphType=args.prunetype, para = args.knn_distance+':'+str(args.k), adjTag = (args.useGAEembedding or args.useBothembedding)) 
+        adj, edgeList = generateAdj(zOut, graphType=args.prunetype, para = args.knn_distance+':'+str(args.k), adjTag = (args.useGAEembedding or args.useBothembedding or (bigepoch == int(args.EM_iteration)-1))) 
         # if args.adjtype == 'unweighted':
         #     adj, edgeList = generateAdj(zOut, graphType=args.prunetype, para = args.knn_distance+':'+str(args.k)) 
         #     adjdense = sp.csr_matrix.todense(adj)
