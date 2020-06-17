@@ -697,7 +697,7 @@ if __name__ == "__main__":
     # adjdense = sp.csr_matrix.todense(adj)
 
     #Better option: use torch.sparse
-    if sparseImputation == 'nonsparse':
+    if args.sparseImputation == 'nonsparse':
         # generate adj from edgeList
         adjdense = sp.csr_matrix.todense(adj)
         adjsample = torch.from_numpy(adjdense)
