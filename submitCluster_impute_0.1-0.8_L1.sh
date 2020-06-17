@@ -18,4 +18,9 @@ sbatch run_experimentImpute_2_g_e_LK_$i\_12_0.3.sh
 sbatch run_experimentImpute_2_g_e_LK_$i\_12_0.6.sh
 # sbatch run_experimentImpute_2_g_e_LK_$i\_12_0.7.sh
 sbatch run_experimentImpute_2_g_e_LK_$i\_12_0.8.sh
+
+sbatch run_experimentImpute_2_g_e_LK_$i\_13_0.1.sh
+sbatch run_experimentImpute_2_g_e_LK_$i\_13_0.3.sh
+sbatch run_experimentImpute_2_g_e_LK_$i\_13_0.6.sh
+sbatch run_experimentImpute_2_g_e_LK_$i\_13_0.8.sh
 done

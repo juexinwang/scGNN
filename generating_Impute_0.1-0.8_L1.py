@@ -39,7 +39,7 @@ methodsList = [
     ('run_experiment_2_g_e_LK_9 92geK','--regulized-type LTMG --EMtype celltypeEM --clustering-method LouvainK --useGAEembedding --L1Para 0.0 --L2Para 1.0 --npyDir','npyG2E_9/'),
 ]
 
-dropoutList = ['0.1','0.3','0.5','0.8']
+dropoutList = ['0.1','0.3','0.6','0.8']
 
 # generate sbatch files:
 for item in methodsList:
@@ -61,5 +61,12 @@ for item in methodsList:
         commandLine = "python3 -W ignore main_benchmark.py --datasetName 12.Klein --benchmark /home/jwang/data/scData/12.Klein/Klein_cell_label.csv "+scGNNparam+" "+outDirStr+imputeStr+" --dropoutRatio "+dropoutPara+"\n"
         outStr = templateStr1 + abbrStr + templateStr2 + commandLine + "\n"
         with open(outputFilename+"_12_"+dropoutPara+".sh",'w') as fw:
+            fw.write(outStr)
+            fw.close()
+
+    for dropoutPara in dropoutList:
+        commandLine = "python3 -W ignore main_benchmark.py --datasetName 13.Zeisel --benchmark /home/jwang/data/scData/13.Zeisel/Zeisel_cell_label.csv "+scGNNparam+" "+outDirStr+imputeStr+" --dropoutRatio "+dropoutPara+"\n"
+        outStr = templateStr1 + abbrStr + templateStr2 + commandLine + "\n"
+        with open(outputFilename+"_13_"+dropoutPara+".sh",'w') as fw:
             fw.write(outStr)
             fw.close()
