@@ -259,14 +259,15 @@ def train(epoch, train_loader=train_loader, EMFlag=False, taskType='celltype'):
                 else:
                     loss = loss_function_graph_celltype(recon_batch, data.view(-1, recon_batch.shape[1]), mu_dummy, logvar_dummy, graphregu=adjsample, celltyperegu=celltypesample, gammaPara=args.gammaImputePara, regulationMatrix=regulationMatrixBatch, regularizer_type=args.regulized_type, reguPara=args.graphImputePara, reguParaCelltype=args.celltypeImputePara, modelusage=args.model, reduction=args.reduction)
 
-        # L1 and L2 regularization
+        # L1 and L2 regularization in imputation
         # 0.0 for no regularization 
-        l1 = 0.0
-        l2 = 0.0
-        for p in model.parameters():
-            l1 = l1 + p.abs().sum()
-            l2 = l2 + p.pow(2).sum()
-        loss = loss + args.L1Para * l1 + args.L2Para * l2
+        if taskType == 'imputation': 
+            l1 = 0.0
+            l2 = 0.0
+            for p in model.parameters():
+                l1 = l1 + p.abs().sum()
+                l2 = l2 + p.pow(2).sum()
+            loss = loss + args.L1Para * l1 + args.L2Para * l2
 
         loss.backward()
         train_loss += loss.item()
