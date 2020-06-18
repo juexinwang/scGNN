@@ -6,7 +6,8 @@ source activate conda_R
 #dir='WaeO'
 dir=''
 # for dataset in {'9.Chung','11.Kolodziejczyk','12.Klein','13.Zeisel'}
-for dataset in {'12.Klein','13.Zeisel'}
+for dataset in {'9.Chung','11.Kolodziejczyk'}
+# for dataset in {'12.Klein','13.Zeisel'}
 do
 echo $dataset
 tdataset=$(echo $dataset | cut -d'.' -f 2)
@@ -17,7 +18,8 @@ do
 para="$ii-$jj"
 for j in {1..3}
 do
-python -W ignore results_impute_graph.py --datasetName $dataset --regulized-type LTMG  --benchmark --labelFilename /home/jwang/data/scData/$dataset\/$tdataset\_cell_label.csv --n-clusters 4  --regupara $para --npyDir ../$dir\/npyImputeG2E_LK_$j\/
+# python -W ignore results_impute_graph.py --datasetName $dataset --regulized-type LTMG  --benchmark --labelFilename /home/jwang/data/scData/$dataset\/$tdataset\_cell_label.csv --n-clusters 4  --regupara $para --npyDir ../$dir\/npyImputeG2E_LK_$j\/
+python -W ignore results_impute_graph.py --datasetName $dataset --regulized-type LTMG  --benchmark --labelFilename /home/jwang/data/scData/$dataset\/$tdataset\_cell_label.csv --regupara $para --npyDir ../$dir\/npyImputeG2E_LK_$j\a/
 done
 done
 done
