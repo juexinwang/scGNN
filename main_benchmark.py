@@ -73,7 +73,7 @@ parser.add_argument('--graphImputePara', type=float, default=0.3,
                     help='graph parameter (default: 0.3)')
 parser.add_argument('--celltypeImputePara', type=float, default=0.1,
                     help='celltype parameter (default: 0.1)')
-parser.add_argument('--L1Para', type=float, default=0.0,
+parser.add_argument('--L1Para', type=float, default=1.0,
                     help='L1 regulized parameter (default: 0.001)')
 parser.add_argument('--L2Para', type=float, default=0.0,
                     help='L2 regulized parameter (default: 0.001)')
