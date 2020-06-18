@@ -100,7 +100,13 @@ def getAllResults(featuresImpute,featuresOriginal):
     BB = fO.reshape(fO.shape[0]*fO.shape[1],)
     AA = featuresImpute.reshape(fO.shape[0]*fO.shape[1],)
     results = np.where(BB > 0, 1, 0)
-    scale = lambda x: 1-np.exp(-x)
+    # calculate scores
+    # Method 1: exp
+    # scale = lambda x: 1-np.exp(-x)
+    # Method 2: linear
+    # scale = lambda x: (x-np.min(featuresImpute))/(np.max(featuresImpute)-np.min(featuresImpute))
+    # Method 3: linear + log
+    scale = lambda x: np.log((x-np.min(featuresImpute))/(np.max(featuresImpute)-np.min(featuresImpute))+1)
     scores = scale(AA)
 
     AUC=roc_auc_score(results, scores)
@@ -138,10 +144,10 @@ fpr_9, tpr_9, precision_9, recall_9 = getAllResults(featuresImpute9,featuresOrig
 
 plt.figure()
 plt.plot(fpr_m, tpr_m, ':k', label='MAGIC')
-plt.plot(fpr_6, tpr_6, 'r', label='L1-0.1')
-plt.plot(fpr_7, tpr_7, 'b', label='L2-0.1')
-# plt.plot(fpr_8, tpr_8, 'r', label='L1-1.0')
-# plt.plot(fpr_9, tpr_9, 'b', label='L2-1.0')
+# plt.plot(fpr_6, tpr_6, 'r', label='L1-0.1')
+# plt.plot(fpr_7, tpr_7, 'b', label='L2-0.1')
+plt.plot(fpr_8, tpr_8, 'r', label='L1:1.0')
+plt.plot(fpr_9, tpr_9, 'b', label='L2:1.0')
 plt.xlabel('False Positive Rate') 
 plt.ylabel('True Positive Rate')
 plt.legend(loc="lower right")
@@ -149,10 +155,10 @@ plt.savefig('Figure-'+args.datasetName+'-'+args.ratio+'-ROC.eps', dpi=300)
 
 plt.figure()
 plt.plot(precision_m, recall_m, ':k', label='MAGIC')
-plt.plot(precision_6, recall_6, 'r', label='L1-0.1')
-plt.plot(precision_7, recall_7, 'b', label='L2-0.1')
-# plt.plot(precision_8, recall_8, 'r', label='L1-1.0')
-# plt.plot(precision_9, recall_9, 'b', label='L2-1.0')
+# plt.plot(precision_6, recall_6, 'r', label='L1-0.1')
+# plt.plot(precision_7, recall_7, 'b', label='L2-0.1')
+plt.plot(precision_8, recall_8, 'r', label='L1:1.0')
+plt.plot(precision_9, recall_9, 'b', label='L2:1.0')
 plt.xlabel('Recall')
 plt.ylabel('Precision')
 plt.legend(loc="lower right")
