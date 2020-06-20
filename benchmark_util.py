@@ -599,6 +599,8 @@ def imputation_cosine_log(X_mean, X, X_zero, i, j, ix):
         y =      X[all_index[0],all_index[1]]
         yuse = scipy.sparse.lil_matrix.todense(y)
         yuse = np.asarray(yuse).reshape(-1)
+        x = x.reshape(1,-1)
+        yuse = yuse.reshape(1,-1)
         result = cosine_similarity(x, np.log(yuse+1))
     # return np.median(np.abs(x - yuse))
     return result
