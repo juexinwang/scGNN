@@ -603,4 +603,4 @@ def imputation_cosine_log(X_mean, X, X_zero, i, j, ix):
         yuse = yuse.reshape(1,-1)
         result = cosine_similarity(x, np.log(yuse+1))
     # return np.median(np.abs(x - yuse))
-    return result
+    return result[0][0]
