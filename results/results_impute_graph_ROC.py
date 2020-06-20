@@ -170,8 +170,8 @@ def getAllResultsL1Cos(featuresImpute,featuresOriginal):
     print('{:.4f} {:.4f} {:.4f} {:.4f} {:.4f} '.format(l1ErrorMean, l1ErrorMedian, l1ErrorMin, l1ErrorMax, cosine), end='')   
     print('')
 
-getAllResults(recon_magic,featuresOriginal)
-getAllResults(featuresImpute8,featuresOriginal)
-getAllResults(featuresImpute9,featuresOriginal)
+getAllResultsL1Cos(recon_magic,featuresOriginal)
+getAllResultsL1Cos(featuresImpute8,featuresOriginal)
+getAllResultsL1Cos(featuresImpute9,featuresOriginal)
 
 
