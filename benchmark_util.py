@@ -589,7 +589,7 @@ def imputation_cosine_log(X_mean, X, X_zero, i, j, ix):
     if isinstance(X, np.ndarray):
         all_index = i[ix], j[ix]
         x, y = X_mean[all_index], X[all_index]
-        result = cosine_similarity(x, np.log(y+1))
+        result = cosine_similarity(np.reshape(x,(-1,len(x))), np.reshape(np.log(y+1),(-1,len(y))))
     # If the input is a sparse matrix
     else:
         all_index = i[ix], j[ix]
@@ -597,6 +597,6 @@ def imputation_cosine_log(X_mean, X, X_zero, i, j, ix):
         y =      X[all_index[0],all_index[1]]
         yuse = scipy.sparse.lil_matrix.todense(y)
         yuse = np.asarray(yuse).reshape(-1)
-        result = cosine_similarity(x, np.log(yuse+1))
+        result = cosine_similarity(np.reshape(x,(-1,len(x))), np.reshape(np.log(yuse+1),(-1,len(yuse))))
     # return np.median(np.abs(x - yuse))
     return result
