@@ -3,10 +3,6 @@ import pandas as pd
 import argparse
 import scipy.sparse
 import sys
-import magic
-from deepimpute.multinet import MultiNet
-sys.path.append('/storage/htc/joshilab/wangjue/software/')
-import SAUCIE
 
 sys.path.append('../')
 from util_function import *
@@ -37,7 +33,7 @@ dropi            = np.load(npyDir+'npyImputeG2E_1/'+args.datasetName+'_LTMG_'+ar
 dropj            = np.load(npyDir+'npyImputeG2E_1/'+args.datasetName+'_LTMG_'+args.ratio+'_10-0.1-0.9-0.0-0.3-0.1_dropj.npy')
 dropix           = np.load(npyDir+'npyImputeG2E_1/'+args.datasetName+'_LTMG_'+args.ratio+'_10-0.1-0.9-0.0-0.3-0.1_dropix.npy')
 
-# for MAGIC
+
 fO = featuresOriginal.todense()
 oriz = fO.copy()
 for item in dropix:
@@ -48,32 +44,46 @@ x = np.log(oriz+1)
 
 # Load single-cell RNA-seq data
 # MAGIC
-# Default is KNN=5
-magic_operator = magic.MAGIC()
-# magic_operator = magic.MAGIC(knn=10)
-X_magic = magic_operator.fit_transform(x, genes="all_genes")
-recon_magic = X_magic
+def impute_MAGIC(x):
+    import magic
+    # Default is KNN=5
+    magic_operator = magic.MAGIC()
+    # magic_operator = magic.MAGIC(knn=10)
+    X_magic = magic_operator.fit_transform(x, genes="all_genes")
+    recon_magic = X_magic
+return recon_magic
 
 # SAUCIE
-x=np.transpose(x)
-saucie = SAUCIE.SAUCIE(x.shape[1])
-loadtrain = SAUCIE.Loader(x, shuffle=True)
-saucie.train(loadtrain, steps=1000)
+def impute_SAUCIE(x):
+    import SAUCIE
+    x=np.transpose(x)
+    saucie = SAUCIE.SAUCIE(x.shape[1])
+    loadtrain = SAUCIE.Loader(x, shuffle=True)
+    saucie.train(loadtrain, steps=1000)
 
-loadeval = SAUCIE.Loader(x, shuffle=False)
-reconstruction = saucie.get_reconstruction(loadeval)
+    loadeval = SAUCIE.Loader(x, shuffle=False)
+    reconstruction = saucie.get_reconstruction(loadeval)
 
-recon_sauice=np.transpose(reconstruction)
+    recon_saucie=np.transpose(reconstruction)
+return recon_saucie
 
 # Deep Impute
-# have to use raw value
-data = pd.DataFrame.from_records(np.asarray(oriz))
-model = MultiNet()
-model.fit(data)
-recon_deepimpute = model.predict(data)
-recon_deepimpute = recon_deepimpute.to_numpy()
+def impute_deepimpute(oriz):
+    from deepimpute.multinet import MultiNet
+    sys.path.append('/storage/htc/joshilab/wangjue/software/')
+    # have to use raw value
+    data = pd.DataFrame.from_records(np.asarray(oriz))
+    model = MultiNet()
+    model.fit(data)
+    recon_deepimpute = model.predict(data)
+    recon_deepimpute = recon_deepimpute.to_numpy()
+return recon_deepimpute
 
-
+# Read existed Results
+def impute_read(fileName):
+    recon_read = pd.read_csv(fileName,header=None)
+    recon_read = recon_read.to_numpy()
+    return recon_read
 
 def findoverlap(A,B):
     '''
@@ -196,9 +206,37 @@ def getAllResultsL1Cos(featuresImpute,featuresOriginal):
     print('{:.4f} {:.4f} {:.4f} {:.4f} {:.4f} '.format(l1ErrorMean, l1ErrorMedian, l1ErrorMin, l1ErrorMax, cosine), end='')   
     print('')
 
+# recon_magic = impute_MAGIC(x)
+# getAllResultsL1Cos(recon_magic,featuresOriginal)
+
+# recon_sauice = impute_SAUCIE(x)
+# getAllResultsL1Cos(recon_sauice,featuresOriginal)
+
+# recon_deepimpute = impute_deepimpute(oriz)
+# getAllResultsL1Cos(recon_deepimpute,featuresOriginal)
+
+recon_dca = impute_read('/storage/htc/joshilab/wangjue/imputed/12.dca.csv')
+getAllResultsL1Cos(recon_dca,featuresOriginal)
+
+recon_impute = impute_read('/storage/htc/joshilab/wangjue/imputed/12.deepimpute.csv')
+getAllResultsL1Cos(recon_impute,featuresOriginal)
+
+recon_magic = impute_read('/storage/htc/joshilab/wangjue/imputed/12.magic.csv')
 getAllResultsL1Cos(recon_magic,featuresOriginal)
-getAllResultsL1Cos(recon_deepimpute,featuresOriginal)
-getAllResultsL1Cos(recon_sauice,featuresOriginal)
+
+recon_saucie = impute_read('/storage/htc/joshilab/wangjue/imputed/12.saucie.csv')
+getAllResultsL1Cos(recon_saucie,featuresOriginal)
+
+recon_saver = impute_read('/storage/htc/joshilab/wangjue/imputed/12.saver.csv')
+getAllResultsL1Cos(recon_saver,featuresOriginal)
+
+recon_scimpute = impute_read('/storage/htc/joshilab/wangjue/imputed/12.scimpute.csv')
+getAllResultsL1Cos(recon_scimpute,featuresOriginal)
+
+recon_scvi = impute_read('/storage/htc/joshilab/wangjue/imputed/12.scvi.csv')
+getAllResultsL1Cos(recon_scvi,featuresOriginal)
+
+
 getAllResultsL1Cos(featuresImpute8,featuresOriginal)
 getAllResultsL1Cos(featuresImpute9,featuresOriginal)
 
