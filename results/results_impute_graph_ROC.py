@@ -5,6 +5,8 @@ import scipy.sparse
 import sys
 import magic
 from deepimpute.multinet import MultiNet
+import SAUCIE
+
 sys.path.append('../')
 from util_function import *
 from benchmark_util import *
@@ -51,6 +53,17 @@ magic_operator = magic.MAGIC()
 X_magic = magic_operator.fit_transform(x, genes="all_genes")
 recon_magic = X_magic
 
+# SAUCIE
+x=np.transpose(x)
+saucie = SAUCIE.SAUCIE(x.shape[1])
+loadtrain = SAUCIE.Loader(x, shuffle=True)
+saucie.train(loadtrain, steps=1000)
+
+loadeval = SAUCIE.Loader(x, shuffle=False)
+reconstruction = saucie.get_reconstruction(loadeval)
+
+recon_sauice=np.transpose(reconstruction)
+
 # Deep Impute
 # have to use raw value
 data = pd.DataFrame.from_records(np.asarray(oriz))
@@ -58,6 +71,8 @@ model = MultiNet()
 model.fit(data)
 recon_deepimpute = model.predict(data)
 recon_deepimpute = recon_deepimpute.to_numpy()
+
+
 
 def findoverlap(A,B):
     '''
@@ -74,7 +89,7 @@ def findoverlap(A,B):
     CC=set(AA).intersection(BB)
     return CC
 
-def getAllResults(featuresImpute,featuresOriginal):
+def getROCResults(featuresImpute,featuresOriginal):
     #original
     l1ErrorMean, l1ErrorMedian, l1ErrorMin, l1ErrorMax = imputation_error_log(featuresImpute, featuresOriginal, features, dropi, dropj, dropix)
 
@@ -140,16 +155,16 @@ featuresImpute8 = np.load(npyDir+'npyImputeG2E_8/'+args.datasetName+'_LTMG_'+arg
 featuresImpute9 = np.load(npyDir+'npyImputeG2E_9/'+args.datasetName+'_LTMG_'+args.ratio+'_10-0.1-0.9-0.0-0.3-0.1_recon.npy')
 
 #Confusion matrix related. 
-# fpr_m, tpr_m, precision_m, recall_m = getAllResults(recon_magic,featuresOriginal)
-# fpr_1, tpr_1, precision_1, recall_1 = getAllResults(featuresImpute1,featuresOriginal)
-# fpr_2, tpr_2, precision_2, recall_2 = getAllResults(featuresImpute2,featuresOriginal)
-# fpr_3, tpr_3, precision_3, recall_3 = getAllResults(featuresImpute3,featuresOriginal)
-# fpr_4, tpr_4, precision_4, recall_4 = getAllResults(featuresImpute4,featuresOriginal)
-# fpr_5, tpr_5, precision_5, recall_5 = getAllResults(featuresImpute5,featuresOriginal)
-# fpr_6, tpr_6, precision_6, recall_6 = getAllResults(featuresImpute6,featuresOriginal)
-# fpr_7, tpr_7, precision_7, recall_7 = getAllResults(featuresImpute7,featuresOriginal)
-# fpr_8, tpr_8, precision_8, recall_8 = getAllResults(featuresImpute8,featuresOriginal)
-# fpr_9, tpr_9, precision_9, recall_9 = getAllResults(featuresImpute9,featuresOriginal)
+# fpr_m, tpr_m, precision_m, recall_m = getROCResults(recon_magic,featuresOriginal)
+# fpr_1, tpr_1, precision_1, recall_1 = gerROCResults(featuresImpute1,featuresOriginal)
+# fpr_2, tpr_2, precision_2, recall_2 = gerROCResults(featuresImpute2,featuresOriginal)
+# fpr_3, tpr_3, precision_3, recall_3 = gerROCResults(featuresImpute3,featuresOriginal)
+# fpr_4, tpr_4, precision_4, recall_4 = gerROCResults(featuresImpute4,featuresOriginal)
+# fpr_5, tpr_5, precision_5, recall_5 = gerROCResults(featuresImpute5,featuresOriginal)
+# fpr_6, tpr_6, precision_6, recall_6 = gerROCResults(featuresImpute6,featuresOriginal)
+# fpr_7, tpr_7, precision_7, recall_7 = gerROCResults(featuresImpute7,featuresOriginal)
+# fpr_8, tpr_8, precision_8, recall_8 = gerROCResults(featuresImpute8,featuresOriginal)
+# fpr_9, tpr_9, precision_9, recall_9 = gerROCResults(featuresImpute9,featuresOriginal)
 
 # plt.figure()
 # plt.plot(fpr_m, tpr_m, ':k', label='MAGIC')
@@ -182,6 +197,7 @@ def getAllResultsL1Cos(featuresImpute,featuresOriginal):
 
 getAllResultsL1Cos(recon_magic,featuresOriginal)
 getAllResultsL1Cos(recon_deepimpute,featuresOriginal)
+getAllResultsL1Cos(recon_sauice,featuresOriginal)
 getAllResultsL1Cos(featuresImpute8,featuresOriginal)
 getAllResultsL1Cos(featuresImpute9,featuresOriginal)
 
