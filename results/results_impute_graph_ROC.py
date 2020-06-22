@@ -51,7 +51,7 @@ def impute_MAGIC(x):
     # magic_operator = magic.MAGIC(knn=10)
     X_magic = magic_operator.fit_transform(x, genes="all_genes")
     recon_magic = X_magic
-return recon_magic
+    return recon_magic
 
 # SAUCIE
 def impute_SAUCIE(x):
@@ -65,7 +65,7 @@ def impute_SAUCIE(x):
     reconstruction = saucie.get_reconstruction(loadeval)
 
     recon_saucie=np.transpose(reconstruction)
-return recon_saucie
+    return recon_saucie
 
 # Deep Impute
 def impute_deepimpute(oriz):
@@ -77,7 +77,7 @@ def impute_deepimpute(oriz):
     model.fit(data)
     recon_deepimpute = model.predict(data)
     recon_deepimpute = recon_deepimpute.to_numpy()
-return recon_deepimpute
+    return recon_deepimpute
 
 # Read existed Results
 def impute_read(fileName):
