@@ -236,7 +236,13 @@ getAllResultsL1Cos(recon_scimpute,featuresOriginal)
 recon_scvi = impute_read('/storage/htc/joshilab/wangjue/imputed/12.scvi.csv')
 getAllResultsL1Cos(recon_scvi,featuresOriginal)
 
-
+getAllResultsL1Cos(featuresImpute1,featuresOriginal)
+getAllResultsL1Cos(featuresImpute2,featuresOriginal)
+getAllResultsL1Cos(featuresImpute3,featuresOriginal)
+getAllResultsL1Cos(featuresImpute4,featuresOriginal)
+getAllResultsL1Cos(featuresImpute5,featuresOriginal)
+getAllResultsL1Cos(featuresImpute6,featuresOriginal)
+getAllResultsL1Cos(featuresImpute7,featuresOriginal)
 getAllResultsL1Cos(featuresImpute8,featuresOriginal)
 getAllResultsL1Cos(featuresImpute9,featuresOriginal)
 
