@@ -53,10 +53,10 @@ recon_magic = X_magic
 
 # Deep Impute
 # have to use raw value
-#data = pd.DataFrame.from_records(np.asarray(oriz))
-#model = MultiNet()
-#model.fit(data)
-#recon_deepimpute = model.predict(data)
+data = pd.DataFrame.from_records(np.asarray(oriz))
+model = MultiNet()
+model.fit(data)
+recon_deepimpute = model.predict(data.to_numpy())
 
 def findoverlap(A,B):
     '''
@@ -180,7 +180,7 @@ def getAllResultsL1Cos(featuresImpute,featuresOriginal):
     print('')
 
 getAllResultsL1Cos(recon_magic,featuresOriginal)
-#getAllResultsL1Cos(recon_deepimpute,featuresOriginal)
+getAllResultsL1Cos(recon_deepimpute,featuresOriginal)
 getAllResultsL1Cos(featuresImpute8,featuresOriginal)
 getAllResultsL1Cos(featuresImpute9,featuresOriginal)
 

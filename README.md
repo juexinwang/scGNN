@@ -132,6 +132,12 @@ Identify celltypes
 2. GAE <https://github.com/tkipf/gae/tree/master/gae>
 3. scVI-reproducibility <https://github.com/romain-lopez/scVI-reproducibility>
 
+Note:
+DeepImpute:
+https://github.com/lanagarmire/deepimpute
+Change to https://github.com/lanagarmire/deepimpute/blob/master/deepimpute/multinet.py
+from tensorflow.keras.callbacks import EarlyStopping
+
 ## Contact:
 
 Juexin Wang wangjue@missouri.edu
