@@ -52,7 +52,8 @@ X_magic = magic_operator.fit_transform(x, genes="all_genes")
 recon_magic = X_magic
 
 # Deep Impute
-data = pd.DataFrame.from_records(x)
+# have to use raw value
+data = pd.DataFrame.from_records(np.asarray(oriz))
 model = MultiNet()
 model.fit(data)
 recon_deepimpute = model.predict(data)
