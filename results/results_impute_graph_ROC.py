@@ -5,7 +5,7 @@ import scipy.sparse
 import sys
 import magic
 from deepimpute.multinet import MultiNet
-sys.path.append('/storage/htc/joshilab/wangjue/software/SAUICE')
+sys.path.append('/storage/htc/joshilab/wangjue/software/')
 import SAUCIE
 
 sys.path.append('../')
