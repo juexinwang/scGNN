@@ -4,6 +4,7 @@ import argparse
 import scipy.sparse
 import sys
 import magic
+from deepimpute.multinet import MultiNet
 sys.path.append('../')
 from util_function import *
 from benchmark_util import *
@@ -43,11 +44,18 @@ for item in dropix:
 x = np.log(oriz+1)
 
 # Load single-cell RNA-seq data
+# MAGIC
 # Default is KNN=5
 magic_operator = magic.MAGIC()
 # magic_operator = magic.MAGIC(knn=10)
 X_magic = magic_operator.fit_transform(x, genes="all_genes")
 recon_magic = X_magic
+
+# Deep Impute
+data = pd.DataFrame.from_records(x)
+model = MultiNet()
+model.fit(data)
+recon_deepimpute = model.predict(data)
 
 def findoverlap(A,B):
     '''
@@ -171,6 +179,7 @@ def getAllResultsL1Cos(featuresImpute,featuresOriginal):
     print('')
 
 getAllResultsL1Cos(recon_magic,featuresOriginal)
+getAllResultsL1Cos(recon_deepimpute,featuresOriginal)
 getAllResultsL1Cos(featuresImpute8,featuresOriginal)
 getAllResultsL1Cos(featuresImpute9,featuresOriginal)
 
