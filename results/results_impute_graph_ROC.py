@@ -206,14 +206,15 @@ def getAllResultsL1Cos(featuresImpute,featuresOriginal):
     print('{:.4f} {:.4f} {:.4f} {:.4f} {:.4f} '.format(l1ErrorMean, l1ErrorMedian, l1ErrorMin, l1ErrorMax, cosine), end='')   
     print('')
 
-# recon_magic = impute_MAGIC(x)
-# getAllResultsL1Cos(recon_magic,featuresOriginal)
 
 # recon_sauice = impute_SAUCIE(x)
 # getAllResultsL1Cos(recon_sauice,featuresOriginal)
 
-# recon_deepimpute = impute_deepimpute(oriz)
-# getAllResultsL1Cos(recon_deepimpute,featuresOriginal)
+recon_deepimpute = impute_deepimpute(oriz)
+getAllResultsL1Cos(recon_deepimpute,featuresOriginal)
+
+recon_magic = impute_MAGIC(x)
+getAllResultsL1Cos(recon_magic,featuresOriginal)
 
 recon_dca = impute_read('/storage/htc/joshilab/wangjue/imputed/12.dca.csv')
 getAllResultsL1Cos(recon_dca,featuresOriginal)
