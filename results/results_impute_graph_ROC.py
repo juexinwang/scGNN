@@ -4,7 +4,7 @@ import argparse
 import scipy.sparse
 import sys
 import magic
-# from deepimpute.multinet import MultiNet
+from deepimpute.multinet import MultiNet
 sys.path.append('../')
 from util_function import *
 from benchmark_util import *
