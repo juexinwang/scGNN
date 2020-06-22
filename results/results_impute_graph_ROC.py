@@ -56,7 +56,8 @@ recon_magic = X_magic
 data = pd.DataFrame.from_records(np.asarray(oriz))
 model = MultiNet()
 model.fit(data)
-recon_deepimpute = model.predict(data.to_numpy())
+recon_deepimpute = model.predict(data)
+recon_deepimpute = recon_deepimpute.to_numpy()
 
 def findoverlap(A,B):
     '''
