@@ -120,7 +120,7 @@ parser.add_argument('--useBothembedding', action='store_true', default=False,
                     help='whether use both embedding and Graph embedding for clustering(default: False)')
 parser.add_argument('--n-clusters', default=20, type=int, help='number of clusters if predifined for KMeans/Birch ')
 parser.add_argument('--clustering-method', type=str, default='LouvainK',
-                    help='Clustering method: Louvain/KMeans/SpectralClustering/AffinityPropagation/AgglomerativeClustering/Birch/BirchN/MeanShift/OPTICS/LouvainK/LouvainB')
+                    help='Clustering method: Louvain/KMeans/SpectralClustering/AffinityPropagation/AgglomerativeClustering/AgglomerativeClusteringK/Birch/BirchN/MeanShift/OPTICS/LouvainK/LouvainB')
 parser.add_argument('--maxClusterNumber', type=int, default=30,
                     help='max cluster for celltypeEM without setting number of clusters (default: 30)') 
 parser.add_argument('--minMemberinCluster', type=int, default=5,
@@ -439,6 +439,9 @@ if __name__ == "__main__":
             listResult = clustering.predict(zOut)
         elif args.clustering_method=='AgglomerativeClustering':
             clustering = AgglomerativeClustering(linkage=args.linkage).fit(zOut)
+            listResult = clustering.labels_.tolist()
+        elif args.clustering_method=='AgglomerativeClusteringK':
+            clustering = AgglomerativeClustering(n_clusters=args.n_clusters).fit(zOut)
             listResult = clustering.labels_.tolist()
         elif args.clustering_method=='Birch':
             clustering = Birch(n_clusters=args.n_clusters).fit(zOut)
