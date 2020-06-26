@@ -147,7 +147,7 @@ def getROCResults(featuresImpute,featuresOriginal):
     AUC=roc_auc_score(results, scores)
 
     # print('{:.4f} {:.4f} {:.4f} {:.4f} {:.4f} {:.4f} {:.4f} {:.4f} {:.4f} {:.4f} {:.4f} {:d} {:d} {:d} {:d} {:.4f} {:.4f} {:.4f} {:.4f} '.format(F1,MCC,AUC,TPR,TNR,PPV,NPV,FNR,FPR,FDR,ACC,TP,FN,FP,TN,l1ErrorMean, l1ErrorMedian, l1ErrorMin, l1ErrorMax), end='')
-    print('{:.4f} {:.4f} {:.4f} {:.4f} {:.4f} {:.4f} {:.4f} {:.4f} {:.4f} {:.4f} {:d} {:d} {:d} {:d} {:.4f} {:.4f} {:.4f} {:.4f} '.format(F1,MCC,AUC,TPR,TNR,PPV,FNR,FPR,FDR,ACC,TP,FN,FP,TN,l1ErrorMean, l1ErrorMedian, l1ErrorMin, l1ErrorMax), end='')   
+    print('{:.4f} {:.4f} {:.4f} {:.4f} {:.4f} {:.4f} {:.4f} {:.4f} {:.4f} {:.4f} {:d} {:d} {:d} {:d} {:.4f} {:.4f} {:.4f} {:.4f} '.format(F1,MCC,AUC,TPR,TNR,PPV,FNR,FPR,FDR,ACC,TP,FN,FP,TN,l1ErrorMean, l1ErrorMedian, l1ErrorMin, l1ErrorMax), end='')
     print('')
 
     fpr_, tpr_, _ = roc_curve(results, scores)
