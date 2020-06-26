@@ -216,26 +216,33 @@ getAllResultsL1Cos(recon_deepimpute,featuresOriginal)
 recon_magic = impute_MAGIC(x)
 getAllResultsL1Cos(recon_magic,featuresOriginal)
 
-recon_dca = impute_read('/storage/htc/joshilab/wangjue/imputed/12.dca.csv')
-getAllResultsL1Cos(recon_dca,featuresOriginal)
+for i in range(3):
+    recon_dca = impute_read('/storage/htc/joshilab/wangjue/imputed/all/12.dca.'+str(i)+'.csv')
+    getAllResultsL1Cos(recon_dca,featuresOriginal)
 
-recon_impute = impute_read('/storage/htc/joshilab/wangjue/imputed/12.deepimpute.csv')
-getAllResultsL1Cos(recon_impute,featuresOriginal)
+for i in range(3):
+    recon_impute = impute_read('/storage/htc/joshilab/wangjue/imputed/all/12.deepimpute.'+str(i)+'.csv')
+    getAllResultsL1Cos(recon_impute,featuresOriginal)
 
-recon_magic = impute_read('/storage/htc/joshilab/wangjue/imputed/12.magic.csv')
-getAllResultsL1Cos(recon_magic,featuresOriginal)
+for i in range(3):
+    recon_magic = impute_read('/storage/htc/joshilab/wangjue/imputed/all/12.magic.'+str(i)+'.csv')
+    getAllResultsL1Cos(recon_magic,featuresOriginal)
 
-recon_saucie = impute_read('/storage/htc/joshilab/wangjue/imputed/12.saucie.csv')
-getAllResultsL1Cos(recon_saucie,featuresOriginal)
+for i in range(3):
+    recon_saucie = impute_read('/storage/htc/joshilab/wangjue/imputed/all/12.saucie.'+str(i)+'.csv')
+    getAllResultsL1Cos(recon_saucie,featuresOriginal)
 
-recon_saver = impute_read('/storage/htc/joshilab/wangjue/imputed/12.saver.csv')
-getAllResultsL1Cos(recon_saver,featuresOriginal)
+for i in range(3):
+    recon_saver = impute_read('/storage/htc/joshilab/wangjue/imputed/all/12.saver.'+str(i)+'.csv')
+    getAllResultsL1Cos(recon_saver,featuresOriginal)
 
-recon_scimpute = impute_read('/storage/htc/joshilab/wangjue/imputed/12.scimpute.csv')
-getAllResultsL1Cos(recon_scimpute,featuresOriginal)
+for i in range(3):
+    recon_scimpute = impute_read('/storage/htc/joshilab/wangjue/imputed/all/12.scimpute.'+str(i)+'.csv')
+    getAllResultsL1Cos(recon_scimpute,featuresOriginal)
 
-recon_scvi = impute_read('/storage/htc/joshilab/wangjue/imputed/12.scvi.csv')
-getAllResultsL1Cos(recon_scvi,featuresOriginal)
+for i in range(3):
+    recon_scvi = impute_read('/storage/htc/joshilab/wangjue/imputed/all/12.scvi.'+str(i)+'.csv')
+    getAllResultsL1Cos(recon_scvi,featuresOriginal)
 
 getAllResultsL1Cos(featuresImpute1,featuresOriginal)
 getAllResultsL1Cos(featuresImpute2,featuresOriginal)
