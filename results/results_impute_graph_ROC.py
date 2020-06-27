@@ -199,10 +199,17 @@ featuresImpute9 = np.load(npyDir+'npyImputeG2E_9/'+args.datasetName+'_LTMG_'+arg
 # plt.legend(loc="lower right")
 # plt.savefig('Figure-'+args.datasetName+'-'+args.ratio+'-PrecisionRecall.eps', dpi=300)
 
-def getAllResultsL1Cos(featuresImpute,featuresOriginal):
+def getAllResultsL1CosLog(featuresImpute,featuresOriginal):
     #original
     l1ErrorMean, l1ErrorMedian, l1ErrorMin, l1ErrorMax = imputation_error_log(featuresImpute, featuresOriginal, features, dropi, dropj, dropix)
     cosine = imputation_cosine_log(featuresImpute, featuresOriginal, features, dropi, dropj, dropix)
+    print('{:.4f} {:.4f} {:.4f} {:.4f} {:.4f} '.format(l1ErrorMean, l1ErrorMedian, l1ErrorMin, l1ErrorMax, cosine), end='')   
+    print('')
+
+def getAllResultsL1Cos(featuresImpute,featuresOriginal):
+    #original
+    l1ErrorMean, l1ErrorMedian, l1ErrorMin, l1ErrorMax = imputation_error(featuresImpute, featuresOriginal, features, dropi, dropj, dropix)
+    cosine = imputation_cosine(featuresImpute, featuresOriginal, features, dropi, dropj, dropix)
     print('{:.4f} {:.4f} {:.4f} {:.4f} {:.4f} '.format(l1ErrorMean, l1ErrorMedian, l1ErrorMin, l1ErrorMax, cosine), end='')   
     print('')
 
@@ -211,10 +218,10 @@ def getAllResultsL1Cos(featuresImpute,featuresOriginal):
 # getAllResultsL1Cos(recon_sauice,featuresOriginal)
 
 recon_deepimpute = impute_deepimpute(oriz)
-getAllResultsL1Cos(recon_deepimpute,featuresOriginal)
+getAllResultsL1CosLog(recon_deepimpute,featuresOriginal)
 
 recon_magic = impute_MAGIC(x)
-getAllResultsL1Cos(recon_magic,featuresOriginal)
+getAllResultsL1CosLog(recon_magic,featuresOriginal)
 
 for i in range(1,4):
     recon_dca = impute_read('/storage/htc/joshilab/wangjue/imputed/all/12.dca.'+str(i)+'.csv')
@@ -244,14 +251,14 @@ for i in range(1,4):
     recon_scvi = impute_read('/storage/htc/joshilab/wangjue/imputed/all/12.scvi.'+str(i)+'.csv')
     getAllResultsL1Cos(recon_scvi,featuresOriginal)
 
-getAllResultsL1Cos(featuresImpute1,featuresOriginal)
-getAllResultsL1Cos(featuresImpute2,featuresOriginal)
-getAllResultsL1Cos(featuresImpute3,featuresOriginal)
-getAllResultsL1Cos(featuresImpute4,featuresOriginal)
-getAllResultsL1Cos(featuresImpute5,featuresOriginal)
-getAllResultsL1Cos(featuresImpute6,featuresOriginal)
-getAllResultsL1Cos(featuresImpute7,featuresOriginal)
-getAllResultsL1Cos(featuresImpute8,featuresOriginal)
-getAllResultsL1Cos(featuresImpute9,featuresOriginal)
+getAllResultsL1CosLog(featuresImpute1,featuresOriginal)
+getAllResultsL1CosLog(featuresImpute2,featuresOriginal)
+getAllResultsL1CosLog(featuresImpute3,featuresOriginal)
+getAllResultsL1CosLog(featuresImpute4,featuresOriginal)
+getAllResultsL1CosLog(featuresImpute5,featuresOriginal)
+getAllResultsL1CosLog(featuresImpute6,featuresOriginal)
+getAllResultsL1CosLog(featuresImpute7,featuresOriginal)
+getAllResultsL1CosLog(featuresImpute8,featuresOriginal)
+getAllResultsL1CosLog(featuresImpute9,featuresOriginal)
 
 

@@ -604,3 +604,35 @@ def imputation_cosine_log(X_mean, X, X_zero, i, j, ix):
         result = cosine_similarity(x, np.log(yuse+1))
     # return np.median(np.abs(x - yuse))
     return result[0][0]
+
+# cosine similarity
+def imputation_cosine(X_mean, X, X_zero, i, j, ix):
+    """
+    X_mean: imputed dataset
+    X: original dataset
+    X_zero: zeros dataset, does not need 
+    i, j, ix: indices of where dropout was applied
+    ========
+    returns:
+    cosine similarity between datasets at indices given
+    """
+
+    #If the input is a dense matrix
+    if isinstance(X, np.ndarray):
+        all_index = i[ix], j[ix]
+        x, y = X_mean[all_index], X[all_index]
+        x = x.reshape(1,-1)
+        y = y.reshape(1,-1)
+        result = cosine_similarity(x, y)
+    # If the input is a sparse matrix
+    else:
+        all_index = i[ix], j[ix]
+        x = X_mean[all_index[0],all_index[1]]
+        y =      X[all_index[0],all_index[1]]
+        yuse = scipy.sparse.lil_matrix.todense(y)
+        yuse = np.asarray(yuse).reshape(-1)
+        x = x.reshape(1,-1)
+        yuse = yuse.reshape(1,-1)
+        result = cosine_similarity(x, yuse)
+    # return np.median(np.abs(x - yuse))
+    return result[0][0]
