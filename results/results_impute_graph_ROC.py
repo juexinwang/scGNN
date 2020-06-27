@@ -217,7 +217,7 @@ def getAllResultsL1Cos(featuresImpute,featuresOriginal):
 # recon_sauice = impute_SAUCIE(x)
 # getAllResultsL1Cos(recon_sauice,featuresOriginal)
 
-recon_deepimpute = impute_deepimpute(x)
+recon_deepimpute = impute_deepimpute(oriz)
 getAllResultsL1CosLog(recon_deepimpute,featuresOriginal)
 
 recon_magic = impute_MAGIC(x)
