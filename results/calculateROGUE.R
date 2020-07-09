@@ -9,6 +9,8 @@ suppressMessages(library(ROGUE))
 suppressMessages(library(ggplot2))
 suppressMessages(library(tidyverse))
 
+kpara = 200
+
 # expr=read.csv("/storage/htc/joshilab/wangjue/imputed/all/12.magic.1.csv", header = FALSE)
 # ent.res <- SE_fun(expr)
 # CalculateRogue(ent.res, platform = "UMI")
@@ -26,31 +28,31 @@ expr=t(expr)
 # CIDR
 clusters=read.csv("CIDR/12.Klein_clusters.csv", header = FALSE)
 clusters=unlist(clusters, use.names=FALSE)
-rogue(expr, labels = clusters, samples = sample, platform = "UMI", span = 0.6)
+rogue(expr, labels = clusters, samples = sample, platform = "UMI", span = 0.6, k = kpara)
 # monocle3
 clusters=read.csv("monocle3/Klein_cell_pre_label.csv")
 clusters=unlist(clusters[2], use.names=FALSE)
-rogue(expr, labels = clusters, samples = sample, platform = "UMI", span = 0.6)
+rogue(expr, labels = clusters, samples = sample, platform = "UMI", span = 0.6, k = kpara)
 # phenoGraph
 clusters=read.csv("phenoGraph/Klein_cell_pre_label.csv")
 clusters=unlist(clusters[2], use.names=FALSE)
-rogue(expr, labels = clusters, samples = sample, platform = "UMI", span = 0.6)
+rogue(expr, labels = clusters, samples = sample, platform = "UMI", span = 0.6, k = kpara)
 # raceID
 clusters=read.csv("raceID/12.Klein_clusters.csv", header = FALSE)
 clusters=unlist(clusters, use.names=FALSE)
-rogue(expr, labels = clusters, samples = sample, platform = "UMI", span = 0.6)
+rogue(expr, labels = clusters, samples = sample, platform = "UMI", span = 0.6, k = kpara)
 # seurat
 clusters=read.csv("seurat/12.Klein_clusters.csv", header = FALSE)
 clusters=unlist(clusters, use.names=FALSE)
-rogue(expr, labels = clusters, samples = sample, platform = "UMI", span = 0.6)
+rogue(expr, labels = clusters, samples = sample, platform = "UMI", span = 0.6, k = kpara)
 # toomanycells
 clusters=read.csv("toomanycells/12.Klein_clusters.csv", header = FALSE)
 clusters=unlist(clusters, use.names=FALSE)
-rogue(expr, labels = clusters, samples = sample, platform = "UMI", span = 0.6)
+rogue(expr, labels = clusters, samples = sample, platform = "UMI", span = 0.6, k = kpara)
 # scGNN
 clusters=read.csv("/storage/htc/joshilab/wangjue/scGNN/npyG2E_LK_1/12.Klein_LTMG_0.0-0.3-0.1_0.0_0.0_results.txt", header = FALSE)
 clusters=unlist(clusters, use.names=FALSE)
-rogue(expr, labels = clusters, samples = sample, platform = "UMI", span = 0.6)
+rogue(expr, labels = clusters, samples = sample, platform = "UMI", span = 0.6, k = kpara)
 
 
 # For dataset Zesel
@@ -64,28 +66,28 @@ expr=t(expr)
 # CIDR
 clusters=read.csv("CIDR/13.Zeisel_clusters.csv", header = FALSE)
 clusters=unlist(clusters, use.names=FALSE)
-rogue(expr, labels = clusters, samples = sample, platform = "UMI", span = 0.6)
+rogue(expr, labels = clusters, samples = sample, platform = "UMI", span = 0.6, k = kpara)
 # monocle3
 clusters=read.csv("monocle3/Zeisel_cell_pre_label.csv")
 clusters=unlist(clusters[2], use.names=FALSE)
-rogue(expr, labels = clusters, samples = sample, platform = "UMI", span = 0.6)
+rogue(expr, labels = clusters, samples = sample, platform = "UMI", span = 0.6, k = kpara)
 # phenoGraph
 clusters=read.csv("phenoGraph/Zeisel_cell_pre_label.csv")
 clusters=unlist(clusters[2], use.names=FALSE)
-rogue(expr, labels = clusters, samples = sample, platform = "UMI", span = 0.6)
+rogue(expr, labels = clusters, samples = sample, platform = "UMI", span = 0.6, k = kpara)
 # raceID
 clusters=read.csv("raceID/13.Zeisel_clusters.csv", header = FALSE)
 clusters=unlist(clusters, use.names=FALSE)
-rogue(expr, labels = clusters, samples = sample, platform = "UMI", span = 0.6)
+rogue(expr, labels = clusters, samples = sample, platform = "UMI", span = 0.6, k = kpara)
 # seurat
 clusters=read.csv("seurat/13.Zeisel_clusters.csv", header = FALSE)
 clusters=unlist(clusters, use.names=FALSE)
-rogue(expr, labels = clusters, samples = sample, platform = "UMI", span = 0.6)
+rogue(expr, labels = clusters, samples = sample, platform = "UMI", span = 0.6, k = kpara)
 # toomanycells
 clusters=read.csv("toomanycells/13.Zeisel_clusters.csv", header = FALSE)
 clusters=unlist(clusters, use.names=FALSE)
-rogue(expr, labels = clusters, samples = sample, platform = "UMI", span = 0.6)
+rogue(expr, labels = clusters, samples = sample, platform = "UMI", span = 0.6, k = kpara)
 # scGNN
 clusters=read.csv("/storage/htc/joshilab/wangjue/scGNN/npyG2E_LK_1/13.Zeisel_LTMG_0.0-0.3-0.1_0.0_0.0_results.txt", header = FALSE)
 clusters=unlist(clusters, use.names=FALSE)
-rogue(expr, labels = clusters, samples = sample, platform = "UMI", span = 0.6)
+rogue(expr, labels = clusters, samples = sample, platform = "UMI", span = 0.6, k = kpara)
