@@ -9,7 +9,7 @@ suppressMessages(library(ROGUE))
 suppressMessages(library(ggplot2))
 suppressMessages(library(tidyverse))
 
-kpara = 200
+kpara = 45
 
 # expr=read.csv("/storage/htc/joshilab/wangjue/imputed/all/12.magic.1.csv", header = FALSE)
 # ent.res <- SE_fun(expr)
@@ -23,7 +23,9 @@ sample =rep('p',dim(expr)[1])
 expr=t(expr)
 
 # Whether use original expression data
-# expr=exp(expr)
+expr=exp(expr)
+ent.res <- SE_fun(expr)
+CalculateRogue(ent.res, platform = "UMI", k = kpara)
 
 # CIDR
 clusters=read.csv("CIDR/12.Klein_clusters.csv", header = FALSE)
@@ -55,13 +57,16 @@ clusters=unlist(clusters, use.names=FALSE)
 rogue(expr, labels = clusters, samples = sample, platform = "UMI", span = 0.6, k = kpara)
 
 
+kpara = 200
 # For dataset Zesel
 expr=read.csv("13.data.csv", header = FALSE)
 sample =rep('p',dim(expr)[1])
 expr=t(expr)
 
 # Whether use original expression data
-# expr=exp(expr)
+expr=exp(expr)
+ent.res <- SE_fun(expr)
+CalculateRogue(ent.res, platform = "UMI", k = kpara)
 
 # CIDR
 clusters=read.csv("CIDR/13.Zeisel_clusters.csv", header = FALSE)
