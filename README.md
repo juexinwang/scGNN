@@ -1,143 +1,105 @@
-# scGNN
-
-single cell Graph Neural Networks
+# scGNN   
 
 ## About:
 
-Graph Neural Network for Single Cell scRNA Imputation and celltype identification. 
+__scGNN__ (**s**ingle **c**ell **g**raph **n**eural networks) provides a hypothesis-free deep learning framework for scRNA-Seq analyses. This framework formulates and aggregates cell-cell relationships with graph neural networks and models heterogeneous gene expression patterns using a left-truncated mixture Gaussian model. scGNN integrates three iterative multi-modal autoencoders and outperforms existing tools for gene imputation and cell clustering on four benchmark scRNA-Seq datasets.
 
-## Reqirements:
+## Installation:
 
 Tested on Ubuntu 16.04 and CentOS 7 with Python 3.6.8
 
-Option 1: Direct individual install
+### Option 1: (Recommended) Use python virutal enviorment with conda（<https://anaconda.org/>）
 
-    pip install numpy
-    pip install torch
-    pip install networkx
-    pip install matplotlib
-    pip install pandas
-    pip install seaborn
-    pip install umap-learn
-    pip install community
-    pip install rpy2
-    pip install munkres
+```shell
+conda create -n scgnnEnv python=3.6.8 pip
+conda activate scgnnEnv
+conda install r-devtools
+conda install -c r r-igraph
+pip install -r requirements.txt
+```
 
-R integration:
+### Option 2 : Direct install individually
 
-    R >=3.6.2
-    install.packages("devtools")
-    install.packages("igraph")
-    library(devtools)
-    install_github("BMEngineeR/scGNNLTMG")
+    Installing R packages, tested on R >=3.6.2:
+    In R command line:
 
-Option 2: simply run ```pip install -r requirements.txt``` to install all the necessary packages.
+```R
+install.packages("devtools")
+install.packages("igraph")
+library(devtools)
+install_github("BMEngineeR/scGNNLTMG")
+```
 
-Option 3: Use Docker #TODO
+    Install all python packages.
 
-## Example:
+```bash
+pip install -r requirements.txt
+```
 
-Accepting scRNA format: 10X and CSV
-Example data:
-After filtering: 9760 cells 13052 genes, finally select 2000 genes
-https://data.humancellatlas.org/project-assets/project-matrices/4d6f6c96-2a83-43d8-8fe1-0f53bffd4674.homo_sapiens.mtx.zip
-
-30K liver cells (10X)
-
-1. Generating Use_expression.csv (preprocessed file) and ltmg.csv (ltmg)
-TODO: ltmgDir
-- CSV
-
-    `python3 -W ignore PreprocessingscGNN.py --datasetName e7448a34-b33d-41de-b422-4c09bfeba96b.mtx --datasetDir /storage/htc/joshilab/wangjue/10x/6/ --LTMGDir /storage/htc/joshilab/wangjue/10x/6/ --filetype CSV`
-
-- 10X
-
-    `python3 -W ignore PreprocessingscGNN.py --datasetName e7448a34-b33d-41de-b422-4c09bfeba96b.mtx --datasetDir /storage/htc/joshilab/wangjue/10x/6/ --LTMGDir /storage/htc/joshilab/wangjue/10x/6/`
-
-2. Run scGNN
-
-    `module load miniconda3`
+### Option 3: Use Docker 
     
-    `source activate conda_R`
+    #TODO
 
-    `python3 -W ignore scGNN.py --datasetName e7448a34-b33d-41de-b422-4c09bfeba96b.mtx --LTMGDir /storage/htc/joshilab/wangjue/10x/6/ --outputDir outputdir/`
+## Quick Start:
 
-3. Check Results
+scGNN accepts scRNA-seq data format: CSV and 10X
+
+1. Prepare datasets
+
+- CSV format
+    Take example of Alzheimer’s disease datasets （GSE138852） analyzed in the manuscript.
+    ```shell
+    mkdir GSE138852
+    wget -P GSE138852/ https://ftp.ncbi.nlm.nih.gov/geo/series/GSE138nnn/GSE138852/suppl/GSE138852_counts.csv.gz
+    ```
+
+- 10X format
+    Take example of 30K liver cells from human cell atlas
+    ```shell
+    mkdir liver
+    wget -P liver https://data.humancellatlas.org/project-assets/project-matrices/4d6f6c96-2a83-43d8-8fe1-0f53bffd4674.homo_sapiens.mtx.zip
+    ```
     
-    In outputdir now, we have four output files. May update later?
+2. Preprocess input files and get discretirized regulatory signals from Left-Trunctruncated-Mixed-Gaussian(LTMG) model (Optional but recommended). This step will generate Use_expression.csv (preprocessed file) and ltmg.csv (from LTMG). 
+In preprocessing, paramter **geneSelectnum** selects number of most variant genes. The default gene number is 2000.  
+
+- CSV format
+
+```shell
+python3 -W ignore PreprocessingscGNN.py --datasetName GSE138852_counts.csv --datasetDir /folder/GSE138852/ --LTMGDir /folder/GSE138852/ --filetype CSV --geneSelectnum 2000
+```
+
+- 10X format
+
+```shell
+python3 -W ignore PreprocessingscGNN.py --datasetName e7448a34-b33d-41de-b422-4c09bfeba96b.mtx --datasetDir /folder/liver/ --LTMGDir /folder/liver/ --geneSelectnum 2000
+```
+
+3. Run scGNN. We takes example of analysis in GSE138852. Here wer use parameters to demo purposes: 
+    - **EM-iteration** defines number of iteration, default is 10, here we set as 2. 
+    - **quickmode** for bypassing cluster autoencoder. 
+    
+    If you want to reproduce results in the manuscript, not using these two parameters. 
+
+    ```bash
+    python3 -W ignore scGNN.py --datasetName GSE138852_counts.csv --LTMGDir /folder/GSE138852/ --outputDir outputdir/ --EM-iteration 2 --quickmode
+    ```
+
+4. Check Results
+    
+    In outputdir now, we have four output files.
     
     *_recon.csv:        Imputed gene expression matrix. Row as gene, col as cell. First row as gene name, First col as the cell name. 
 
-    *_embedding.csv:    Learned embedding (features) for clustering. Row as cell, col as embeddings. First row as the embedding names (no means). First col as the cell name
+    *_embedding.csv:    Learned embedding (features) for clustering. Row as cell, col as embeddings. First row as the embedding names (no means). First col as the cell name.
 
     *_graph.csv:        Learned graph edges of the cell graph in tuples: nodeA,nodeB,weights. First row as the name.
 
     *_results.txt:      Identified cell types. First row as the name. 
-
-
-## Notes for Cluster Running Benchmark: (main_benchmark.py) Here for eproducibility.
----------
-    module load miniconda3
-    conda create -n my_environment python=3.7
-    source activate my_environment
-
-Preprocess benchmarks:
-
- 1. generating usage csv
-
-    python Preprocessing_scFile.py --inputfile /home/wangjue/biodata/scData/allBench/10.Usoskin/T2000_UsingOriginalMatrix/T2000_expression.txt --outputfile /home/wangjue/biodata/scData/10.Usoskin.csv --cellcount 622 --genecount 2000 --split space --cellheadflag False
-
-2. generating sparse coding under data/
-    python Preprocessing_main.py --expression-name 10.Usoskin
-
-Or directly unzip data folder ```gunzip data```
-
-Now We totally have 4 dropout ratio in testing imputation (0.1,0.3,0.6,0.9):
-
-1. Generating job scripts for each of the benchmark datsets:
-
-    ```python generating_Impute_0.1-0.8.py```
-
-2. Submit job scripts in cluster (HPC):
-
-    ```submitCluster_impute_0.1-0.8.sh```
-
-3. Get results when jobs finished
-
-    ```cd results``` 
-    ```bash results_impute_explore_0.3.sh```
-
-(Optional): Check MAGIC results: 
-    ```cd otherresults``` 
-    ```bash results_impute_explore_0.3.sh```
-
-Identify celltypes
-
-1. Generating job scripts for each of the benchmark datsets:
-
-    ```python generating_celltype.py```
-
-2. Submit job scripts in cluster (HPC):
-
-    ```submitCluster_celltype.sh```
-
-3. Get results in npyG2E_LK_1 when jobs finished
- 
-    ```ls npyG2E_LK_1/*_benchmark.txt```
-
 
 ## Reference:
 
 1. VAE <https://github.com/pytorch/examples/tree/master/vae>
 2. GAE <https://github.com/tkipf/gae/tree/master/gae>
 3. scVI-reproducibility <https://github.com/romain-lopez/scVI-reproducibility>
-
-Note:
-DeepImpute:
-https://github.com/lanagarmire/deepimpute
-Change to https://github.com/lanagarmire/deepimpute/blob/master/deepimpute/multinet.py
-from tensorflow.keras.callbacks import EarlyStopping
-
-## Contact:
-
-Juexin Wang wangjue@missouri.edu
+4. LTMG <https://academic.oup.com/nar/article/47/18/e111/5542876>

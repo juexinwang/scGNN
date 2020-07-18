@@ -96,12 +96,12 @@ parser.add_argument('--precisionModel', type=str, default='Float',
                     help='Single Precision/Double precision: Float/Double (default:Float)')
 parser.add_argument('--coresUsage', type=str, default='1', 
                     help='how many cores used: all/1/... (default:1)')
-parser.add_argument('--saveFlag', action='store_true', default=True, 
-                    help='whether save npy results or not')
 parser.add_argument('--npyDir', type=str, default='npyGraphTest/',
                     help='save npy results in directory')
 parser.add_argument('--log-interval', type=int, default=100, metavar='N',
                     help='how many batches to wait before logging training status')
+parser.add_argument('--saveinternal', action='store_true', default=False, 
+                    help='whether save internal interation results or not')
 
 #LTMG related
 parser.add_argument('--inferLTMGTag', action='store_true', default=False,
@@ -356,7 +356,7 @@ if __name__ == "__main__":
     #     adj, edgeList = generateAdjWeighted(zOut, graphType=args.prunetype, para = args.knn_distance+':'+str(args.k))         
     #     adjdense = adj.toarray()    
     print("---Pruning takes %s seconds ---" % (time.time() - prune_time))
-    # if args.saveFlag:
+    # if args.saveinternal:
     #     reconOut = recon.detach().cpu().numpy()
     #     if args.imputeMode:
     #         np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_'+str(args.dropoutRatio)+'_'+outParaTag+'_recon.npy',reconOut)
@@ -539,7 +539,7 @@ if __name__ == "__main__":
                 zEmbedding=GAEembedding(zDiscret, adj, args)
                 zOut=np.concatenate((zOut,zEmbedding),axis=1)
 
-        if args.saveFlag:
+        if args.saveinternal:
             reconOut = recon.detach().cpu().numpy()
             if args.imputeMode:
                 # np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_'+str(args.dropoutRatio)+'_'+outParaTag+'_recon'+str(bigepoch)+'.npy',reconOut)
@@ -575,7 +575,7 @@ if __name__ == "__main__":
         print('All Results: ')
         print(resultstr)
 
-        if args.saveFlag:
+        if args.saveinternal:
             if args.imputeMode:
                 np.savetxt(args.npyDir+args.datasetName+'_'+args.regulized_type+'_'+str(args.dropoutRatio)+'_'+outParaTag+'_benchmark'+str(bigepoch)+'.txt',resultarray,fmt='%s')
                 np.savetxt(args.npyDir+args.datasetName+'_'+args.regulized_type+'_'+str(args.dropoutRatio)+'_'+outParaTag+'_graph'+str(bigepoch)+'.csv',edgeList,fmt='%d,%d,%2.1f')
@@ -612,23 +612,22 @@ if __name__ == "__main__":
         # torch.cuda.empty_cache()
 
     # Output celltype related results
-    if args.saveFlag:
-        if args.imputeMode:
-            np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_'+str(args.dropoutRatio)+'_'+outParaTag+'_final_edgeList.npy',edgeList)
-        else:
-            np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_'+outParaTag+'_final_edgeList.npy',edgeList)
-        
-        # np.savetxt(args.npyDir+args.datasetName+'_'+args.regulized_type+'_'+outParaTag+'_'+str(args.L1Para)+'_'+str(args.L2Para)+'_recon.csv',reconOut,delimiter=",",fmt='%10.4f')
-        np.savetxt(args.npyDir+args.datasetName+'_'+args.regulized_type+'_'+outParaTag+'_'+str(args.L1Para)+'_'+str(args.L2Para)+'_embedding.csv',zOut, delimiter=",",fmt='%10.4f')
-        np.savetxt(args.npyDir+args.datasetName+'_'+args.regulized_type+'_'+outParaTag+'_'+str(args.L1Para)+'_'+str(args.L2Para)+'_graph.csv',edgeList,fmt='%d,%d,%2.1f')
-        np.savetxt(args.npyDir+args.datasetName+'_'+args.regulized_type+'_'+outParaTag+'_'+str(args.L1Para)+'_'+str(args.L2Para)+'_results.txt',listResult,fmt='%d')
+    if args.imputeMode:
+        np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_'+str(args.dropoutRatio)+'_'+outParaTag+'_final_edgeList.npy',edgeList)
+    else:
+        np.save(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_'+outParaTag+'_final_edgeList.npy',edgeList)
+    
+    # np.savetxt(args.npyDir+args.datasetName+'_'+args.regulized_type+'_'+outParaTag+'_'+str(args.L1Para)+'_'+str(args.L2Para)+'_recon.csv',reconOut,delimiter=",",fmt='%10.4f')
+    np.savetxt(args.npyDir+args.datasetName+'_'+args.regulized_type+'_'+outParaTag+'_'+str(args.L1Para)+'_'+str(args.L2Para)+'_embedding.csv',zOut, delimiter=",",fmt='%10.4f')
+    np.savetxt(args.npyDir+args.datasetName+'_'+args.regulized_type+'_'+outParaTag+'_'+str(args.L1Para)+'_'+str(args.L2Para)+'_graph.csv',edgeList,fmt='%d,%d,%2.1f')
+    np.savetxt(args.npyDir+args.datasetName+'_'+args.regulized_type+'_'+outParaTag+'_'+str(args.L1Para)+'_'+str(args.L2Para)+'_results.txt',listResult,fmt='%d')
 
-        resultarray=[]
-        silhouette, chs, dbs = measureClusteringNoLabel(zOut, listResult)
-        ari, ami, nmi, cs, fms, vms, hs = measureClusteringTrueLabel(bench_celltype, listResult)
-        resultstr = str(silhouette)+' '+str(chs)+' '+str(dbs)+' '+str(ari)+' '+str(ami)+' '+str(nmi)+' '+str(cs)+' '+str(fms)+' '+str(vms)+' '+str(hs)
-        resultarray.append(resultstr)
-        np.savetxt(args.npyDir+args.datasetName+'_'+args.regulized_type+'_'+outParaTag+'_'+str(args.L1Para)+'_'+str(args.L2Para)+'_benchmark.txt',resultarray,fmt='%s')
+    resultarray=[]
+    silhouette, chs, dbs = measureClusteringNoLabel(zOut, listResult)
+    ari, ami, nmi, cs, fms, vms, hs = measureClusteringTrueLabel(bench_celltype, listResult)
+    resultstr = str(silhouette)+' '+str(chs)+' '+str(dbs)+' '+str(ari)+' '+str(ami)+' '+str(nmi)+' '+str(cs)+' '+str(fms)+' '+str(vms)+' '+str(hs)
+    resultarray.append(resultstr)
+    np.savetxt(args.npyDir+args.datasetName+'_'+args.regulized_type+'_'+outParaTag+'_'+str(args.L1Para)+'_'+str(args.L2Para)+'_benchmark.txt',resultarray,fmt='%s')
 
     # save internal results for imputation
     # if args.imputeMode:
@@ -690,12 +689,11 @@ if __name__ == "__main__":
     reconOut = recon.detach().cpu().numpy()
 
     # out imputation Results    
-    if args.saveFlag:
-        if args.imputeMode:
-            np.save   (args.npyDir+args.datasetName+'_'+args.regulized_type+'_'+str(args.dropoutRatio)+'_'+outParaTag+'_recon.npy',reconOut)        
-            np.savetxt(args.npyDir+args.datasetName+'_'+args.regulized_type+'_'+str(args.dropoutRatio)+'_'+outParaTag+'_recon.csv',reconOut,delimiter=",",fmt='%10.4f')
-        else:
-            np.save   (args.npyDir+args.datasetName+'_'+args.regulized_type+'_'+outParaTag+'_recon.npy',reconOut)        
-            np.savetxt(args.npyDir+args.datasetName+'_'+args.regulized_type+'_'+outParaTag+'_recon.csv',reconOut,delimiter=",",fmt='%10.4f')
+    if args.imputeMode:
+        np.save   (args.npyDir+args.datasetName+'_'+args.regulized_type+'_'+str(args.dropoutRatio)+'_'+outParaTag+'_recon.npy',reconOut)        
+        np.savetxt(args.npyDir+args.datasetName+'_'+args.regulized_type+'_'+str(args.dropoutRatio)+'_'+outParaTag+'_recon.csv',reconOut,delimiter=",",fmt='%10.4f')
+    else:
+        np.save   (args.npyDir+args.datasetName+'_'+args.regulized_type+'_'+outParaTag+'_recon.npy',reconOut)        
+        np.savetxt(args.npyDir+args.datasetName+'_'+args.regulized_type+'_'+outParaTag+'_recon.csv',reconOut,delimiter=",",fmt='%10.4f')
  
     print("---Total Running Time: %s seconds ---" % (time.time() - start_time))

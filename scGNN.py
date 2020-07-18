@@ -93,10 +93,10 @@ parser.add_argument('--outputDir', type=str, default='npyGraphTest/',
                     help='save npy results in directory')
 parser.add_argument('--log-interval', type=int, default=100, metavar='N',
                     help='how many batches to wait before logging training status')                    
-parser.add_argument('--saveinternal', action='store_true', default=True, 
-                    help='whether save internal npy results or not')
+parser.add_argument('--saveinternal', action='store_true', default=False, 
+                    help='whether save internal interation results or not')
 parser.add_argument('--debugMode', type=str, default='noDebug',
-                    help='savePrune/loadPrune for debug reason (default: noDebug)')
+                    help='savePrune/loadPrune for extremely huge data in debug (default: noDebug)')
 parser.add_argument('--nonsparseMode', action='store_true', default=False, 
                     help='SparseMode for running for huge dataset')
 
