@@ -39,7 +39,7 @@ pip install -r requirements.txt
 
 ### Option 3: Use Docker 
     
-    #TODO
+#TODO
 
 ## Quick Start:
 
@@ -51,19 +51,19 @@ scGNN accepts scRNA-seq data format: CSV and 10X
 
 Take example of Alzheimer’s disease datasets ([GSE138852](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE138852)) analyzed in the manuscript.
 
-    ```shell
-    mkdir GSE138852
-    wget -P GSE138852/ https://ftp.ncbi.nlm.nih.gov/geo/series/GSE138nnn/GSE138852/suppl/GSE138852_counts.csv.gz
-    ```
+```shell
+mkdir GSE138852
+wget -P GSE138852/ https://ftp.ncbi.nlm.nih.gov/geo/series/GSE138nnn/GSE138852/suppl/GSE138852_counts.csv.gz
+```
 
 - 10X format
 
 Take example of [liver cellular landscape study](https://data.humancellatlas.org/explore/projects/4d6f6c96-2a83-43d8-8fe1-0f53bffd4674) from human cell atlas(<https://data.humancellatlas.org/>)
 
-    ```shell
-    mkdir liver
-    wget -P liver https://data.humancellatlas.org/project-assets/project-matrices/4d6f6c96-2a83-43d8-8fe1-0f53bffd4674.homo_sapiens.mtx.zip
-    ```
+```shell
+mkdir liver
+wget -P liver https://data.humancellatlas.org/project-assets/project-matrices/4d6f6c96-2a83-43d8-8fe1-0f53bffd4674.homo_sapiens.mtx.zip
+```
     
 2. Preprocess input files and get discretirized regulatory signals from Left-Trunctruncated-Mixed-Gaussian(LTMG) model (Optional but recommended). This step will generate Use_expression.csv (preprocessed file) and ltmg.csv (from LTMG). 
 In preprocessing, paramter **geneSelectnum** selects number of most variant genes. The default gene number is 2000.  
@@ -84,11 +84,11 @@ python3 -W ignore PreprocessingscGNN.py --datasetName e7448a34-b33d-41de-b422-4c
     - **EM-iteration** defines number of iteration, default is 10, here we set as 2. 
     - **quickmode** for bypassing cluster autoencoder. 
     
-    If you want to reproduce results in the manuscript, not using these two parameters. 
+If you want to reproduce results in the manuscript, not using these two parameters. 
 
-    ```bash
-    python3 -W ignore scGNN.py --datasetName GSE138852_counts.csv --LTMGDir /folder/GSE138852/ --outputDir outputdir/ --EM-iteration 2 --quickmode
-    ```
+```
+python3 -W ignore scGNN.py --datasetName GSE138852_counts.csv --LTMGDir /folder/GSE138852/ --outputDir outputdir/ --EM-iteration 2 --quickmode
+```
 
 4. Check Results
     
