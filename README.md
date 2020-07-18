@@ -20,8 +20,9 @@ pip install -r requirements.txt
 
 ### Option 2 : Direct install individually
 
-    Installing R packages, tested on R >=3.6.2:
-    In R command line:
+Installing R packages, tested on R >=3.6.2:
+
+In R command line:
 
 ```R
 install.packages("devtools")
@@ -30,7 +31,7 @@ library(devtools)
 install_github("BMEngineeR/scGNNLTMG")
 ```
 
-    Install all python packages.
+Install all python packages.
 
 ```bash
 pip install -r requirements.txt
@@ -96,6 +97,14 @@ python3 -W ignore PreprocessingscGNN.py --datasetName e7448a34-b33d-41de-b422-4c
     *_graph.csv:        Learned graph edges of the cell graph in tuples: nodeA,nodeB,weights. First row as the name.
 
     *_results.txt:      Identified cell types. First row as the name. 
+
+For a complete list of options provided by scGNN:
+
+```
+python scGNN.py --help
+```
+
+More information can be checked at [tutorial](https://github.com/scgnn/scGNN/tutorial).
 
 ## Reference:
 
