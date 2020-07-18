@@ -20,7 +20,7 @@ pip install -r requirements.txt
 
 ### Option 2 : Direct install individually
 
-Installing R packages, tested on R >=3.6.2:
+Need to install R packages first, tested on R >=3.6.2:
 
 In R command line:
 
@@ -48,14 +48,14 @@ scGNN accepts scRNA-seq data format: CSV and 10X
 1. Prepare datasets
 
 - CSV format
-    Take example of Alzheimer’s disease datasets （GSE138852） analyzed in the manuscript.
+    Take example of Alzheimer’s disease datasets ([GSE138852](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE138852)) analyzed in the manuscript.
     ```shell
     mkdir GSE138852
     wget -P GSE138852/ https://ftp.ncbi.nlm.nih.gov/geo/series/GSE138nnn/GSE138852/suppl/GSE138852_counts.csv.gz
     ```
 
 - 10X format
-    Take example of 30K liver cells from human cell atlas
+    Take example of [liver cellular landscape study](https://data.humancellatlas.org/explore/projects/4d6f6c96-2a83-43d8-8fe1-0f53bffd4674) from human cell atlas(<https://data.humancellatlas.org/>)
     ```shell
     mkdir liver
     wget -P liver https://data.humancellatlas.org/project-assets/project-matrices/4d6f6c96-2a83-43d8-8fe1-0f53bffd4674.homo_sapiens.mtx.zip
