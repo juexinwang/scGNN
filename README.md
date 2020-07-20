@@ -8,6 +8,14 @@ __scGNN__ (**s**ingle **c**ell **g**raph **n**eural networks) provides a hypothe
 
 Tested on Ubuntu 16.04 and CentOS 7 with Python 3.6.8
 
+### From Source:
+
+Start by grabbing this source codes:
+
+```
+git clone https://github.com/scgnn/scGNN.git
+```
+
 ### Option 1: (Recommended) Use python virutal enviorment with conda（<https://anaconda.org/>）
 
 ```shell
@@ -45,7 +53,7 @@ pip install -r requirements.txt
 
 scGNN accepts scRNA-seq data format: CSV and 10X
 
-### 1. Prepare datasets
+### 1. Prepare datasets 
 
 #### CSV format
 
@@ -114,7 +122,7 @@ For a complete list of options provided by scGNN:
 python scGNN.py --help
 ```
 
-More information can be checked at [tutorial](https://github.com/scgnn/scGNN/tutorial).
+More information can be checked at [tutorial](https://github.com/scgnn/scGNN/tree/master/tutorial).
 
 ## Reference:
 
