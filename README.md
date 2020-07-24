@@ -14,21 +14,12 @@ Start by grabbing this source codes:
 
 ```
 git clone https://github.com/scgnn/scGNN.git
+cd scGNN
 ```
 
-### Option 1: (Recommended) Use python virutal enviorment with conda（<https://anaconda.org/>）
+### Option 1 : Direct install individually
 
-```shell
-conda create -n scgnnEnv python=3.6.8 pip
-conda activate scgnnEnv
-conda install r-devtools
-conda install -c r r-igraph
-pip install -r requirements.txt
-```
-
-### Option 2 : Direct install individually
-
-Need to install R packages first, tested on R >=3.6.2:
+Need to install R packages first, tested on R >=3.6.1:
 
 In R command line:
 
@@ -39,9 +30,20 @@ library(devtools)
 install_github("BMEngineeR/scGNNLTMG")
 ```
 
-Then install all python packages.
+Then install all python packages in bash.
 
 ```bash
+pip install -r requirements.txt
+```
+
+### Option 2: (Under Construction) Use python virutal enviorment with conda（<https://anaconda.org/>）
+
+```shell
+conda create -n scgnnEnv python=3.6.8 pip
+conda activate scgnnEnv
+conda install r-devtools
+conda install -c r r-igraph
+conda install -c cyz931123 r-scgnnltmg
 pip install -r requirements.txt
 ```
 
@@ -71,6 +73,9 @@ Take example of [liver cellular landscape study](https://data.humancellatlas.org
 ```shell
 mkdir liver
 wget -P liver https://data.humancellatlas.org/project-assets/project-matrices/4d6f6c96-2a83-43d8-8fe1-0f53bffd4674.homo_sapiens.mtx.zip
+cd liver
+unzip 4d6f6c96-2a83-43d8-8fe1-0f53bffd4674.homo_sapiens.mtx.zip
+cd ..
 ```
     
 ### 2. Preprocess input files 
@@ -82,26 +87,28 @@ In preprocessing, paramter **geneSelectnum** selects number of most variant gene
 #### CSV format
 
 ```shell
-python3 -W ignore PreprocessingscGNN.py --datasetName GSE138852_counts.csv --datasetDir /folder/GSE138852/ --LTMGDir /folder/GSE138852/ --filetype CSV --geneSelectnum 2000
+python3 -W ignore PreprocessingscGNN.py --datasetName GSE138852_counts.csv.gz --datasetDir GSE138852/ --LTMGDir GSE138852/ --filetype CSV --geneSelectnum 2000
 ```
 
 #### 10X format
 
 ```shell
-python3 -W ignore PreprocessingscGNN.py --datasetName e7448a34-b33d-41de-b422-4c09bfeba96b.mtx --datasetDir /folder/liver/ --LTMGDir /folder/liver/ --geneSelectnum 2000
+python3 -W ignore PreprocessingscGNN.py --datasetName 481193cb-c021-4e04-b477-0b7cfef4614b.mtx --datasetDir liver/ --LTMGDir liver/ --geneSelectnum 2000
 ```
 
-### 3. Run scGNN. 
+### 3. Run scGNN 
 
-We takes example of analysis in GSE138852. Here wer use parameters to demo purposes:
+We takes example of analysis in GSE138852. Here we use parameters to demo purposes:
 
 - **EM-iteration** defines number of iteration, default is 10, here we set as 2. 
-- **quickmode** for bypassing cluster autoencoder. 
+- **quickmode** for bypassing cluster autoencoder.
+- **Regu-epochs** defines epocs in feature autoencoder, default is 500, here we set as 50.
+- **EM-epochs** defines epocs in feature autoencoder in the iteration, default is 200, here we set as 20. 
     
-If you want to reproduce results in the manuscript, not using these two parameters. 
+If you want to reproduce results in the manuscript, not using these parameters. 
 
 ```
-python3 -W ignore scGNN.py --datasetName GSE138852_counts.csv --LTMGDir /folder/GSE138852/ --outputDir outputdir/ --EM-iteration 2 --quickmode
+python3 -W ignore scGNN.py --datasetName GSE138852 --LTMGDir ./ --outputDir outputdir/ --EM-iteration 2 --Regu-epochs 50 --EM-epochs 20 --quickmode --nonsparseMode
 ```
 
 ### 4. Check Results
