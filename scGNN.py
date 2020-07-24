@@ -554,9 +554,11 @@ if __name__ == "__main__":
             # Update
             recon = reconNew
             ptstatus = model.state_dict()
+            
+            # Debug mem consumption
+            mem=resource.getrusage(resource.RUSAGE_SELF).ru_maxrss
+            print('Mem consumption: '+str(mem))        
         
-        mem=resource.getrusage(resource.RUSAGE_SELF).ru_maxrss
-        print('Mem consumption: '+str(mem))
         # Use new dataloader
         scDataInter = scDatasetInter(recon)
         train_loader = DataLoader(scDataInter, batch_size=args.batch_size, shuffle=False, **kwargs)
@@ -650,8 +652,10 @@ if __name__ == "__main__":
         # Check similarity
         # ari, ami, nmi, cs, fms, vms, hs = measureClusteringTrueLabel()
         ari = adjusted_rand_score(listResultOld, listResult)
-        print(listResultOld)
-        print(listResult)
+        
+        # Debug Information of clustering results between iterations
+        # print(listResultOld)
+        # print(listResult)
         print('celltype similarity:'+str(ari))
         
         # graph criteria
