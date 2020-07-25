@@ -12,12 +12,23 @@ Tested on Ubuntu 16.04 and CentOS 7 with Python 3.6.8
 
 Start by grabbing this source codes:
 
-```
+```bash
 git clone https://github.com/scgnn/scGNN.git
 cd scGNN
 ```
 
-### Option 1 : Direct install individually
+### Option 1 : (Recommended) Use python virutal enviorment with conda（<https://anaconda.org/>）
+
+```shell
+conda create -n scgnnEnv python=3.6.8 pip
+conda activate scgnnEnv
+conda install r-devtools
+conda install -c r r-igraph
+conda install -c cyz931123 r-scgnnltmg
+pip install -r requirements.txt
+```
+
+### Option 2 : Direct install individually
 
 Need to install R packages first, tested on R >=3.6.1:
 
@@ -33,17 +44,6 @@ install_github("BMEngineeR/scGNNLTMG")
 Then install all python packages in bash.
 
 ```bash
-pip install -r requirements.txt
-```
-
-### Option 2: (Under Construction) Use python virutal enviorment with conda（<https://anaconda.org/>）
-
-```shell
-conda create -n scgnnEnv python=3.6.8 pip
-conda activate scgnnEnv
-conda install r-devtools
-conda install -c r r-igraph
-conda install -c cyz931123 r-scgnnltmg
 pip install -r requirements.txt
 ```
 
@@ -77,12 +77,17 @@ cd liver
 unzip 4d6f6c96-2a83-43d8-8fe1-0f53bffd4674.homo_sapiens.mtx.zip
 cd ..
 ```
-    
+
 ### 2. Preprocess input files 
 
 This step generates Use_expression.csv (preprocessed file) and get discretirized regulatory signals as ltmg.csv from Left-Trunctruncated-Mixed-Gaussian(LTMG) model (Optional but recommended).  
 
-In preprocessing, paramter **geneSelectnum** selects number of most variant genes. The default gene number is 2000.  
+In preprocessing, parameters are used:
+
+- **filetype** defines file type (CSV or 10X(default))  
+- **geneSelectnum** selects number of most variant genes. The default gene number is 2000 
+
+The running time is depended with the cell number and gene numbers selected. It takes ~20 minutes (GSE138852) and ~28 minitues (liver) to generate the files needed.
 
 #### CSV format
 
@@ -103,13 +108,25 @@ We takes example of analysis in GSE138852. Here we use parameters to demo purpos
 - **EM-iteration** defines number of iteration, default is 10, here we set as 2. 
 - **quickmode** for bypassing cluster autoencoder.
 - **Regu-epochs** defines epocs in feature autoencoder, default is 500, here we set as 50.
-- **EM-epochs** defines epocs in feature autoencoder in the iteration, default is 200, here we set as 20. 
-    
-If you want to reproduce results in the manuscript, not using these parameters. 
+- **EM-epochs** defines epocs in feature autoencoder in the iteration, default is 200, here we set as 20.
 
-```
+If you want to reproduce results in the manuscript, do not use these parameters. 
+
+#### CSV format
+
+For CSV format, we need add **--nonsparseMode**
+
+```bash
 python3 -W ignore scGNN.py --datasetName GSE138852 --LTMGDir ./ --outputDir outputdir/ --EM-iteration 2 --Regu-epochs 50 --EM-epochs 20 --quickmode --nonsparseMode
 ```
+
+#### 10X format
+
+```bash
+python3 -W ignore scGNN.py --datasetName 481193cb-c021-4e04-b477-0b7cfef4614b.mtx --LTMGDir liver/ --outputDir outputdir/ --EM-iteration 2 --Regu-epochs 50 --EM-epochs 20 --quickmode
+```
+
+On the dataset, the running time of demo codes is ~33min. The full running time is ~6 hours.
 
 ### 4. Check Results
     

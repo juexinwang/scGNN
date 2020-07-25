@@ -1,4 +1,5 @@
 import time
+import os
 import argparse
 import sys
 import numpy as np
@@ -89,7 +90,7 @@ parser.add_argument('--precisionModel', type=str, default='Float',
                     help='Single Precision/Double precision: Float/Double (default:Float)')
 parser.add_argument('--coresUsage', type=str, default='1', 
                     help='how many cores used: all/1/... (default:1)')
-parser.add_argument('--outputDir', type=str, default='npyGraphTest/',
+parser.add_argument('--outputDir', type=str, default='outputDir/',
                     help='save npy results in directory')
 parser.add_argument('--log-interval', type=int, default=100, metavar='N',
                     help='how many batches to wait before logging training status')                    
@@ -313,6 +314,9 @@ if __name__ == "__main__":
     start_time = time.time()
     adjsample = None
     celltypesample = None
+    # If not exist, then create the outputDir
+    if not os.path.exists(args.outputDir):
+        os.makedirs(args.outputDir)
     # outParaTag = str(args.gammaImputePara)+'-'+str(args.graphImputePara)+'-'+str(args.celltypeImputePara)   
     ptfileStart = args.outputDir+args.datasetName+'_EMtrainingStart.pt'
     # ptfile      = args.outputDir+args.datasetName+'_EMtraining.pt'
@@ -508,8 +512,8 @@ if __name__ == "__main__":
             # Else: dealing with the number
             listResult = trimClustering(listResult,minMemberinCluster=args.minMemberinCluster,maxClusterNumber=args.maxClusterNumber)
         
-        #Calculate silhouette
-        measure_clustering_results(zOut, listResult)
+        # Debug: Calculate silhouette
+        # measure_clustering_results(zOut, listResult)
         print('Total Cluster Number: '+str(len(set(listResult))))
         mem=resource.getrusage(resource.RUSAGE_SELF).ru_maxrss
         print('Mem consumption: '+str(mem))
