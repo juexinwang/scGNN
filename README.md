@@ -126,7 +126,7 @@ python3 -W ignore scGNN.py --datasetName GSE138852 --LTMGDir ./ --outputDir outp
 python3 -W ignore scGNN.py --datasetName 481193cb-c021-4e04-b477-0b7cfef4614b.mtx --LTMGDir liver/ --outputDir outputdir/ --EM-iteration 2 --Regu-epochs 50 --EM-epochs 20 --quickmode
 ```
 
-On the dataset, the running time of demo codes is ~33min. The full running time is ~6 hours.
+On these demo dataset using single cpu, the running time of demo codes is ~33min/26min. The full running time is ~6 hours.
 
 ### 4. Check Results
     
