@@ -47,15 +47,31 @@ Then install all python packages in bash.
 pip install -r requirements.txt
 ```
 
-### Option 3: Use Docker 
-    
-#TODO
+### Option 3: Use Docker
 
-## Quick Start:
+Dowmload and install [docker](https://www.docker.com/products/docker-desktop).
+
+Pull docker image **gongjt057/scgnn** from the [dockerhub](https://hub.docker.com/). To get this docker image as base image type the command as shown in the below:
+
+```bash
+docker pull gongjt057/scgnn:1.0
+```
+
+Type `docker images` to see the list of images you have downloaded on your machine. If **gongjt057/scgnn** in the list, download it successfully.
+
+Run a container from the image.
+
+```bash
+docker run -it gongjt057/scgnn:1.0 /bin/bash
+```
+
+Then you can proceed to the next step.
+
+## Quick Start
 
 scGNN accepts scRNA-seq data format: CSV and 10X
 
-### 1. Prepare datasets 
+### 1. Prepare datasets
 
 #### CSV format
 
@@ -78,7 +94,7 @@ unzip 4d6f6c96-2a83-43d8-8fe1-0f53bffd4674.homo_sapiens.mtx.zip
 cd ..
 ```
 
-### 2. Preprocess input files 
+### 2. Preprocess input files
 
 This step generates Use_expression.csv (preprocessed file) and get discretirized regulatory signals as ltmg.csv from Left-Trunctruncated-Mixed-Gaussian(LTMG) model (Optional but recommended).  
 
@@ -101,7 +117,7 @@ python3 -W ignore PreprocessingscGNN.py --datasetName GSE138852_counts.csv.gz --
 python3 -W ignore PreprocessingscGNN.py --datasetName 481193cb-c021-4e04-b477-0b7cfef4614b.mtx --datasetDir liver/ --LTMGDir liver/ --geneSelectnum 2000
 ```
 
-### 3. Run scGNN 
+### 3. Run scGNN
 
 We takes example of analysis in GSE138852. Here we use parameters to demo purposes:
 
@@ -129,9 +145,9 @@ python3 -W ignore scGNN.py --datasetName 481193cb-c021-4e04-b477-0b7cfef4614b.mt
 On these demo dataset using single cpu, the running time of demo codes is ~33min/26min. The full running time is ~6 hours.
 
 ### 4. Check Results
-    
+
 In outputdir now, we have four output files.
-    
+
 - ***_recon.csv**:        Imputed gene expression matrix. Row as gene, col as cell. First row as gene name, First col as the cell name. 
 
 - ***_embedding.csv**:    Learned embedding (features) for clustering. Row as cell, col as embeddings. First row as the embedding names (no means). First col as the cell name.
@@ -142,7 +158,7 @@ In outputdir now, we have four output files.
 
 For a complete list of options provided by scGNN:
 
-```
+```bash
 python scGNN.py --help
 ```
 
