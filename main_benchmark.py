@@ -43,8 +43,8 @@ parser.add_argument('--converge-graphratio', type=float, default=0.01,
                     help='ratio of cell type change in EM iteration (default: 0.01), 0-1')
 parser.add_argument('--converge-celltyperatio', type=float, default=0.95,
                     help='ratio of cell type change in EM iteration (default: 0.99), 0-1')
-parser.add_argument('--celltype-epochs', type=int, default=200, metavar='N',
-                    help='number of epochs in celltype training (default: 200)')
+parser.add_argument('--cluster-epochs', type=int, default=200, metavar='N',
+                    help='number of epochs in cluster autoencoder training (default: 200)')
 parser.add_argument('--no-cuda', action='store_true', default=True,
                     help='enables CUDA training')
 parser.add_argument('--seed', type=int, default=1, metavar='S',
@@ -57,7 +57,7 @@ parser.add_argument('--model', type=str, default='AE',
                     help='VAE/AE (default: AE)')
 parser.add_argument('--gammaPara', type=float, default=0.1,
                     help='regulized parameter (default: 0.1)')
-parser.add_argument('--regularizePara', type=float, default=0.9,
+parser.add_argument('--alphaRegularizePara', type=float, default=0.9,
                     help='regulized parameter (default: 0.9)')
 
 # imputation related
@@ -233,9 +233,9 @@ def train(epoch, train_loader=train_loader, EMFlag=False, taskType='celltype'):
             # loss = loss_function(recon_batch, data, mu, logvar)
             if taskType == 'celltype':
                 if EMFlag and (not args.EMreguTag):
-                    loss = loss_function_graph(recon_batch, data.view(-1, recon_batch.shape[1]), mu, logvar, gammaPara=args.gammaPara, regulationMatrix=regulationMatrixBatch, regularizer_type='noregu', reguPara=args.regularizePara, modelusage=args.model, reduction=args.reduction)
+                    loss = loss_function_graph(recon_batch, data.view(-1, recon_batch.shape[1]), mu, logvar, gammaPara=args.gammaPara, regulationMatrix=regulationMatrixBatch, regularizer_type='noregu', reguPara=args.alphaRegularizePara, modelusage=args.model, reduction=args.reduction)
                 else: 
-                    loss = loss_function_graph(recon_batch, data.view(-1, recon_batch.shape[1]), mu, logvar, gammaPara=args.gammaPara, regulationMatrix=regulationMatrixBatch, regularizer_type=args.regulized_type, reguPara=args.regularizePara, modelusage=args.model, reduction=args.reduction)
+                    loss = loss_function_graph(recon_batch, data.view(-1, recon_batch.shape[1]), mu, logvar, gammaPara=args.gammaPara, regulationMatrix=regulationMatrixBatch, regularizer_type=args.regulized_type, reguPara=args.alphaRegularizePara, modelusage=args.model, reduction=args.reduction)
             elif taskType == 'imputation':
                 if EMFlag and (not args.EMreguTag):
                     loss = loss_function_graph_celltype(recon_batch, data.view(-1, recon_batch.shape[1]), mu, logvar, graphregu=adjsample, celltyperegu=celltypesample, gammaPara=args.gammaImputePara, regulationMatrix=regulationMatrixBatch, regularizer_type=args.EMregulized_type, reguPara=args.graphImputePara, reguParaCelltype=args.celltypeImputePara, modelusage=args.model, reduction=args.reduction)
@@ -250,9 +250,9 @@ def train(epoch, train_loader=train_loader, EMFlag=False, taskType='celltype'):
             # loss = loss_function(recon_batch, data, mu, logvar)
             if taskType == 'celltype':
                 if EMFlag and (not args.EMreguTag):
-                    loss = loss_function_graph(recon_batch, data.view(-1, recon_batch.shape[1]), mu_dummy, logvar_dummy, gammaPara=args.gammaPara, regulationMatrix=regulationMatrixBatch, regularizer_type='noregu', reguPara=args.regularizePara, modelusage=args.model, reduction=args.reduction)    
+                    loss = loss_function_graph(recon_batch, data.view(-1, recon_batch.shape[1]), mu_dummy, logvar_dummy, gammaPara=args.gammaPara, regulationMatrix=regulationMatrixBatch, regularizer_type='noregu', reguPara=args.alphaRegularizePara, modelusage=args.model, reduction=args.reduction)    
                 else:
-                    loss = loss_function_graph(recon_batch, data.view(-1, recon_batch.shape[1]), mu_dummy, logvar_dummy, gammaPara=args.gammaPara, regulationMatrix=regulationMatrixBatch, regularizer_type=args.regulized_type, reguPara=args.regularizePara, modelusage=args.model, reduction=args.reduction)
+                    loss = loss_function_graph(recon_batch, data.view(-1, recon_batch.shape[1]), mu_dummy, logvar_dummy, gammaPara=args.gammaPara, regulationMatrix=regulationMatrixBatch, regularizer_type=args.regulized_type, reguPara=args.alphaRegularizePara, modelusage=args.model, reduction=args.reduction)
             elif taskType == 'imputation':
                 if EMFlag and (not args.EMreguTag):
                     loss = loss_function_graph_celltype(recon_batch, data.view(-1, recon_batch.shape[1]), mu_dummy, logvar_dummy, graphregu=adjsample, celltyperegu=celltypesample, gammaPara=args.gammaImputePara, regulationMatrix=regulationMatrixBatch, regularizer_type=args.EMregulized_type, reguPara=args.graphImputePara, reguParaCelltype=args.celltypeImputePara, modelusage=args.model, reduction=args.reduction)    
@@ -295,7 +295,7 @@ def train(epoch, train_loader=train_loader, EMFlag=False, taskType='celltype'):
 
 if __name__ == "__main__":
     start_time = time.time()
-    outParaTag = str(args.k)+'-'+str(args.gammaPara)+'-'+str(args.regularizePara)+'-'+str(args.gammaImputePara)+'-'+str(args.graphImputePara)+'-'+str(args.celltypeImputePara)
+    outParaTag = str(args.k)+'-'+str(args.gammaPara)+'-'+str(args.alphaRegularizePara)+'-'+str(args.gammaImputePara)+'-'+str(args.graphImputePara)+'-'+str(args.celltypeImputePara)
     # outParaTag = str(args.gammaImputePara)+'-'+str(args.graphImputePara)+'-'+str(args.celltypeImputePara)   
     ptfileStart = args.npyDir+args.datasetName+'_'+outParaTag+'_EMtrainingStart.pt'
     stateStart = {
@@ -497,7 +497,7 @@ if __name__ == "__main__":
                 reconUsage = recon[clusterIndex]
                 scDataInter = scDatasetInter(reconUsage)
                 train_loader = DataLoader(scDataInter, batch_size=args.batch_size, shuffle=False, **kwargs)
-                for epoch in range(1, args.celltype_epochs + 1):
+                for epoch in range(1, args.cluster_epochs + 1):
                     reconCluster, originalCluster, zCluster = train(epoch, EMFlag=True)                
                 count = 0
                 for i in clusterIndex:

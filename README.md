@@ -49,12 +49,12 @@ pip install -r requirements.txt
 
 ### Option 3: Use Docker
 
-Dowmload and install [docker](https://www.docker.com/products/docker-desktop).
+Download and install [docker](https://www.docker.com/products/docker-desktop).
 
-Pull docker image **gongjt057/scgnn** from the [dockerhub](https://hub.docker.com/). To get this docker image as base image type the command as shown in the below:
+Pull docker image **gongjt057/scgnn** from the [dockerhub](https://hub.docker.com/). Please beware that this image is huge for it includes all the environments. To get this docker image as base image type the command as shown in the below:
 
 ```bash
-docker pull gongjt057/scgnn:1.0
+docker pull gongjt057/scgnn:code
 ```
 
 Type `docker images` to see the list of images you have downloaded on your machine. If **gongjt057/scgnn** in the list, download it successfully.
@@ -62,7 +62,8 @@ Type `docker images` to see the list of images you have downloaded on your machi
 Run a container from the image.
 
 ```bash
-docker run -it gongjt057/scgnn:1.0 /bin/bash
+docker run -it gongjt057/scgnn:code /bin/bash
+cd /scGNN/scGNN
 ```
 
 Then you can proceed to the next step.
@@ -75,7 +76,7 @@ scGNN accepts scRNA-seq data format: CSV and 10X
 
 #### CSV format
 
-Take example of Alzheimer’s disease datasets ([GSE138852](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE138852)) analyzed in the manuscript.
+Take an example of Alzheimer’s disease datasets ([GSE138852](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE138852)) analyzed in the manuscript.
 
 ```shell
 mkdir GSE138852
@@ -84,7 +85,7 @@ wget -P GSE138852/ https://ftp.ncbi.nlm.nih.gov/geo/series/GSE138nnn/GSE138852/s
 
 #### 10X format
 
-Take example of [liver cellular landscape study](https://data.humancellatlas.org/explore/projects/4d6f6c96-2a83-43d8-8fe1-0f53bffd4674) from human cell atlas(<https://data.humancellatlas.org/>)
+Take an example of [liver cellular landscape study](https://data.humancellatlas.org/explore/projects/4d6f6c96-2a83-43d8-8fe1-0f53bffd4674) from human cell atlas(<https://data.humancellatlas.org/>)
 
 ```shell
 mkdir liver
@@ -96,35 +97,36 @@ cd ..
 
 ### 2. Preprocess input files
 
-This step generates Use_expression.csv (preprocessed file) and get discretirized regulatory signals as ltmg.csv from Left-Trunctruncated-Mixed-Gaussian(LTMG) model (Optional but recommended).  
+This step generates Use_expression.csv (preprocessed file) and gets discretized regulatory signals as ltmg.csv from Left-Trunctruncated-Mixed-Gaussian(LTMG) model (Optional but recommended).  
 
 In preprocessing, parameters are used:
 
 - **filetype** defines file type (CSV or 10X(default))  
-- **geneSelectnum** selects number of most variant genes. The default gene number is 2000 
+- **geneSelectnum** selects a number of most variant genes. The default gene number is 2000 
 
-The running time is depended with the cell number and gene numbers selected. It takes ~20 minutes (GSE138852) and ~28 minitues (liver) to generate the files needed.
+The running time is depended on the cell number and gene numbers selected. It takes ~20 minutes (GSE138852) and ~28 minutes (liver) to generate the files needed.
 
 #### CSV format
 
 ```shell
-python3 -W ignore PreprocessingscGNN.py --datasetName GSE138852_counts.csv.gz --datasetDir GSE138852/ --LTMGDir GSE138852/ --filetype CSV --geneSelectnum 2000
+python -W ignore PreprocessingscGNN.py --datasetName GSE138852_counts.csv.gz --datasetDir GSE138852/ --LTMGDir GSE138852/ --filetype CSV --geneSelectnum 2000
 ```
 
 #### 10X format
 
 ```shell
-python3 -W ignore PreprocessingscGNN.py --datasetName 481193cb-c021-4e04-b477-0b7cfef4614b.mtx --datasetDir liver/ --LTMGDir liver/ --geneSelectnum 2000
+python -W ignore PreprocessingscGNN.py --datasetName 481193cb-c021-4e04-b477-0b7cfef4614b.mtx --datasetDir liver/ --LTMGDir liver/ --geneSelectnum 2000
 ```
 
 ### 3. Run scGNN
 
-We takes example of analysis in GSE138852. Here we use parameters to demo purposes:
+We take an example of an analysis in GSE138852. Here we use parameters to demo purposes:
 
-- **EM-iteration** defines number of iteration, default is 10, here we set as 2. 
+- **batch-size** defines batch-size of the cells for training
+- **EM-iteration** defines the number of iteration, default is 10, here we set as 2. 
 - **quickmode** for bypassing cluster autoencoder.
-- **Regu-epochs** defines epocs in feature autoencoder, default is 500, here we set as 50.
-- **EM-epochs** defines epocs in feature autoencoder in the iteration, default is 200, here we set as 20.
+- **Regu-epochs** defines epochs in feature autoencoder, default is 500, here we set as 50.
+- **EM-epochs** defines epochs in feature autoencoder in the iteration, default is 200, here we set as 20.
 
 If you want to reproduce results in the manuscript, do not use these parameters. 
 
@@ -133,16 +135,16 @@ If you want to reproduce results in the manuscript, do not use these parameters.
 For CSV format, we need add **--nonsparseMode**
 
 ```bash
-python3 -W ignore scGNN.py --datasetName GSE138852 --LTMGDir ./ --outputDir outputdir/ --EM-iteration 2 --Regu-epochs 50 --EM-epochs 20 --quickmode --nonsparseMode
+python -W ignore scGNN.py --datasetName GSE138852 --datasetDir YOUR_FOLDER --LTMGDir ./ --outputDir outputdir/ --EM-iteration 2 --Regu-epochs 50 --EM-epochs 20 --quickmode --nonsparseMode
 ```
 
 #### 10X format
 
 ```bash
-python3 -W ignore scGNN.py --datasetName 481193cb-c021-4e04-b477-0b7cfef4614b.mtx --LTMGDir liver/ --outputDir outputdir/ --EM-iteration 2 --Regu-epochs 50 --EM-epochs 20 --quickmode
+python -W ignore scGNN.py --datasetName 481193cb-c021-4e04-b477-0b7cfef4614b.mtx --LTMGDir liver/ --datasetDir YOUR_FOLDER --outputDir outputdir/ --EM-iteration 2 --Regu-epochs 50 --EM-epochs 20 --quickmode
 ```
 
-On these demo dataset using single cpu, the running time of demo codes is ~33min/26min. The full running time is ~6 hours.
+On these demo dataset using single cpu, the running time of demo codes is ~33min/26min. User should get exact same results as paper shown with full running time on single cpu for ~6 hours. If user wants to use multiple CPUs, parameter **--coresUsage** can be set as **all** or any number of cores the machine has.
 
 ### 4. Check Results
 
@@ -162,7 +164,7 @@ For a complete list of options provided by scGNN:
 python scGNN.py --help
 ```
 
-More information can be checked at [tutorial](https://github.com/scgnn/scGNN/tree/master/tutorial).
+More information can be checked at the [tutorial](https://github.com/scgnn/scGNN/tree/master/tutorial).
 
 ## Reference:
 

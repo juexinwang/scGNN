@@ -38,8 +38,8 @@ parser.add_argument('--EM-iteration', type=int, default=10, metavar='N',
                     help='number of iteration in total EM iteration (default: 10)')
 parser.add_argument('--quickmode', action='store_true', default=False,
                     help='whether use quickmode, skip celltype autoencoder (default: no quickmode)')
-parser.add_argument('--celltype-epochs', type=int, default=200, metavar='N',
-                    help='number of epochs in celltype training (default: 200)')
+parser.add_argument('--cluster-epochs', type=int, default=200, metavar='N',
+                    help='number of epochs in cluster autoencoder training (default: 200)')
 parser.add_argument('--no-cuda', action='store_true', default=True,
                     help='enables CUDA training')
 parser.add_argument('--seed', type=int, default=1, metavar='S',
@@ -51,8 +51,8 @@ parser.add_argument('--reduction', type=str, default='sum',
 parser.add_argument('--model', type=str, default='AE',
                     help='VAE/AE (default: AE)')
 parser.add_argument('--gammaPara', type=float, default=0.1,
-                    help='regulized parameter (default: 0.1)')
-parser.add_argument('--regularizePara', type=float, default=0.9,
+                    help='regulized intensity (default: 0.1)')
+parser.add_argument('--alphaRegularizePara', type=float, default=0.9,
                     help='regulized parameter (default: 0.9)')
 
 # imputation related
@@ -83,7 +83,7 @@ parser.add_argument('--k', type=int, default=10,
 parser.add_argument('--knn-distance', type=str, default='euclidean',
                     help='KNN graph distance type: euclidean/cosine/correlation (default: euclidean)')
 parser.add_argument('--prunetype', type=str, default='KNNgraphStatsSingleThread',
-                    help='prune type, KNNgraphStats/KNNgraphML/KNNgraphStatsSingleThread (default: KNNgraphStats)')
+                    help='prune type, KNNgraphStats/KNNgraphML/KNNgraphStatsSingleThread (default: KNNgraphStatsSingleThread)')
 
 #Debug related
 parser.add_argument('--precisionModel', type=str, default='Float', 
@@ -251,9 +251,9 @@ def train(epoch, train_loader=train_loader, EMFlag=False, taskType='celltype', s
             # loss = loss_function(recon_batch, data, mu, logvar)
             if taskType == 'celltype':
                 if EMFlag and (not args.EMreguTag):
-                    loss = loss_function_graph(recon_batch, data.view(-1, recon_batch.shape[1]), mu, logvar, gammaPara=args.gammaPara, regulationMatrix=regulationMatrixBatch, regularizer_type='noregu', reguPara=args.regularizePara, modelusage=args.model, reduction=args.reduction)
+                    loss = loss_function_graph(recon_batch, data.view(-1, recon_batch.shape[1]), mu, logvar, gammaPara=args.gammaPara, regulationMatrix=regulationMatrixBatch, regularizer_type='noregu', reguPara=args.alphaRegularizePara, modelusage=args.model, reduction=args.reduction)
                 else: 
-                    loss = loss_function_graph(recon_batch, data.view(-1, recon_batch.shape[1]), mu, logvar, gammaPara=args.gammaPara, regulationMatrix=regulationMatrixBatch, regularizer_type=args.regulized_type, reguPara=args.regularizePara, modelusage=args.model, reduction=args.reduction)
+                    loss = loss_function_graph(recon_batch, data.view(-1, recon_batch.shape[1]), mu, logvar, gammaPara=args.gammaPara, regulationMatrix=regulationMatrixBatch, regularizer_type=args.regulized_type, reguPara=args.alphaRegularizePara, modelusage=args.model, reduction=args.reduction)
             elif taskType == 'imputation':
                 if EMFlag and (not args.EMreguTag):
                     loss = loss_function_graph_celltype(recon_batch, data.view(-1, recon_batch.shape[1]), mu, logvar, graphregu=adjsampleBatch, celltyperegu=celltypesampleBatch, gammaPara=args.gammaImputePara, regulationMatrix=regulationMatrixBatch, regularizer_type=args.EMregulized_type, reguPara=args.graphImputePara, reguParaCelltype=args.celltypeImputePara, modelusage=args.model, reduction=args.reduction)
@@ -268,9 +268,9 @@ def train(epoch, train_loader=train_loader, EMFlag=False, taskType='celltype', s
             # loss = loss_function(recon_batch, data, mu, logvar)
             if taskType == 'celltype':
                 if EMFlag and (not args.EMreguTag):
-                    loss = loss_function_graph(recon_batch, data.view(-1, recon_batch.shape[1]), mu_dummy, logvar_dummy, gammaPara=args.gammaPara, regulationMatrix=regulationMatrixBatch, regularizer_type='noregu', reguPara=args.regularizePara, modelusage=args.model, reduction=args.reduction)    
+                    loss = loss_function_graph(recon_batch, data.view(-1, recon_batch.shape[1]), mu_dummy, logvar_dummy, gammaPara=args.gammaPara, regulationMatrix=regulationMatrixBatch, regularizer_type='noregu', reguPara=args.alphaRegularizePara, modelusage=args.model, reduction=args.reduction)    
                 else:
-                    loss = loss_function_graph(recon_batch, data.view(-1, recon_batch.shape[1]), mu_dummy, logvar_dummy, gammaPara=args.gammaPara, regulationMatrix=regulationMatrixBatch, regularizer_type=args.regulized_type, reguPara=args.regularizePara, modelusage=args.model, reduction=args.reduction)
+                    loss = loss_function_graph(recon_batch, data.view(-1, recon_batch.shape[1]), mu_dummy, logvar_dummy, gammaPara=args.gammaPara, regulationMatrix=regulationMatrixBatch, regularizer_type=args.regulized_type, reguPara=args.alphaRegularizePara, modelusage=args.model, reduction=args.reduction)
             elif taskType == 'imputation':
                 if EMFlag and (not args.EMreguTag):
                     loss = loss_function_graph_celltype(recon_batch, data.view(-1, recon_batch.shape[1]), mu_dummy, logvar_dummy, graphregu=adjsampleBatch, celltyperegu=celltypesampleBatch, gammaPara=args.gammaImputePara, regulationMatrix=regulationMatrixBatch, regularizer_type=args.EMregulized_type, reguPara=args.graphImputePara, reguParaCelltype=args.celltypeImputePara, modelusage=args.model, reduction=args.reduction)    
@@ -544,7 +544,7 @@ if __name__ == "__main__":
                 reconUsage = recon[clusterIndex]
                 scDataInter = scDatasetInter(reconUsage)
                 train_loader = DataLoader(scDataInter, batch_size=args.batch_size, shuffle=False, **kwargs)
-                for epoch in range(1, args.celltype_epochs + 1):
+                for epoch in range(1, args.cluster_epochs + 1):
                     reconCluster, originalCluster, zCluster = train(epoch, EMFlag=True)                
                 count = 0
                 for i in clusterIndex:
@@ -612,16 +612,16 @@ if __name__ == "__main__":
             print ('---'+str(datetime.timedelta(seconds=int(time.time()-start_time)))+'---Prepare save')
             # print('Save results with reconstructed shape:'+str(reconOut.shape)+' Size of gene:'+str(len(genelist))+' Size of cell:'+str(len(celllist)))
             recon_df = pd.DataFrame(np.transpose(reconOut),index=genelist,columns=celllist)
-            recon_df.to_csv(args.outputDir+args.datasetName+'_'+args.regulized_type+'_'+str(args.regularizePara)+'_'+str(args.L1Para)+'_'+str(args.L2Para)+'_recon_'+str(bigepoch)+'.csv')
+            recon_df.to_csv(args.outputDir+args.datasetName+'_'+args.regulized_type+'_'+str(args.alphaRegularizePara)+'_'+str(args.L1Para)+'_'+str(args.L2Para)+'_recon_'+str(bigepoch)+'.csv')
             emblist=[]
             for i in range(zOut.shape[1]):
                 emblist.append('embedding'+str(i))
             embedding_df = pd.DataFrame(zOut,index=celllist,columns=emblist)
-            embedding_df.to_csv(args.outputDir+args.datasetName+'_'+args.regulized_type+'_'+str(args.regularizePara)+'_'+str(args.L1Para)+'_'+str(args.L2Para)+'_embedding_'+str(bigepoch)+'.csv')
+            embedding_df.to_csv(args.outputDir+args.datasetName+'_'+args.regulized_type+'_'+str(args.alphaRegularizePara)+'_'+str(args.L1Para)+'_'+str(args.L2Para)+'_embedding_'+str(bigepoch)+'.csv')
             graph_df = pd.DataFrame(edgeList,columns=["NodeA","NodeB","Weights"]) 
-            graph_df.to_csv(args.outputDir+args.datasetName+'_'+args.regulized_type+'_'+str(args.regularizePara)+'_'+str(args.L1Para)+'_'+str(args.L2Para)+'_graph_'+str(bigepoch)+'.csv',index=False)
+            graph_df.to_csv(args.outputDir+args.datasetName+'_'+args.regulized_type+'_'+str(args.alphaRegularizePara)+'_'+str(args.L1Para)+'_'+str(args.L2Para)+'_graph_'+str(bigepoch)+'.csv',index=False)
             results_df = pd.DataFrame(listResult,index=celllist,columns=["Celltype"])
-            results_df.to_csv(args.outputDir+args.datasetName+'_'+args.regulized_type+'_'+str(args.regularizePara)+'_'+str(args.L1Para)+'_'+str(args.L2Para)+'_results_'+str(bigepoch)+'.txt')   
+            results_df.to_csv(args.outputDir+args.datasetName+'_'+args.regulized_type+'_'+str(args.alphaRegularizePara)+'_'+str(args.L1Para)+'_'+str(args.L2Para)+'_results_'+str(bigepoch)+'.txt')   
             
             print ('---'+str(datetime.timedelta(seconds=int(time.time()-start_time)))+'---Save internal completed')
 
@@ -744,15 +744,15 @@ if __name__ == "__main__":
     # np.savetxt(args.npyDir+args.datasetName+'_'+args.regulized_type+'_'+outParaTag+'_recon.csv',reconOut,delimiter=",",fmt='%10.4f')   
     # Output celltype Results
     recon_df = pd.DataFrame(np.transpose(reconOut),index=genelist,columns=celllist)
-    recon_df.to_csv(args.outputDir+args.datasetName+'_'+args.regulized_type+'_'+str(args.regularizePara)+'_'+str(args.L1Para)+'_'+str(args.L2Para)+'_recon.csv')
+    recon_df.to_csv(args.outputDir+args.datasetName+'_'+args.regulized_type+'_'+str(args.alphaRegularizePara)+'_'+str(args.L1Para)+'_'+str(args.L2Para)+'_recon.csv')
     emblist=[]
     for i in range(zOut.shape[1]):
         emblist.append('embedding'+str(i))
     embedding_df = pd.DataFrame(zOut,index=celllist,columns=emblist)
-    embedding_df.to_csv(args.outputDir+args.datasetName+'_'+args.regulized_type+'_'+str(args.regularizePara)+'_'+str(args.L1Para)+'_'+str(args.L2Para)+'_embedding.csv')
+    embedding_df.to_csv(args.outputDir+args.datasetName+'_'+args.regulized_type+'_'+str(args.alphaRegularizePara)+'_'+str(args.L1Para)+'_'+str(args.L2Para)+'_embedding.csv')
     graph_df = pd.DataFrame(edgeList,columns=["NodeA","NodeB","Weights"]) 
-    graph_df.to_csv(args.outputDir+args.datasetName+'_'+args.regulized_type+'_'+str(args.regularizePara)+'_'+str(args.L1Para)+'_'+str(args.L2Para)+'_graph.csv',index=False)
+    graph_df.to_csv(args.outputDir+args.datasetName+'_'+args.regulized_type+'_'+str(args.alphaRegularizePara)+'_'+str(args.L1Para)+'_'+str(args.L2Para)+'_graph.csv',index=False)
     results_df = pd.DataFrame(listResult,index=celllist,columns=["Celltype"])
-    results_df.to_csv(args.outputDir+args.datasetName+'_'+args.regulized_type+'_'+str(args.regularizePara)+'_'+str(args.L1Para)+'_'+str(args.L2Para)+'_results.txt')   
+    results_df.to_csv(args.outputDir+args.datasetName+'_'+args.regulized_type+'_'+str(args.alphaRegularizePara)+'_'+str(args.L1Para)+'_'+str(args.L2Para)+'_results.txt')   
       
     print('---'+str(datetime.timedelta(seconds=int(time.time()-start_time)))+"---scGNN finished")
