@@ -32,7 +32,7 @@ python Preprocessing_main.py --expression-name 9.Chung
 ## Clustering on Benchmarks
 
 ```
-python3 -W ignore main_benchmark.py --datasetName 9.Chung --benchmark data/9.Chung/Chung_cell_label.csv --npyDir output/  
+python -W ignore main_benchmark.py --datasetName 9.Chung --benchmark data/9.Chung/Chung_cell_label.csv --npyDir output/  
 ```
 
 ## Imputation on Benchmarks
@@ -40,5 +40,5 @@ python3 -W ignore main_benchmark.py --datasetName 9.Chung --benchmark data/9.Chu
 Default: 10% of the non-zeros are flipped
 
 ```
-python3 -W ignore main_benchmark.py --datasetName 9.Chung --benchmark data/9.Chung/Chung_cell_label.csv --npyDir output/ --imputeMode
+python -W ignore main_benchmark.py --datasetName 9.Chung --benchmark data/9.Chung/Chung_cell_label.csv --npyDir output/ --imputeMode
 ```
