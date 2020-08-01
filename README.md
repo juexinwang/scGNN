@@ -172,3 +172,14 @@ More information can be checked at the [tutorial](https://github.com/scgnn/scGNN
 2. GAE <https://github.com/tkipf/gae/tree/master/gae>
 3. scVI-reproducibility <https://github.com/romain-lopez/scVI-reproducibility>
 4. LTMG <https://academic.oup.com/nar/article/47/18/e111/5542876>
+
+## Contact:
+
+Juexin Wang: wangjue@missouri.edu
+
+Anjun Ma: Anjun.Ma@osumc.edu
+
+Qin Ma: Qin.Ma@osumc.edu
+
+Dong Xu: xudong@missouri.edu
+ 
