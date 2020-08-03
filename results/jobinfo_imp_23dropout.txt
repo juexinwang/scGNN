@@ -1,9 +1,0 @@
-          20470867 BioComput  RI_7_11    jwang  R       0:05      1 lewis4-r630-htc4-node284
-          20470868 BioComput  RI_8_11    jwang  R       0:05      1 lewis4-r630-htc4-node287
-          20470864     Lewis  RI_4_11    jwang  R       0:08      1 lewis4-r630-hpc4-node299
-          20470865     Lewis  RI_5_11    jwang  R       0:08      1 lewis4-r630-hpc4-node672
-          20470866 BioComput  RI_6_11    jwang  R       0:08      1 lewis4-r630-htc4-node284
-          20470861 BioComput  RI_1_11    jwang  R       0:11      1 lewis4-r630-htc4-node285
-          20470862 BioComput  RI_2_11    jwang  R       0:11      1 lewis4-r630-htc4-node285
-          20470863 BioComput  RI_3_11    jwang  R       0:11      1 lewis4-r630-htc4-node284
-          20470860 BioComput  RI_0_11    jwang  R       0:14      1 lewis4-r630-htc4-node333

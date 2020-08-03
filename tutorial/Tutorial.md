@@ -136,7 +136,7 @@ python -W ignore PreprocessingscGNN.py --datasetName 481193cb-c021-4e04-b477-0b7
 
 ## Run scGNN
 
-Program ***scGNN.py*** is the main entrance of scGNN to impute and clustering. There are quite a few parameters to define to meet users' requirements.
+Program ***PreprocessingscGNN.py*** is the main entrance of scGNN to impute and clustering. There are quite a few parameters to define to meet users' requirements.
 
 #### Required
 
