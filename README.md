@@ -13,7 +13,7 @@ Installation Tested on Ubuntu 16.04 and CentOS 7 with Python 3.6.8
 Start by grabbing this source codes:
 
 ```bash
-git clone https://github.com/scgnn/scGNN.git
+git clone https://github.com/juexinwang/scGNN.git
 cd scGNN
 ```
 
@@ -164,7 +164,9 @@ For a complete list of options provided by scGNN:
 python scGNN.py --help
 ```
 
-More information can be checked at the [tutorial](https://github.com/scgnn/scGNN/tree/master/tutorial).
+More information can be checked at the [tutorial](https://github.com/juexinwang/scGNN/tree/master/tutorial).
+
+Another repository for reviewers is located at [here](https://github.com/scgnn/scGNN/tree/master/tutorial).
 
 ## Reference:
 
@@ -172,3 +174,13 @@ More information can be checked at the [tutorial](https://github.com/scgnn/scGNN
 2. GAE <https://github.com/tkipf/gae/tree/master/gae>
 3. scVI-reproducibility <https://github.com/romain-lopez/scVI-reproducibility>
 4. LTMG <https://academic.oup.com/nar/article/47/18/e111/5542876>
+
+## Contact:
+
+Juexin Wang: wangjue@missouri.edu
+
+Anjun Ma: Anjun.Ma@osumc.edu
+
+Qin Ma: Qin.Ma@osumc.edu
+
+Dong Xu: xudong@missouri.edu
