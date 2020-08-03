@@ -166,7 +166,7 @@ python scGNN.py --help
 
 More information can be checked at the [tutorial](https://github.com/juexinwang/scGNN/tree/master/tutorial).
 
-Another repository for reviewers is located at [here](https://github.com/scgnn/scGNN/tree/master/tutorial).
+Another repository for reviewers is located at [here](https://github.com/scgnn/scGNN/).
 
 ## Reference:
 
