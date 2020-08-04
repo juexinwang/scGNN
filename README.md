@@ -21,6 +21,7 @@ This repository contains the source code for the paper **scGNN: a novel graph ne
 	journal = {bioRxiv}
 }
 ```
+--------------------------------------------------------------------------------
 
 ## Installation:
 
