@@ -6,6 +6,22 @@ __scGNN__ (**s**ingle **c**ell **g**raph **n**eural **n**etworks) provides a hyp
 
 This repository contains the source code for the paper **scGNN: a novel graph neural network framework for single-cell RNA-Seq analyses** available at bioRxiv; doi: https://doi.org/10.1101/2020.08.02.233569
 
+**BibTeX**
+
+```latex
+@article{Wang_2020_scGNN,
+	author = {Juexin Wang, Anjun Ma, Yuzhou Chang, Jianting Gong, Yuexu Jiang, Hongjun Fu, Cankun Wang, Ren Qi, Qin Ma, Dong Xu},
+	title = {scGNN: a novel graph neural network framework for single-cell RNA-Seq analyses},
+	elocation-id = {2020.08.02.233569},
+	year = {2020},
+	doi = {10.1101/2020.08.02.233569},
+	publisher = {Cold Spring Harbor Laboratory},
+	URL = {https://www.biorxiv.org/content/10.1101/2020.08.02.233569v1},
+	eprint = {https://www.biorxiv.org/content/10.1101/2020.08.02.233569v1.full.pdf},
+	journal = {bioRxiv}
+}
+```
+
 ## Installation:
 
 Installation Tested on Ubuntu 16.04 and CentOS 7 with Python 3.6.8
