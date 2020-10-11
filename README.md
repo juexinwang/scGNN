@@ -36,7 +36,7 @@ git clone https://github.com/juexinwang/scGNN.git
 cd scGNN
 ```
 
-### Option 1 : (Recommended) Use python virutal enviorment with conda（<https://anaconda.org/>）
+### Option 1 : (Recommended) Use python virutal environment with conda（<https://anaconda.org/>）
 
 ```shell
 conda create -n scgnnEnv python=3.6.8 pip
