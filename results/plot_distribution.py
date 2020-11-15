@@ -21,6 +21,7 @@ j =np.load(args.datasetName+'_'+args.para+'_dropj.npy')
 recon   =np.load(args.datasetName+'_'+args.para+'_recon.npy',allow_pickle=True)
 features=np.load(args.datasetName+'_'+args.para+'_features.npy',allow_pickle=True)
 features=features.tolist()
+features=features.todense()
 
 _ = plt.hist(features.ravel())
 plt.savefig(args.outDir+'/'+args.datasetName+'_'+args.para+'_features.png')
