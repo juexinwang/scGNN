@@ -24,6 +24,8 @@ features=features.tolist()
 features=features.todense()
 
 # Directly use plt histogram
+# Careful! plt.hist does not work for huge datasets
+
 # _ = plt.hist(features.ravel())
 # plt.savefig(args.outDir+'/'+args.datasetName+'_'+args.para+'_features.png')
 # plt.close()
@@ -43,6 +45,7 @@ features=features.todense()
 
 # Use numpy histogram
 hist, bin_edges = np.histogram(features.ravel(), bins = np.arange(0,np.max(features),100))
+print(hist)
 plt.bar(bin_edges[:-1], hist, width = 1)
 plt.xlim(min(bin_edges), max(bin_edges))
 plt.savefig(args.outDir+'/'+args.datasetName+'_'+args.para+'_features.png')
@@ -50,12 +53,14 @@ plt.close()
 
 features_log = np.log(features+1)
 hist, bin_edges = np.histogram(features_log.ravel(), bins = np.arange(0,np.max(features),0.1))
+print(hist)
 plt.bar(bin_edges[:-1], hist, width = 1)
 plt.xlim(min(bin_edges), max(bin_edges))
 plt.savefig(args.outDir+'/'+args.datasetName+'_'+args.para+'_features_log.png')
 plt.close()
 
 hist, bin_edges = np.histogram(recon.ravel(), bins = np.arange(0,np.max(recon),0.1))
+print(hist)
 plt.bar(bin_edges[:-1], hist, width = 1)
 plt.xlim(min(bin_edges), max(bin_edges))
 plt.savefig(args.outDir+'/'+args.datasetName+'_'+args.para+'_recon.png')
@@ -63,6 +68,7 @@ plt.close()
 
 recon_exp = np.exp(recon)-1
 hist, bin_edges = np.histogram(recon_exp.ravel(), bins = np.arange(0,np.max(features),0.1))
+print(hist)
 plt.bar(bin_edges[:-1], hist, width = 1)
 plt.xlim(min(bin_edges), max(bin_edges))
 plt.savefig(args.outDir+'/'+args.datasetName+'_'+args.para+'_recon_exp.png')
