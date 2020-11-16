@@ -77,7 +77,7 @@ plt.savefig(args.outDir+'/'+args.datasetName+'_'+args.para+'_recon.png')
 plt.close()
 
 recon_exp = np.exp(recon)-1
-hist, bin_edges = np.histogram(recon_exp.ravel(), bins = np.arange(0,np.max(features)+10,10))
+hist, bin_edges = np.histogram(recon_exp.ravel(), bins = np.arange(0,np.max(recon_exp)+10,10))
 print(hist)
 x_pos = [i for i, _ in enumerate(hist)]
 plt.bar(x_pos, hist)
