@@ -43,34 +43,45 @@ features=features.todense()
 # plt.savefig(args.outDir+'/'+args.datasetName+'_'+args.para+'_recon_exp.png')
 # plt.close()
 
+# Something wrong, have to change to here:
+# plt.bar(bin_edges[:-1], hist)
+# plt.xlim(min(bin_edges), max(bin_edges))
+
 # Use numpy histogram
-hist, bin_edges = np.histogram(features.ravel(), bins = np.arange(0,np.max(features),10))
+hist, bin_edges = np.histogram(features.ravel(), bins = np.arange(0,np.max(features)+10,10))
 print(hist)
-# plt.bar(bin_edges[:-1], hist, width = 1)
-plt.bar(bin_edges[:-1], hist)
-plt.xlim(min(bin_edges), max(bin_edges))
+x_pos = [i for i, _ in enumerate(hist)]
+plt.bar(x_pos, hist)
+plt.xticks(x_pos, bin_edges[:-1])
+plt.xticks(rotation=90)
 plt.savefig(args.outDir+'/'+args.datasetName+'_'+args.para+'_features.png')
 plt.close()
 
 features_log = np.log(features+1)
-hist, bin_edges = np.histogram(features_log.ravel(), bins = np.arange(0,np.max(features),0.01))
+hist, bin_edges = np.histogram(features_log.ravel(), bins = np.arange(0,np.max(features_log)+0.01,0.01))
 print(hist)
-plt.bar(bin_edges[:-1], hist)
-plt.xlim(min(bin_edges), max(bin_edges))
+x_pos = [i for i, _ in enumerate(hist)]
+plt.bar(x_pos, hist)
+plt.xticks(x_pos, bin_edges[:-1])
+plt.xticks(rotation=90)
 plt.savefig(args.outDir+'/'+args.datasetName+'_'+args.para+'_features_log.png')
 plt.close()
 
-hist, bin_edges = np.histogram(recon.ravel(), bins = np.arange(0,np.max(recon),0.01))
+hist, bin_edges = np.histogram(recon.ravel(), bins = np.arange(0,np.max(recon)+0.01,0.01))
 print(hist)
-plt.bar(bin_edges[:-1], hist)
-plt.xlim(min(bin_edges), max(bin_edges))
+x_pos = [i for i, _ in enumerate(hist)]
+plt.bar(x_pos, hist)
+plt.xticks(x_pos, bin_edges[:-1])
+plt.xticks(rotation=90)
 plt.savefig(args.outDir+'/'+args.datasetName+'_'+args.para+'_recon.png')
 plt.close()
 
 recon_exp = np.exp(recon)-1
-hist, bin_edges = np.histogram(recon_exp.ravel(), bins = np.arange(0,np.max(features),10))
+hist, bin_edges = np.histogram(recon_exp.ravel(), bins = np.arange(0,np.max(features)+10,10))
 print(hist)
-plt.bar(bin_edges[:-1], hist)
-plt.xlim(min(bin_edges), max(bin_edges))
+x_pos = [i for i, _ in enumerate(hist)]
+plt.bar(x_pos, hist)
+plt.xticks(x_pos, bin_edges[:-1])
+plt.xticks(rotation=90)
 plt.savefig(args.outDir+'/'+args.datasetName+'_'+args.para+'_recon_exp.png')
 plt.close()
