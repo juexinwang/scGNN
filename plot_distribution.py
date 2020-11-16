@@ -23,19 +23,47 @@ features=np.load(args.inDir+args.datasetName+'_'+args.para+'_features.npy',allow
 features=features.tolist()
 features=features.todense()
 
-_ = plt.hist(features.ravel())
+# Directly use plt histogram
+# _ = plt.hist(features.ravel())
+# plt.savefig(args.outDir+'/'+args.datasetName+'_'+args.para+'_features.png')
+# plt.close()
+
+# features_log = np.log(features+1)
+# _ = plt.hist(features_log.ravel(),bin=100)
+# plt.savefig(args.outDir+'/'+args.datasetName+'_'+args.para+'_features_log.png')
+# plt.close()
+
+# _ = plt.hist(recon.ravel(),bin=100)
+# plt.savefig(args.outDir+'/'+args.datasetName+'_'+args.para+'_recon.png')
+# plt.close()
+
+# recon_exp = np.exp(recon)-1
+# plt.savefig(args.outDir+'/'+args.datasetName+'_'+args.para+'_recon_exp.png')
+# plt.close()
+
+# Use numpy histogram
+hist, bin_edges = np.histogram(features.ravel(), bins = np.arange(0,np.max(features),100))
+plt.bar(bin_edges[:-1], hist, width = 1)
+plt.xlim(min(bin_edges), max(bin_edges))
 plt.savefig(args.outDir+'/'+args.datasetName+'_'+args.para+'_features.png')
 plt.close()
 
 features_log = np.log(features+1)
-_ = plt.hist(features_log.ravel(),bin=100)
+hist, bin_edges = np.histogram(features_log.ravel(), bins = np.arange(0,np.max(features),0.1))
+plt.bar(bin_edges[:-1], hist, width = 1)
+plt.xlim(min(bin_edges), max(bin_edges))
 plt.savefig(args.outDir+'/'+args.datasetName+'_'+args.para+'_features_log.png')
 plt.close()
 
-_ = plt.hist(recon.ravel(),bin=100)
+hist, bin_edges = np.histogram(recon.ravel(), bins = np.arange(0,np.max(recon),0.1))
+plt.bar(bin_edges[:-1], hist, width = 1)
+plt.xlim(min(bin_edges), max(bin_edges))
 plt.savefig(args.outDir+'/'+args.datasetName+'_'+args.para+'_recon.png')
 plt.close()
 
 recon_exp = np.exp(recon)-1
+hist, bin_edges = np.histogram(recon_exp.ravel(), bins = np.arange(0,np.max(features),0.1))
+plt.bar(bin_edges[:-1], hist, width = 1)
+plt.xlim(min(bin_edges), max(bin_edges))
 plt.savefig(args.outDir+'/'+args.datasetName+'_'+args.para+'_recon_exp.png')
 plt.close()
