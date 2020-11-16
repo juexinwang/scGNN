@@ -15,11 +15,11 @@ parser.add_argument('--outDir', type=str, default='DistNpy/',
 args = parser.parse_args()
 
 
-ix=np.load(args.datasetName+'_'+args.para+'_dropix.npy')
-i =np.load(args.datasetName+'_'+args.para+'_dropi.npy')
-j =np.load(args.datasetName+'_'+args.para+'_dropj.npy')
-recon   =np.load(args.datasetName+'_'+args.para+'_recon.npy',allow_pickle=True)
-features=np.load(args.datasetName+'_'+args.para+'_features.npy',allow_pickle=True)
+ix=np.load(args.inDir+args.datasetName+'_'+args.para+'_dropix.npy')
+i =np.load(args.inDir+args.datasetName+'_'+args.para+'_dropi.npy')
+j =np.load(args.inDir+args.datasetName+'_'+args.para+'_dropj.npy')
+recon   =np.load(args.inDir+args.datasetName+'_'+args.para+'_recon.npy',allow_pickle=True)
+features=np.load(args.inDir+args.datasetName+'_'+args.para+'_features.npy',allow_pickle=True)
 features=features.tolist()
 features=features.todense()
 
