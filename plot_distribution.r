@@ -12,6 +12,7 @@
 # install.packages("gamlss")
 library(fitdistrplus)
 library(gamlss)
+suppressWarnings()
 
 args = commandArgs(trailingOnly=TRUE)
 if (length(args)==0) {
@@ -39,6 +40,13 @@ plot(fit_nbi)
 dev.off()
 
 # http://www.gamlss.com/wp-content/uploads/2013/01/book-2010-Athens1.pdf Page 221
+fit_zinb_= fitdist(features, 'ZINBI', start = list(mu = mu_, sigma = sigma_))
+gofstat(fit_zinb_)
+tiff(file=paste(outdir,"/",datasetName,"_",para,"_ZINBI_.tiff",sep=''))
+plot(fit_zinb_)
+dev.off()
+
+
 nu_ = 1-length(which(features!=0))/(length(features))
 fit_zinb= fitdist(features, 'ZINBI', start = list(mu = mu_, sigma = sigma_, nu = nu_))
 gofstat(fit_zinb)
@@ -46,11 +54,7 @@ tiff(file=paste(outdir,"/",datasetName,"_",para,"_ZINBI.tiff",sep=''))
 plot(fit_zinb)
 dev.off()
 
-fit_zinb_= fitdist(features, 'ZINBI', start = list(mu = mu_, sigma = sigma_))
-gofstat(fit_zinb_)
-tiff(file=paste(outdir,"/",datasetName,"_",para,"_ZINBI.tiff_",sep=''))
-plot(fit_zinb_)
-dev.off()
+
 
 
 # NBI:
