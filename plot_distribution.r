@@ -34,7 +34,7 @@ sigma_ = (sd(features)-mean(features))/mean(features)**2
 fit_nbi = fitdist(features, 'NBI',   start = list(mu = mu_, sigma = sigma_ ))
 gofstat(fit_nbi)
 tiff(file= paste(outdir,"/",datasetName,"_",para,"_NBI.tiff",sep=''))
-plot(fit_zinb)
+plot(fit_nbi)
 dev.off()
 
 # http://www.gamlss.com/wp-content/uploads/2013/01/book-2010-Athens1.pdf Page 221
