@@ -68,7 +68,7 @@ for item in methodsList:
     commandLine = ''
     for seed in seedList:
         commandLine += "python3 -W ignore plot_distribution.py --datasetName 12.Klein --para "+param+" --inDir "+dirStr+seed+" --outDir "+dirStr+seed+"\n"
-        commandLine += "R CMD BATCH plot_distribution.r 12.Klein "+param+" "+dirStr+seed+" "+dirStr+seed+"\n"
+        commandLine += "Rscript plot_distribution.r 12.Klein "+param+" "+dirStr+seed+" "+dirStr+seed+"\n"
     outStr = templateStr1 + abbrStr + templateStr2 + commandLine + "\n"
     with open(outputFilename+"_12.sh",'w') as fw:
         fw.write(outStr)
@@ -77,7 +77,7 @@ for item in methodsList:
     commandLine = ''
     for seed in seedList:
         commandLine += "python3 -W ignore plot_distribution.py --datasetName 13.Zeisel --para "+param+" --inDir "+dirStr+seed+" --outDir "+dirStr+seed+"\n"
-        commandLine += "R CMD BATCH plot_distribution.r 13.Zeisel "+param+" "+dirStr+seed+" "+dirStr+seed+"\n"
+        commandLine += "Rscript plot_distribution.r 13.Zeisel "+param+" "+dirStr+seed+" "+dirStr+seed+"\n"
     outStr = templateStr1 + abbrStr + templateStr2 + commandLine + "\n"
     with open(outputFilename+"_13.sh",'w') as fw:
         fw.write(outStr)

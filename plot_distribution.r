@@ -28,7 +28,7 @@ features = data.matrix(features)
 features = as.vector(features)
 features = as.numeric(features)
 
-print(paste("\n",indir,"/",datasetName,"_",para,"_features.txt")
+print(paste(indir,"/",datasetName,"_",para,"_features.txt",sep=''))
 mu_ = mean(features)
 sigma_ = (sd(features)-mean(features))/mean(features)**2
 # http://www.gamlss.com/wp-content/uploads/2013/01/book-2010-Athens1.pdf Page 219

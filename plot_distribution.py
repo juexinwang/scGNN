@@ -53,7 +53,7 @@ features=features.todense()
 
 # Use numpy histogram
 hist, bin_edges = np.histogram(features.ravel(), bins = np.arange(0,np.max(features)+10,10))
-print(hist)
+# print(hist)
 x_pos = [i for i, _ in enumerate(hist)]
 plt.bar(x_pos, hist)
 plt.xticks(x_pos, bin_edges[:-1])
@@ -63,7 +63,7 @@ plt.close()
 
 features_log = np.log(features+1)
 hist, bin_edges = np.histogram(features_log.ravel(), bins = np.arange(0,np.max(features_log)+0.1,0.1))
-print(hist)
+# print(hist)
 x_pos = [i for i, _ in enumerate(hist)]
 plt.bar(x_pos, hist)
 plt.xticks(x_pos, bin_edges[:-1])
@@ -72,7 +72,7 @@ plt.savefig(args.outDir+'/'+args.datasetName+'_'+args.para+'_features_log.png')
 plt.close()
 
 hist, bin_edges = np.histogram(recon.ravel(), bins = np.arange(0,np.max(recon)+0.1,0.1))
-print(hist)
+# print(hist)
 x_pos = [i for i, _ in enumerate(hist)]
 plt.bar(x_pos, hist)
 plt.xticks(x_pos, bin_edges[:-1])
