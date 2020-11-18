@@ -13,6 +13,7 @@ parser.add_argument('--batchStr', type=int, default=0,
 args = parser.parse_args()
 
 # Note:
+# Main Check results
 # Generate results in python other than in shell for better organization
 # We are not use runpy.run_path('main_result.py') for it is hard to pass arguments
 # We are not use subprocess.call("python main_result.py", shell=True) for it runs scripts parallel

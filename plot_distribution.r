@@ -12,7 +12,6 @@
 # install.packages("gamlss")
 library(fitdistrplus)
 library(gamlss)
-suppressWarnings()
 
 args = commandArgs(trailingOnly=TRUE)
 if (length(args)==0) {

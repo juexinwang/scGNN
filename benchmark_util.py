@@ -562,6 +562,7 @@ def imputation_error_log(X_mean, X, X_zero, i, j, ix):
         all_index = i[ix], j[ix]
         x, y = X_mean[all_index], X[all_index]
         result = np.abs(x - np.log(y+1))
+        resultL2 = (x - np.log(y+1))**2
     # If the input is a sparse matrix
     else:
         all_index = i[ix], j[ix]
@@ -570,8 +571,9 @@ def imputation_error_log(X_mean, X, X_zero, i, j, ix):
         yuse = scipy.sparse.lil_matrix.todense(y)
         yuse = np.asarray(yuse).reshape(-1)
         result = np.abs(x - np.log(yuse+1))
+        resultL2 = (x - np.log(yuse+1))**2
     # return np.median(np.abs(x - yuse))
-    return np.mean(result), np.median(result), np.min(result), np.max(result)
+    return np.mean(result), np.median(result), np.min(result), np.max(result),np.mean(resultL2), np.median(resultL2), np.min(resultL2), np.max(resultL2)
 
 # cosine similarity
 def imputation_cosine_log(X_mean, X, X_zero, i, j, ix):
