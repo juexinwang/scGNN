@@ -80,3 +80,6 @@ dev.off()
 #                                1-mle-ZINBI
 # Akaike's Information Criterion    25969108
 # Bayesian Information Criterion    25969135
+
+# Can learn from *
+# https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.nbinom.html
