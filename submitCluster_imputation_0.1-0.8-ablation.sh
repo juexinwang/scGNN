@@ -20,16 +20,28 @@ for i in {1..3}
 do
 for j in {0.1,0.3,0.6,0.8}
 do
-sbatch run_experimentImpute_1_g_e_$i\_12_$j\.sh
-sbatch run_experimentImpute_2_g_e_$i\_12_$j\.sh
-sbatch run_experimentImpute_2_g_e_L_$i\_12_$j\.sh
-sbatch run_experimentImpute_2_g_f_$i\_12_$j\.sh
-sbatch run_experimentImpute_2_n_e_$i\_12_$j\.sh
+sbatch run_experimentImpute_1_g_e_$i\_9_$j\.sh
+sbatch run_experimentImpute_2_g_e_$i\_9_$j\.sh
+sbatch run_experimentImpute_2_g_e_L_$i\_9_$j\.sh
+sbatch run_experimentImpute_2_g_f_$i\_9_$j\.sh
+sbatch run_experimentImpute_2_n_e_$i\_9_$j\.sh
 
-sbatch run_experimentImpute_1_g_e_$i\_13_$j\.sh
-sbatch run_experimentImpute_2_g_e_$i\_13_$j\.sh
-sbatch run_experimentImpute_2_g_e_L_$i\_13_$j\.sh
-sbatch run_experimentImpute_2_g_f_$i\_13_$j\.sh
-sbatch run_experimentImpute_2_n_e_$i\_13_$j\.sh
+sbatch run_experimentImpute_1_g_e_$i\_11_$j\.sh
+sbatch run_experimentImpute_2_g_e_$i\_11_$j\.sh
+sbatch run_experimentImpute_2_g_e_L_$i\_11_$j\.sh
+sbatch run_experimentImpute_2_g_f_$i\_11_$j\.sh
+sbatch run_experimentImpute_2_n_e_$i\_11_$j\.sh
+
+# sbatch run_experimentImpute_1_g_e_$i\_12_$j\.sh
+# sbatch run_experimentImpute_2_g_e_$i\_12_$j\.sh
+# sbatch run_experimentImpute_2_g_e_L_$i\_12_$j\.sh
+# sbatch run_experimentImpute_2_g_f_$i\_12_$j\.sh
+# sbatch run_experimentImpute_2_n_e_$i\_12_$j\.sh
+
+# sbatch run_experimentImpute_1_g_e_$i\_13_$j\.sh
+# sbatch run_experimentImpute_2_g_e_$i\_13_$j\.sh
+# sbatch run_experimentImpute_2_g_e_L_$i\_13_$j\.sh
+# sbatch run_experimentImpute_2_g_f_$i\_13_$j\.sh
+# sbatch run_experimentImpute_2_n_e_$i\_13_$j\.sh
 done
 done
