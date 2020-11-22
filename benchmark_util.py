@@ -573,7 +573,7 @@ def imputation_error_log(X_mean, X, X_zero, i, j, ix):
         result = np.abs(x - np.log(yuse+1))
         rmse = ((x - np.log(yuse+1))**2/len(result))**0.5
     # return np.median(np.abs(x - yuse))
-    return np.mean(result), np.median(result), np.min(result), np.max(result), rmse
+    return np.mean(result), np.median(result), np.min(result), np.max(result), np.mean(rmse)
 
 # cosine similarity
 def imputation_cosine_log(X_mean, X, X_zero, i, j, ix):
