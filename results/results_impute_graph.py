@@ -63,20 +63,20 @@ features         = None
 # dropi            = np.load(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_'+args.ratio+'_0.0-0.3-0.1_dropi.npy')
 # dropj            = np.load(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_'+args.ratio+'_0.0-0.3-0.1_dropj.npy')
 # dropix           = np.load(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_'+args.ratio+'_0.0-0.3-0.1_dropix.npy')
-dropi            = np.load(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_'+args.ratio+'_10-0.1-0.9-'+args.regupara+'_dropi.npy')
-dropj            = np.load(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_'+args.ratio+'_10-0.1-0.9-'+args.regupara+'_dropj.npy')
-dropix           = np.load(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_'+args.ratio+'_10-0.1-0.9-'+args.regupara+'_dropix.npy')
+dropi            = np.load(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_'+args.ratio+'_10-0.1-0.9-0.0-0.3-'+args.regupara+'_dropi.npy')
+dropj            = np.load(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_'+args.ratio+'_10-0.1-0.9-0.0-0.3-'+args.regupara+'_dropj.npy')
+dropix           = np.load(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_'+args.ratio+'_10-0.1-0.9-0.0-0.3-'+args.regupara+'_dropix.npy')
 
 
 
 # featuresImpute   = np.load(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_'+args.ratio+'_'+args.regupara+'_recon'+args.reconstr+'.npy')
-featuresImpute   = np.load(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_'+args.ratio+'_10-0.1-0.9-'+args.regupara+'_recon'+args.reconstr+'.npy')
+featuresImpute   = np.load(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_'+args.ratio+'_10-0.1-0.9-0.0-0.3-'+args.regupara+'_recon'+args.reconstr+'.npy')
 # featuresImpute   = np.load(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_'+args.ratio+'_0.0-0.3-0.1_recon'+args.reconstr+'.npy')
 # featuresImpute   = pd.read_csv(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_'+args.regupara+'_0.0_0.0_recon'+args.reconstr+'.csv')
 # featuresImpute = featuresImpute.to_numpy()
 
-l1ErrorMean, l1ErrorMedian, l1ErrorMin, l1ErrorMax = imputation_error_log(featuresImpute, featuresOriginal, features, dropi, dropj, dropix)
-print('{:.4f} {:.4f} {:.4f} {:.4f} '.format(l1ErrorMean, l1ErrorMedian, l1ErrorMin, l1ErrorMax), end='')
+l1ErrorMean, l1ErrorMedian, l1ErrorMin, l1ErrorMax, rmse = imputation_error_log(featuresImpute, featuresOriginal, features, dropi, dropj, dropix)
+print('{:.4f} {:.4f} {:.4f} {:.4f} {:.4f} '.format(l1ErrorMean, l1ErrorMedian, l1ErrorMin, l1ErrorMax, rmse), end='')
 
 def imputeResult(inputData):
     '''

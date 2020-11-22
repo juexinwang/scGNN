@@ -50,7 +50,7 @@ else:
     ]
 
 if args.imputeMode:
-    pyStr = 'results_impute.py'
+    pyStr = 'results_impute_graph.py'
 
     npyList = [
         '../npyImputeG2E_1/ --ratio 0.1', #1
@@ -210,55 +210,55 @@ else:
     
 def getBenchmarkStr(count):
     benchmarkStr = ''
-    if args.batchStr == 0:
+    if args.batchStr == 1:
         benchmarkStr = ' --benchmark '\
                     '--labelFilename ' + labelFileDir + '1.Biase/Biase_cell_label.csv '\
                     '--n-clusters 3 '
-    elif args.batchStr == 1:
+    elif args.batchStr == 2:
         benchmarkStr = ' --benchmark '\
                     '--labelFilename ' + labelFileDir + '2.Li/Li_cell_label.csv '\
                     '--n-clusters 9 '
-    elif args.batchStr == 2:
+    elif args.batchStr == 3:
         benchmarkStr = ' --benchmark '\
                     '--labelFilename ' + labelFileDir + '3.Treutlein/Treutlein_cell_label.csv '\
                     '--n-clusters 5 '
-    elif args.batchStr == 3:
+    elif args.batchStr == 4:
         benchmarkStr = ' --benchmark '\
                     '--labelFilename ' + labelFileDir + '4.Yan/Yan_cell_label.csv '\
                     '--n-clusters 7 '
-    elif args.batchStr == 4:
+    elif args.batchStr == 5:
         benchmarkStr = ' --benchmark '\
                     '--labelFilename ' + labelFileDir + '5.Goolam/Goolam_cell_label.csv '\
                     '--n-clusters 5 '
-    elif args.batchStr == 5:
+    elif args.batchStr == 6:
         benchmarkStr = ' --benchmark '\
                     '--labelFilename ' + labelFileDir + '6.Guo/Guo_cell_label.csv '\
                     '--n-clusters 9 '
-    elif args.batchStr == 6:
+    elif args.batchStr == 7:
         benchmarkStr = ' --benchmark '\
                     '--labelFilename ' + labelFileDir + '7.Deng/Deng_cell_label.csv '\
                     '--n-clusters 10 '
-    elif args.batchStr == 7:
+    elif args.batchStr == 8:
         benchmarkStr = ' --benchmark '\
                     '--labelFilename ' + labelFileDir + '8.Pollen/Pollen_cell_label.csv '\
                     '--n-clusters 11 '
-    elif args.batchStr == 8:
+    elif args.batchStr == 9:
         benchmarkStr = ' --benchmark '\
                     '--labelFilename ' + labelFileDir + '9.Chung/Chung_cell_label.csv '\
                     '--n-clusters 4 '
-    elif args.batchStr == 9:
+    elif args.batchStr == 10:
         benchmarkStr = ' --benchmark '\
                     '--labelFilename ' + labelFileDir + '10.Usoskin/Usoskin_cell_label.csv '\
                     '--n-clusters 11 '
-    elif args.batchStr == 10:
+    elif args.batchStr == 11:
         benchmarkStr = ' --benchmark '\
                     '--labelFilename ' + labelFileDir + '11.Kolodziejczyk/Kolodziejczyk_cell_label.csv '\
                     '--n-clusters 3 '
-    elif args.batchStr == 11:
+    elif args.batchStr == 12:
         benchmarkStr = ' --benchmark '\
                     '--labelFilename ' + labelFileDir + '12.Klein/Klein_cell_label.csv '\
                     '--n-clusters 4 '
-    elif args.batchStr == 12:
+    elif args.batchStr == 13:
         benchmarkStr = ' --benchmark '\
                     '--labelFilename ' + labelFileDir + '13.Zeisel/Zeisel_cell_label.csv '\
                     '--n-clusters 7 '
@@ -296,12 +296,12 @@ for datasetStr in datasetList:
         os.system(commandStr)
     else:
         print(commandStr)
-    for i in range(10):
-        commandStr = 'python -W ignore ' + pyStr + ' --datasetName ' + datasetStr + reguStr + getBenchmarkStr(count) + ' --reconstr '+ str(i) + ' --npyDir ' + npyStr
-        if args.runMode:
-            os.system(commandStr)
-        else:
-            print(commandStr)
+    # for i in range(10):
+    #     commandStr = 'python -W ignore ' + pyStr + ' --datasetName ' + datasetStr + reguStr + getBenchmarkStr(count) + ' --reconstr '+ str(i) + ' --npyDir ' + npyStr
+    #     if args.runMode:
+    #         os.system(commandStr)
+    #     else:
+    #         print(commandStr)
     count += 1
 
 
