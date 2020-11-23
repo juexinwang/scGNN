@@ -63,7 +63,25 @@ for item in methodsList:
     tmpstr2=tmp[1]
     imputeStr = ''
     outputFilename = args.outputDir + tmpstr1
-    abbrStr = tmpstr2   
+    abbrStr = tmpstr2
+
+    commandLine = ''
+    for seed in seedList:
+        commandLine += "python3 -W ignore plot_distribution.py --datasetName 9.Chung --para "+param+" --inDir "+dirStr+seed+" --outDir "+dirStr+seed+"\n"
+        commandLine += "Rscript plot_distribution.r 9.Chung "+param+" "+dirStr+seed+" "+dirStr+seed+"\n"
+    outStr = templateStr1 + abbrStr + templateStr2 + commandLine + "\n"
+    with open(outputFilename+"_9.sh",'w') as fw:
+        fw.write(outStr)
+        fw.close()
+
+    commandLine = ''
+    for seed in seedList:
+        commandLine += "python3 -W ignore plot_distribution.py --datasetName 11.Kolodziejczyk --para "+param+" --inDir "+dirStr+seed+" --outDir "+dirStr+seed+"\n"
+        commandLine += "Rscript plot_distribution.r 11.Kolodziejczyk "+param+" "+dirStr+seed+" "+dirStr+seed+"\n"
+    outStr = templateStr1 + abbrStr + templateStr2 + commandLine + "\n"
+    with open(outputFilename+"_12.sh",'w') as fw:
+        fw.write(outStr)
+        fw.close()   
 
     commandLine = ''
     for seed in seedList:

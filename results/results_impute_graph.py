@@ -67,8 +67,6 @@ dropi            = np.load(args.npyDir+args.datasetName+'_'+args.regulized_type+
 dropj            = np.load(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_'+args.ratio+'_10-0.1-0.9-0.0-0.3-'+args.regupara+'_dropj.npy')
 dropix           = np.load(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_'+args.ratio+'_10-0.1-0.9-0.0-0.3-'+args.regupara+'_dropix.npy')
 
-
-
 # featuresImpute   = np.load(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_'+args.ratio+'_'+args.regupara+'_recon'+args.reconstr+'.npy')
 featuresImpute   = np.load(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_'+args.ratio+'_10-0.1-0.9-0.0-0.3-'+args.regupara+'_recon'+args.reconstr+'.npy')
 # featuresImpute   = np.load(args.npyDir+args.datasetName+'_'+args.regulized_type+discreteStr+'_'+args.ratio+'_0.0-0.3-0.1_recon'+args.reconstr+'.npy')

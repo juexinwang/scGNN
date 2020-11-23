@@ -45,7 +45,6 @@ tiff(file=paste(outdir,"/",datasetName,"_",para,"_ZINBI_.tiff",sep=''))
 plot(fit_zinb_)
 dev.off()
 
-
 nu_ = 1-length(which(features!=0))/(length(features))
 fit_zinb= fitdist(features, 'ZINBI', start = list(mu = mu_, sigma = sigma_, nu = nu_))
 gofstat(fit_zinb)

@@ -32,16 +32,16 @@ sbatch run_experimentImpute_2_g_e_L_$i\_11_$j\.sh
 sbatch run_experimentImpute_2_g_f_$i\_11_$j\.sh
 sbatch run_experimentImpute_2_n_e_$i\_11_$j\.sh
 
-# sbatch run_experimentImpute_1_g_e_$i\_12_$j\.sh
-# sbatch run_experimentImpute_2_g_e_$i\_12_$j\.sh
-# sbatch run_experimentImpute_2_g_e_L_$i\_12_$j\.sh
-# sbatch run_experimentImpute_2_g_f_$i\_12_$j\.sh
-# sbatch run_experimentImpute_2_n_e_$i\_12_$j\.sh
+sbatch run_experimentImpute_1_g_e_$i\_12_$j\.sh
+sbatch run_experimentImpute_2_g_e_$i\_12_$j\.sh
+sbatch run_experimentImpute_2_g_e_L_$i\_12_$j\.sh
+sbatch run_experimentImpute_2_g_f_$i\_12_$j\.sh
+sbatch run_experimentImpute_2_n_e_$i\_12_$j\.sh
 
-# sbatch run_experimentImpute_1_g_e_$i\_13_$j\.sh
-# sbatch run_experimentImpute_2_g_e_$i\_13_$j\.sh
-# sbatch run_experimentImpute_2_g_e_L_$i\_13_$j\.sh
-# sbatch run_experimentImpute_2_g_f_$i\_13_$j\.sh
-# sbatch run_experimentImpute_2_n_e_$i\_13_$j\.sh
+sbatch run_experimentImpute_1_g_e_$i\_13_$j\.sh
+sbatch run_experimentImpute_2_g_e_$i\_13_$j\.sh
+sbatch run_experimentImpute_2_g_e_L_$i\_13_$j\.sh
+sbatch run_experimentImpute_2_g_f_$i\_13_$j\.sh
+sbatch run_experimentImpute_2_n_e_$i\_13_$j\.sh
 done
 done

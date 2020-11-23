@@ -79,16 +79,16 @@ for item in methodsList:
             fw.write(outStr)
             fw.close()  
 
-    # for dropoutPara in dropoutList:
-    #     commandLine = "python3 -W ignore main_benchmark.py --datasetName 12.Klein --benchmark /home/jwang/data/scData/12.Klein/Klein_cell_label.csv "+scGNNparam+" "+outDirStr+imputeStr+" --dropoutRatio "+dropoutPara+"\n"
-    #     outStr = templateStr1 + abbrStr + templateStr2 + commandLine + "\n"
-    #     with open(outputFilename+"_12_"+dropoutPara+".sh",'w') as fw:
-    #         fw.write(outStr)
-    #         fw.close()
+    for dropoutPara in dropoutList:
+        commandLine = "python3 -W ignore main_benchmark.py --datasetName 12.Klein --benchmark /home/jwang/data/scData/12.Klein/Klein_cell_label.csv "+scGNNparam+" "+outDirStr+imputeStr+" --dropoutRatio "+dropoutPara+"\n"
+        outStr = templateStr1 + abbrStr + templateStr2 + commandLine + "\n"
+        with open(outputFilename+"_12_"+dropoutPara+".sh",'w') as fw:
+            fw.write(outStr)
+            fw.close()
 
-    # for dropoutPara in dropoutList:
-    #     commandLine = "python3 -W ignore main_benchmark.py --datasetName 13.Zeisel --benchmark /home/jwang/data/scData/13.Zeisel/Zeisel_cell_label.csv "+scGNNparam+" "+outDirStr+imputeStr+" --dropoutRatio "+dropoutPara+"\n"
-    #     outStr = templateStr1 + abbrStr + templateStr2 + commandLine + "\n"
-    #     with open(outputFilename+"_13_"+dropoutPara+".sh",'w') as fw:
-    #         fw.write(outStr)
-    #         fw.close()
+    for dropoutPara in dropoutList:
+        commandLine = "python3 -W ignore main_benchmark.py --datasetName 13.Zeisel --benchmark /home/jwang/data/scData/13.Zeisel/Zeisel_cell_label.csv "+scGNNparam+" "+outDirStr+imputeStr+" --dropoutRatio "+dropoutPara+"\n"
+        outStr = templateStr1 + abbrStr + templateStr2 + commandLine + "\n"
+        with open(outputFilename+"_13_"+dropoutPara+".sh",'w') as fw:
+            fw.write(outStr)
+            fw.close()
