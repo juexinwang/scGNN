@@ -79,7 +79,7 @@ for item in methodsList:
         commandLine += "python3 -W ignore plot_distribution.py --datasetName 11.Kolodziejczyk --para "+param+" --inDir "+dirStr+seed+" --outDir "+dirStr+seed+"\n"
         commandLine += "Rscript plot_distribution.r 11.Kolodziejczyk "+param+" "+dirStr+seed+" "+dirStr+seed+"\n"
     outStr = templateStr1 + abbrStr + templateStr2 + commandLine + "\n"
-    with open(outputFilename+"_12.sh",'w') as fw:
+    with open(outputFilename+"_11.sh",'w') as fw:
         fw.write(outStr)
         fw.close()   
 
