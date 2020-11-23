@@ -588,22 +588,34 @@ if __name__ == "__main__":
         # graph criteria
         if args.converge_type == 'graph':       
             if graphChange < graphChangeThreshold:
-                print('Converge now!')
+                print('Graph Converge now!')
+                # Converge and Update
+                adjOld = adjNew
+                listResultOld = listResult
                 break
         # celltype criteria
         elif args.converge_type == 'celltype':            
             if ari>args.converge_celltyperatio:
-                print('Converge now!')
+                print('Celltype Converge now!')
+                # Converge and Update
+                adjOld = adjNew
+                listResultOld = listResult
                 break
         # if both criteria are meets
         elif args.converge_type == 'both': 
             if graphChange < graphChangeThreshold and ari > args.converge_celltyperatio:
-                print('Converge now!')
+                print('Graph and Celltype Converge now!')
+                # Converge and Update
+                adjOld = adjNew
+                listResultOld = listResult
                 break
         # if either criteria are meets
         elif args.converge_type == 'either': 
             if graphChange < graphChangeThreshold or ari > args.converge_celltyperatio:
-                print('Converge now!')
+                print('Graph or Celltype Converge now!')
+                # Converge and Update
+                adjOld = adjNew
+                listResultOld = listResult
                 break
 
         # Update
