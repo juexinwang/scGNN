@@ -36,7 +36,7 @@ parser.add_argument('--EMtype', type=str, default='EM',
                     help='EM process type (default: celltypeEM) or EM')
 parser.add_argument('--alpha', type=float, default=0.5,
                     help='iteration alpha (default: 0.5) to control the converge rate, should be a number between 0~1')
-parser.add_argument('--converge-type', type=str, default='either',
+parser.add_argument('--converge-type', type=str, default='celltype',
                     help='type of converge: celltype/graph/both/either (default: celltype) ')
 parser.add_argument('--converge-graphratio', type=float, default=0.01,
                     help='ratio of cell type change in EM iteration (default: 0.01), 0-1')
@@ -587,22 +587,34 @@ if __name__ == "__main__":
         # graph criteria
         if args.converge_type == 'graph':       
             if graphChange < graphChangeThreshold:
-                print('Converge now!')
+                print('Graph Converge now!')
+                # Converge, Update
+                adjOld = adjNew
+                listResultOld = listResult
                 break
         # celltype criteria
         elif args.converge_type == 'celltype':            
             if ari>args.converge_celltyperatio:
-                print('Converge now!')
+                print('Celltype Converge now!')
+                # Converge, Update
+                adjOld = adjNew
+                listResultOld = listResult
                 break
         # if both criteria are meets
         elif args.converge_type == 'both': 
             if graphChange < graphChangeThreshold and ari > args.converge_celltyperatio:
-                print('Converge now!')
+                print('Graph and Celltype Converge now!')
+                # Converge, Update
+                adjOld = adjNew
+                listResultOld = listResult
                 break
         # if either criteria are meets
         elif args.converge_type == 'either': 
             if graphChange < graphChangeThreshold or ari > args.converge_celltyperatio:
-                print('Converge now!')
+                print('Graph or Celltype Converge now!')
+                # Converge, Update
+                adjOld = adjNew
+                listResultOld = listResult
                 break
 
         # Update
