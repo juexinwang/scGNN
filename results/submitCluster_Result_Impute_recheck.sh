@@ -6,7 +6,7 @@ python results_Reading_recheck.py --methodName $i --splitMode --batchStr $j > ru
 done
 done
 
-submit
+# submit
 for i in {0..59}
 do
 for j in {8,11,12,13}
