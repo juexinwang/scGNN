@@ -74,7 +74,8 @@ featuresImpute   = np.load(args.npyDir+args.datasetName+'_'+args.regulized_type+
 # featuresImpute = featuresImpute.to_numpy()
 
 l1ErrorMean, l1ErrorMedian, l1ErrorMin, l1ErrorMax, rmse = imputation_error_log(featuresImpute, featuresOriginal, features, dropi, dropj, dropix)
-print('{:.4f} {:.4f} {:.4f} {:.4f} {:.4f} '.format(l1ErrorMean, l1ErrorMedian, l1ErrorMin, l1ErrorMax, rmse), end='')
+cosine = imputation_cosine(featuresImpute, featuresOriginal, features, dropi, dropj, dropix)
+print('{:.4f} {:.4f} {:.4f} {:.4f} {:.4f} {:.4f} '.format(l1ErrorMean, l1ErrorMedian, l1ErrorMin, l1ErrorMax, cosine, rmse), end='')
 
 def imputeResult(inputData):
     '''
