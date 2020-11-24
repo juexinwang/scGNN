@@ -5,71 +5,40 @@ import matplotlib.pyplot as plt
 import numpy as np
 import argparse
 import sys
-sys.path.append('../')
-sys.path.append('/storage/hpc/scratch/yjiang/SCwangjuexin/scGNN-master_021720/scGNN-master/')
 #from benchmark_util import impute_dropout
 
-def impute_dropout(X, rate=0.1):
-    """
-    X: original testing set
-    ========
-    returns:
-    X_zero: copy of X with zeros
-    i, j, ix: indices of where dropout is applied
-    """
-    #If the input is a dense matrix
-    if isinstance(X, np.ndarray):
-        X_zero = np.copy(X)
-        # select non-zero subset
-        i,j = np.nonzero(X_zero)
-    # If the input is a sparse matrix
-    else:
-        X_zero = scipy.sparse.lil_matrix.copy(X)
-        # select non-zero subset
-        i,j = X_zero.nonzero()
-    # choice number 1 : select 10 percent of the non zero values (so that distributions overlap enough)
-    ix = np.random.choice(range(len(i)), int(np.floor(0.1 * len(i))), replace=False)
-    X_zero[i[ix], j[ix]] *= np.random.binomial(1, rate)
-    # choice number 2, focus on a few but corrupt binomially
-    #ix = np.random.choice(range(len(i)), int(slice_prop * np.floor(len(i))), replace=False)
-    #X_zero[i[ix], j[ix]] = np.random.binomial(X_zero[i[ix], j[ix]].astype(np.int), rate)
-    return X_zero, i, j, ix
-
 parser = argparse.ArgumentParser(description='')
-parser.add_argument('--data', type=str, default='data1',help='data1,2,3')
 parser.add_argument('--datasetName', type=str, default='MMPbasal_2000',help='MMPbasal_2000')
-parser.add_argument('--discreteTag', action='store_true', default=False,
-                    help='whether input is raw or 0/1 (default: False)')
 parser.add_argument('--ratio', type=str, default='0.1',
                     help='dropoutratio')
 args = parser.parse_args()
 
 
-# x = np.concatenate([np.random.uniform(-3, -2, (1000, 40)), np.random.uniform(2, 3, (1000, 40))], axis=0)
-if args.discreteTag:
-    filename = '/storage/hpc/scratch/yjiang/SCwangjuexin/scData/{}/{}.features.D.csv'.format(args.datasetName,args.datasetName)
-else:
-    filename = '/storage/hpc/scratch/yjiang/SCwangjuexin/scGNN-master_021720/{}/{}_LTMG_0.1_features.npy'.format(args.data,args.datasetName)
-x = np.load(filename,allow_pickle=True)
-x = x.tolist()
-x=x.todense()
-x=np.asarray(x)
-x=np.log(x+1)
+def impute_Magic(seed=1, datasetName='9.Chung', ratio=0.1):
+    filename = '/storage/hpc/scratch/wangjue/scGNN/npyImputeG2E_{}/{}_LTMG_{}_10-0.1-0.9-0.0-0.3-0.1_features.npy'.format(seed, datasetName, ratio)
+    x = np.load(filename,allow_pickle=True)
+    x = x.tolist()
+    x=x.todense()
+    x=np.asarray(x)
+    x=np.log(x+1)
 
-# Load single-cell RNA-seq data
-# Default is KNN=5
-magic_operator = magic.MAGIC()
-# magic_operator = magic.MAGIC(knn=10)
-X_magic = magic_operator.fit_transform(x, genes="all_genes")
-recon = X_magic
+    # Load single-cell RNA-seq data
+    # Default is KNN=5
+    magic_operator = magic.MAGIC()
+    # magic_operator = magic.MAGIC(knn=10)
+    X_magic = magic_operator.fit_transform(x, genes="all_genes")
+    recon = X_magic
 
-discreteStr = ''
-if args.discreteTag:
-    discreteStr = 'D'
-datasetNameStr = args.datasetName+discreteStr
+    np.save('/storage/hpc/scratch/wangjue/scGNN/magic/{}_{}_{}_recon.npy'.format(datasetName,ratio,seed),recon)
 
-np.save('/storage/hpc/scratch/yjiang/SCwangjuexin/scGNN-master_021720/magic/{}/{}_{}_recon.npy'.format(args.data,datasetNameStr,args.ratio),recon)
+datasetNameList = ['9.Chung','11.Kolodziejczyk','12.Klein','13.Zeisel']
+seedList = ['1','2','3']
+ratioList = [0.1, 0.3, 0.6, 0.8]
 
+for datasetName in datasetNameList:
+    for seed in seedList:
+        for ratio in ratioList:        
+            impute_Magic(seed=seed, datasetName=datasetName, ratio=ratio)
 
 # From scVI
 # # Load single-cell RNA-seq data
