@@ -15,7 +15,7 @@ args = parser.parse_args()
 
 
 def impute_Magic(seed=1, datasetName='9.Chung', ratio=0.1):
-    filename = '/storage/hpc/scratch/wangjue/scGNN/npyImputeG2E_{}/{}_LTMG_{}_10-0.1-0.9-0.0-0.3-0.1_features.npy'.format(seed, datasetName, ratio)
+    filename = '/storage/htc/joshilab/wangjue/scGNN/npyImputeG2E_{}/{}_LTMG_{}_10-0.1-0.9-0.0-0.3-0.1_features.npy'.format(seed, datasetName, ratio)
     x = np.load(filename,allow_pickle=True)
     x = x.tolist()
     x=x.todense()
@@ -29,7 +29,7 @@ def impute_Magic(seed=1, datasetName='9.Chung', ratio=0.1):
     X_magic = magic_operator.fit_transform(x, genes="all_genes")
     recon = X_magic
 
-    np.save('/storage/hpc/scratch/wangjue/scGNN/magic/{}_{}_{}_recon.npy'.format(datasetName,ratio,seed),recon)
+    np.save('/storage/htc/joshilab/wangjue/scGNN/magic/{}_{}_{}_recon.npy'.format(datasetName,ratio,seed),recon)
 
 datasetNameList = ['9.Chung','11.Kolodziejczyk','12.Klein','13.Zeisel']
 seedList = ['1','2','3']
