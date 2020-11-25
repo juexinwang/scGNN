@@ -7,10 +7,10 @@ import argparse
 import sys
 #from benchmark_util import impute_dropout
 
-parser = argparse.ArgumentParser(description='')
+parser = argparse.ArgumentParser(description='MAGIC Impute')
+# In this script, not using arguments
 parser.add_argument('--datasetName', type=str, default='MMPbasal_2000',help='MMPbasal_2000')
-parser.add_argument('--ratio', type=str, default='0.1',
-                    help='dropoutratio')
+parser.add_argument('--ratio', type=str, default='0.1', help='dropoutratio')
 args = parser.parse_args()
 
 
