@@ -25,8 +25,6 @@ def impute_deepimpute(seed=1, datasetName='9.Chung', ratio=0.1):
     x=x.todense()
     x=np.asarray(x)
     x=np.log(x+1)
-    
-    save_path = '/storage/hpc/scratch/yjiang/SCwangjuexin/scGNN-master_021720/deepimpute_nolog/{}/'.format(args.data)
 
     features=x
     dropout_filename = save_path+"deepimpute.csv"
