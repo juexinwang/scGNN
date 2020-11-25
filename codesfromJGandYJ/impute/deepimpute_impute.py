@@ -24,7 +24,7 @@ def impute_deepimpute(seed=1, datasetName='9.Chung', ratio=0.1):
     x = x.tolist()
     x=x.todense()
     x=np.asarray(x)
-    x=np.log(x+1)
+    # x=np.log(x+1)
 
     features=x
     dropout_filename = save_path+"deepimpute.csv"
