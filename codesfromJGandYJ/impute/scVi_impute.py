@@ -9,7 +9,6 @@ import torch
 import csv
 import argparse
 import sys
-from benchmark_util import impute_dropout
 
 # pip install scvi==0.6.3
 parser = argparse.ArgumentParser(description='')
