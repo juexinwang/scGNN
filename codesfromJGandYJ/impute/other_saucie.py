@@ -8,6 +8,7 @@
 #SBATCH --cpus-per-task=1  # cores per task
 #SBATCH --mem-per-cpu=12G  # memory per core (default is 1GB/core)
 #SBATCH --time 2-00:00     # days-hours:minutes
+#SBATCH -J SAUCIE
 #SBATCH --gres gpu:1 #gpu:1 any gpu
 ## labels and outputs
 #SBATCH --job-name=modelpyenetCB-%j.out
