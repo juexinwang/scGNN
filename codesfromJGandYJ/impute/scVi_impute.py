@@ -42,7 +42,7 @@ def impute_scvi(seed=1, datasetName='9.Chung', ratio=0.1):
     features=np.concatenate([colname,features],axis=0)
 
     #write
-    dropout_filename = save_path+"dropout.csv"
+    dropout_filename = save_path+"scvi.csv"
     with open(dropout_filename, "w") as f:
         writer = csv.writer(f)
         writer.writerows(features)
@@ -80,7 +80,7 @@ def impute_scvi(seed=1, datasetName='9.Chung', ratio=0.1):
 
 datasetNameList = ['9.Chung','11.Kolodziejczyk','12.Klein','13.Zeisel']
 seedList = ['1','2','3']
-ratioList = [0.1]
+ratioList = [0.1, 0.3, 0.6, 0.8]
 
 for datasetName in datasetNameList:
     for seed in seedList:

@@ -36,7 +36,7 @@ def impute_saucie(seed=1, datasetName='9.Chung', ratio=0.1):
 
 datasetNameList = ['9.Chung','11.Kolodziejczyk','12.Klein','13.Zeisel']
 seedList = ['1','2','3']
-ratioList = [0.1]
+ratioList = [0.1, 0.3, 0.6, 0.8]
 
 for datasetName in datasetNameList:
     for seed in seedList:

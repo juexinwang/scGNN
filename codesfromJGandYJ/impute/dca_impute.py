@@ -13,6 +13,7 @@ parser.add_argument('--datasetName', type=str, default='MMPbasal_2000',help='MMP
 parser.add_argument('--ratio', type=str, default='0.1', help='dropoutratio')
 args = parser.parse_args()
 
+save_path = '/storage/htc/joshilab/wangjue/scGNN/tmp/'
 
 def impute_dca(seed=1, datasetName='9.Chung', ratio=0.1):
     filename = '/storage/htc/joshilab/wangjue/scGNN/npyImputeG2E_{}/{}_LTMG_{}_10-0.1-0.9-0.0-0.3-0.1_features.npy'.format(seed, datasetName, ratio)
@@ -21,20 +22,27 @@ def impute_dca(seed=1, datasetName='9.Chung', ratio=0.1):
     x=x.todense()
     x=np.asarray(x)
 
-    save_path = '/storage/hpc/scratch/yjiang/SCwangjuexin/scGNN-master_021720/dca/{}/'.format(args.data)
-
     features=x.T
 
     #write
-    dropout_filename = save_path+datasetNameStr+"_dropout.csv"
+    dropout_filename = save_path+"dca_input.csv"
     with open(dropout_filename, "w") as f:
         writer = csv.writer(f)
         writer.writerows(features)
 
-    os.system("dca "+dropout_filename+ " "+save_path+datasetNameStr)
+    os.system("dca "+dropout_filename+ " "+save_path+"dca_output.csv")
 
-    filename=save_path+datasetNameStr+"/mean.tsv"
+    filename=save_path+"dca_output.csv"
     imputed_values = pd.read_csv(filename,sep="\t")
     imputed_values=imputed_values.T
 
-    np.save('/storage/hpc/scratch/yjiang/SCwangjuexin/scGNN-master_021720/dca/{}/{}_{}_recon.npy'.format(args.data,datasetNameStr,args.ratio),imputed_values)
+    np.save('/storage/htc/joshilab/wangjue/scGNN/dca/{}_{}_{}_recon.npy'.format(datasetName,ratio,seed),imputed_values)
+
+datasetNameList = ['9.Chung','11.Kolodziejczyk','12.Klein','13.Zeisel']
+seedList = ['1','2','3']
+ratioList = [0.1, 0.3, 0.6, 0.8]
+
+for datasetName in datasetNameList:
+    for seed in seedList:
+        for ratio in ratioList:        
+            impute_dca(seed=seed, datasetName=datasetName, ratio=ratio)

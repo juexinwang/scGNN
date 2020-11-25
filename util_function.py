@@ -199,6 +199,48 @@ class scDatasetDropout(Dataset):
        
         return sample,idx
 
+class scDatasetDropoutSparse(Dataset):
+    def __init__(self, data=None, discreteTag=False, ratio=0.1, seed=1, transform=None):
+        """
+        Args:
+            Sparse
+            datasetName (String): TGFb, etc.
+            transform (callable, optional):
+        """
+
+        self.featuresOriginal = data.transpose()
+        self.ratio = ratio
+        # Random seed
+        # np.random.uniform(1, 2) 
+        self.features, self.i, self.j, self.ix = impute_dropout(self.featuresOriginal, seed=seed, rate=self.ratio) 
+        # Now lines are cells, and cols are genes
+        # self.features = self.features.transpose()
+        self.transform = transform  
+        # check whether log or not
+        self.discreteTag = discreteTag       
+
+    def __len__(self):
+        return self.features.shape[0]
+
+    def __getitem__(self, idx):
+        if torch.is_tensor(idx):
+            idx = idx.tolist()
+
+        sample = self.features[idx,:]
+        if type(sample)==sp.lil_matrix:
+            sample = torch.from_numpy(sample.toarray())
+        else:
+            sample = torch.from_numpy(sample)
+        
+        # transform after get the data
+        if self.transform:
+            sample = self.transform(sample)
+        
+        if not self.discreteTag:
+            sample = torch.log(sample+1)
+       
+        return sample,idx
+
 class scDataset(Dataset):
     def __init__(self, data=None, transform=None):
         """
