@@ -48,7 +48,7 @@ def impute_scvi(seed=1, datasetName='9.Chung', ratio=0.1):
         writer.writerows(features)
 
     # gene_dataset = CortexDataset(save_path=save_path, total_genes=558)
-    gene_dataset = CsvDataset(dropout_filename, save_path=save_path+args.data+"/")
+    gene_dataset = CsvDataset(dropout_filename, save_path=save_path)
 
     n_epochs = 400 
     lr = 1e-3
