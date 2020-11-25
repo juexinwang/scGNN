@@ -16,6 +16,7 @@
 #################################################################
 
 module load miniconda3
-source activate /storage/htc/joshilab/wangjue/conda_R_saucie
+# source activate /storage/htc/joshilab/wangjue/conda_R_saucie
+source activate /storage/htc/joshilab/wangjue/conda_R_gpu
 module load cuda/cuda-10.1.243
 python3 -W ignore SAUCIE_impute.py
