@@ -10,5 +10,5 @@
 #SBATCH --mem=128G
 #################################################################
 module load miniconda3
-source activate conda_R
+source activate /storage/htc/joshilab/wangjue/conda_R_gpu
 python3 -W ignore dca_impute.py
