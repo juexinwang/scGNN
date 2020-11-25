@@ -4,7 +4,7 @@
 #-------------------------------------------------------------------------------
 ## resources
 #SBATCH -A xulab
-#SBATCH --partition gpu4
+#SBATCH --partition gpu3,gpu4
 #SBATCH --cpus-per-task=1  # cores per task
 #SBATCH --mem-per-cpu=12G  # memory per core (default is 1GB/core)
 #SBATCH --time 2-00:00     # days-hours:minutes
