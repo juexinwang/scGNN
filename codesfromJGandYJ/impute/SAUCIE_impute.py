@@ -5,6 +5,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
 import argparse
+sys.path.append("/storage/htc/joshilab/wangjue/SAUCIE/")
 
 parser = argparse.ArgumentParser(description='Impute use SAUCIE')
 # In this script, not using arguments
