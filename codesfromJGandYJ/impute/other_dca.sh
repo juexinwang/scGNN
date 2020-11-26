@@ -1,21 +1,15 @@
-#!/bin/bash
-#-------------------------------------------------------------------------------
-#  SBATCH CONFIG
-#-------------------------------------------------------------------------------
-## resources
+#! /bin/bash
+######################### Batch Headers #########################
 #SBATCH -A xulab
-#SBATCH --partition gpu3,gpu4
-#SBATCH --cpus-per-task=1  # cores per task
-#SBATCH --mem-per-cpu=12G  # memory per core (default is 1GB/core)
-#SBATCH --time 2-00:00     # days-hours:minutes
-#SBATCH -J dca
-#SBATCH --gres gpu:1 #gpu:1 any gpu
-## labels and outputs
-#SBATCH --job-name=modelpyenetCB-%j.out
-#SBATCH --output=results-%j.out  # %j is the unique jobID
+#SBATCH -p Lewis,BioCompute               # use the BioCompute partition Lewis,BioCompute
+#SBATCH -J DCA
+#SBATCH -o results-%j.out           # give the job output a custom name
+#SBATCH -t 2-00:00                  # two days time limit
+#SBATCH -N 1                        # number of nodes
+#SBATCH -n 1                        # number of cores (AKA tasks)
+#SBATCH --mem=128G
 #################################################################
 
 module load miniconda3
 source activate /storage/htc/joshilab/wangjue/conda_R_dca
-module load cuda/cuda-10.1.243
 python3 -W ignore dca_impute.py
