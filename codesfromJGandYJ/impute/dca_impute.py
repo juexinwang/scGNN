@@ -19,7 +19,7 @@ def impute_dca(seed=1, datasetName='9.Chung', ratio=0.1):
     x = np.load(filename,allow_pickle=True)
     x = x.tolist()
     x=x.todense()
-    # x=np.asarray(x)
+    x=np.asarray(x)
     features=x.T
 
     #write
