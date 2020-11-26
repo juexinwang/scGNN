@@ -7,6 +7,11 @@ import matplotlib.pyplot as plt
 import pandas as pd
 import argparse
 
+# modified from official tutorial: https://colab.research.google.com/github/KrishnaswamyLab/SingleCellWorkshop/blob/master/exercises/Deep_Learning/notebooks/02_Answers_Exploratory_analysis_of_single_cell_data_with_SAUCIE.ipynb
+# Notes: Have to use very old tensorflow downloaded from conda:
+# python==3.6.12
+# tensorflow==1.4.0
+# numpy==1.19.4
 
 parser = argparse.ArgumentParser(description='Impute use SAUCIE')
 # In this script, not using arguments
@@ -14,7 +19,6 @@ parser.add_argument('--datasetName', type=str, default='MMPbasal_2000',help='MMP
 parser.add_argument('--ratio', type=str, default='0.1', help='dropoutratio')
 args = parser.parse_args()
 
-# modified from official tutorial: https://colab.research.google.com/github/KrishnaswamyLab/SingleCellWorkshop/blob/master/exercises/Deep_Learning/notebooks/02_Answers_Exploratory_analysis_of_single_cell_data_with_SAUCIE.ipynb
 def impute_saucie(seed=1, datasetName='9.Chung', ratio=0.1):
     filename = '/storage/htc/joshilab/wangjue/scGNN/npyImputeG2E_{}/{}_LTMG_{}_10-0.1-0.9-0.0-0.3-0.1_features.npy'.format(seed, datasetName, ratio)
     x = np.load(filename,allow_pickle=True)

@@ -6,6 +6,14 @@ import csv
 import argparse
 import sys
 
+# Ref: https://github.com/theislab/dca
+# Notes: As tensorflow comes to 2.0 version, lots of things chagned, here is the version tested in Nov.26, 2020
+# python==3.7.9
+# tensorflow==1.15.4
+# keras==2.3.1
+# theano==1.0.5
+# scanpy==1.5.1
+
 parser = argparse.ArgumentParser(description='Imputation DCA')
 # In this script, not using arguments
 parser.add_argument('--datasetName', type=str, default='MMPbasal_2000',help='MMPbasal_2000')
@@ -14,7 +22,6 @@ args = parser.parse_args()
 
 save_path = '/storage/htc/joshilab/wangjue/scGNN/tmp/'
 
-# Ref: https://github.com/theislab/dca
 def impute_dca(seed=1, datasetName='9.Chung', ratio=0.1):
     filename = '/storage/htc/joshilab/wangjue/scGNN/npyImputeG2E_{}/{}_LTMG_{}_10-0.1-0.9-0.0-0.3-0.1_features.npy'.format(seed, datasetName, ratio)
     x = np.load(filename,allow_pickle=True)
