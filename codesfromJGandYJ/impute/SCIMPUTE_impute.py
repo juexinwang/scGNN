@@ -27,7 +27,17 @@ def impute_scimpute(seed=1, datasetName='9.Chung', ratio=0.1):
     x=x.todense()
     x=np.asarray(x)
     x=np.log(x+1)
-    features=x.T
+
+    features = np.copy(x)
+
+    #transpose and add names for rows and cols
+    features=np.transpose(features)
+    rowname=np.linspace(1,features.shape[0],features.shape[0]).reshape([features.shape[0],1])
+    features=np.concatenate([rowname,features],axis=1)
+    colname=np.linspace(1,features.shape[1],features.shape[1]).reshape([1,features.shape[1]])
+    features=np.concatenate([colname,features],axis=0)
+
+    features=features.T
 
     #write
     dropout_filename = save_path+"scimpute_input.csv"
