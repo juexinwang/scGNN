@@ -19,8 +19,7 @@ def impute_dca(seed=1, datasetName='9.Chung', ratio=0.1):
     x = np.load(filename,allow_pickle=True)
     x = x.tolist()
     x=x.todense()
-    x=np.asarray(x)
-
+    # x=np.asarray(x)
     features=x.T
 
     #write
@@ -29,9 +28,9 @@ def impute_dca(seed=1, datasetName='9.Chung', ratio=0.1):
         writer = csv.writer(f)
         writer.writerows(features)
 
-    os.system("dca "+dropout_filename+ " "+save_path+"dca_output.csv")
+    os.system("dca "+dropout_filename+ " "+save_path+"tmpdca")
 
-    filename=save_path+"dca_output.csv"
+    filename=save_path+"tmpdca/mean.tsv"
     imputed_values = pd.read_csv(filename,sep="\t")
     imputed_values=imputed_values.T
 
