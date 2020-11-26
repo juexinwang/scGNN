@@ -1,6 +1,7 @@
 import sys
 sys.path.append("/storage/htc/joshilab/wangjue/")
 import SAUCIE
+import tensorflow as tf
 import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
@@ -13,7 +14,7 @@ parser.add_argument('--datasetName', type=str, default='MMPbasal_2000',help='MMP
 parser.add_argument('--ratio', type=str, default='0.1', help='dropoutratio')
 args = parser.parse_args()
 
-
+# modified from official tutorial: https://colab.research.google.com/github/KrishnaswamyLab/SingleCellWorkshop/blob/master/exercises/Deep_Learning/notebooks/02_Answers_Exploratory_analysis_of_single_cell_data_with_SAUCIE.ipynb
 def impute_saucie(seed=1, datasetName='9.Chung', ratio=0.1):
     filename = '/storage/htc/joshilab/wangjue/scGNN/npyImputeG2E_{}/{}_LTMG_{}_10-0.1-0.9-0.0-0.3-0.1_features.npy'.format(seed, datasetName, ratio)
     x = np.load(filename,allow_pickle=True)
@@ -21,18 +22,17 @@ def impute_saucie(seed=1, datasetName='9.Chung', ratio=0.1):
     x=x.todense()
     x=np.asarray(x)
     x=np.log(x+1)
-
     x=np.transpose(x)
-
-    saucie = SAUCIE.SAUCIE(x.shape[1])
-    loadtrain = SAUCIE.Loader(x, shuffle=True)
-    saucie.train(loadtrain, steps=1000)
-
-    loadeval = SAUCIE.Loader(x, shuffle=False)
-    reconstruction = saucie.get_reconstruction(loadeval)
-
+    loader_train = SAUCIE.Loader(x, shuffle=True)
+    loader_eval = SAUCIE.Loader(x, shuffle=False)
+    # clear the computational graph
+    tf.reset_default_graph()
+    # build the SAUCIE model
+    model = SAUCIE.SAUCIE(x.shape[1])
+    # train the model!
+    model.train(loader_train, steps=2000)
+    reconstruction = model.get_reconstruction(loader_eval)
     reconstruction=np.transpose(reconstruction)
-
     np.save('/storage/htc/joshilab/wangjue/scGNN/saucie/{}_{}_{}_recon.npy'.format(datasetName,ratio,seed),reconstruction)
 
 datasetNameList = ['9.Chung','11.Kolodziejczyk','12.Klein','13.Zeisel']
