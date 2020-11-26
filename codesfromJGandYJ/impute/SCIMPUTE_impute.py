@@ -54,9 +54,14 @@ def impute_scimpute(seed=1, datasetName='9.Chung', ratio=0.1):
 
     np.save('/storage/htc/joshilab/wangjue/scGNN/scimpute/{}_{}_{}_recon.npy'.format(datasetName,ratio,seed),imputed_values)
 
-datasetNameList = ['9.Chung','11.Kolodziejczyk','12.Klein','13.Zeisel']
-seedList = ['1','2','3']
-ratioList = [0.1, 0.3, 0.6, 0.8]
+# datasetNameList = ['9.Chung','11.Kolodziejczyk','12.Klein','13.Zeisel']
+# seedList = ['1','2','3']
+# ratioList = [0.1, 0.3, 0.6, 0.8]
+
+# Debug
+datasetNameList = ['12.Klein']
+seedList = ['1']
+ratioList = [0.1]
 
 for datasetName in datasetNameList:
     for seed in seedList:
