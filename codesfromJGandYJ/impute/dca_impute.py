@@ -14,6 +14,7 @@ args = parser.parse_args()
 
 save_path = '/storage/htc/joshilab/wangjue/scGNN/tmp/'
 
+# Ref: https://github.com/theislab/dca
 def impute_dca(seed=1, datasetName='9.Chung', ratio=0.1):
     filename = '/storage/htc/joshilab/wangjue/scGNN/npyImputeG2E_{}/{}_LTMG_{}_10-0.1-0.9-0.0-0.3-0.1_features.npy'.format(seed, datasetName, ratio)
     x = np.load(filename,allow_pickle=True)
