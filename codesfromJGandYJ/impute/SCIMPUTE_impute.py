@@ -30,7 +30,7 @@ def impute_scimpute(seed=1, datasetName='9.Chung', ratio=0.1):
     features=x.T
 
     #write
-    dropout_filename = save_path+"saver_input.csv"
+    dropout_filename = save_path+"scimpute_input.csv"
     with open(dropout_filename, "w") as f:
         writer = csv.writer(f)
         writer.writerows(features)
