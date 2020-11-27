@@ -530,6 +530,7 @@ def imputation_error(X_mean, X, X_zero, i, j, ix):
         all_index = i[ix], j[ix]
         x, y = X_mean[all_index], X[all_index]
         result = np.abs(x - y)
+        rmse = ((x - y)**2/len(result))**0.5
     # If the input is a sparse matrix
     else:
         all_index = i[ix], j[ix]
@@ -538,8 +539,9 @@ def imputation_error(X_mean, X, X_zero, i, j, ix):
         yuse = scipy.sparse.lil_matrix.todense(y)
         yuse = np.asarray(yuse).reshape(-1)
         result = np.abs(x - yuse)
+        rmse = ((x - yuse)**2/len(result))**0.5
     # return np.median(np.abs(x - yuse))
-    return np.mean(result), np.median(result), np.min(result), np.max(result)
+    return np.mean(result), np.median(result), np.min(result), np.max(result), np.mean(rmse)
 
 
 # IMPUTATION METRICS
