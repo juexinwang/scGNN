@@ -12,7 +12,12 @@ parser.add_argument('--batchStr', type=int, default=0,
                     help="method used: 1-13")
 args = parser.parse_args()
 
-# Note:
+# New notes:
+# We used this in paper revision, will generate lots of .sh files.
+# This file is called by submitCluster_Result_Impute_recheck.sh, and only check .out files.
+# The results can be get by cat *.out
+
+# Old Note:
 # Generate results in python other than in shell for better organization
 # We are not use runpy.run_path('main_result.py') for it is hard to pass arguments
 # We are not use subprocess.call("python main_result.py", shell=True) for it runs scripts parallel
@@ -21,7 +26,7 @@ args = parser.parse_args()
 if args.splitMode:
     #The split of batch, more batches, more parallel
 
-    if args.batchStr == 8:
+    if args.batchStr == 9:
         datasetList = [
         '9.Chung',
         # '9.Chung --discreteTag'
