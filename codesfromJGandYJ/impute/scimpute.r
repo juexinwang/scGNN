@@ -1,5 +1,5 @@
 # Usage:
-# Rscript scImpute.r input.txt output.txt
+# Rscript scImpute.r input.txt outputdir
 # test if there is one argument: if not, return an error
 args = commandArgs(trailingOnly=TRUE)
 if (length(args)==0) {
@@ -9,7 +9,6 @@ if (length(args)==0) {
 library(scImpute)
 inputfile = args[1]
 outputDir = args[2]
-outputfile = args[3]
 scimpute(# full path to raw count matrix
          count_path = inputfile, 
          infile = "csv",           # format of input file

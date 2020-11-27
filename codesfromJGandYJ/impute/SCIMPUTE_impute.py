@@ -46,11 +46,11 @@ def impute_scimpute(seed=1, datasetName='9.Chung', ratio=0.1):
         writer.writerows(features)
 
     #run the R script
-    os.system("Rscript scimpute.r "+save_path+"scimpute_input.csv "+save_path+"/tmpscimpute/ scimpute_output.csv")
+    os.system("Rscript scimpute.r "+save_path+"scimpute_input.csv "+save_path+"tmpscimpute/")
 
-    filename=save_path+"/tmpscimpute/scimpute_output.csv"
-    imputed_values = pd.read_csv(filename,sep=",")
-    imputed_values=imputed_values.T
+    filename=save_path+"tmpscimpute/scimpute_count.csv"
+    imputed_values = pd.read_csv(filename,sep=",",index_col=0)
+    imputed_values = imputed_values.to_numpy()
 
     np.save('/storage/htc/joshilab/wangjue/scGNN/scimpute/{}_{}_{}_recon.npy'.format(datasetName,ratio,seed),imputed_values)
 
