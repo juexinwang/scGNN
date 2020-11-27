@@ -577,7 +577,7 @@ def imputation_error_log(X_mean, X, X_zero, i, j, ix):
     # return np.median(np.abs(x - yuse))
     return np.mean(result), np.median(result), np.min(result), np.max(result), np.mean(rmse)
 
-# cosine similarity
+# cosine similarity with log
 def imputation_cosine_log(X_mean, X, X_zero, i, j, ix):
     """
     X_mean: imputed dataset
