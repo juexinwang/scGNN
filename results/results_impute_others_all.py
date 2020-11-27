@@ -28,7 +28,7 @@ oridirStr = '../npyImputeG2E'
 medirStr = '../'
 
 seedList = ['1','2','3']
-ratioList = [0.1,0.3,0.6,0.8]
+ratioList = ['0.1','0.3','0.6','0.8']
 methodList = ['magic','saucie','saver','scimpute','scvi','dca','deepimpute']
 
 def outResults(datasetName,seed,ratio,method):
