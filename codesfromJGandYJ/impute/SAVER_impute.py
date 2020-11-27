@@ -39,7 +39,7 @@ def impute_saver(seed=1, datasetName='9.Chung', ratio=0.1):
     os.system("Rscript saver.r "+save_path+"saver_input.csv "+save_path+"saver_output.csv ")
 
     filename=save_path+"saver_output.csv"
-    imputed_values = pd.read_csv(filename,sep="\t")
+    imputed_values = pd.read_csv(filename,sep="\t",header=None)
     imputed_values=imputed_values.T
 
     np.save('/storage/htc/joshilab/wangjue/scGNN/saver/{}_{}_{}_recon.npy'.format(datasetName,ratio,seed),imputed_values)
