@@ -11,4 +11,4 @@
 #################################################################
 module load miniconda3
 source activate conda_R
-python3 -W results_impute_others_all.py
+python3 -W ignore results_impute_others_all.py
