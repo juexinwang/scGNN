@@ -29,7 +29,7 @@ medirStr = '../'
 
 seedList = ['1','2','3']
 ratioList = ['0.1','0.3','0.6','0.8']
-methodList = ['magic','saucie','saver','scimpute','scvi','dca','deepimpute']
+methodList = ['magic','saucie','saver','scimpute','scvi','scvinorm','dca','deepimpute','scIGANs','netNMFsclog','netNMFsc']
 
 def outResults(datasetName,seed,ratio,method):
     featuresOriginal = load_data(datasetName, discreteTag=False)
@@ -41,11 +41,22 @@ def outResults(datasetName,seed,ratio,method):
 
     # scGNN results
     # featuresImpute   = np.load(npyDir+datasetName+'_'+args.regulized_type+discreteStr+'_'+args.ratio+'_10-0.1-0.9-0.0-0.3-'+args.regupara+'_recon'+args.reconstr+'.npy')
-    featuresImpute   = np.load(medirStr+method+'/'+datasetName+'_'+ratio+'_'+seed+'_recon.npy')
+    if method == 'scvinorm':
+        featuresImpute   = np.load(medirStr+'scvi/'+datasetName+'_'+ratio+'_'+seed+'_recon_normalized.npy')
+    # not using now
+    elif method == 'scIGANs':
+        featuresImpute   = np.load(medirStr+method+'/'+datasetName+'_'+ratio+'_'+seed+'_recon.npy')
+    elif method == 'netNMFsc':
+        featuresImpute   = np.load('/storage/htc/joshilab/jghhd/singlecellTest/netNMFsc/result/'+datasetName+'/npyImputeG2E_'+seed+'_log_imputation.npy')
+        featruesImpute = featruesImpute.T
+    else:
+        featuresImpute   = np.load(medirStr+method+'/'+datasetName+'_'+ratio+'_'+seed+'_recon.npy')
 
+    # No log
     if method=='dca' or method=='deepimpute':
         l1ErrorMean, l1ErrorMedian, l1ErrorMin, l1ErrorMax, rmse = imputation_error(featuresImpute, featuresOriginal, features, dropi, dropj, dropix)
         cosine = imputation_cosine(featuresImpute, featuresOriginal, features, dropi, dropj, dropix)    
+    # log
     else:
         l1ErrorMean, l1ErrorMedian, l1ErrorMin, l1ErrorMax, rmse = imputation_error_log(featuresImpute, featuresOriginal, features, dropi, dropj, dropix)
         cosine = imputation_cosine_log(featuresImpute, featuresOriginal, features, dropi, dropj, dropix)
