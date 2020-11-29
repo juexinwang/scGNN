@@ -51,7 +51,10 @@ savedir = './fig3/'
 methodList = ['magic','saucie','saver','scimpute','scvi','scvinorm','dca','deepimpute']
 
 def corCal(method='magic'):
-    filename = '/storage/htc/joshilab/wangjue/scGNN/{}/12.Klein_0.0_1_recon.npy'.format(method)
+    if method == 'scvinorm':
+        filename = '/storage/htc/joshilab/wangjue/scGNN/scvi/12.Klein_0.0_1_recon_normalized.npy'
+    else:
+        filename = '/storage/htc/joshilab/wangjue/scGNN/{}/12.Klein_0.0_1_recon.npy'.format(method)
     x = np.load(filename,allow_pickle=True)
     x = x.T
 
