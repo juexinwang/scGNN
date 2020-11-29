@@ -61,7 +61,7 @@ def corCal(method='magic'):
     corr = np.zeros((len(geneNumList),len(geneNumList)))
     for i in range(len(geneNumList)):
         for j in range(len(geneNumList)):
-            corr[i,j]=stats.pearsonr(x[geneNumList[i],:], x[geneNumList[j],:])
+            corr[i,j]=stats.pearsonr(x[geneNumList[i],:], x[geneNumList[j],:])[0]
 
     out_filename = savedir+method+".csv"
     with open(out_filename, "w") as f:
