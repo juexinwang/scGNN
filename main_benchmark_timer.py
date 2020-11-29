@@ -490,7 +490,7 @@ if __name__ == "__main__":
         measure_clustering_results(zOut, listResult)
         print('Total Cluster Number: '+str(len(set(listResult))))
 
-        debuginfoStr(str(bigepoch)+' th iter: Cluster Autoencoder training started')
+        debuginfoStr(str(bigepoch)+'th iter: Cluster Autoencoder training started')
         #Graph regulizated EM AE with celltype AE, do the additional AE
         if args.EMtype == 'celltypeEM': 
             # Each cluster has a autoencoder, and organize them back in iteraization
@@ -528,13 +528,13 @@ if __name__ == "__main__":
             # torch.save(model.state_dict(),ptfile)
             ptstatus = model.state_dict()
 
-        debuginfoStr(str(bigepoch)+' th iter: Cluster Autoencoder training succeed')
+        debuginfoStr(str(bigepoch)+'th iter: Cluster Autoencoder training succeed')
 
         # Use new dataloader
         scDataInter = scDatasetInter(recon)
         train_loader = DataLoader(scDataInter, batch_size=args.batch_size, shuffle=False, **kwargs)
 
-        debuginfoStr(str(bigepoch)+' th iter: Start construct cell grpah')
+        debuginfoStr(str(bigepoch)+'th iter: Start construct cell grpah')
         for epoch in range(1, args.EM_epochs + 1):
             recon, original, z = train(epoch, EMFlag=True)
         
@@ -549,9 +549,9 @@ if __name__ == "__main__":
         # elif args.adjtype == 'weighted':
         #     adj, edgeList = generateAdjWeighted(zOut, graphType=args.prunetype, para = args.knn_distance+':'+str(args.k))         
         #     adjdense = adj.toarray()
-        debuginfoStr(str(bigepoch)+' th iter: Cell Graph constructed and pruned')
+        debuginfoStr(str(bigepoch)+'th iter: Cell Graph constructed and pruned')
 
-        debuginfoStr(str(bigepoch)+' th iter: Start Graph Autoencoder training')
+        debuginfoStr(str(bigepoch)+'th iter: Start Graph Autoencoder training')
         # Whether use GAE embedding
         if args.useGAEembedding or args.useBothembedding:
             zDiscret = zOut>np.mean(zOut,axis=0)
@@ -562,7 +562,7 @@ if __name__ == "__main__":
                 zEmbedding=GAEembedding(zDiscret, adj, args)
                 zOut=np.concatenate((zOut,zEmbedding),axis=1)
 
-        debuginfoStr(str(bigepoch)+' th iter: Graph Autoencoder training finished')
+        debuginfoStr(str(bigepoch)+'th iter: Graph Autoencoder training finished')
 
         if args.saveinternal:
             reconOut = recon.detach().cpu().numpy()
@@ -647,7 +647,7 @@ if __name__ == "__main__":
         adjOld = adjNew
         listResultOld = listResult
         # torch.cuda.empty_cache()
-        debuginfoStr(str(bigepoch)+' th iter: Iteration finished')
+        debuginfoStr(str(bigepoch)+'th iter: Iteration finished')
         
 
     # Output celltype related results
@@ -735,4 +735,4 @@ if __name__ == "__main__":
         np.save   (args.npyDir+args.datasetName+'_'+args.regulized_type+'_'+outParaTag+'_recon.npy',reconOut)        
         np.savetxt(args.npyDir+args.datasetName+'_'+args.regulized_type+'_'+outParaTag+'_recon.csv',reconOut,delimiter=",",fmt='%10.4f')
  
-    debuginfoStr(str(bigepoch)+'scGNN finished')
+    debuginfoStr('scGNN finished')
