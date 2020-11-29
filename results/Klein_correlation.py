@@ -58,7 +58,7 @@ def corCal(method='magic'):
     x = np.load(filename,allow_pickle=True)
     x = x.T
 
-    corr = np.zeros(len(geneNumList),len(geneNumList))
+    corr = np.zeros((len(geneNumList),len(geneNumList)))
     for i in range(len(geneNumList)):
         for j in range(len(geneNumList)):
             corr[i,j]=stats.pearsonr(x[geneNumList[i],:], x[geneNumList[j],:])
