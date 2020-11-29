@@ -12,4 +12,6 @@
 
 module load miniconda3
 source activate /storage/htc/joshilab/wangjue/conda_R_dca
-python3 -W ignore dca_impute.py
+# grid
+# python3 -W ignore dca_impute.py
+python3 -W ignore dca_impute.py --origin

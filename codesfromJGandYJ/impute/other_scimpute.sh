@@ -11,4 +11,5 @@
 #################################################################
 module load miniconda3
 source activate conda_R
-python3 -W ignore SCIMPUTE_impute.py
+# python3 -W ignore SCIMPUTE_impute.py
+python3 -W ignore SCIMPUTE_impute.py --origin

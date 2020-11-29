@@ -8,9 +8,7 @@ import sys
 #from benchmark_util import impute_dropout
 
 parser = argparse.ArgumentParser(description='MAGIC Impute')
-# In this script, not using arguments
-parser.add_argument('--datasetName', type=str, default='MMPbasal_2000',help='MMPbasal_2000')
-parser.add_argument('--ratio', type=str, default='0.1', help='dropoutratio')
+parser.add_argument('--origin', action='store_true', default=False, help='Whether use origin (default: use ratio 0.0)')
 args = parser.parse_args()
 
 
@@ -35,10 +33,14 @@ datasetNameList = ['9.Chung','11.Kolodziejczyk','12.Klein','13.Zeisel']
 seedList = ['1','2','3']
 ratioList = [0.1, 0.3, 0.6, 0.8]
 
-for datasetName in datasetNameList:
-    for seed in seedList:
-        for ratio in ratioList:        
-            impute_Magic(seed=seed, datasetName=datasetName, ratio=ratio)
+if args.origin:
+    for datasetName in datasetNameList:
+        impute_Magic(seed='1', datasetName=datasetName, ratio='0.0')
+else:
+    for datasetName in datasetNameList:
+        for seed in seedList:
+            for ratio in ratioList:        
+                impute_Magic(seed=seed, datasetName=datasetName, ratio=ratio)
 
 # From scVI
 # # Load single-cell RNA-seq data

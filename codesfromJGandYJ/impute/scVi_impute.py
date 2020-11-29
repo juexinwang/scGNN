@@ -12,9 +12,7 @@ import sys
 
 # pip install scvi==0.6.3
 parser = argparse.ArgumentParser(description='scVi imputation')
-# In this script, not using arguments
-parser.add_argument('--datasetName', type=str, default='MMPbasal_2000',help='MMPbasal_2000')
-parser.add_argument('--ratio', type=str, default='0.1', help='dropoutratio')
+parser.add_argument('--origin', action='store_true', default=False, help='Whether use origin (default: use ratio 0.0)')
 args = parser.parse_args()
 
 # Ref:
@@ -77,15 +75,18 @@ def impute_scvi(seed=1, datasetName='9.Chung', ratio=0.1):
     np.save('/storage/htc/joshilab/wangjue/scGNN/scvi/{}_{}_{}_recon.npy'.format(datasetName,ratio,seed),imputed_values)
     np.save('/storage/htc/joshilab/wangjue/scGNN/scvi/{}_{}_{}_recon_normalized.npy'.format(datasetName,ratio,seed),normalized_values)
 
-
 datasetNameList = ['9.Chung','11.Kolodziejczyk','12.Klein','13.Zeisel']
 seedList = ['1','2','3']
 ratioList = [0.1, 0.3, 0.6, 0.8]
 
-for datasetName in datasetNameList:
-    for seed in seedList:
-        for ratio in ratioList:        
-            impute_scvi(seed=seed, datasetName=datasetName, ratio=ratio)
+if args.origin:
+    for datasetName in datasetNameList:
+        impute_scvi(seed='1', datasetName=datasetName, ratio='0.0')
+else:
+    for datasetName in datasetNameList:
+        for seed in seedList:
+            for ratio in ratioList:        
+                impute_scvi(seed=seed, datasetName=datasetName, ratio=ratio)
 
 # celltype:
 #np.save(save_path+'{}_{}_z.npy'.format(datasetNameStr,args.ratio),latent)
