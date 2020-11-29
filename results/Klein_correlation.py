@@ -2,7 +2,7 @@ import numpy as np
 from scipy import stats
 import csv
 
-# Get correlation from gene interactions from Klein datasets
+# Get correlation from gene interactions from Klein datasets in Figure 3 of scGNN paper
 # Ref: Klein, Allon M., et al. "Droplet barcoding for single-cell transcriptomics applied to embryonic stem cells." Cell 161.5 (2015): 1187-1201.
 
 geneList=[
