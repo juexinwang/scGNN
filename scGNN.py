@@ -755,4 +755,6 @@ if __name__ == "__main__":
     results_df = pd.DataFrame(listResult,index=celllist,columns=["Celltype"])
     results_df.to_csv(args.outputDir+args.datasetName+'_'+args.regulized_type+'_'+str(args.alphaRegularizePara)+'_'+str(args.L1Para)+'_'+str(args.L2Para)+'_results.txt')   
       
+    mem=resource.getrusage(resource.RUSAGE_SELF).ru_maxrss
+    print('Mem consumption: '+str(mem))
     print('---'+str(datetime.timedelta(seconds=int(time.time()-start_time)))+"---scGNN finished")

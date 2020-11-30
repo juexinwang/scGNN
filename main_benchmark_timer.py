@@ -217,7 +217,7 @@ def debuginfoStr(info):
     if args.debuginfo:
         print ('---'+str(datetime.timedelta(seconds=int(time.time()-start_time)))+'---'+info)
         mem=resource.getrusage(resource.RUSAGE_SELF).ru_maxrss
-        print('Init Mem consumption: '+str(mem))
+        print('Mem consumption: '+str(mem))
 
 debuginfoStr('scRNA has been successfully loaded')
 
