@@ -59,7 +59,7 @@ def corCal(method='magic'):
             x = np.load(filename,allow_pickle=True)
             x = x.T
         elif method == 'netNMFsc':
-            filename = '/storage/htc/joshilab/jghhd/singlecellTest/netNMFsc/result_mi_100000/0.0/'+datasetName+'/npyImputeG2E_1_log_imputation.npy')
+            filename = '/storage/htc/joshilab/jghhd/singlecellTest/netNMFsc/result_mi_100000/0.0/'+datasetName+'/npyImputeG2E_1_log_imputation.npy'
             x = np.load(filename,allow_pickle=True)
         else:
             filename = '/storage/htc/joshilab/wangjue/scGNN/{}/12.Klein_0.0_1_recon.npy'.format(method)
