@@ -52,7 +52,7 @@ methodList = ['magic','saucie','saver','scimpute','scvi','scvinorm','dca','deepi
 
 def corCal(method='magic'):
     if method == 'scIGANs':
-        df = pd.read_csv('/storage/htc/joshilab/jghhd/singlecellTest/scIGAN/Result_200_0.0/12.Klein/scIGANs_npyImputeG2E_1_Klein_LTMG_0.1_10-0.1-0.9-0.0-0.3-0.1_features_log.csv_Klein_only_label.csv.txt',sep='\s+',index_col=0)
+        df = pd.read_csv('/storage/htc/joshilab/jghhd/singlecellTest/scIGAN/Result_200_0.0/12.Klein/scIGANs_npyImputeG2E_1_12.Klein_LTMG_0.0_10-0.1-0.9-0.0-0.3-0.1_features_log.csv_Klein_only_label.csv.txt',sep='\s+',index_col=0)
         x = df.to_numpy()
     else:
         if method == 'scvinorm':
