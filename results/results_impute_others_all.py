@@ -14,8 +14,7 @@ parser = argparse.ArgumentParser(description='Read Results in different methods'
 args = parser.parse_args()
 
 # Notes:
-# Call by submit_Impute_others.sh
-
+# In HPC, call by sbatch submit_Impute_others.sh
 
 datasetList = [
     '9.Chung',
@@ -29,7 +28,12 @@ medirStr = '../'
 
 seedList = ['1','2','3']
 ratioList = ['0.1','0.3','0.6','0.8']
-methodList = ['magic','saucie','saver','scimpute','scvi','scvinorm','dca','deepimpute','scIGANs','netNMFsclog','netNMFsc']
+
+# sophisticated, not using
+# methodList = ['magic','saucie','saver','scimpute','scvi','scvinorm','dca','deepimpute','scIGANslog','scIGANs','netNMFsclog','netNMFsc']
+
+# We should use only log(x+1) if the method permitted
+methodList = ['magic','saucie','saver','scimpute','scvi','scvinorm','dca','deepimpute','scIGANs','netNMFsc']
 
 def outResults(datasetName,seed,ratio,method):
     featuresOriginal = load_data(datasetName, discreteTag=False)
@@ -45,9 +49,11 @@ def outResults(datasetName,seed,ratio,method):
         featuresImpute   = np.load(medirStr+'scvi/'+datasetName+'_'+ratio+'_'+seed+'_recon_normalized.npy')
     # not using now
     elif method == 'scIGANs':
-        featuresImpute   = np.load(medirStr+method+'/'+datasetName+'_'+ratio+'_'+seed+'_recon.npy')
+        df = pd.read_csv('/storage/htc/joshilab/jghhd/singlecellTest/scIGAN/Result_200_'+ratio+'/'+datasetName+'/scIGANs_npyImputeG2E_'+seed+'_'+datasetName+'_LTMG_0.1_10-0.1-0.9-0.0-0.3-0.1_features_log.csv_'+datasetName.split('.')[1]+'_only_label.csv.txt',sep='\s+',index_col=0)
+        tmp = df.to_numpy()
+        featuresImpute   = tmp.T
     elif method == 'netNMFsc':
-        featuresImpute   = np.load('/storage/htc/joshilab/jghhd/singlecellTest/netNMFsc/result/'+datasetName+'/npyImputeG2E_'+seed+'_log_imputation.npy')
+        featuresImpute   = np.load('/storage/htc/joshilab/jghhd/singlecellTest/netNMFsc/result_mi_100000/'+ratio+'/'+datasetName+'/npyImputeG2E_'+seed+'_log_imputation.npy')
         featruesImpute = featruesImpute.T
     else:
         featuresImpute   = np.load(medirStr+method+'/'+datasetName+'_'+ratio+'_'+seed+'_recon.npy')
