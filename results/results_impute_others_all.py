@@ -54,7 +54,7 @@ def outResults(datasetName,seed,ratio,method):
         featuresImpute   = tmp.T
     elif method == 'netNMFsc':
         featuresImpute   = np.load('/storage/htc/joshilab/jghhd/singlecellTest/netNMFsc/result_mi_100000/'+ratio+'/'+datasetName+'/npyImputeG2E_'+seed+'_log_imputation.npy')
-        featruesImpute = featruesImpute.T
+        featuresImpute = featuresImpute.T
     else:
         featuresImpute   = np.load(medirStr+method+'/'+datasetName+'_'+ratio+'_'+seed+'_recon.npy')
 
