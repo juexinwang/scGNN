@@ -2,7 +2,7 @@
 ######################### Batch Headers #########################
 #SBATCH -A xulab
 #SBATCH -p Lewis,BioCompute               # use the BioCompute partition Lewis,BioCompute
-#SBATCH -J IE2geK
+#SBATCH -J Fig3
 #SBATCH -o results-%j.out           # give the job output a custom name
 #SBATCH -t 2-00:00                  # two days time limit
 #SBATCH -N 1                        # number of nodes
