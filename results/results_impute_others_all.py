@@ -49,7 +49,7 @@ def outResults(datasetName,seed,ratio,method):
         featuresImpute   = np.load(medirStr+'scvi/'+datasetName+'_'+ratio+'_'+seed+'_recon_normalized.npy')
     # not using now
     elif method == 'scIGANs':
-        df = pd.read_csv('/storage/htc/joshilab/jghhd/singlecellTest/scIGAN/Result_200_'+ratio+'/'+datasetName+'/scIGANs_npyImputeG2E_'+seed+'_'+datasetName+'_LTMG_0.1_10-0.1-0.9-0.0-0.3-0.1_features_log.csv_'+datasetName.split('.')[1]+'_only_label.csv.txt',sep='\s+',index_col=0)
+        df = pd.read_csv('/storage/htc/joshilab/jghhd/singlecellTest/scIGAN/Result_200_'+ratio+'/'+datasetName+'/scIGANs_npyImputeG2E_'+seed+'_'+datasetName+'_LTMG_'+ratio+'_10-0.1-0.9-0.0-0.3-0.1_features_log.csv_'+datasetName.split('.')[1]+'_only_label.csv.txt',sep='\s+',index_col=0)
         tmp = df.to_numpy()
         featuresImpute   = tmp.T
     elif method == 'netNMFsc':
