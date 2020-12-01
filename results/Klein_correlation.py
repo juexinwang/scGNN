@@ -52,7 +52,7 @@ methodList = ['magic','saucie','saver','scimpute','scvi','scvinorm','dca','deepi
 
 def corCal(method='magic'):
     if method == 'scIGANs':
-        df = pd.read_csv('/storage/htc/joshilab/jghhd/singlecellTest/scIGAN/Result_200_0.0/'+datasetName+'/scIGANs_npyImputeG2E_1_'+datasetName+'_LTMG_0.1_10-0.1-0.9-0.0-0.3-0.1_features_log.csv_'+datasetName.split('.')[1]+'_only_label.csv.txt',sep='\s+',index_col=0)
+        df = pd.read_csv('/storage/htc/joshilab/jghhd/singlecellTest/scIGAN/Result_200_0.0/12.Klein/scIGANs_npyImputeG2E_1_Klein_LTMG_0.1_10-0.1-0.9-0.0-0.3-0.1_features_log.csv_'+datasetName.split('.')[1]+'_only_label.csv.txt',sep='\s+',index_col=0)
         x = df.to_numpy()
     else:
         if method == 'scvinorm':
@@ -60,7 +60,7 @@ def corCal(method='magic'):
             x = np.load(filename,allow_pickle=True)
             x = x.T
         elif method == 'netNMFsc':
-            filename = '/storage/htc/joshilab/jghhd/singlecellTest/netNMFsc/result_mi_100000/0.0/'+datasetName+'/npyImputeG2E_1_log_imputation.npy'
+            filename = '/storage/htc/joshilab/jghhd/singlecellTest/netNMFsc/result_mi_100000/0.0/12.Klein/npyImputeG2E_1_log_imputation.npy'
             x = np.load(filename,allow_pickle=True)
         else:
             filename = '/storage/htc/joshilab/wangjue/scGNN/{}/12.Klein_0.0_1_recon.npy'.format(method)
