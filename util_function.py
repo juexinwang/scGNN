@@ -65,13 +65,23 @@ def load_data(datasetName, discreteTag):
         names = ['x', 'tx', 'allx']
     objects = []
     for i in range(len(names)):
-        with open(dir_path+"/data/sc/{}/ind.{}.{}".format(datasetName, datasetName, names[i]), 'rb') as f:
+        #windows
+        if os.name=='nt':
+            filename = dir_path+"\\data\\sc\\{}\\ind.{}.{}".format(datasetName, datasetName, names[i])
+        else:
+            filename = dir_path+"/data/sc/{}/ind.{}.{}".format(datasetName, datasetName, names[i])
+        with open(filename, 'rb') as f:
             if sys.version_info > (3, 0):
                 objects.append(pkl.load(f, encoding='latin1'))
             else:
                 objects.append(pkl.load(f))
     x, tx, allx = tuple(objects)
-    test_idx_reorder = parse_index_file(dir_path+"/data/sc/{}/ind.{}.test.index".format(datasetName, datasetName))
+    #windows
+    if os.name == 'nt':
+        filename = dir_path+"\\data\\sc\\{}\\ind.{}.test.index".format(datasetName, datasetName)
+    else:
+        filename = dir_path+"/data/sc/{}/ind.{}.test.index".format(datasetName, datasetName)
+    test_idx_reorder = parse_index_file(filename)
     test_idx_range = np.sort(test_idx_reorder)
 
     if datasetName == 'citeseer':
