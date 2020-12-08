@@ -19,7 +19,7 @@ from util_function import *
 from graph_function import *
 from benchmark_util import *
 from gae_embedding import GAEembedding,measure_clustering_results,test_clustering_benchmark_results
-from LTMG_R import *
+# from LTMG_R import *
 import pandas as pd
 
 # Benchmark for both celltype identification and imputation, needs Preprocessing_main.py first, then proceed by this script.
@@ -46,7 +46,7 @@ parser.add_argument('--converge-celltyperatio', type=float, default=0.95,
                     help='ratio of cell type change in EM iteration (default: 0.99), 0-1')
 parser.add_argument('--cluster-epochs', type=int, default=200, metavar='N',
                     help='number of epochs in cluster autoencoder training (default: 200)')
-parser.add_argument('--no-cuda', action='store_true', default=True,
+parser.add_argument('--no-cuda', action='store_true', default=False,
                     help='enables CUDA training')
 parser.add_argument('--seed', type=int, default=1, metavar='S',
                     help='random seed (default: 1)')
@@ -196,6 +196,10 @@ else:
 
 regulationMatrix = readLTMGnonsparse(args.LTMGDir, ltmgFile)
 regulationMatrix = torch.from_numpy(regulationMatrix)
+if args.precisionModel == 'Double':
+    regulationMatrix = regulationMatrix.type(torch.DoubleTensor)
+elif args.precisionModel == 'Float':
+    regulationMatrix = regulationMatrix.type(torch.FloatTensor)
 
 # Original
 if args.model == 'VAE':
@@ -240,6 +244,7 @@ def train(epoch, train_loader=train_loader, EMFlag=False, taskType='celltype'):
             data = data.type(torch.FloatTensor)
         data = data.to(device)
         regulationMatrixBatch = regulationMatrix[dataindex,:]
+        regulationMatrixBatch = regulationMatrixBatch.to(device)
         optimizer.zero_grad()
         if args.model == 'VAE':
             recon_batch, mu, logvar, z = model(data)
@@ -712,6 +717,7 @@ if __name__ == "__main__":
         adjsample = adjsample.float()
     elif args.precisionModel == 'Double':
         adjsample = adjsample.type(torch.DoubleTensor)
+    adjsample = adjsample.to(device)
 
     # generate celltype regularizer from celltype
     celltypesample = generateCelltypeRegu(listResult)
@@ -721,6 +727,7 @@ if __name__ == "__main__":
         celltypesample = celltypesample.float()
     elif args.precisionModel == 'Double':
         celltypesample = celltypesample.type(torch.DoubleTensor)
+    celltypesample = celltypesample.to(device)
 
     for epoch in range(1, args.EM_epochs + 1):
         recon, original, z = train(epoch, EMFlag=True, taskType='imputation')
