@@ -27,7 +27,7 @@ bench_pd=pd.read_csv(args.benchmark,index_col=0)
 bench_celltype=bench_pd.iloc[:,0].to_numpy()
 
 zOut = np.load(args.input,allow_pickle=True)
-zOut = pcaFunc(zOut, n_components=10)
+zOut,re = pcaFunc(zOut, n_components=10)
 adj, edgeList = generateAdj(zOut, graphType=args.prunetype, para = args.knn_distance+':'+str(args.k))
 listResult,size = generateLouvainCluster(edgeList)
 silhouette, chs, dbs = measureClusteringNoLabel(zOut, listResult)
