@@ -17,8 +17,8 @@ args = parser.parse_args()
 # In HPC, call by sbatch submit_Impute_others.sh
 
 datasetList = [
-    '9.Chung',
-    '11.Kolodziejczyk',
+    # '9.Chung',
+    # '11.Kolodziejczyk',
     '12.Klein',
     '13.Zeisel',
 ]
