@@ -26,20 +26,17 @@ def impute_dca(seed=1, datasetName='9.Chung', ratio=0.1):
     x = x.tolist()
     x=x.todense()
     x=np.asarray(x)
+    x=x.astype(int)
     features=x.T
-
     #write
     dropout_filename = save_path+"dca_input.csv"
     with open(dropout_filename, "w") as f:
         writer = csv.writer(f)
         writer.writerows(features)
-
     os.system("dca "+dropout_filename+ " "+save_path+"tmpdca")
-
     filename=save_path+"tmpdca/mean.tsv"
     imputed_values = pd.read_csv(filename,sep="\t")
     imputed_values=imputed_values.T
-
     np.save('/storage/htc/joshilab/wangjue/scGNN/dca/{}_{}_{}_recon.npy'.format(datasetName,ratio,seed),imputed_values)
 
 datasetNameList = ['9.Chung','11.Kolodziejczyk','12.Klein','13.Zeisel']
