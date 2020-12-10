@@ -33,7 +33,10 @@ ratioList = ['0.1','0.3','0.6','0.8']
 # methodList = ['magic','saucie','saver','scimpute','scvi','scvinorm','dca','deepimpute','scIGANslog','scIGANs','netNMFsclog','netNMFsc']
 
 # We should use only log(x+1) if the method permitted
-methodList = ['magic','saucie','saver','scimpute','scvi','scvinorm','dca','deepimpute','scIGANs','netNMFsc']
+# methodList = ['magic','saucie','saver','scimpute','scvi','scvinorm','dca','deepimpute','scIGANs','netNMFsc']
+
+# Temp: just test dca
+methodList = ['dca']
 
 def outResults(datasetName,seed,ratio,method):
     featuresOriginal = load_data(datasetName, discreteTag=False)
