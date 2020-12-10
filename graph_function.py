@@ -71,6 +71,12 @@ def generateAdj(featureMatrix, graphType='KNNgraph', para = None, parallelLimit 
             distanceType = parawords[0]
             k = int(parawords[1])
         edgeList = calculateKNNgraphDistanceMatrixStatsSingleThread(featureMatrix, distanceType=distanceType, k=k)
+    elif graphType == 'KNNgraphStatsSingleThreadNoPrune':
+        if para != None:
+            parawords = para.split(':')
+            distanceType = parawords[0]
+            k = int(parawords[1])
+        edgeList =  calculateKNNgraphDistanceMatrixStatsSingleThreadNoPrune(featureMatrix, distanceType=distanceType, k=k)      
     else:
         print('Should give graphtype')
 
@@ -327,6 +333,25 @@ def calculateKNNgraphDistanceMatrixStatsSingleThread(featureMatrix, distanceType
     #         else:
     #             weight = 0.0
     #         edgeList.append((i,res[j],weight))
+    
+    return edgeList
+
+#para: measuareName:k:threshold no prune only
+def calculateKNNgraphDistanceMatrixStatsSingleThreadNoPrune(featureMatrix, distanceType='euclidean', k=10, param=None):
+    r"""
+    Thresholdgraph: KNN Graph with stats one-std based methods, SingleThread version, no boundary,
+    """       
+
+    edgeList=[]
+    for i in np.arange(featureMatrix.shape[0]):
+        tmp=featureMatrix[i,:].reshape(1,-1)
+        distMat = distance.cdist(tmp,featureMatrix, distanceType)
+        res = distMat.argsort()[:k+1]
+        for j in np.arange(1,k+1):
+            # TODO: check, only exclude large outliners
+            # if (distMat[0,res[0][j]]<=mean+std) and (distMat[0,res[0][j]]>=mean-std):
+            weight = 1.0
+            edgeList.append((i,res[0][j],weight))
     
     return edgeList
 

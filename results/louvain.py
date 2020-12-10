@@ -11,7 +11,7 @@ parser.add_argument('--k', type=int, default=10,
                     help='parameter k in KNN graph (default: 10)')
 parser.add_argument('--knn-distance', type=str, default='euclidean',
                     help='KNN graph distance type: euclidean/cosine/correlation (default: euclidean)')
-parser.add_argument('--prunetype', type=str, default='KNNgraphStatsSingleThread',
+parser.add_argument('--prunetype', type=str, default='KNNgraphStatsSingleThreadNoPrune',
                     help='prune type, KNNgraphStats/KNNgraphML/KNNgraphStatsSingleThread (default: KNNgraphStats)')
 #Benchmark related
 parser.add_argument('--benchmark', type=str, default='/home/jwang/data/scData/13.Zeisel/Zeisel_cell_label.csv',
