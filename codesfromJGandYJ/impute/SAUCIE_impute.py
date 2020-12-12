@@ -33,9 +33,30 @@ def impute_saucie(seed=1, datasetName='9.Chung', ratio=0.1):
     model = SAUCIE.SAUCIE(x.shape[1])
     # train the model!
     model.train(loader_train, steps=2000)
+    #imputation
     reconstruction = model.get_reconstruction(loader_eval)
     reconstruction=np.transpose(reconstruction)
     np.save('/storage/htc/joshilab/wangjue/scGNN/saucie/{}_{}_{}_recon.npy'.format(datasetName,ratio,seed),reconstruction)
+
+def plot_saucie(seed=1, datasetName='9.Chung', ratio=0.1):
+    filename = '/storage/htc/joshilab/wangjue/scGNN/npyImputeG2E_{}/{}_LTMG_{}_10-0.1-0.9-0.0-0.3-0.1_features.npy'.format(seed, datasetName, ratio)
+    x = np.load(filename,allow_pickle=True)
+    x = x.tolist()
+    x=x.todense()
+    x=np.asarray(x)
+    x=np.log(x+1)
+    loader_eval = SAUCIE.Loader(x, shuffle=False)
+    # clear the computational graph
+    #plot
+    tf.reset_default_graph()
+    model = SAUCIE.SAUCIE(x.shape[1])
+    model.train(loader_eval, steps=2000)
+    embedding = model.get_embedding(loader_eval)
+    num_clusters, clusters = model.get_clusters(loader_eval)
+    fig = plt.figure()
+    ax = fig.add_subplot(1, 1, 1)
+    ax.scatter(embedding[:, 0], embedding[:, 1], c=clusters)
+    fig.savefig('saucie_'+datasetName+'.png')
 
 datasetNameList = ['9.Chung','11.Kolodziejczyk','12.Klein','13.Zeisel']
 seedList = ['1','2','3']
@@ -49,3 +70,5 @@ else:
         for seed in seedList:
             for ratio in ratioList:        
                 impute_saucie(seed=seed, datasetName=datasetName, ratio=ratio)
+
+# plot_saucie(seed='1', datasetName=datasetName, ratio='0.0')
