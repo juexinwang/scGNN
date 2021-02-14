@@ -826,8 +826,7 @@ if __name__ == "__main__":
     graph_df = pd.DataFrame(edgeList, columns=["NodeA", "NodeB", "Weights"])
     graph_df.to_csv(args.outputDir+args.datasetName+'_graph.csv', index=False)
     results_df = pd.DataFrame(listResult, index=celllist, columns=["Celltype"])
-    results_df.to_csv(args.outputDir+args.datasetName+'_' +
-                      args.regulized_type+'_results.txt')
+    results_df.to_csv(args.outputDir+args.datasetName+'_results.txt')
 
     print('---'+str(datetime.timedelta(seconds=int(time.time()-start_time))
                     )+"---scGNN finished")
