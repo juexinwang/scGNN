@@ -40,7 +40,7 @@ parser.add_argument('--quickmode', action='store_true', default=False,
                     help='whether use quickmode, skip celltype autoencoder (default: no quickmode)')
 parser.add_argument('--cluster-epochs', type=int, default=200, metavar='N',
                     help='number of epochs in cluster autoencoder training (default: 200)')
-parser.add_argument('--no-cuda', action='store_true', default=True,
+parser.add_argument('--no-cuda', action='store_true', default=False,
                     help='enables CUDA training')
 parser.add_argument('--seed', type=int, default=1, metavar='S',
                     help='random seed (default: 1)')
@@ -180,7 +180,7 @@ start_time = time.time()
 # load scRNA in csv
 print('---0:00:00---scRNA starts loading.')
 data, genelist, celllist = loadscExpression(
-    args.LTMGDir+args.datasetName+'/'+args.ltmgExpressionFile, sparseMode=args.sparseMode)
+    args.datasetDir+args.datasetName+'/'+args.ltmgExpressionFile, sparseMode=args.sparseMode)
 print('---'+str(datetime.timedelta(seconds=int(time.time()-start_time))) +
       '---scRNA has been successfully loaded')
 
@@ -237,6 +237,7 @@ def train(epoch, train_loader=train_loader, EMFlag=False, taskType='celltype', s
             regulationMatrixBatch = regulationMatrix[dataindex, :]
         else:
             regulationMatrixBatch = None
+        regulationMatrixBatch = regulationMatrixBatch.to(device)
         if taskType == 'imputation':
             if sparseImputation == 'nonsparse':
                 celltypesampleBatch = celltypesample[dataindex,
@@ -251,8 +252,8 @@ def train(epoch, train_loader=train_loader, EMFlag=False, taskType='celltype', s
                 elif args.precisionModel == 'Double':
                     celltypesampleBatch = celltypesampleBatch.type(
                         torch.DoubleTensor)
-                mem = resource.getrusage(resource.RUSAGE_SELF).ru_maxrss
-                print('celltype Mem consumption: '+str(mem))
+                # mem = resource.getrusage(resource.RUSAGE_SELF).ru_maxrss
+                # print('celltype Mem consumption: '+str(mem))
 
                 adjsampleBatch = adj[dataindex, :][:, dataindex]
                 adjsampleBatch = sp.csr_matrix.todense(adjsampleBatch)
@@ -261,8 +262,8 @@ def train(epoch, train_loader=train_loader, EMFlag=False, taskType='celltype', s
                     adjsampleBatch = adjsampleBatch.float()
                 elif args.precisionModel == 'Double':
                     adjsampleBatch = adjsampleBatch.type(torch.DoubleTensor)
-                mem = resource.getrusage(resource.RUSAGE_SELF).ru_maxrss
-                print('adj Mem consumption: '+str(mem))
+                # mem = resource.getrusage(resource.RUSAGE_SELF).ru_maxrss
+                # print('adj Mem consumption: '+str(mem))
 
         optimizer.zero_grad()
         if args.model == 'VAE':
@@ -386,8 +387,8 @@ if __name__ == "__main__":
         #     adjdense = adj.toarray()
         print('---'+str(datetime.timedelta(seconds=int(time.time() -
                                                        start_time)))+'---Prune Finished')
-        mem = resource.getrusage(resource.RUSAGE_SELF).ru_maxrss
-        print('Mem consumption: '+str(mem))
+        # mem = resource.getrusage(resource.RUSAGE_SELF).ru_maxrss
+        # print('Mem consumption: '+str(mem))
 
         if args.debugMode == 'savePrune':
             # Add protocol=4 for serizalize object larger than 4GiB
@@ -425,21 +426,21 @@ if __name__ == "__main__":
         with open('originalFile', 'rb') as originalFile:
             original = pkl.load(originalFile)
 
-        mem = resource.getrusage(resource.RUSAGE_SELF).ru_maxrss
-        print('Mem consumption: '+str(mem))
+        # mem = resource.getrusage(resource.RUSAGE_SELF).ru_maxrss
+        # print('Mem consumption: '+str(mem))
 
     # Whether use GAE embedding
     if args.useGAEembedding or args.useBothembedding:
         zDiscret = zOut > np.mean(zOut, axis=0)
         zDiscret = 1.0*zDiscret
         if args.useGAEembedding:
-            mem = resource.getrusage(resource.RUSAGE_SELF).ru_maxrss
-            print('Mem consumption: '+str(mem))
+            # mem = resource.getrusage(resource.RUSAGE_SELF).ru_maxrss
+            # print('Mem consumption: '+str(mem))
             zOut = GAEembedding(zDiscret, adj, args)
             print('---'+str(datetime.timedelta(seconds=int(time.time() -
                                                            start_time)))+"---GAE embedding finished")
-            mem = resource.getrusage(resource.RUSAGE_SELF).ru_maxrss
-            print('Mem consumption: '+str(mem))
+            # mem = resource.getrusage(resource.RUSAGE_SELF).ru_maxrss
+            # print('Mem consumption: '+str(mem))
 
         elif args.useBothembedding:
             zEmbedding = GAEembedding(zDiscret, adj, args)
@@ -556,8 +557,8 @@ if __name__ == "__main__":
         # Debug: Calculate silhouette
         # measure_clustering_results(zOut, listResult)
         print('Total Cluster Number: '+str(len(set(listResult))))
-        mem = resource.getrusage(resource.RUSAGE_SELF).ru_maxrss
-        print('Mem consumption: '+str(mem))
+        # mem = resource.getrusage(resource.RUSAGE_SELF).ru_maxrss
+        # print('Mem consumption: '+str(mem))
 
         # Graph regulizated EM AE with celltype AE, do the additional AE
         if not args.quickmode:
@@ -605,8 +606,8 @@ if __name__ == "__main__":
             ptstatus = model.state_dict()
 
             # Debug mem consumption
-            mem = resource.getrusage(resource.RUSAGE_SELF).ru_maxrss
-            print('Mem consumption: '+str(mem))
+            # mem = resource.getrusage(resource.RUSAGE_SELF).ru_maxrss
+            # print('Mem consumption: '+str(mem))
 
         # Use new dataloader
         scDataInter = scDatasetInter(recon)
@@ -618,8 +619,8 @@ if __name__ == "__main__":
 
         zOut = z.detach().cpu().numpy()
 
-        mem = resource.getrusage(resource.RUSAGE_SELF).ru_maxrss
-        print('Mem consumption: '+str(mem))
+        # mem = resource.getrusage(resource.RUSAGE_SELF).ru_maxrss
+        # print('Mem consumption: '+str(mem))
         # Here para = 'euclidean:10'
         # adj, edgeList = generateAdj(zOut, graphType='KNNgraphML', para = args.knn_distance+':'+str(args.k))
         print('---'+str(datetime.timedelta(seconds=int(time.time()-start_time)))+'---Start Prune')
@@ -633,21 +634,21 @@ if __name__ == "__main__":
         #     adjdense = adj.toarray()
         print('---'+str(datetime.timedelta(seconds=int(time.time() -
                                                        start_time)))+'---Prune Finished')
-        mem = resource.getrusage(resource.RUSAGE_SELF).ru_maxrss
-        print('Mem consumption: '+str(mem))
+        # mem = resource.getrusage(resource.RUSAGE_SELF).ru_maxrss
+        # print('Mem consumption: '+str(mem))
 
         # Whether use GAE embedding
         if args.useGAEembedding or args.useBothembedding:
             zDiscret = zOut > np.mean(zOut, axis=0)
             zDiscret = 1.0*zDiscret
             if args.useGAEembedding:
-                mem = resource.getrusage(resource.RUSAGE_SELF).ru_maxrss
-                print('Mem consumption: '+str(mem))
+                # mem = resource.getrusage(resource.RUSAGE_SELF).ru_maxrss
+                # print('Mem consumption: '+str(mem))
                 zOut = GAEembedding(zDiscret, adj, args)
                 print('---'+str(datetime.timedelta(seconds=int(time.time() -
                                                                start_time)))+"---GAE embedding finished")
-                mem = resource.getrusage(resource.RUSAGE_SELF).ru_maxrss
-                print('Mem consumption: '+str(mem))
+                # mem = resource.getrusage(resource.RUSAGE_SELF).ru_maxrss
+                # print('Mem consumption: '+str(mem))
             elif args.useBothembedding:
                 zEmbedding = GAEembedding(zDiscret, adj, args)
                 zOut = np.concatenate((zOut, zEmbedding), axis=1)
@@ -684,8 +685,8 @@ if __name__ == "__main__":
             print('---'+str(datetime.timedelta(seconds=int(time.time() -
                                                            start_time)))+'---Save internal completed')
 
-        mem = resource.getrusage(resource.RUSAGE_SELF).ru_maxrss
-        print('Mem consumption: '+str(mem))
+        # mem = resource.getrusage(resource.RUSAGE_SELF).ru_maxrss
+        # print('Mem consumption: '+str(mem))
         print('---'+str(datetime.timedelta(seconds=int(time.time() -
                                                        start_time)))+'---Start test converge condition')
 
@@ -701,8 +702,8 @@ if __name__ == "__main__":
             adjNew = args.alpha*nlG0 + \
                 (1-args.alpha) * adjGc/np.sum(adjGc, axis=0)
 
-            mem = resource.getrusage(resource.RUSAGE_SELF).ru_maxrss
-            print('Mem consumption: '+str(mem))
+            # mem = resource.getrusage(resource.RUSAGE_SELF).ru_maxrss
+            # print('Mem consumption: '+str(mem))
             print('---'+str(datetime.timedelta(seconds=int(time.time() -
                                                            start_time)))+'---New adj ready')
 
@@ -755,8 +756,8 @@ if __name__ == "__main__":
     # Use new dataloader
     print('---'+str(datetime.timedelta(seconds=int(time.time()-start_time))
                     )+"---Starts Imputation")
-    mem = resource.getrusage(resource.RUSAGE_SELF).ru_maxrss
-    print('Mem consumption: '+str(mem))
+    # mem = resource.getrusage(resource.RUSAGE_SELF).ru_maxrss
+    # print('Mem consumption: '+str(mem))
     scDataInter = scDatasetInter(reconOri)
     train_loader = DataLoader(
         scDataInter, batch_size=args.batch_size, shuffle=False, **kwargs)
@@ -783,8 +784,9 @@ if __name__ == "__main__":
             adjsample = adjsample.float()
         elif args.precisionModel == 'Double':
             adjsample = adjsample.type(torch.DoubleTensor)
-        mem = resource.getrusage(resource.RUSAGE_SELF).ru_maxrss
-        print('Mem consumption: '+str(mem))
+        adjsample = adjsample.to(device)
+        # mem = resource.getrusage(resource.RUSAGE_SELF).ru_maxrss
+        # print('Mem consumption: '+str(mem))
 
         # generate celltype regularizer from celltype
         celltypesample = generateCelltypeRegu(listResult)
@@ -793,8 +795,9 @@ if __name__ == "__main__":
             celltypesample = celltypesample.float()
         elif args.precisionModel == 'Double':
             celltypesample = celltypesample.type(torch.DoubleTensor)
-        mem = resource.getrusage(resource.RUSAGE_SELF).ru_maxrss
-        print('Mem consumption: '+str(mem))
+        celltypesample = celltypesample.to(device)
+        # mem = resource.getrusage(resource.RUSAGE_SELF).ru_maxrss
+        # print('Mem consumption: '+str(mem))
 
     for epoch in range(1, args.EM_epochs + 1):
         recon, original, z = train(
@@ -814,8 +817,7 @@ if __name__ == "__main__":
     # Output celltype Results
     recon_df = pd.DataFrame(np.transpose(reconOut),
                             index=genelist, columns=celllist)
-    recon_df.to_csv(args.outputDir+args.datasetName+'_'+args.regulized_type+'_'+str(
-        args.alphaRegularizePara)+'_'+str(args.L1Para)+'_'+str(args.L2Para)+'_recon.csv')
+    recon_df.to_csv(args.outputDir+args.datasetName+'_recon.csv')
     emblist = []
     for i in range(zOut.shape[1]):
         emblist.append('embedding'+str(i))

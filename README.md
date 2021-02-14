@@ -25,7 +25,7 @@ This repository contains the source code for the paper **scGNN: a novel graph ne
 
 ## Installation:
 
-Installation Tested on Ubuntu 16.04 and CentOS 7 with Python 3.6.8
+Installation Tested on Ubuntu 16.04, CentOS 7, MacOS catalina with Python 3.6.8
 
 ### From Source:
 
