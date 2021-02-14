@@ -108,12 +108,12 @@ wget -P GSE138852/ https://ftp.ncbi.nlm.nih.gov/geo/series/GSE138nnn/GSE138852/s
 
 #### 10X format
 
-Take an example of [liver cellular landscape study](https://data.humancellatlas.org/explore/projects/4d6f6c96-2a83-43d8-8fe1-0f53bffd4674) from human cell atlas(<https://data.humancellatlas.org/>)
+Take an example of [liver cellular landscape study](https://data.humancellatlas.org/explore/projects/4d6f6c96-2a83-43d8-8fe1-0f53bffd4674/expression-matrices?catalog=dcp1) from human cell atlas(<https://data.humancellatlas.org/>). Click the download link of 'homo_sapiens.mtx.zip' in the page, and get 4d6f6c96-2a83-43d8-8fe1-0f53bffd4674.homo_sapiens.mtx.zip. (It looks like they does not provide direct download link anymore)
 
 ```shell
 mkdir liver
-wget -P liver https://data.humancellatlas.org/project-assets/project-matrices/4d6f6c96-2a83-43d8-8fe1-0f53bffd4674.homo_sapiens.mtx.zip
 cd liver
+mv ~/Download/4d6f6c96-2a83-43d8-8fe1-0f53bffd4674.homo_sapiens.mtx.zip .
 unzip 4d6f6c96-2a83-43d8-8fe1-0f53bffd4674.homo_sapiens.mtx.zip
 cd ..
 ```
@@ -126,7 +126,7 @@ In preprocessing, parameters are used:
 
 - **filetype** defines file type (CSV or 10X(default))  
 - **geneSelectnum** selects a number of most variant genes. The default gene number is 2000
-- **inferLTMGTag** (Optional) add --inferLTMGTag to infer LTMG in preprocessing. Need to install r-scgnnltmg. The running time of inferring LTMG is depended on the cell number and gene number selected, i.e. extra ~10 minutes in GSE138852 and extra ~15 minutes in data liver. 
+- **inferLTMGTag** (Optional) add --inferLTMGTag to infer LTMG in preprocessing. Need to install r-scgnnltmg. The running time of inferring LTMG is depended on the cell number and gene number selected, i.e. extra ~10 minutes in GSE138852 and extra ~13 minutes in data liver. 
 
 #### CSV format
 
@@ -144,12 +144,12 @@ python -W ignore PreprocessingscGNN.py --datasetName GSE138852_counts.csv.gz --d
 
 Cell/Gene filtering without inferring LTMG:
 ```shell
-python -W ignore PreprocessingscGNN.py --datasetName 481193cb-c021-4e04-b477-0b7cfef4614b.mtx --datasetDir liver/ --LTMGDir liver/ --geneSelectnum 2000
+python -W ignore PreprocessingscGNN.py --datasetName 481193cb-c021-4e04-b477-0b7cfef4614b.mtx --datasetDir liver/ --LTMGDir liver/ --geneSelectnum 2000 sparseOut
 ```
 
 (Optional) Cell/Gene filtering and inferring LTMG:
 ```shell
-python -W ignore PreprocessingscGNN.py --datasetName GSE138852_counts.csv.gz --datasetDir GSE138852/ --LTMGDir GSE138852/ --filetype CSV --geneSelectnum 2000 --inferLTMGTag
+python -W ignore PreprocessingscGNN.py --datasetName 481193cb-c021-4e04-b477-0b7cfef4614b.mtx --datasetDir liver/ --LTMGDir liver/ --geneSelectnum 2000 --inferLTMGTag
 ```
 
 ### 3. Run scGNN
@@ -183,12 +183,12 @@ python -W ignore scGNN.py --datasetName GSE138852 --datasetDir ./ --LTMGDir ./ -
 
 Without LTMG:
 ```bash
-python -W ignore scGNN.py --datasetName 481193cb-c021-4e04-b477-0b7cfef4614b.mtx --datasetDir ./ --outputDir outputdir/ --EM-iteration 2 --Regu-epochs 50 --EM-epochs 20 --quickmode
+python -W ignore scGNN.py --datasetName 481193cb-c021-4e04-b477-0b7cfef4614b.mtx --datasetDir liver/ --outputDir outputdir/ --EM-iteration 2 --Regu-epochs 50 --EM-epochs 20 --quickmode
 ```
 
 (Optional) Using LTMG:
 ```bash
-python -W ignore scGNN.py --datasetName 481193cb-c021-4e04-b477-0b7cfef4614b.mtx --LTMGDir liver/ --datasetDir ./ --outputDir outputdir/ --EM-iteration 2 --Regu-epochs 50 --EM-epochs 20 --quickmode --regulized-type LTMG
+python -W ignore scGNN.py --datasetName 481193cb-c021-4e04-b477-0b7cfef4614b.mtx --LTMGDir liver/ --datasetDir liver/ --outputDir outputdir/ --EM-iteration 2 --Regu-epochs 50 --EM-epochs 20 --quickmode --regulized-type LTMG
 ```
 
 On these demo dataset using single cpu, the running time of demo codes is ~33min/26min. User should get exact same results as paper shown with full running time on single cpu for ~6 hours. If user wants to use multiple CPUs, parameter **--coresUsage** can be set as **all** or any number of cores the machine has.
