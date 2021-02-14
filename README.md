@@ -126,7 +126,7 @@ In preprocessing, parameters are used:
 
 - **filetype** defines file type (CSV or 10X(default))  
 - **geneSelectnum** selects a number of most variant genes. The default gene number is 2000
-- **inferLTMGTag** (Optional) add --inferLTMGTag to infer LTMG in preprocessing. Need to install r-scgnnltmg. The running time of inferring LTMG is depended on the cell number and gene number selected, i.e. extra ~10 minutes in GSE138852 and extra ~13 minutes in data liver. 
+- **inferLTMGTag** (Optional) add --inferLTMGTag to infer LTMG in preprocessing. Need to install r-scgnnltmg. The running time of inferring LTMG is depended on the cell number and gene number selected, i.e. ~10 minutes in GSE138852 and extra ~13 minutes in data liver. 
 
 #### CSV format
 

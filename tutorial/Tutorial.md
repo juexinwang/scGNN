@@ -6,7 +6,7 @@ __scGNN__ (**s**ingle **c**ell **g**raph **n**eural networks) provides a hypothe
 
 ## Installation:
 
-Installation Tested on Ubuntu 16.04 and CentOS 7 with Python 3.6.8
+Installation Tested on Ubuntu 16.04, CentOS 7, MacOS catalina with Python 3.6.8
 
 ### From Source:
 
@@ -22,10 +22,14 @@ cd scGNN
 ```shell
 conda create -n scgnnEnv python=3.6.8 pip
 conda activate scgnnEnv
-conda install r-devtools
 conda install -c r r-igraph
-conda install -c cyz931123 r-scgnnltmg
 pip install -r requirements.txt
+```
+
+If want to use LTMG (**Recommended** but Optional, will takes extra time in data preprocessing):
+```shell
+conda install r-devtools
+conda install -c cyz931123 r-scgnnltmg
 ```
 
 ### Option 2 : Direct install individually
@@ -76,7 +80,7 @@ Datasets should be preprocessed to proceed. scGNN accepts scRNA-seq data format:
 
 CSV format explicitly shows data in plain text. We take an example of Alzheimer’s disease datasets ([GSE138852](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE138852)) analyzed in the manuscript. 
 
-10X format stores scRNA-seq expression sparsely, so is commonly used for huge datasets. Take an example of [liver cellular landscape study](https://data.humancellatlas.org/explore/projects/4d6f6c96-2a83-43d8-8fe1-0f53bffd4674) from human cell atlas(<https://data.humancellatlas.org/>)
+10X format stores scRNA-seq expression sparsely, so is commonly used for huge datasets. Take an example of [liver cellular landscape study](https://data.humancellatlas.org/explore/projects/4d6f6c96-2a83-43d8-8fe1-0f53bffd4674/expression-matrices?catalog=dcp1) from human cell atlas(<https://data.humancellatlas.org/>). Click the download link of 'homo_sapiens.mtx.zip' in the page, and get 4d6f6c96-2a83-43d8-8fe1-0f53bffd4674.homo_sapiens.mtx.zip. (It looks like they does not provide direct download link anymore)
 
 #### Example:
 
@@ -118,20 +122,20 @@ In ***PreprocessingscGNN.py***, usually these parameters are used:
 - **geneCriteria** defines which criteria to select most variant genes, default is variance.
 - **geneSelectnum** selects a number of most variant genes. The default gene number is 2000. 
 
-The running time of ***PreprocessingscGNN.py*** is dependent on the cell number and gene numbers selected. It takes ~20 minutes (GSE138852) and ~28 minutes (liver) to generate the files needed.
+The running time of ***PreprocessingscGNN.py*** is dependent on the cell number and gene numbers selected. It takes ~10 minutes (GSE138852) and ~13 minutes (liver) to generate the files needed.
 
 #### Example:
 
 ##### CSV format
 
 ```shell
-python -W ignore PreprocessingscGNN.py --datasetName GSE138852_counts.csv.gz --datasetDir GSE138852/ --LTMGDir GSE138852/ --filetype CSV --geneSelectnum 2000
+python -W ignore PreprocessingscGNN.py --datasetName GSE138852_counts.csv.gz --datasetDir GSE138852/ --LTMGDir GSE138852/ --filetype CSV --geneSelectnum 2000 --inferLTMGTag
 ```
 
 ##### 10X format
 
 ```shell
-python -W ignore PreprocessingscGNN.py --datasetName 481193cb-c021-4e04-b477-0b7cfef4614b.mtx --datasetDir liver/ --LTMGDir liver/ --geneSelectnum 2000
+python -W ignore PreprocessingscGNN.py --datasetName 481193cb-c021-4e04-b477-0b7cfef4614b.mtx --datasetDir liver/ --LTMGDir liver/ --geneSelectnum 2000 --inferLTMGTag
 ```
 
 ## Run scGNN
@@ -187,13 +191,13 @@ Program ***PreprocessingscGNN.py*** is the main entrance of scGNN to impute and 
 For CSV format, we need add **--nonsparseMode**
 
 ```bash
-python -W ignore scGNN.py --datasetName GSE138852 --datasetDir YOUR_FOLDER --LTMGDir ./ --outputDir outputdir/ --EM-iteration 2 --Regu-epochs 50 --EM-epochs 20 --quickmode --nonsparseMode
+python -W ignore scGNN.py --datasetName GSE138852 --datasetDir ./ --LTMGDir ./ --outputDir outputdir/ --EM-iteration 2 --Regu-epochs 50 --EM-epochs 20 --quickmode --nonsparseMode --regulized-type LTMG
 ```
 
 ##### 10X format
 
 ```bash
-python -W ignore scGNN.py --datasetName 481193cb-c021-4e04-b477-0b7cfef4614b.mtx --LTMGDir liver/ --datasetDir YOUR_FOLDER --outputDir outputdir/ --EM-iteration 2 --Regu-epochs 50 --EM-epochs 20 --quickmode
+python -W ignore scGNN.py --datasetName 481193cb-c021-4e04-b477-0b7cfef4614b.mtx --LTMGDir liver/ --datasetDir liver/ --outputDir outputdir/ --EM-iteration 2 --Regu-epochs 50 --EM-epochs 20 --quickmode --regulized-type LTMG
 ```
 
 On these demo dataset using single cpu, the running time of demo codes is ~33min/26min. User should get exact same results as paper shown with full running time on single cpu for ~6 hours. If user wants to use multiple CPUs, parameter **--coresUsage** can be set as **all** or any number of cores the machine has.
