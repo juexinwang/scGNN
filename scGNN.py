@@ -235,9 +235,9 @@ def train(epoch, train_loader=train_loader, EMFlag=False, taskType='celltype', s
         data = data.to(device)
         if not args.regulized_type == 'noregu':
             regulationMatrixBatch = regulationMatrix[dataindex, :]
+            regulationMatrixBatch = regulationMatrixBatch.to(device)
         else:
             regulationMatrixBatch = None
-        regulationMatrixBatch = regulationMatrixBatch.to(device)
         if taskType == 'imputation':
             if sparseImputation == 'nonsparse':
                 celltypesampleBatch = celltypesample[dataindex,
