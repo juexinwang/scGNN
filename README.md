@@ -41,10 +41,14 @@ cd scGNN
 ```shell
 conda create -n scgnnEnv python=3.6.8 pip
 conda activate scgnnEnv
-conda install r-devtools
 conda install -c r r-igraph
-conda install -c cyz931123 r-scgnnltmg
 pip install -r requirements.txt
+```
+
+If want to use LTMG (**Recommended** but Optional, will takes extra time in data preprocessing):
+```shell
+conda install r-devtools
+conda install -c cyz931123 r-scgnnltmg
 ```
 
 ### Option 2 : Direct install individually
@@ -121,20 +125,31 @@ This step generates Use_expression.csv (preprocessed file) and gets discretized 
 In preprocessing, parameters are used:
 
 - **filetype** defines file type (CSV or 10X(default))  
-- **geneSelectnum** selects a number of most variant genes. The default gene number is 2000 
-
-The running time is depended on the cell number and gene numbers selected. It takes ~20 minutes (GSE138852) and ~28 minutes (liver) to generate the files needed.
+- **geneSelectnum** selects a number of most variant genes. The default gene number is 2000
+- **inferLTMGTag** (Optional) add --inferLTMGTag to infer LTMG in preprocessing. Need to install r-scgnnltmg. The running time of inferring LTMG is depended on the cell number and gene number selected, i.e. extra ~20 minutes in GSE138852 and extra ~28 minutes in data liver. 
 
 #### CSV format
 
+Cell/Gene filtering without inferring LTMG:
 ```shell
 python -W ignore PreprocessingscGNN.py --datasetName GSE138852_counts.csv.gz --datasetDir GSE138852/ --LTMGDir GSE138852/ --filetype CSV --geneSelectnum 2000
 ```
 
+(Optional) Cell/Gene filtering and inferring LTMG:
+```shell
+python -W ignore PreprocessingscGNN.py --datasetName GSE138852_counts.csv.gz --datasetDir GSE138852/ --LTMGDir GSE138852/ --filetype CSV --geneSelectnum 2000 --inferLTMGTag
+```
+
 #### 10X format
 
+Cell/Gene filtering without inferring LTMG:
 ```shell
 python -W ignore PreprocessingscGNN.py --datasetName 481193cb-c021-4e04-b477-0b7cfef4614b.mtx --datasetDir liver/ --LTMGDir liver/ --geneSelectnum 2000
+```
+
+(Optional) Cell/Gene filtering and inferring LTMG:
+```shell
+python -W ignore PreprocessingscGNN.py --datasetName GSE138852_counts.csv.gz --datasetDir GSE138852/ --LTMGDir GSE138852/ --filetype CSV --geneSelectnum 2000 --inferLTMGTag
 ```
 
 ### 3. Run scGNN
@@ -146,21 +161,34 @@ We take an example of an analysis in GSE138852. Here we use parameters to demo p
 - **quickmode** for bypassing cluster autoencoder.
 - **Regu-epochs** defines epochs in feature autoencoder, default is 500, here we set as 50.
 - **EM-epochs** defines epochs in feature autoencoder in the iteration, default is 200, here we set as 20.
+- **regulized-type** (Optional) defines types of regulization, default is noregu for not using LTMG as regulization. User can add --regulized-type LTMG to enable LTMG.
 
-If you want to reproduce results in the manuscript, do not use these parameters. 
+If you want to reproduce results in the manuscript, please use default parameters. 
 
 #### CSV format
 
 For CSV format, we need add **--nonsparseMode**
 
+Without LTMG:
 ```bash
-python -W ignore scGNN.py --datasetName GSE138852 --datasetDir ./ --LTMGDir ./ --outputDir outputdir/ --EM-iteration 2 --Regu-epochs 50 --EM-epochs 20 --quickmode --nonsparseMode
+python -W ignore scGNN.py --datasetName GSE138852 --datasetDir ./  --outputDir outputdir/ --EM-iteration 2 --Regu-epochs 50 --EM-epochs 20 --quickmode --nonsparseMode
+```
+
+(Optional) Using LTMG:
+```bash
+python -W ignore scGNN.py --datasetName GSE138852 --datasetDir ./ --LTMGDir ./ --outputDir outputdir/ --EM-iteration 2 --Regu-epochs 50 --EM-epochs 20 --quickmode --nonsparseMode --regulized-type LTMG
 ```
 
 #### 10X format
 
+Without LTMG:
 ```bash
-python -W ignore scGNN.py --datasetName 481193cb-c021-4e04-b477-0b7cfef4614b.mtx --LTMGDir liver/ --datasetDir ./ --outputDir outputdir/ --EM-iteration 2 --Regu-epochs 50 --EM-epochs 20 --quickmode
+python -W ignore scGNN.py --datasetName 481193cb-c021-4e04-b477-0b7cfef4614b.mtx --datasetDir ./ --outputDir outputdir/ --EM-iteration 2 --Regu-epochs 50 --EM-epochs 20 --quickmode
+```
+
+(Optional) Using LTMG:
+```bash
+python -W ignore scGNN.py --datasetName 481193cb-c021-4e04-b477-0b7cfef4614b.mtx --LTMGDir liver/ --datasetDir ./ --outputDir outputdir/ --EM-iteration 2 --Regu-epochs 50 --EM-epochs 20 --quickmode --regulized-type LTMG
 ```
 
 On these demo dataset using single cpu, the running time of demo codes is ~33min/26min. User should get exact same results as paper shown with full running time on single cpu for ~6 hours. If user wants to use multiple CPUs, parameter **--coresUsage** can be set as **all** or any number of cores the machine has.
@@ -186,6 +214,9 @@ python scGNN.py --help
 More information can be checked at the [tutorial](https://github.com/juexinwang/scGNN/tree/master/tutorial).
 
 Another repository for reviewers is located at [here](https://github.com/scgnn/scGNN/).
+
+### Notes:
+We recommend users to infer LTMG from their datasets. LTMG can improve performance on our benchmarks despite it consumes extra time in data preprocessing. We also provide supports without LTMG to save running time.
 
 ## Reference:
 
