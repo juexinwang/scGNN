@@ -48,7 +48,7 @@ parser.add_argument('--converge-celltyperatio', type=float, default=0.95,
 parser.add_argument('--cluster-epochs', type=int, default=200, metavar='N',
                     help='number of epochs in cluster autoencoder training (default: 200)')
 parser.add_argument('--no-cuda', action='store_true', default=False,
-                    help='enables CUDA training')
+                    help='Disable GPU training. If you only have CPU, add --no-cuda in the command line')
 parser.add_argument('--seed', type=int, default=1, metavar='S',
                     help='random seed (default: 1)')
 parser.add_argument('--regulized-type', type=str, default='LTMG',
@@ -111,7 +111,7 @@ parser.add_argument('--debuginfo', action='store_true', default=False,
 parser.add_argument('--inferLTMGTag', action='store_true', default=False,
                     help='Whether infer LTMG')
 parser.add_argument('--LTMGDir', type=str, default='/home/jwang/data/scData/',
-                    help='directory of LTMGDir, default:(/home/wangjue/biodata/scData/allBench/)')
+                    help='directory of LTMGDir, default:(/home/wangjue/workspace/scGNN/data/scData/)')
 parser.add_argument('--expressionFile', type=str, default='Biase_expression.csv',
                     help='expression File in csv')
 parser.add_argument('--ltmgFile', type=str, default='ltmg.csv',
@@ -136,7 +136,7 @@ parser.add_argument('--resolution', type=str, default='auto',
 
 # Benchmark related
 parser.add_argument('--benchmark', type=str, default='/home/jwang/data/scData/13.Zeisel/Zeisel_cell_label.csv',
-                    help='the benchmark file of celltype (default: /home/jwang/data/scData/13.Zeisel/Zeisel_cell_label.csv)')
+                    help='the benchmark file of celltype (default: /home/wangjue/workspace/scGNN/data/scData/9.Chung/Chung_cell_label.csv)')
 
 # Aggrelated
 parser.add_argument('--linkage', type=str, default='ward',
@@ -173,6 +173,7 @@ checkargs(args)
 
 torch.manual_seed(args.seed)
 device = torch.device("cuda" if args.cuda else "cpu")
+print('Using device:'+str(device))
 
 if not args.coresUsage == 'all':
     torch.set_num_threads(int(args.coresUsage))

@@ -6,7 +6,7 @@ __scGNN__ (**s**ingle **c**ell **g**raph **n**eural networks) provides a hypothe
 
 ## Installation:
 
-Installation Tested on Ubuntu 16.04, CentOS 7, MacOS catalina with Python 3.6.8
+Installation Tested on Ubuntu 16.04, CentOS 7, MacOS catalina with Python 3.6.8 on one NVIDIA RTX 2080Ti GPU.
 
 ### From Source:
 
@@ -182,7 +182,8 @@ Program ***PreprocessingscGNN.py*** is the main entrance of scGNN to impute and 
 
 #### Optional: Speed
 
-- **coresUsage** defines how many cores can be used. default: 1.
+- **no-cuda** defines devices in usage. Default is using GPU, add --no-cuda in command line if you only have CPU.
+- **coresUsage** defines how many cores can be used. default: 1. Change this value if you want to use more.
 
 #### Example: 
 

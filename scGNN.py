@@ -41,7 +41,7 @@ parser.add_argument('--quickmode', action='store_true', default=False,
 parser.add_argument('--cluster-epochs', type=int, default=200, metavar='N',
                     help='number of epochs in cluster autoencoder training (default: 200)')
 parser.add_argument('--no-cuda', action='store_true', default=False,
-                    help='enables CUDA training')
+                    help='Disable GPU training. If you only have CPU, add --no-cuda in the command line')
 parser.add_argument('--seed', type=int, default=1, metavar='S',
                     help='random seed (default: 1)')
 parser.add_argument('--regulized-type', type=str, default='noregu',
@@ -169,12 +169,13 @@ checkargs(args)
 
 torch.manual_seed(args.seed)
 device = torch.device("cuda" if args.cuda else "cpu")
+print('Using device:'+str(device))
 
 if not args.coresUsage == 'all':
     torch.set_num_threads(int(args.coresUsage))
 
 kwargs = {'num_workers': 1, 'pin_memory': True} if args.cuda else {}
-print(args)
+# print(args)
 start_time = time.time()
 
 # load scRNA in csv

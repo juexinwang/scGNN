@@ -25,7 +25,7 @@ This repository contains the source code for the paper **scGNN: a novel graph ne
 
 ## Installation:
 
-Installation Tested on Ubuntu 16.04, CentOS 7, MacOS catalina with Python 3.6.8
+Installation Tested on Ubuntu 16.04, CentOS 7, MacOS catalina with Python 3.6.8 on one NVIDIA RTX 2080Ti GPU.
 
 ### From Source:
 
@@ -161,6 +161,7 @@ We take an example of an analysis in GSE138852. Here we use parameters to demo p
 - **quickmode** for bypassing cluster autoencoder.
 - **Regu-epochs** defines epochs in feature autoencoder, default is 500, here we set as 50.
 - **EM-epochs** defines epochs in feature autoencoder in the iteration, default is 200, here we set as 20.
+- **no-cuda** defines devices in usage. Default is using GPU, add --no-cuda in command line if you only have CPU.
 - **regulized-type** (Optional) defines types of regulization, default is noregu for not using LTMG as regulization. User can add --regulized-type LTMG to enable LTMG.
 
 If you want to reproduce results in the manuscript, please use default parameters. 
