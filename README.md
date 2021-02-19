@@ -39,9 +39,8 @@ cd scGNN
 ### Option 1 : (Recommended) Use python virutal environment with conda（<https://anaconda.org/>）
 
 ```shell
-conda create -n scgnnEnv python=3.6.8 pip
-conda activate scgnnEnv
-conda install -c r r-igraph
+conda create -n scgnnEnv1 python=3.6.8 pip
+conda activate scgnnEnv1
 pip install -r requirements.txt
 ```
 
