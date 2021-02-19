@@ -39,8 +39,8 @@ cd scGNN
 ### Option 1 : (Recommended) Use python virutal environment with conda（<https://anaconda.org/>）
 
 ```shell
-conda create -n scgnnEnv1 python=3.6.8 pip
-conda activate scgnnEnv1
+conda create -n scgnnEnv python=3.6.8 pip
+conda activate scgnnEnv
 pip install -r requirements.txt
 ```
 
@@ -58,7 +58,6 @@ In R command line:
 
 ```R
 install.packages("devtools")
-install.packages("igraph")
 library(devtools)
 install_github("BMEngineeR/scGNNLTMG")
 ```
