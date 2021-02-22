@@ -41,7 +41,6 @@ cd scGNN
 ```shell
 conda create -n scgnnEnv python=3.6.8 pip
 conda activate scgnnEnv
-conda install -c r r-igraph
 pip install -r requirements.txt
 ```
 
@@ -59,7 +58,6 @@ In R command line:
 
 ```R
 install.packages("devtools")
-install.packages("igraph")
 library(devtools)
 install_github("BMEngineeR/scGNNLTMG")
 ```

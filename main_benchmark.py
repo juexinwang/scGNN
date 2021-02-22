@@ -461,14 +461,10 @@ if __name__ == "__main__":
         # Clustering: Get cluster
         clustering_time = time.time()
         if args.clustering_method == 'Louvain':
-            # Louvain: the only function has R dependent
-            # Seperate here for platforms without R support
-            from R_util import generateLouvainCluster
             listResult, size = generateLouvainCluster(edgeList)
             k = len(np.unique(listResult))
             print('Louvain cluster: '+str(k))
         elif args.clustering_method == 'LouvainK':
-            from R_util import generateLouvainCluster
             listResult, size = generateLouvainCluster(edgeList)
             k = len(np.unique(listResult))
             print('Louvain cluster: '+str(k))
@@ -477,7 +473,6 @@ if __name__ == "__main__":
             clustering = KMeans(n_clusters=k, random_state=0).fit(zOut)
             listResult = clustering.predict(zOut)
         elif args.clustering_method == 'LouvainB':
-            from R_util import generateLouvainCluster
             listResult, size = generateLouvainCluster(edgeList)
             k = len(np.unique(listResult))
             print('Louvain cluster: '+str(k))
