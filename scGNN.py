@@ -193,6 +193,10 @@ if not args.regulized_type == 'noregu':
     regulationMatrix = readLTMG(
         args.LTMGDir+args.datasetName+'/', args.ltmgFile)
     regulationMatrix = torch.from_numpy(regulationMatrix)
+    if args.precisionModel == 'Double':
+        regulationMatrix = regulationMatrix.type(torch.DoubleTensor)
+    elif args.precisionModel == 'Float':
+        regulationMatrix = regulationMatrix.type(torch.FloatTensor)
     print('---'+str(datetime.timedelta(seconds=int(time.time()-start_time))
                     )+'---LTMG has been successfully prepared.')
 else:
