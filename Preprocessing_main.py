@@ -14,9 +14,8 @@ import csv
 
 # Preprocess network for sc
 parser = argparse.ArgumentParser()
-parser.add_argument('--expression-name', type=str, default='10.Usoskin',
-                    help='TGFb from MAGIC/test also from MAGIC/sci-CAR/sci-CAR_LTMG/MMPbasal/MMPbasal_all/MMPbasal_allcell/MMPbasal_allgene/MMPepo/MMPepo_all/MMPepo_allcell/MMPepo_allgene/MMPbasal_LTMG/MMPbasal_all_LTMG/MMPbasal_2000/MMPbasal_2000_LTMG')
-# Dataset: 1-13 benchmark: 1.Biase/2.Li/3.Treutlein/4.Yan/5.Goolam/6.Guo/7.Deng/8.Pollen/9.Chung/10.Usoskin/11.Kolodziejczyk/12.Klein/13.Zeisel/20.10X_2700_seurat/30.Schafer
+parser.add_argument('--expression-name', type=str, default='9.Chung',
+                    help='TGFb from MAGIC/test also from 9.Chung/11.Kolodziejczyk/12.Klein/13.Zeisel')
 parser.add_argument('--featureDir', type=str, default='/home/wangjue/biodata/scData/',
                     help='Feature File Directory')
 parser.add_argument('--data-type', type=str, default='float',

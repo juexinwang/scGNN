@@ -20,7 +20,7 @@ There are four datasets: Chung, Kolodziejczyk, Klein, Zeisel
 Take Dataset Chung for example.
 
 ```shell
-python Preprocessing_scFile.py --inputfile /folder/scGNN/data/9.Chung/T2000_expression.txt --outputfile /home/wangjue/biodata/scData/9.Chung.csv --split space --cellheadflag False
+python Preprocessing_benchmark.py --inputfile /folder/scGNN/data/9.Chung/T2000_expression.txt --outputfile /home/wangjue/biodata/scData/9.Chung.csv --split space --cellheadflag False
 ```
 
 #### 2. generating sparse coding under data/

@@ -1,5 +1,3 @@
-from __future__ import division
-from __future__ import print_function
 import os, sys
 sys.path.append(os.path.join(os.path.dirname(os.path.realpath(__file__)), os.pardir))
 # For replicating the experiments
@@ -17,8 +15,6 @@ import torch.nn.functional as F
 from gae.model import GCNModelVAE, GCNModelAE
 from gae.optimizer import loss_function
 from gae.utils import load_data, mask_test_edges, preprocess_graph, get_roc_score
-from deepWalk.graph import load_edgelist_from_csr_matrix, build_deepwalk_corpus_iter, build_deepwalk_corpus
-from deepWalk.skipGram import SkipGram
 from tqdm import tqdm
 from graph_function import *
 from benchmark_util import *
