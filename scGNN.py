@@ -22,7 +22,7 @@ from benchmark_util import *
 from gae_embedding import GAEembedding, measure_clustering_results, test_clustering_benchmark_results
 import torch.multiprocessing as mp
 
-parser = argparse.ArgumentParser(description='Main Entrance of scGNN')
+parser = argparse.ArgumentParser(description='Main entrance of scGNN')
 parser.add_argument('--datasetName', type=str, default='481193cb-c021-4e04-b477-0b7cfef4614b.mtx',
                     help='For 10X: folder name of 10X dataset; For CSV: csv file name')
 parser.add_argument('--datasetDir', type=str, default='/storage/htc/joshilab/wangjue/casestudy/',
@@ -54,28 +54,6 @@ parser.add_argument('--gammaPara', type=float, default=0.1,
                     help='regulized intensity (default: 0.1)')
 parser.add_argument('--alphaRegularizePara', type=float, default=0.9,
                     help='regulized parameter (default: 0.9)')
-
-# imputation related
-parser.add_argument('--EMregulized-type', type=str, default='Celltype',
-                    help='regulized type (default: noregu) in EM, otherwise: noregu/Graph/GraphR/Celltype')
-# parser.add_argument('--adjtype', type=str, default='unweighted',
-#                     help='adjtype (default: weighted) otherwise: unweighted')
-# parser.add_argument('--aePara', type=str, default='start',
-#                     help='whether use parameter of first feature autoencoder: start/end/cont')
-parser.add_argument('--gammaImputePara', type=float, default=0.0,
-                    help='regulized parameter (default: 0.0)')
-parser.add_argument('--graphImputePara', type=float, default=0.3,
-                    help='graph parameter (default: 0.3)')
-parser.add_argument('--celltypeImputePara', type=float, default=0.1,
-                    help='celltype parameter (default: 0.1)')
-parser.add_argument('--L1Para', type=float, default=1.0,
-                    help='L1 regulized parameter (default: 0.001)')
-parser.add_argument('--L2Para', type=float, default=0.0,
-                    help='L2 regulized parameter (default: 0.001)')
-parser.add_argument('--EMreguTag', action='store_true', default=False,
-                    help='whether regu in EM process')
-parser.add_argument('--sparseImputation', type=str, default='nonsparse',
-                    help='whether use sparse in imputation: sparse/nonsparse (default: nonsparse)')
 
 # Build cell graph
 parser.add_argument('--k', type=int, default=10,
@@ -125,6 +103,32 @@ parser.add_argument('--minMemberinCluster', type=int, default=5,
 parser.add_argument('--resolution', type=str, default='auto',
                     help='the number of resolution on Louvain (default: auto/0.5/0.8)')
 
+# imputation related
+parser.add_argument('--EMregulized-type', type=str, default='Celltype',
+                    help='regulized type (default: noregu) in EM, otherwise: noregu/Graph/GraphR/Celltype')
+parser.add_argument('--gammaImputePara', type=float, default=0.0,
+                    help='regulized parameter (default: 0.0)')
+parser.add_argument('--graphImputePara', type=float, default=0.3,
+                    help='graph parameter (default: 0.3)')
+parser.add_argument('--celltypeImputePara', type=float, default=0.1,
+                    help='celltype parameter (default: 0.1)')
+parser.add_argument('--L1Para', type=float, default=1.0,
+                    help='L1 regulized parameter (default: 0.001)')
+parser.add_argument('--L2Para', type=float, default=0.0,
+                    help='L2 regulized parameter (default: 0.001)')
+parser.add_argument('--EMreguTag', action='store_true', default=False,
+                    help='whether regu in EM process')
+parser.add_argument('--sparseImputation', type=str, default='nonsparse',
+                    help='whether use sparse in imputation: sparse/nonsparse (default: nonsparse)')
+
+# dealing with zeros in imputation results
+parser.add_argument('--zerofillFlag', action='store_true', default=False,
+                    help='fill zero or not before EM process (default: False)')
+parser.add_argument('--noPostprocessingTag', action='store_false', default=True,
+                    help='whether postprocess imputated results, default: (True)')
+parser.add_argument('--postThreshold', type=float, default=0.01,
+                    help='Threshold to force expression as 0, default:(0.01)')
+
 # Converge related
 parser.add_argument('--alpha', type=float, default=0.5,
                     help='iteration alpha (default: 0.5) to control the converge rate, should be a number between 0~1')
@@ -134,14 +138,6 @@ parser.add_argument('--converge-graphratio', type=float, default=0.01,
                     help='converge condition: ratio of graph ratio change in EM iteration (default: 0.01), 0-1')
 parser.add_argument('--converge-celltyperatio', type=float, default=0.99,
                     help='converge condition: ratio of cell type change in EM iteration (default: 0.99), 0-1')
-
-# dealing with zeros in imputation results
-parser.add_argument('--zerofillFlag', action='store_true', default=False,
-                    help='fill zero or not before EM process (default: False)')
-parser.add_argument('--noPostprocessingTag', action='store_false', default=True,
-                    help='whether postprocess imputated results, default: (True)')
-parser.add_argument('--postThreshold', type=float, default=0.01,
-                    help='Threshold to force expression as 0, default:(0.01)')
 
 # GAE related
 parser.add_argument('--GAEmodel', type=str,
@@ -204,8 +200,7 @@ else:
 
 # Original
 if args.model == 'VAE':
-    # model = VAE(dim=scData.features.shape[1]).to(device)
-    model = VAE2d(dim=scData.features.shape[1]).to(device)
+    model = VAE(dim=scData.features.shape[1]).to(device)
 elif args.model == 'AE':
     model = AE(dim=scData.features.shape[1]).to(device)
 if args.precisionModel == 'Double':
@@ -213,9 +208,6 @@ if args.precisionModel == 'Double':
 optimizer = optim.Adam(model.parameters(), lr=1e-3)
 print('---'+str(datetime.timedelta(seconds=int(time.time()-start_time))) +
       '---Pytorch model ready.')
-
-# TODO: have to improve save npy
-
 
 def train(epoch, train_loader=train_loader, EMFlag=False, taskType='celltype', sparseImputation='nonsparse'):
     '''
@@ -226,8 +218,6 @@ def train(epoch, train_loader=train_loader, EMFlag=False, taskType='celltype', s
     '''
     model.train()
     train_loss = 0
-    # for batch_idx, (data, _) in enumerate(train_loader):
-    # for batch_idx, data in enumerate(train_loader):
     for batch_idx, (data, dataindex) in enumerate(train_loader):
         if args.precisionModel == 'Double':
             data = data.type(torch.DoubleTensor)
@@ -269,8 +259,6 @@ def train(epoch, train_loader=train_loader, EMFlag=False, taskType='celltype', s
         optimizer.zero_grad()
         if args.model == 'VAE':
             recon_batch, mu, logvar, z = model(data)
-            # Original
-            # loss = loss_function(recon_batch, data, mu, logvar)
             if taskType == 'celltype':
                 if EMFlag and (not args.EMreguTag):
                     loss = loss_function_graph(recon_batch, data.view(-1, recon_batch.shape[1]), mu, logvar, gammaPara=args.gammaPara, regulationMatrix=regulationMatrixBatch,
@@ -290,8 +278,6 @@ def train(epoch, train_loader=train_loader, EMFlag=False, taskType='celltype', s
             recon_batch, z = model(data)
             mu_dummy = ''
             logvar_dummy = ''
-            # Original
-            # loss = loss_function(recon_batch, data, mu, logvar)
             if taskType == 'celltype':
                 if EMFlag and (not args.EMreguTag):
                     loss = loss_function_graph(recon_batch, data.view(-1, recon_batch.shape[1]), mu_dummy, logvar_dummy, gammaPara=args.gammaPara,
@@ -380,12 +366,6 @@ if __name__ == "__main__":
         print('---'+str(datetime.timedelta(seconds=int(time.time()-start_time)))+'---Start Prune')
         adj, edgeList = generateAdj(zOut, graphType=args.prunetype, para=args.knn_distance+':'+str(
             args.k), adjTag=(args.useGAEembedding or args.useBothembedding))
-        # if args.adjtype == 'unweighted':
-        #     adj, edgeList = generateAdj(zOut, graphType=args.prunetype, para = args.knn_distance+':'+str(args.k))
-        #     adjdense = sp.csr_matrix.todense(adj)
-        # elif args.adjtype == 'weighted':
-        #     adj, edgeList = generateAdjWeighted(zOut, graphType=args.prunetype, para = args.knn_distance+':'+str(args.k))
-        #     adjdense = adj.toarray()
         print('---'+str(datetime.timedelta(seconds=int(time.time() -
                                                        start_time)))+'---Prune Finished')
         # mem = resource.getrusage(resource.RUSAGE_SELF).ru_maxrss
@@ -484,8 +464,7 @@ if __name__ == "__main__":
                                                        start_time)))+'---Start %sth iteration.' % (bigepoch))
 
         # Now for both methods, we need do clustering, using clustering results to check converge
-        # TODO May reimplement later
-        # Clustering: Get cluster
+        # Clustering: Get clusters
         if args.clustering_method == 'Louvain':
             listResult, size = generateLouvainCluster(edgeList)
             k = len(np.unique(listResult))
@@ -617,17 +596,9 @@ if __name__ == "__main__":
 
         # mem = resource.getrusage(resource.RUSAGE_SELF).ru_maxrss
         # print('Mem consumption: '+str(mem))
-        # Here para = 'euclidean:10'
-        # adj, edgeList = generateAdj(zOut, graphType='KNNgraphML', para = args.knn_distance+':'+str(args.k))
         print('---'+str(datetime.timedelta(seconds=int(time.time()-start_time)))+'---Start Prune')
         adj, edgeList = generateAdj(zOut, graphType=args.prunetype, para=args.knn_distance+':'+str(
             args.k), adjTag=(args.useGAEembedding or args.useBothembedding or (bigepoch == int(args.EM_iteration)-1)))
-        # if args.adjtype == 'unweighted':
-        #     adj, edgeList = generateAdj(zOut, graphType=args.prunetype, para = args.knn_distance+':'+str(args.k))
-        #     adjdense = sp.csr_matrix.todense(adj)
-        # elif args.adjtype == 'weighted':
-        #     adj, edgeList = generateAdjWeighted(zOut, graphType=args.prunetype, para = args.knn_distance+':'+str(args.k))
-        #     adjdense = adj.toarray()
         print('---'+str(datetime.timedelta(seconds=int(time.time() -
                                                        start_time)))+'---Prune Finished')
         # mem = resource.getrusage(resource.RUSAGE_SELF).ru_maxrss
@@ -715,7 +686,6 @@ if __name__ == "__main__":
             adjOld = adjNew
 
         # Check similarity
-        # ari, ami, nmi, cs, fms, vms, hs = measureClusteringTrueLabel()
         ari = adjusted_rand_score(listResultOld, listResult)
 
         # Debug Information of clustering results between iterations

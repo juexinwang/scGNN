@@ -67,27 +67,7 @@ def GAEembedding(z, adj, args):
         z,adj
     Return:
         Embedding from graph
-    '''
-    # true_labels = np.asarray(true_labels)
-
-    # args.model = 'gcn_vae'
-    # args.dw    = 0
-    # args.epochs = 200
-    # args.hidden1 = 32
-    # args.hidden2 = 16
-    # args.lr      = 0.01
-    # args.dropout = 0.
-    # args.dataset_sr = 'cora'
-    # args.walk_length = 5
-    # args.window_size = 3
-    # args.number_walks = 5
-    # args.full_number_walks =0
-    # args.lr_dw   = 0.001
-    # args.context = 0
-    # args.ns = 1
-    # args.n_clusters = 11
-    # args.plot = 0
-    
+    '''   
     # featrues from z
     # Louvain
     features = z
@@ -107,16 +87,6 @@ def GAEembedding(z, adj, args):
     adj_train, train_edges, val_edges, val_edges_false, test_edges, test_edges_false = mask_test_edges(adj)
     adj = adj_train
 
-    # Before proceeding further, make the structure for doing deepWalk
-    # if args.dw == 1:
-    #     print('Using deepWalk regularization...')
-    #     G = load_edgelist_from_csr_matrix(adj_orig, undirected=True)
-    #     print("Number of nodes: {}".format(len(G.nodes())))
-    #     num_walks = len(G.nodes()) * args.number_walks
-    #     print("Number of walks: {}".format(num_walks))
-    #     data_size = num_walks * args.walk_length
-    #     print("Data size (walks*length): {}".format(data_size))
-
     # Some preprocessing
     adj_norm = preprocess_graph(adj)
     adj_label = adj_train + sp.eye(adj_train.shape[0])
@@ -135,15 +105,6 @@ def GAEembedding(z, adj, args):
         model=model.double()
     optimizer = optim.Adam(model.parameters(), lr=args.GAElr)
 
-    # if args.dw == 1:
-    #     sg = SkipGram(args.hidden2, adj.shape[0])
-    #     optimizer_dw = optim.Adam(sg.parameters(), lr=args.lr_dw)
-
-    #     # Construct the nodes for doing random walk. Doing it before since the seed is fixed
-    #     nodes_in_G = list(G.nodes())
-    #     chunks = len(nodes_in_G) // args.number_walks
-    #     random.Random().shuffle(nodes_in_G)
-
     hidden_emb = None
     for epoch in tqdm(range(args.GAEepochs)):
         t = time.time()
@@ -152,60 +113,6 @@ def GAEembedding(z, adj, args):
         model.train()
         optimizer.zero_grad()
         z, mu, logvar = model(features, adj_norm)
-
-        # After back-propagating gae loss, now do the deepWalk regularization
-        # if args.dw == 1:
-        #     sg.train()
-        #     if args.full_number_walks > 0:
-        #         walks = build_deepwalk_corpus(G, num_paths=args.full_number_walks,
-        #                                       path_length=args.walk_length, alpha=0,
-        #                                       rand=random.Random(SEED))
-        #     else:
-        #         walks = build_deepwalk_corpus_iter(G, num_paths=args.number_walks,
-        #                                            path_length=args.walk_length, alpha=0,
-        #                                            rand=random.Random(SEED),
-        #                                            chunk=epoch % chunks,
-        #                                            nodes=nodes_in_G)
-        #     for walk in walks:
-        #         if args.context == 1:
-        #             # Construct the pairs for predicting context node
-        #             # for each node, treated as center word
-        #             curr_pair = (int(walk[center_node_pos]), [])
-        #             for center_node_pos in range(len(walk)):
-        #                 # for each window position
-        #                 for w in range(-args.window_size, args.window_size + 1):
-        #                     context_node_pos = center_node_pos + w
-        #                     # make soure not jump out sentence
-        #                     if context_node_pos < 0 or context_node_pos >= len(walk) or center_node_pos == context_node_pos:
-        #                         continue
-        #                     context_node_idx = walk[context_node_pos]
-        #                     curr_pair[1].append(int(context_node_idx))
-        #         else:
-        #             # first item in the walk is the starting node
-        #             curr_pair = (int(walk[0]), [int(context_node_idx) for context_node_idx in walk[1:]])
-
-        #         if args.ns == 1:
-        #             neg_nodes = []
-        #             pos_nodes = set(walk)
-        #             while len(neg_nodes) < args.walk_length - 1:
-        #                 rand_node = random.randint(0, n_nodes - 1)
-        #                 if rand_node not in pos_nodes:
-        #                     neg_nodes.append(rand_node)
-        #             neg_nodes = torch.from_numpy(np.array(neg_nodes)).long()
-
-        #         # Do actual prediction
-        #         src_node = torch.from_numpy(np.array([curr_pair[0]])).long()
-        #         tgt_nodes = torch.from_numpy(np.array(curr_pair[1])).long()
-        #         optimizer_dw.zero_grad()
-        #         log_pos = sg(src_node, tgt_nodes, neg_sample=False)
-        #         if args.ns == 1:
-        #             loss_neg = sg(src_node, neg_nodes, neg_sample=True)
-        #             loss_dw = log_pos + loss_neg
-        #         else:
-        #             loss_dw = log_pos
-        #         loss_dw.backward(retain_graph=True)
-        #         cur_dw_loss = loss_dw.item()
-        #         optimizer_dw.step()
 
         loss = loss_function(preds=model.dc(z), labels=adj_label,
                              mu=mu, logvar=logvar, n_nodes=n_nodes,
@@ -219,37 +126,16 @@ def GAEembedding(z, adj, args):
         # roc_curr, ap_curr = get_roc_score(hidden_emb, adj_orig, val_edges, val_edges_false)
         ap_curr = 0
 
-        # if args.dw == 1:
-        #     tqdm.write("Epoch: {}, train_loss_gae={:.5f}, train_loss_dw={:.5f}, val_ap={:.5f}, time={:.5f}".format(
-        #         epoch + 1, cur_loss, cur_dw_loss,
-        #         ap_curr, time.time() - t))
-        # else:
         tqdm.write("Epoch: {}, train_loss_gae={:.5f}, val_ap={:.5f}, time={:.5f}".format(
             epoch + 1, cur_loss,
             ap_curr, time.time() - t))
 
-        # if (epoch + 1) % 10 == 0:
-        #     tqdm.write("Evaluating intermediate results...")
-        #     kmeans = KMeans(n_clusters=args.n_clusters, random_state=0).fit(hidden_emb)
-        #     predict_labels = kmeans.predict(hidden_emb)
-        #     cm = clustering_metrics(true_labels, predict_labels)
-        #     cm.evaluationClusterModelFromLabel(tqdm)
-        #     roc_score, ap_score = get_roc_score(hidden_emb, adj_orig, test_edges, test_edges_false)
-        #     tqdm.write('ROC: {}, AP: {}'.format(roc_score, ap_score))
-        #     np.save('logs/emb_epoch_{}.npy'.format(epoch + 1), hidden_emb)
 
     tqdm.write("Optimization Finished!")
 
     roc_score, ap_score = get_roc_score(hidden_emb, adj_orig, test_edges, test_edges_false)
     tqdm.write('Test ROC score: ' + str(roc_score))
     tqdm.write('Test AP score: ' + str(ap_score))
-    # kmeans = KMeans(n_clusters=args.n_clusters, random_state=0).fit(hidden_emb)
-    # predict_labels = kmeans.predict(hidden_emb)
-    # cm = clustering_metrics(true_labels, predict_labels)
-    # cm.evaluationClusterModelFromLabel(tqdm)
-
-    # if args.GAEplot == 1:
-    #     cm.plotClusters(tqdm, hidden_emb, true_labels)
 
     return hidden_emb
 

@@ -10,13 +10,6 @@ import time
 from multiprocessing import Pool
 import multiprocessing 
 
-#Graph related functions
-#graph Edge
-# class graphEdge:
-#     def __init__(self,row,col):
-#         self.row=row
-#         self.col=col
-
 # Calculate graph, return adjcency matrix in 0/1
 def generateAdj(featureMatrix, graphType='KNNgraph', para = None, parallelLimit = 0, adjTag = True ):
     """
