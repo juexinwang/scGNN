@@ -14,7 +14,7 @@ from torch.nn import functional as F
 from sklearn.decomposition import PCA
 from sklearn.metrics import silhouette_samples, silhouette_score
 from sklearn.cluster import KMeans, SpectralClustering, AffinityPropagation, AgglomerativeClustering, Birch, DBSCAN, FeatureAgglomeration, MeanShift, OPTICS
-from model import AE, VAE, VAE2d
+from model import AE, VAE
 from util_function import *
 from graph_function import *
 from benchmark_util import *
