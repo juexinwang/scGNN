@@ -31,15 +31,15 @@ parser.add_argument('--datasetDir', type=str, default='/storage/htc/joshilab/wan
 parser.add_argument('--batch-size', type=int, default=12800, metavar='N',
                     help='input batch size for training (default: 12800)')
 parser.add_argument('--Regu-epochs', type=int, default=500, metavar='N',
-                    help='number of epochs to train in Regulatory Autoencoder (default: 500)')
+                    help='number of epochs to train in Feature Autoencoder initially (default: 500)')
 parser.add_argument('--EM-epochs', type=int, default=200, metavar='N',
-                    help='number of epochs to train in iteration EM (default: 200)')
+                    help='number of epochs to train Feature Autoencoder in iteration EM (default: 200)')
 parser.add_argument('--EM-iteration', type=int, default=10, metavar='N',
                     help='number of iteration in total EM iteration (default: 10)')
 parser.add_argument('--quickmode', action='store_true', default=False,
-                    help='whether use quickmode, skip celltype autoencoder (default: no quickmode)')
+                    help='whether use quickmode, skip Cluster Autoencoder (default: no quickmode)')
 parser.add_argument('--cluster-epochs', type=int, default=200, metavar='N',
-                    help='number of epochs in cluster autoencoder training (default: 200)')
+                    help='number of epochs in Cluster Autoencoder training (default: 200)')
 parser.add_argument('--no-cuda', action='store_true', default=False,
                     help='Disable GPU training. If you only have CPU, add --no-cuda in the command line')
 parser.add_argument('--seed', type=int, default=1, metavar='S',
@@ -477,14 +477,14 @@ if __name__ == "__main__":
             listResult, size = generateLouvainCluster(edgeList)
             k = len(np.unique(listResult))
             print('Louvain cluster: '+str(k))
-            k = int(k*resolution) if k > 3 else 2
+            k = int(k*resolution) if int(k*resolution)>=3 else 2
             clustering = KMeans(n_clusters=k, random_state=0).fit(zOut)
             listResult = clustering.predict(zOut)
         elif args.clustering_method == 'LouvainB':
             listResult, size = generateLouvainCluster(edgeList)
             k = len(np.unique(listResult))
             print('Louvain cluster: '+str(k))
-            k = int(k*resolution) if k > 3 else 2
+            k = int(k*resolution) if int(k*resolution)>=3 else 2
             clustering = Birch(n_clusters=k).fit(zOut)
             listResult = clustering.predict(zOut)
         elif args.clustering_method == 'KMeans':
@@ -539,11 +539,11 @@ if __name__ == "__main__":
         # mem = resource.getrusage(resource.RUSAGE_SELF).ru_maxrss
         # print('Mem consumption: '+str(mem))
 
-        # Graph regulizated EM AE with celltype AE, do the additional AE
+        # Graph regulizated EM AE with Cluster AE, do the additional AE
         if not args.quickmode:
             # Each cluster has a autoencoder, and organize them back in iteraization
             print('---'+str(datetime.timedelta(seconds=int(time.time() -
-                                                           start_time)))+'---Start celltype autoencoder.')
+                                                           start_time)))+'---Start Cluster Autoencoder.')
             clusterIndexList = []
             for i in range(len(set(listResult))):
                 clusterIndexList.append([])

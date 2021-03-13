@@ -29,12 +29,12 @@ parser.add_argument('--datasetName', type=str, default='1.Biase',
                     help='Dataset: benchmarks: 9.Chung/11.Kolodziejczyk/12.Klein/13.Zeisel')
 parser.add_argument('--batch-size', type=int, default=12800, metavar='N',
                     help='input batch size for training (default: 12800)')
-parser.add_argument('--epochs', type=int, default=500, metavar='N',
-                    help='number of epochs to train in Regulatory Autoencoder (default: 500)')
+parser.add_argument('--Regu-epochs', type=int, default=500, metavar='N',
+                    help='number of epochs to train in Feature Autoencoder initially (default: 500)')
 parser.add_argument('--EM-epochs', type=int, default=200, metavar='N',
-                    help='number of epochs to train in iteration EM (default: 200)')
+                    help='number of epochs to train Feature Autoencoder in iteration EM (default: 200)')
 parser.add_argument('--EM-iteration', type=int, default=10, metavar='N',
-                    help='number of epochs in EM iteration (default: 10)')
+                    help='number of iteration in total EM iteration (default: 10)')
 parser.add_argument('--EMtype', type=str, default='EM',
                     help='EM process type (default: celltypeEM) or EM')
 parser.add_argument('--alpha', type=float, default=0.5,
@@ -46,7 +46,7 @@ parser.add_argument('--converge-graphratio', type=float, default=0.01,
 parser.add_argument('--converge-celltyperatio', type=float, default=0.95,
                     help='ratio of cell type change in EM iteration (default: 0.99), 0-1')
 parser.add_argument('--cluster-epochs', type=int, default=200, metavar='N',
-                    help='number of epochs in cluster autoencoder training (default: 200)')
+                    help='number of epochs in Cluster Autoencoder training (default: 200)')
 parser.add_argument('--no-cuda', action='store_true', default=False,
                     help='Disable GPU training. If you only have CPU, add --no-cuda in the command line')
 parser.add_argument('--seed', type=int, default=1, metavar='S',
@@ -375,7 +375,7 @@ if __name__ == "__main__":
 
     debuginfoStr('Start feature autoencoder training')
 
-    for epoch in range(1, args.epochs + 1):
+    for epoch in range(1, args.Regu_epochs + 1):
         recon, original, z = train(epoch, EMFlag=False)
 
     debuginfoStr('Feature autoencoder training finished')
@@ -469,7 +469,7 @@ if __name__ == "__main__":
             k = len(np.unique(listResult))
             print('Louvain cluster: '+str(k))
             # resolution of louvain cluster:
-            k = int(k*resolution) if k > 3 else 2
+            k = int(k*resolution) if int(k*resolution)>=3 else 2
             clustering = KMeans(n_clusters=k, random_state=0).fit(zOut)
             listResult = clustering.predict(zOut)
         elif args.clustering_method == 'LouvainB':
@@ -477,7 +477,7 @@ if __name__ == "__main__":
             k = len(np.unique(listResult))
             print('Louvain cluster: '+str(k))
             # resolution of louvain cluster:
-            k = int(k*resolution) if k > 3 else 2
+            k = int(k*resolution) if int(k*resolution)>=3 else 2
             clustering = Birch(n_clusters=k).fit(zOut)
             listResult = clustering.predict(zOut)
         elif args.clustering_method == 'KMeans':
@@ -532,7 +532,7 @@ if __name__ == "__main__":
 
         debuginfoStr(
             str(bigepoch)+'th iter: Cluster Autoencoder training started')
-        # Graph regulizated EM AE with celltype AE, do the additional AE
+        # Graph regulizated EM AE with Cluster AE, do the additional AE
         if args.EMtype == 'celltypeEM':
             # Each cluster has a autoencoder, and organize them back in iteraization
             clusterIndexList = []

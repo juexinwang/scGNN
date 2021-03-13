@@ -13,7 +13,7 @@ Installation Tested on Ubuntu 16.04, CentOS 7, MacOS catalina with Python 3.6.8 
 Start by grabbing this source codes:
 
 ```bash
-git clone https://github.com/scgnn/scGNN.git
+git clone https://github.com/juexinwang/scGNN.git
 cd scGNN
 ```
 
@@ -22,7 +22,6 @@ cd scGNN
 ```shell
 conda create -n scgnnEnv python=3.6.8 pip
 conda activate scgnnEnv
-conda install -c r r-igraph
 pip install -r requirements.txt
 ```
 
@@ -40,7 +39,6 @@ In R command line:
 
 ```R
 install.packages("devtools")
-install.packages("igraph")
 library(devtools)
 install_github("BMEngineeR/scGNNLTMG")
 ```
@@ -78,25 +76,23 @@ Datasets should be preprocessed to proceed. scGNN accepts scRNA-seq data format:
 
 ### 1. Prepare datasets 
 
-CSV format explicitly shows data in plain text. We take an example of Alzheimer’s disease datasets ([GSE138852](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE138852)) analyzed in the manuscript. 
+#### CSV format
 
-10X format stores scRNA-seq expression sparsely, so is commonly used for huge datasets. Take an example of [liver cellular landscape study](https://data.humancellatlas.org/explore/projects/4d6f6c96-2a83-43d8-8fe1-0f53bffd4674/expression-matrices?catalog=dcp1) from human cell atlas(<https://data.humancellatlas.org/>). Click the download link of 'homo_sapiens.mtx.zip' in the page, and get 4d6f6c96-2a83-43d8-8fe1-0f53bffd4674.homo_sapiens.mtx.zip. (It looks like they does not provide direct download link anymore)
-
-#### Example:
-
-##### CSV format
+Take an example of Alzheimer’s disease datasets ([GSE138852](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE138852)) analyzed in the manuscript.
 
 ```shell
 mkdir GSE138852
 wget -P GSE138852/ https://ftp.ncbi.nlm.nih.gov/geo/series/GSE138nnn/GSE138852/suppl/GSE138852_counts.csv.gz
 ```
 
-##### 10X format
+#### 10X format
+
+Take an example of [liver cellular landscape study](https://data.humancellatlas.org/explore/projects/4d6f6c96-2a83-43d8-8fe1-0f53bffd4674/expression-matrices?catalog=dcp1) from human cell atlas(<https://data.humancellatlas.org/>). Click the download link of 'homo_sapiens.mtx.zip' in the page, and get 4d6f6c96-2a83-43d8-8fe1-0f53bffd4674.homo_sapiens.mtx.zip. (It looks like they does not provide direct download link anymore)
 
 ```shell
 mkdir liver
-wget -P liver https://data.humancellatlas.org/project-assets/project-matrices/4d6f6c96-2a83-43d8-8fe1-0f53bffd4674.homo_sapiens.mtx.zip
 cd liver
+mv ~/Download/4d6f6c96-2a83-43d8-8fe1-0f53bffd4674.homo_sapiens.mtx.zip .
 unzip 4d6f6c96-2a83-43d8-8fe1-0f53bffd4674.homo_sapiens.mtx.zip
 cd ..
 ```
@@ -126,21 +122,33 @@ The running time of ***PreprocessingscGNN.py*** is dependent on the cell number 
 
 #### Example:
 
-##### CSV format
+#### CSV format
 
+Cell/Gene filtering without inferring LTMG:
+```shell
+python -W ignore PreprocessingscGNN.py --datasetName GSE138852_counts.csv.gz --datasetDir GSE138852/ --LTMGDir GSE138852/ --filetype CSV --geneSelectnum 2000
+```
+
+(Optional) Cell/Gene filtering and inferring LTMG:
 ```shell
 python -W ignore PreprocessingscGNN.py --datasetName GSE138852_counts.csv.gz --datasetDir GSE138852/ --LTMGDir GSE138852/ --filetype CSV --geneSelectnum 2000 --inferLTMGTag
 ```
 
-##### 10X format
+#### 10X format
 
+Cell/Gene filtering without inferring LTMG:
+```shell
+python -W ignore PreprocessingscGNN.py --datasetName 481193cb-c021-4e04-b477-0b7cfef4614b.mtx --datasetDir liver/ --LTMGDir liver/ --geneSelectnum 2000 sparseOut
+```
+
+(Optional) Cell/Gene filtering and inferring LTMG:
 ```shell
 python -W ignore PreprocessingscGNN.py --datasetName 481193cb-c021-4e04-b477-0b7cfef4614b.mtx --datasetDir liver/ --LTMGDir liver/ --geneSelectnum 2000 --inferLTMGTag
 ```
 
-## Run scGNN
+### 3. Run scGNN
 
-Program ***PreprocessingscGNN.py*** is the main entrance of scGNN to impute and clustering. There are quite a few parameters to define to meet users' requirements.
+Program ***scGNN.py*** is the main entrance of scGNN to impute and clustering. There are quite a few parameters to define to meet users' requirements.
 
 #### Required
 
@@ -159,16 +167,16 @@ Program ***PreprocessingscGNN.py*** is the main entrance of scGNN to impute and 
 #### Optional: Hyperparameters
 
 - **EM-iteration** defines the number of iteration, default is 10 
-- **Regu-epochs** defines epochs in feature autoencoder, default is 500
-- **EM-epochs** defines epochs in feature autoencoder in the iteration, default is 200
-- **cluster-epochs** defines epochs in the cluster autoencoder, default is 200
+- **Regu-epochs** defines epochs in Feature Autoencoder initially, default is 500
+- **EM-epochs** defines epochs in Feature Autoencoder in the iteration, default is 200
+- **cluster-epochs** defines epochs in the Cluster Autoencoder, default is 200
 - **k** is k of the K-Nearest-Neighour Graph
 - **knn-distance** distance type of building K-Nearest-Neighour Graph, supported type: euclidean/cosine/correlation (default: euclidean)
 - **GAEepochs** Number of epochs to train in Graph Autoencoder
 
 #### Optional: Performance
 
-- **quickmode** whether or not to bypass the cluster autoencoder.
+- **quickmode** whether or not to bypass the Cluster Autoencoder.
 - **useGAEembedding** whether use Graph Autoencoder
 - **regulized-type** is the regularized type: noregu/LTMG, default is to use LTMG
 - **alphaRegularizePara** alpha in the manuscript, the intensity of the regularizer
@@ -187,16 +195,28 @@ Program ***PreprocessingscGNN.py*** is the main entrance of scGNN to impute and 
 
 #### Example: 
 
-##### CSV format
+#### CSV format
 
 For CSV format, we need add **--nonsparseMode**
 
+Without LTMG:
+```bash
+python -W ignore scGNN.py --datasetName GSE138852 --datasetDir ./  --outputDir outputdir/ --EM-iteration 2 --Regu-epochs 50 --EM-epochs 20 --quickmode --nonsparseMode
+```
+
+(Optional) Using LTMG:
 ```bash
 python -W ignore scGNN.py --datasetName GSE138852 --datasetDir ./ --LTMGDir ./ --outputDir outputdir/ --EM-iteration 2 --Regu-epochs 50 --EM-epochs 20 --quickmode --nonsparseMode --regulized-type LTMG
 ```
 
-##### 10X format
+#### 10X format
 
+Without LTMG:
+```bash
+python -W ignore scGNN.py --datasetName 481193cb-c021-4e04-b477-0b7cfef4614b.mtx --datasetDir liver/ --outputDir outputdir/ --EM-iteration 2 --Regu-epochs 50 --EM-epochs 20 --quickmode
+```
+
+(Optional) Using LTMG:
 ```bash
 python -W ignore scGNN.py --datasetName 481193cb-c021-4e04-b477-0b7cfef4614b.mtx --LTMGDir liver/ --datasetDir liver/ --outputDir outputdir/ --EM-iteration 2 --Regu-epochs 50 --EM-epochs 20 --quickmode --regulized-type LTMG
 ```
