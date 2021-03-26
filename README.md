@@ -4,21 +4,18 @@
 
 __scGNN__ (**s**ingle **c**ell **g**raph **n**eural **n**etworks) provides a hypothesis-free deep learning framework for scRNA-Seq analyses. This framework formulates and aggregates cell-cell relationships with graph neural networks and models heterogeneous gene expression patterns using a left-truncated mixture Gaussian model. scGNN integrates three iterative multi-modal autoencoders and outperforms existing tools for gene imputation and cell clustering on four benchmark scRNA-Seq datasets.
 
-This repository contains the source code for the paper **scGNN: a novel graph neural network framework for single-cell RNA-Seq analyses** preprint available at bioRxiv; doi: https://doi.org/10.1101/2020.08.02.233569
+This repository contains the source code for the paper **scGNN is a novel graph neural network framework for single-cell RNA-Seq analyses**. Juexin Wang*, Anjun Ma*, Yuzhou Chang, Jianting Gong, Yuexu Jiang, Hongjun Fu, Cankun Wang, Ren Qi, Qin Ma*, Dong Xu*. Nat Commun 12, 1882 (2021). <https://www.nature.com/articles/s41467-021-22197-x>
 
 **BibTeX**
 
 ```latex
-@article{Wang_2020_scGNN,
+@article{Wang_2021_scGNN,
 	author = {Juexin Wang, Anjun Ma, Yuzhou Chang, Jianting Gong, Yuexu Jiang, Hongjun Fu, Cankun Wang, Ren Qi, Qin Ma, Dong Xu},
-	title = {scGNN: a novel graph neural network framework for single-cell RNA-Seq analyses},
-	elocation-id = {2020.08.02.233569},
-	year = {2020},
-	doi = {10.1101/2020.08.02.233569},
-	publisher = {Cold Spring Harbor Laboratory},
-	URL = {https://www.biorxiv.org/content/10.1101/2020.08.02.233569v1},
-	eprint = {https://www.biorxiv.org/content/10.1101/2020.08.02.233569v1.full.pdf},
-	journal = {bioRxiv}
+	title = {cGNN is a novel graph neural network framework for single-cell RNA-Seq analyses},
+	year = {2021},
+	doi = {10.1038/s41467-021-22197-x},
+	publisher = {Springer Nature},
+	journal = {Nature Communications}
 }
 ```
 --------------------------------------------------------------------------------
