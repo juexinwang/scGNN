@@ -548,7 +548,11 @@ if __name__ == "__main__":
             for i in range(len(set(listResult))):
                 clusterIndexList.append([])
             for i in range(len(listResult)):
-                clusterIndexList[listResult[i]].append(i)
+                assignee = listResult[i]
+                # Avoid bugs for maxClusterNumber
+                if assignee == args.maxClusterNumber:
+                    assignee = args.maxClusterNumber-1
+                clusterIndexList[assignee].append(i)
 
             reconNew = np.zeros(
                 (scData.features.shape[0], scData.features.shape[1]))
