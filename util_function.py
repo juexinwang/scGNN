@@ -140,7 +140,7 @@ class scDatasetInter(Dataset):
         if self.transform:
             sample = self.transform(sample)
 
-        return sample
+        return sample, idx
 
 
 class scBenchDataset(Dataset):

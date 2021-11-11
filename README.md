@@ -65,7 +65,7 @@ Then install all python packages in bash.
 pip install -r requirements.txt
 ```
 
-### Option 3: Use Docker
+### Option 3: Use Docker (Temporarily not available)
 
 Download and install [docker](https://www.docker.com/products/docker-desktop).
 
@@ -213,6 +213,9 @@ Another repository for reviewers is located at [here](https://github.com/scgnn/s
 
 ### Notes:
 We recommend users to infer LTMG from their datasets. LTMG can improve performance on our benchmarks despite it consumes extra time in data preprocessing. We also provide supports without LTMG to save running time.
+
+## History:
+- 2021-11-10: Fix a bug causing cluster autoencoder and iteration problems.
 
 ## Reference:
 

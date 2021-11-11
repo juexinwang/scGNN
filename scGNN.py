@@ -574,7 +574,7 @@ if __name__ == "__main__":
                     scDataInter, batch_size=args.batch_size, shuffle=False, **kwargs)
                 for epoch in range(1, args.cluster_epochs + 1):
                     reconCluster, originalCluster, zCluster = train(
-                        epoch, EMFlag=True)
+                        epoch, train_loader=train_loader, EMFlag=True)
                 count = 0
                 for i in clusterIndex:
                     reconNew[i] = reconCluster[count, :]
@@ -598,7 +598,7 @@ if __name__ == "__main__":
             scDataInter, batch_size=args.batch_size, shuffle=False, **kwargs)
 
         for epoch in range(1, args.EM_epochs + 1):
-            recon, original, z = train(epoch, EMFlag=True)
+            recon, original, z = train(epoch, train_loader=train_loader, EMFlag=True)
 
         zOut = z.detach().cpu().numpy()
 
