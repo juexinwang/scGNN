@@ -13,9 +13,9 @@ parser.add_argument('--inputfile', type=str, default='/home/wangjue/biodata/scDa
                     help='inputfile name')
 parser.add_argument('--outputfile', type=str, default='/home/wangjue/biodata/scData/sci-CAR_LTMG.csv',
                     help='outputfile name')
-parser.add_argument('--cellcount', type=int, default=1414,
+parser.add_argument('--cellcount', type=int, default=317,
                     help='total cell count')
-parser.add_argument('--genecount', type=int, default=19467,
+parser.add_argument('--genecount', type=int, default=2000,
                     help='total gene count')
 parser.add_argument('--split', type=str, default='space',
                     help='comma/blank')
@@ -64,9 +64,10 @@ with open(inputfile, 'r') as f:
     f.close()
 
 with open(outputfile, 'w') as fw:
-    fw.write(geneNamesLine+'\n')
+    fw.write(geneNamesLine[:-1]+'\n')
     for i in range(contentArray.shape[0]):
+        tmpStr = ''
         for j in range(contentArray.shape[1]):
-            fw.write(str(contentArray[i][j])+',')
-        fw.write('\n')
+            tmpStr = tmpStr + str(contentArray[i][j])+','
+        fw.write(tmpStr[:-1]+'\n')
     fw.close()

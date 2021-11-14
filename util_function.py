@@ -134,7 +134,6 @@ class scDatasetInter(Dataset):
             idx = idx.tolist()
 
         sample = self.features[idx, :]
-        sample = torch.from_numpy(sample.toarray())
 
         # transform after get the data
         if self.transform:

@@ -14,9 +14,9 @@ import csv
 
 # Preprocess network for sc
 parser = argparse.ArgumentParser()
-parser.add_argument('--expression-name', type=str, default='9.Chung',
+parser.add_argument('--expression-name', type=str, default='Chung',
                     help='TGFb from MAGIC/test also from 9.Chung/11.Kolodziejczyk/12.Klein/13.Zeisel')
-parser.add_argument('--featureDir', type=str, default='/home/wangjue/biodata/scData/',
+parser.add_argument('--featureDir', type=str, default='/Users/wangjue/workspace/scGNN/',
                     help='Feature File Directory')
 parser.add_argument('--data-type', type=str, default='float',
                     help='int/float')
@@ -358,6 +358,8 @@ elif args.expression_name=='20.10X_2700_seurat':
     expressionname = '20.10X_2700_seurat.csv'
 elif args.expression_name=='30.Schafer':
     expressionname = '30.Schafer.csv'
+else:
+    expressionname = args.expression_name+'.csv'
 
 out_folder = "data/sc/"+args.expression_name+"/"
 if not os.path.exists(out_folder):
