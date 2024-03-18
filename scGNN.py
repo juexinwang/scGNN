@@ -96,10 +96,10 @@ parser.add_argument('--n-clusters', default=20, type=int,
                     help='number of clusters if predifined for KMeans/Birch ')
 parser.add_argument('--clustering-method', type=str, default='LouvainK',
                     help='Clustering method: Louvain/KMeans/SpectralClustering/AffinityPropagation/AgglomerativeClustering/AgglomerativeClusteringK/Birch/BirchN/MeanShift/OPTICS/LouvainK/LouvainB')
-parser.add_argument('--maxClusterNumber', type=int, default=30,
-                    help='max cluster for celltypeEM without setting number of clusters (default: 30)')
-parser.add_argument('--minMemberinCluster', type=int, default=5,
-                    help='max cluster for celltypeEM without setting number of clusters (default: 100)')
+parser.add_argument('--maxClusterNumber', type=int, default=2000,
+                    help='max cluster for celltypeEM without setting number of clusters (default: 2000)')
+parser.add_argument('--minMemberinCluster', type=int, default=2,
+                    help='min cluster for celltypeEM without setting number of clusters (default: 2)')
 parser.add_argument('--resolution', type=str, default='auto',
                     help='the number of resolution on Louvain (default: auto/0.5/0.8)')
 
@@ -477,7 +477,9 @@ if __name__ == "__main__":
             listResult, size = generateLouvainCluster(edgeList)
             k = len(np.unique(listResult))
             print('Louvain cluster: '+str(k))
-            k = int(k*resolution) if int(k*resolution)>=3 else 2
+            k = int(k*resolution) if int(k*resolution)>=3 else args.minMemberinCluster
+            if k > args.maxClusterNumber : k = args.maxClusterNumber
+            print('Kmeans cluster: '+str(k))
             clustering = KMeans(n_clusters=k, random_state=0).fit(zOut)
             listResult = clustering.predict(zOut)
         elif args.clustering_method == 'LouvainB':
@@ -524,14 +526,14 @@ if __name__ == "__main__":
                                                        start_time)))+"---Clustering Ends")
 
         # If clusters more than maxclusters, then have to stop
-        if len(set(listResult)) > args.maxClusterNumber or len(set(listResult)) <= 1:
-            print("Stopping: Number of clusters is " +
-                  str(len(set(listResult))) + ".")
+        #if len(set(listResult)) > args.maxClusterNumber or len(set(listResult)) <= 1:
+        #    print("Stopping: Number of clusters is " +
+        #          str(len(set(listResult))) + ".")
             # Exit
             # return None
             # Else: dealing with the number
-            listResult = trimClustering(
-                listResult, minMemberinCluster=args.minMemberinCluster, maxClusterNumber=args.maxClusterNumber)
+        #    listResult = trimClustering(
+        #        listResult, minMemberinCluster=args.minMemberinCluster, maxClusterNumber=args.maxClusterNumber)
 
         # Debug: Calculate silhouette
         # measure_clustering_results(zOut, listResult)
