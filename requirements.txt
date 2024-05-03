@@ -6,5 +6,5 @@ matplotlib==3.1.2
 seaborn==0.9.0
 umap-learn==0.3.10
 munkres==1.1.2
-tqdm==4.48.0
+tqdm==4.66.3
 python-igraph==0.8.3
